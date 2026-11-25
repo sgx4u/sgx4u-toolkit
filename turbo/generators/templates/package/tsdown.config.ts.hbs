@@ -1,9 +1,13 @@
 import { defineLibraryConfig } from "@sgx4u/tsdown-config";
+import type { UserConfig } from "tsdown";
 
+// Annotate the binding so isolatedDeclarations can type the default export.
 {{#if (eq runtimeName "node")}}
-export default defineLibraryConfig({
+const libraryConfig: UserConfig = defineLibraryConfig({
     platform: "node",
 });
 {{else}}
-export default defineLibraryConfig();
+const libraryConfig: UserConfig = defineLibraryConfig();
 {{/if}}
+
+export default libraryConfig;
