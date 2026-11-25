@@ -15,7 +15,7 @@ There is no `main`. Two long-lived branches stay protected:
 
 Create `production` from `develop` when the first stable release is ready. Create `release/<package>/v<major>` only when the first backport for that older major is needed. Those branches publish the `previous` dist-tag. Pull requests into them run the same required checks as `develop` and `production`.
 
-After `production` publishes, `release.yml` opens a pull request into `develop` from a new `sync/consumed-changesets-*` branch. Squash-merge it before the next promotion. The head is not `production`. Squash merges do not record `production`'s commits as ancestors, so a pull request whose head is the long-lived release branch would list those commits again next time and conflict. The sync commit only deletes changeset files that `production` already released. Left on `develop`, a later rebase would add them again and the next Version Packages pull request would release the same work twice.
+After `production` publishes, `release.yml` opens a pull request into `develop` from a new `sync/consumed-changesets-*` branch. Squash-merge it before the next promotion. The head is not `production`. Squash merges do not record `production`'s commits as ancestors, so a pull request whose head is the long-lived release branch would list those commits again next time and conflict. The sync commit only deletes changeset files that `production` removed since the branches diverged. A changeset added on `develop` after promotion is not in that set. Left on `develop`, an already released changeset would be added again by a later rebase, and the next Version Packages pull request would release the same work twice.
 
 Settings → General → Pull Requests:
 

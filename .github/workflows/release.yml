@@ -199,12 +199,18 @@ jobs:
           git fetch origin production:refs/remotes/origin/production
           production_sha="$(git rev-parse origin/production)"
           sync_branch="sync/consumed-changesets-${production_sha}"
-          mapfile -t changed_files < <(git diff --name-only --diff-filter=D origin/develop origin/production -- .changeset)
+          # Three-dot diff: only files production deleted since it diverged from develop.
+          # A two-dot tree diff also matches changesets added on develop after promotion.
+          mapfile -t changed_files < <(git diff --name-only --diff-filter=D origin/develop...origin/production -- .changeset)
           consumed_files=()
           for file in "${changed_files[@]}"; do
             case "${file}" in
               .changeset/README.md) ;;
-              .changeset/*.md) consumed_files+=("${file}") ;;
+              .changeset/*.md)
+                if git cat-file -e "origin/develop:${file}" 2>/dev/null; then
+                  consumed_files+=("${file}")
+                fi
+                ;;
             esac
           done
           if [ "${#consumed_files[@]}" -eq 0 ]; then
@@ -227,7 +233,7 @@ jobs:
             --base develop \
             --head "${sync_branch}" \
             --title "chore: drop changesets already released from production" \
-            --body "Squash-merge this into develop before the next promotion. It deletes only the changeset files that production already released. The head is a new branch, not production, because develop squash-merges and does not record production as an ancestor. Reusing production as the head would reopen the same commits on the next release and conflict."
+            --body "Squash-merge this into develop before the next promotion. It deletes only changeset files that production removed since the two branches diverged. Changesets added on develop after that split stay. The head is a new branch, not production, because develop squash-merges and does not record production as an ancestor."
 
   snapshot-check:
     name: snapshot-check
