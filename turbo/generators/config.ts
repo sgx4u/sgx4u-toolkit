@@ -8,12 +8,21 @@ import {
 import path from "node:path";
 import type { PlopTypes } from "@turbo/gen";
 
-interface PackageAnswers {
+type RuntimeName = "universal" | "edge" | "node";
+
+interface PackagePromptAnswers {
     packageName: string;
     packageKind: "config" | "regular";
-    runtimeName: "universal" | "edge" | "node";
+    runtimeName: RuntimeName;
     ownerHandle: string;
     packageDirectory: string;
+}
+
+interface PackageAnswers extends PackagePromptAnswers {
+    tsconfigPreset: string;
+    buildPlatform: "neutral" | "node";
+    testEnvironment: "node";
+    includeNodeTypes: boolean;
 }
 
 const reservedPackageNames = new Set(["utils", "common", "shared"]);
@@ -42,7 +51,7 @@ function isRegularPackage(answers: unknown): boolean {
     );
 }
 
-function isPackageAnswers(value: object): value is PackageAnswers {
+function isPackagePromptAnswers(value: object): value is PackagePromptAnswers {
     const candidate = value as Record<string, unknown>;
     return (
         typeof candidate.packageName === "string" &&
@@ -54,6 +63,39 @@ function isPackageAnswers(value: object): value is PackageAnswers {
         typeof candidate.ownerHandle === "string" &&
         typeof candidate.packageDirectory === "string"
     );
+}
+
+function runtimeChoices(
+    runtimeName: RuntimeName,
+): Pick<
+    PackageAnswers,
+    "tsconfigPreset" | "buildPlatform" | "testEnvironment" | "includeNodeTypes"
+> {
+    if (runtimeName === "node") {
+        return {
+            tsconfigPreset: "@sgx4u/tsconfig/node.json",
+            buildPlatform: "node",
+            testEnvironment: "node",
+            includeNodeTypes: true,
+        };
+    }
+    if (runtimeName === "edge") {
+        // Neutral keeps Node built-ins external without assuming Node or the
+        // browser. Tests still run on Node; ESLint enforces the edge imports.
+        // Types come from the WebWorker library, not a Cloudflare package.
+        return {
+            tsconfigPreset: "@sgx4u/tsconfig/edge.json",
+            buildPlatform: "neutral",
+            testEnvironment: "node",
+            includeNodeTypes: false,
+        };
+    }
+    return {
+        tsconfigPreset: "@sgx4u/tsconfig/library.json",
+        buildPlatform: "neutral",
+        testEnvironment: "node",
+        includeNodeTypes: false,
+    };
 }
 
 function preparePackageAnswers(value: unknown): PackageAnswers {
@@ -70,7 +112,7 @@ function preparePackageAnswers(value: unknown): PackageAnswers {
     } else if (candidate.packageKind === "regular") {
         candidate.packageDirectory = `packages/${candidate.packageName}`;
     }
-    if (!isPackageAnswers(candidate)) {
+    if (!isPackagePromptAnswers(candidate)) {
         throw new Error("Package generator answers were incomplete.");
     }
     if (
@@ -79,7 +121,14 @@ function preparePackageAnswers(value: unknown): PackageAnswers {
     ) {
         throw new Error("Config packages use the node runtime.");
     }
-    return candidate;
+    const packageAnswers: PackageAnswers = {
+        ...candidate,
+        ...runtimeChoices(candidate.runtimeName),
+    };
+    // Plop renders templates from the original answers object. Copy the
+    // derived fields back onto it so the templates can see them.
+    Object.assign(value, packageAnswers);
+    return packageAnswers;
 }
 
 function repositoryRoot(): string {

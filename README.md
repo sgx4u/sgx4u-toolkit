@@ -19,7 +19,15 @@ Public Turborepo of shared [`@sgx4u`](https://www.npmjs.com/search?q=%40sgx4u) p
 |                                                               |                                        |
 | [`@sgx4u/string`](./packages/string)                          | Blank checks and whitespace collapsing |
 
-Tooling presets live in `packages/config`. Every other package lives in `packages/<name>`. A package there chooses a runtime of `universal`, `edge`, or `node`. None of the `edge` or `node` packages are published yet.
+Tooling presets live in `packages/config`. Every other package lives in `packages/<name>` and picks one runtime: `universal`, `edge`, or `node`. None of the `edge` or `node` packages are published yet.
+
+| Runtime     | Choose it when                                                                                                     | It may depend on                                      |
+| ----------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------- |
+| `universal` | The code must run in browsers, workers, and Node, and it does not import a Node built-in.                          | Other universal packages, and tooling presets.        |
+| `edge`      | The code targets an edge runtime and may use web standards plus the Workers `nodejs_compat` modules that are real. | Universal packages, other edge packages, and presets. |
+| `node`      | The code needs Node itself: processes, the full filesystem, or another API the edge subset does not implement.     | Universal, edge, and node packages, and presets.      |
+
+`turbo boundaries` enforces that table. ESLint enforces the imports. The generator writes the matching TypeScript preset, tsdown platform, and Vitest environment. The full rules, including why edge does not depend on `@cloudflare/workers-types`, are in [docs/runtimes.md](./docs/runtimes.md).
 
 Packages publish ESM and CommonJS, are built with tsdown, and declare `"node": ">=22.12"`. `import` resolves `dist/*.js` with `dist/*.d.ts`. `require` resolves `dist/*.cjs` with `dist/*.d.cts`. Inside this repo, runtime dependencies use `workspace:^` and dev tooling uses `workspace:*`. Third-party versions live in the pnpm catalog. Add a catalog entry only when a package needs it. The root workspace package is the private `@sgx4u/toolkit`. It is never published.
 
@@ -48,7 +56,10 @@ pnpm lint
 pnpm typecheck
 pnpm test
 pnpm build
+pnpm check
 ```
+
+`pnpm lint` lints packages and then the repository root. The root ESLint config ignores `packages/**`, so package sources are linted once. `pnpm typecheck` typechecks packages and then the generator. `pnpm check` runs boundaries, sherif, the visibility and link guards, package checks, and the pack review. `pnpm changeset` is the Changesets binary; there is no package script for it.
 
 Create a package:
 

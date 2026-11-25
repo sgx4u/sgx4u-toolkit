@@ -13,22 +13,12 @@
     "scripts": {
         "build": "turbo run build",
         "dev": "turbo run dev",
-        "lint": "turbo run lint",
-        "lint:root": "eslint . --max-warnings 0",
-        "typecheck": "turbo run typecheck",
-        "typecheck:root": "tsc --noEmit",
+        "lint": "turbo run lint && eslint . --max-warnings 0",
+        "typecheck": "turbo run typecheck && tsc --noEmit",
         "test": "turbo run test && node --test \"scripts/*.test.mjs\"",
         "format": "prettier --write .",
         "format:check": "prettier --check .",
-        "check:boundaries": "turbo boundaries",
-        "check:sherif": "sherif",
-        "check:visibility": "node scripts/check-visibility.mjs",
-        "check:links": "node scripts/check-links.mjs",
-        "check:pack": "node scripts/check-pack.mjs",
-        "check:packages": "turbo run check:package",
-        "changeset": "changeset",
-        "version-packages": "changeset version",
-        "release": "node scripts/publish-packages.mjs",
+        "check": "turbo boundaries && sherif && node scripts/check-visibility.mjs && node scripts/check-links.mjs && turbo run check:package && node scripts/check-pack.mjs",
         "prepare": "node scripts/install-git-hooks.mjs"
     },
     "devDependencies": {
@@ -52,7 +42,8 @@
     "prettier": "@sgx4u/prettier-config",
     "sherif": {
         "ignoreRule": [
-            "non-existant-packages"
+            "non-existant-packages",
+            "root-package-private-field"
         ]
     },
     "lint-staged": {

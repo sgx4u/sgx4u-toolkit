@@ -20,6 +20,7 @@ The plan pins TypeScript `~6.0.3` and treats TypeScript 7 as a later, separate u
 - Config presets in `packages/config` are public packages. Sibling repositories install them from npm. Inside this repo they are `workspace:*` dev dependencies. They do not depend on packages under `packages/`.
 - Runtime dependencies between packages use `workspace:^`.
 - Libraries are built with tsdown and publish both ESM and CommonJS. Published packages declare `node >= 22.12`. Development and CI use Node 24.
+- A library picks one runtime: `universal`, `edge`, or `node`. Boundaries, ESLint, and the TypeScript preset all follow that choice. See [docs/runtimes.md](../runtimes.md).
 - Releases use Changesets (independent versions, public access, `updateInternalDependencies: minor`) and npm trusted publishing from `release.yml` in the `release` environment.
 - CODEOWNERS entries are `@sgx4u`.
 - `@sgx4u/string` is the first library package so the task graph, tests, publint, and attw have something real to run. Further packages are added with `turbo gen package`.

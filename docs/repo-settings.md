@@ -189,11 +189,11 @@ Install the [pkg.pr.new GitHub App](https://github.com/apps/pkg-pr-new) on this 
 
 ## 10. Renovate
 
-Dependabot updates GitHub Actions only (`dependabot.yml`). npm updates belong to Renovate (`renovate.json`). Both open pull requests against `develop` only. `beta` is not a base branch. A second lockfile stream would conflict every time `develop` is merged in. Dependency updates reach experimental builds through that merge.
+Dependabot updates GitHub Actions only (`dependabot.yml`). npm updates belong to Renovate (`renovate.json`), including the catalog in `pnpm-workspace.yaml`. The npm manager reads that file by default. Renovate opens pull requests against `develop` only (`baseBranchPatterns`). `beta` is not a base branch. A second lockfile stream would conflict every time `develop` is merged in. Dependency updates reach experimental builds through that merge.
 
-If Renovate runs from `sgx4u-devops`, point that job at this repository. The checked-in config groups `@sgx4u/**` minor and patch updates and turns automerge on for that group. Majors stay for review. This file does not mention a private scope.
+The config extends `config:recommended` and sets `automerge` to false. Dependency pull requests are reviewed and merged like any other pull request. There is no `@sgx4u/**` group: packages in this repository depend on each other with `workspace:*` or `workspace:^`, and Renovate does not update those.
 
-Automerge needs the ruleset to allow it, or the Renovate app to be a bypass. With a required code-owner review, automerge will wait until that review exists. On a personal account that is you.
+Renovate waits 3 days after a release before opening an update (`minimumReleaseAge`). That is the window in which npm still allows a publish to be unpublished. It runs weekly, before 5am on Monday. Non-major updates share one pull request. Major updates are not in that pull request. Lockfile maintenance uses the same weekly schedule. GitHub Actions stay disabled here because Dependabot opens those.
 
 ## 11. Two-factor authentication
 

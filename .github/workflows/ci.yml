@@ -58,7 +58,7 @@ jobs:
               run: pnpm exec turbo run lint --affected
 
             - name: Lint repository scripts
-              run: pnpm run lint:root
+              run: pnpm exec eslint . --max-warnings 0
 
             - name: Check package boundaries
               run: pnpm exec turbo boundaries
@@ -101,7 +101,7 @@ jobs:
               run: pnpm exec turbo run typecheck --affected
 
             - name: Typecheck the package generator
-              run: pnpm run typecheck:root
+              run: pnpm exec tsc --noEmit
 
     test:
         name: test

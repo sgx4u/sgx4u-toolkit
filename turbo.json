@@ -5,19 +5,10 @@
     "remoteCache": {
         "signature": true
     },
-    "globalPassThroughEnv": [
-        "CI",
-        "GITHUB_REF_NAME",
-        "CHANGESETS_OUTPUT",
-        "CHANGESET_PACK_DIR",
-        "TURBO_TOKEN",
-        "TURBO_TEAM",
-        "TURBO_REMOTE_CACHE_SIGNATURE_KEY"
-    ],
+    "globalPassThroughEnv": ["CI"],
     "tasks": {
         "build": {
             "dependsOn": ["^build"],
-            "inputs": ["$TURBO_DEFAULT$"],
             "outputs": ["dist/**"]
         },
         "typecheck": {
@@ -54,10 +45,23 @@
             },
             "runtime:edge": {
                 "dependencies": {
-                    "deny": ["runtime:node"]
+                    "allow": [
+                        "runtime:universal",
+                        "runtime:edge",
+                        "layout:config"
+                    ]
                 }
             },
-            "runtime:node": {}
+            "runtime:node": {
+                "dependencies": {
+                    "allow": [
+                        "runtime:universal",
+                        "runtime:edge",
+                        "runtime:node",
+                        "layout:config"
+                    ]
+                }
+            }
         }
     }
 }

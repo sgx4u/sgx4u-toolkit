@@ -20,7 +20,15 @@ export default definePackageConfig({
 });
 ```
 
-`runtime` is `universal`, `edge`, or `node`. `runtime: "universal"` rejects Node built-ins. `runtime: "edge"` rejects Node-only built-ins outside the Workers `nodejs_compat` subset. `runtime: "node"` allows Node built-ins.
+`runtime` is `universal`, `edge`, or `node`.
+
+| Runtime     | Imports                                                                                                                                                                                                                                                                          | Globals                                                                                                |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `universal` | Rejects every Node built-in, both `node:` and the bare name, including subpaths such as `node:fs/promises`.                                                                                                                                                                      | Web standards that Node and browsers share (`fetch`, `URL`, `TextEncoder`). No `window`, no `process`. |
+| `edge`      | Allows web standards and Workers `nodejs_compat` modules that have an implementation (`node:fs`, `node:http`, `node:net`, and the rest of that set). Rejects the non-functional stub modules (`node:child_process`, `node:vm`, `node:worker_threads`, and the rest of that set). | Worker globals, plus `process`, `Buffer`, `global`, `setImmediate`, and `clearImmediate`.              |
+| `node`      | Allows Node built-ins.                                                                                                                                                                                                                                                           | Node globals.                                                                                          |
+
+The edge stub list follows the Workers Node.js compatibility document. A module moves off that list only when Workers stops treating it as a stub. Implemented modules stay allowed without a config change. See [the runtime notes](https://github.com/sgx4u/sgx4u-toolkit/blob/develop/docs/runtimes.md) for how this lines up with package tags and TypeScript presets.
 
 ## Owner
 

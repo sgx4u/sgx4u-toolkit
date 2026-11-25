@@ -2,6 +2,8 @@
 
 Vitest preset: Node environment, tests in `src/**/*.test.ts`.
 
+Universal, edge, and node packages all use this environment. The test runner is Node. Which imports the source may use is enforced by `@sgx4u/eslint-config`, not by the Vitest environment.
+
 ## Install
 
 ```sh
