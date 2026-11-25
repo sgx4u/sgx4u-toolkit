@@ -32,6 +32,7 @@ async function restrictedImportMessages(runtime, sourceText) {
     const results = await eslint.lintText(sourceText, {
         filePath: path.join(packageDirectory, "src/runtime-probe.ts"),
     });
+
     return results
         .flatMap((result) => result.messages)
         .filter(
