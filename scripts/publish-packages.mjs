@@ -1,23 +1,45 @@
+import { readFileSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
-import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { distributionTagForBranch } from "./distribution-tag.mjs";
 
 /**
  * Arguments for `pnpm exec changeset publish`.
- * When packDirectory is set, publish the tarballs the pack job already reviewed.
+ * Artifact mode stores the dist-tag in publish-plan.json. Passing `--tag`
+ * together with `--from-pack-dir` makes Changesets exit.
  *
- * @param {string} branchName
- * @param {string | undefined} packDirectory
+ * @param {string} packDirectory
  * @returns {string[]}
  */
-export function publishArguments(branchName, packDirectory) {
-  const distributionTag = distributionTagForBranch(branchName);
-  const args = ["exec", "changeset", "publish", "--tag", distributionTag];
-  if (packDirectory) {
-    args.push("--from-pack-dir", packDirectory);
+export function publishArguments(packDirectory) {
+  return ["exec", "changeset", "publish", "--from-pack-dir", packDirectory];
+}
+
+/**
+ * @param {{ plan: { kind?: string, tag?: string }[][] }} planDocument
+ * @param {string} distributionTag
+ */
+export function applyDistributionTagToPlan(planDocument, distributionTag) {
+  for (const batch of planDocument.plan) {
+    for (const release of batch) {
+      if (release.kind === "publish") {
+        release.tag = distributionTag;
+      }
+    }
   }
-  return args;
+  return planDocument;
+}
+
+/**
+ * @param {string} packDirectory
+ * @param {string} distributionTag
+ */
+export function writeDistributionTag(packDirectory, distributionTag) {
+  const planPath = path.join(packDirectory, "publish-plan.json");
+  const planDocument = JSON.parse(readFileSync(planPath, "utf8"));
+  applyDistributionTagToPlan(planDocument, distributionTag);
+  writeFileSync(planPath, `${JSON.stringify(planDocument, null, 2)}\n`);
 }
 
 function main() {
@@ -37,14 +59,11 @@ function main() {
     process.exit(1);
   }
 
-  const result = spawnSync(
-    "pnpm",
-    publishArguments(branchName, packDirectory),
-    {
-      stdio: "inherit",
-      env: process.env,
-    },
-  );
+  writeDistributionTag(packDirectory, distributionTagForBranch(branchName));
+  const result = spawnSync("pnpm", publishArguments(packDirectory), {
+    stdio: "inherit",
+    env: process.env,
+  });
 
   process.exit(result.status ?? 1);
 }

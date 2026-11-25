@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { distributionTagForBranch } from "./distribution-tag.mjs";
-import { publishArguments } from "./publish-packages.mjs";
+import {
+  applyDistributionTagToPlan,
+  publishArguments,
+} from "./publish-packages.mjs";
 
 test("release branches map to the three supported dist-tags", () => {
   assert.equal(distributionTagForBranch("production"), "latest");
@@ -10,24 +13,33 @@ test("release branches map to the three supported dist-tags", () => {
 });
 
 test("other branches are rejected", () => {
-  assert.throws(
-    () => distributionTagForBranch("main"),
-    /Refusing to publish/,
-  );
+  assert.throws(() => distributionTagForBranch("main"), /Refusing to publish/);
 });
 
-test("publish uses the packed directory and the branch dist-tag", () => {
-  assert.deepEqual(publishArguments("production", "packed-packages"), [
+test("packed publishes do not pass --tag", () => {
+  assert.deepEqual(publishArguments("packed-packages"), [
     "exec",
     "changeset",
     "publish",
-    "--tag",
-    "latest",
     "--from-pack-dir",
     "packed-packages",
   ]);
-  assert.equal(
-    publishArguments("release/string/v1", "packed-packages").at(4),
-    "previous",
-  );
+});
+
+test("the publish plan carries the branch dist-tag", () => {
+  const planDocument = {
+    version: 1,
+    plan: [
+      [
+        {
+          kind: "publish",
+          name: "@sgx4u/string",
+          version: "1.2.0",
+          tag: "latest",
+        },
+      ],
+    ],
+  };
+  applyDistributionTagToPlan(planDocument, "previous");
+  assert.equal(planDocument.plan[0][0].tag, "previous");
 });

@@ -146,8 +146,9 @@ jobs:
           path: packed-packages
 
       # production -> latest, release/** -> previous.
+      # The dist-tag is written into publish-plan.json. Changesets rejects
+      # --tag together with --from-pack-dir.
       # develop does not use this job. It publishes snapshots from the snapshot job.
-      # changeset publish uses pnpm, which rewrote workspace: and catalog: while packing.
       # No NPM_TOKEN and no registry-url: npm CLI 11.5.1+ uses OIDC for this environment.
       - name: Publish to npm
         uses: changesets/action/publish@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
