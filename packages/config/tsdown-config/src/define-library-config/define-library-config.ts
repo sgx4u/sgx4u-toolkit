@@ -3,17 +3,20 @@ import { defineConfig, type UserConfig } from "tsdown";
 /**
  * Returns a tsdown config for a library that publishes ESM and CommonJS.
  *
- * Sets `entry` to `["src/index.ts"]`, `format` to `["esm", "cjs"]`, and
- * `dts`, `sourcemap`, and `clean` to true. `platform` is `"neutral"` and
- * `fixedExtension` is false. Does not set `deps`, so tsdown leaves
+ * Call this from a library `tsdown.config.ts`. Sets `entry` to
+ * `["src/index.ts"]`, `format` to `["esm", "cjs"]`, and `dts`, `sourcemap`,
+ * and `clean` to true. `platform` is `"neutral"`. `fixedExtension` is false
+ * so an ESM build stays `index.js` when the package is `"type": "module"`,
+ * and CommonJS stays `index.cjs`. Leaves `deps` unset, so tsdown keeps
  * `dependencies`, `peerDependencies`, and `optionalDependencies` external.
- * Does not write the package `exports` map. Does not modify `options`.
+ * The caller writes the package `exports` map. `options` is left unchanged.
  *
  * Each field on `options` replaces that preset field. Arrays and nested
  * objects are replaced, not merged. `fixedExtension` stays false when the
- * caller overrides `platform` and does not set `fixedExtension`.
+ * caller overrides `platform` and leaves `fixedExtension` unset.
  *
- * @param options - Fields that replace the preset. Defaults to an empty object, which keeps every preset field.
+ * @param options - Fields that replace the preset. An empty object keeps every preset field.
+ * @defaultValue {}
  * @returns A new config object.
  * @throws {@link TypeError} When `options` is `null`, an array, a function, or a promise.
  * @example

@@ -1,12 +1,16 @@
 /**
  * Prettier options for @sgx4u repositories.
  *
- * `tabWidth` is 4. The other fields are Prettier 3 defaults, written here
- * so a later Prettier release does not reformat consumers. This object does
- * not read the environment, the working directory, or `.editorconfig`.
+ * Use this as the `prettier` field in `package.json`, or as the default
+ * export of a Prettier config file. `tabWidth` is 4, matching
+ * `.editorconfig`. The other fields are Prettier 3 defaults, written here
+ * so a later Prettier release keeps the same format. The object is static:
+ * it ignores the environment, the working directory, and `.editorconfig`.
  * Applying it replaces Prettier's default indent of 2.
  *
  * @type {import("prettier").Config}
+ * @example
+ * import prettierConfig from "@sgx4u/prettier-config";
  */
 const prettierConfig = {
     semi: true,

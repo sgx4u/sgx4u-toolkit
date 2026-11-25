@@ -1,7 +1,13 @@
 import { defineConfig } from "tsdown";
 
-// This package cannot import its own preset, so it repeats those options.
-// Workspace tooling is only loaded through `import`, so it skips CommonJS.
+/**
+ * Build config for this preset.
+ *
+ * This package cannot import its own `defineLibraryConfig`, so the options
+ * are written out here. Workspace tooling is only loaded through `import`,
+ * so the format is ESM and CommonJS is omitted. `platform` is `"node"`
+ * because the preset runs in the repository toolchain.
+ */
 export default defineConfig({
     entry: ["src/index.ts"],
     format: ["esm"],
