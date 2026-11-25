@@ -1,6 +1,6 @@
 # CodeQL and gitleaks. Separate from ci.yml because CodeQL needs
 # security-events: write, and the weekly schedule should not rerun lint,
-# tests, and package builds.
+# tests, and package builds. Pull requests into beta run this workflow too.
 #
 # Optional check names: security / analyze, security / secrets.
 # The previous names were codeql / analyze and ci / secrets.
@@ -10,11 +10,13 @@ on:
     pull_request:
         branches:
             - develop
+            - beta
             - production
             - "release/**"
     push:
         branches:
             - develop
+            - beta
             - production
             - "release/**"
     schedule:

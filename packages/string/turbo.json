@@ -1,4 +1,4 @@
 {
   "extends": ["//"],
-  "tags": ["tier:foundation", "runtime:universal"]
+  "tags": ["layout:package", "runtime:universal"]
 }

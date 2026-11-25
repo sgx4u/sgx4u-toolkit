@@ -4,14 +4,11 @@ packages:
     - "packages/*"
     - "packages/config/*"
 
-# One version for every third-party dependency. Packages opt in with "catalog:".
+# Add a catalog entry only when a package needs it.
+# Packages opt in with "catalog:".
 # pnpm rewrites catalog: to a real range when a package is packed or published.
 catalog:
     typescript: ~6.0.3
-    react: ^19.3.0
-    react-dom: ^19.3.0
-    next: ^16.4.0
-    hono: ^4.13.0
     eslint: ^10.15.0
     "@eslint/js": ^10.0.1
     typescript-eslint: ^8.74.0
@@ -35,12 +32,6 @@ catalog:
     globals: ^17.12.0
     pkg-pr-new: ^0.0.94
     turbo: ^2.11.13
-    "@cloudflare/workers-types": 5.20261119.1
-
-catalogs:
-    native:
-        # React Native moves on its own cadence. Nothing in this repo depends on it yet.
-        react-native: ^0.88.0
 
 # pnpm's release-age policy blocked this just-published @types/node build.
 # The exception is the exact version in the catalog, not a blanket bypass.

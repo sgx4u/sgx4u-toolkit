@@ -1,4 +1,4 @@
 {
   "extends": ["//"],
-  "tags": [{{#if (eq packageKind "config")}}"tier:platform"{{else}}"tier:{{tierName}}", "runtime:{{runtimeName}}"{{/if}}]
+  "tags": [{{#if (eq packageKind "config")}}"layout:config"{{else}}"layout:package", "runtime:{{runtimeName}}"{{/if}}]
 }

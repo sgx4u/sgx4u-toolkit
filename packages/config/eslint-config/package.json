@@ -1,7 +1,7 @@
 {
   "name": "@sgx4u/eslint-config",
   "version": "0.0.0",
-  "description": "ESLint flat config for @sgx4u packages, including tier and runtime boundaries.",
+  "description": "ESLint flat config for @sgx4u packages, including runtime boundaries.",
   "license": "MIT",
   "author": "Subhajit Ghosh",
   "type": "module",

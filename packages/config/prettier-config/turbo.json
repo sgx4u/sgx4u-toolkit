@@ -1,4 +1,4 @@
 {
   "extends": ["//"],
-  "tags": ["tier:platform"]
+  "tags": ["layout:config"]
 }

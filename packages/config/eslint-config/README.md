@@ -2,7 +2,7 @@
 
 ESLint flat config for the toolkit. It turns on TypeScript recommended rules, Prettier compatibility, Turborepo environment checks, and boundaries rules that reject `@sgx4u-private` and `@sgx4u/ui*` imports.
 
-`turbo boundaries` enforces tier direction: a foundation package cannot depend on an adapter. This package enforces the runtime rules for the `tier` you pass, and rejects `@sgx4u-private` and `@sgx4u/ui*` imports.
+`turbo boundaries` keeps `packages/config` from depending on `packages/<name>`. This package enforces the runtime import rules for the `runtime` you pass, and rejects `@sgx4u-private` and `@sgx4u/ui*` imports.
 
 ## Install
 
@@ -16,8 +16,7 @@ pnpm add -D @sgx4u/eslint-config eslint typescript
 import { definePackageConfig } from "@sgx4u/eslint-config";
 
 export default definePackageConfig({
-  tier: "foundation",
-  runtime: "universal",
+    runtime: "universal",
 });
 ```
 

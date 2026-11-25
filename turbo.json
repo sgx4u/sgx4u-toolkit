@@ -37,47 +37,19 @@
     },
     "boundaries": {
         "tags": {
-            "tier:foundation": {
+            "layout:config": {
                 "dependencies": {
-                    "allow": ["tier:foundation", "tier:platform"]
+                    "deny": ["layout:package"]
                 }
             },
-            "tier:capability": {
+            "layout:package": {
                 "dependencies": {
-                    "allow": [
-                        "tier:foundation",
-                        "tier:capability",
-                        "tier:platform"
-                    ]
-                }
-            },
-            "tier:adapter": {
-                "dependencies": {
-                    "allow": [
-                        "tier:foundation",
-                        "tier:capability",
-                        "tier:adapter",
-                        "tier:platform"
-                    ]
-                }
-            },
-            "tier:platform": {
-                "dependencies": {
-                    "deny": [
-                        "tier:foundation",
-                        "tier:capability",
-                        "tier:adapter",
-                        "runtime:universal",
-                        "runtime:edge",
-                        "runtime:node",
-                        "runtime:web",
-                        "runtime:native"
-                    ]
+                    "allow": ["layout:package", "layout:config"]
                 }
             },
             "runtime:universal": {
                 "dependencies": {
-                    "allow": ["runtime:universal", "tier:platform"]
+                    "allow": ["runtime:universal", "layout:config"]
                 }
             },
             "runtime:edge": {

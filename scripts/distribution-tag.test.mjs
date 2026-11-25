@@ -6,10 +6,20 @@ import {
     publishArguments,
 } from "./publish-packages.mjs";
 
-test("release branches map to the three supported dist-tags", () => {
+test("stable release branches map to latest and previous", () => {
     assert.equal(distributionTagForBranch("production"), "latest");
-    assert.equal(distributionTagForBranch("develop"), "beta");
     assert.equal(distributionTagForBranch("release/string/v1"), "previous");
+});
+
+test("develop and beta do not publish committed versions", () => {
+    assert.throws(
+        () => distributionTagForBranch("develop"),
+        /Refusing to publish/,
+    );
+    assert.throws(
+        () => distributionTagForBranch("beta"),
+        /Refusing to publish committed versions/,
+    );
 });
 
 test("other branches are rejected", () => {

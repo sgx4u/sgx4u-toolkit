@@ -24,7 +24,7 @@ const edgeRuntimeMessage =
  * @param {import("./index.js").PackageRuntime} runtime
  * @returns {import("eslint").Linter.RuleEntry}
  */
-function restrictedImportsForRuntime(runtime, tier) {
+function restrictedImportsForRuntime(runtime) {
   const patterns = [
     {
       group: ["@sgx4u-private", "@sgx4u-private/*"],
@@ -63,7 +63,7 @@ function restrictedImportsForRuntime(runtime, tier) {
         "url",
         "module",
       ],
-      message: `${tier} packages are ${runtime}: ${universalRuntimeMessage}`,
+      message: universalRuntimeMessage,
     });
   }
 
@@ -71,7 +71,7 @@ function restrictedImportsForRuntime(runtime, tier) {
     patterns.push({
       group: ["react", "react-dom", "react-native", "react-native/*"],
       message:
-        "React belongs to sgx4u-ui. Toolkit foundation, capability, and adapter packages stay platform-free of React.",
+        "React belongs to sgx4u-ui. Packages in this repository do not import React.",
     });
   }
 
@@ -106,7 +106,7 @@ function restrictedImportsForRuntime(runtime, tier) {
         "tls",
         "worker_threads",
       ],
-      message: `${tier} packages are ${runtime}: ${edgeRuntimeMessage}`,
+      message: edgeRuntimeMessage,
     });
   }
 
@@ -120,8 +120,8 @@ function restrictedImportsForRuntime(runtime, tier) {
 
 /**
  * Flat config shared by every package.
- * `turbo boundaries` enforces tier direction on the package graph.
- * This config enforces the runtime import rules for the tier you pass,
+ * `turbo boundaries` keeps packages/config from depending on packages/<name>.
+ * This config enforces the runtime import rules for the runtime you pass,
  * and rejects @sgx4u-private and @sgx4u/ui imports in the editor.
  *
  * @param {import("./index.js").PackageLintOptions} options
@@ -198,10 +198,7 @@ export function definePackageConfig(options) {
     {
       files: ["src/**/*.{ts,tsx,js,mjs,cjs}"],
       rules: {
-        "no-restricted-imports": restrictedImportsForRuntime(
-          options.runtime,
-          options.tier,
-        ),
+        "no-restricted-imports": restrictedImportsForRuntime(options.runtime),
       },
     },
     {
@@ -212,10 +209,7 @@ export function definePackageConfig(options) {
       ],
       ignores: ["src/**"],
       rules: {
-        "no-restricted-imports": restrictedImportsForRuntime(
-          "node",
-          options.tier,
-        ),
+        "no-restricted-imports": restrictedImportsForRuntime("node"),
       },
     },
     eslintConfigPrettier,
@@ -223,13 +217,12 @@ export function definePackageConfig(options) {
 }
 
 /**
- * Root config. Package directories lint themselves so rules can see their tier.
+ * Root config. Package directories lint themselves so rules can see their runtime.
  *
  * @returns {import("eslint").Linter.Config[]}
  */
 export function defineRootConfig() {
   return definePackageConfig({
-    tier: "platform",
     runtime: "node",
   }).map((config, index) => {
     if (index !== 0) {

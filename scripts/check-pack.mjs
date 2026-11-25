@@ -52,7 +52,7 @@ export function listPublishablePackages(repositoryDirectory) {
                 );
                 if (
                     packageManifest.private !== true &&
-                    packageManifest.name !== "sgx4u-toolkit"
+                    packageManifest.name !== "@sgx4u/toolkit"
                 ) {
                     packageDirectories.push(absolutePath);
                 }
