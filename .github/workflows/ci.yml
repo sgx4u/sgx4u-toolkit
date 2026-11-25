@@ -215,9 +215,9 @@ jobs:
             - name: Review packed files
               run: node scripts/check-pack.mjs
 
-            - name: Require a changeset when a publishable package changes
+            - name: Require a changeset when published behavior changes
               if: github.event_name == 'pull_request'
-              run: pnpm exec changeset status --since "origin/${{ github.base_ref }}"
+              run: node scripts/check-changeset.mjs --base "origin/${{ github.base_ref }}" --labels "${{ join(github.event.pull_request.labels.*.name, ',') }}"
 
     dependency-review:
         name: dependency-review
@@ -257,6 +257,8 @@ jobs:
             - name: Build packages
               run: pnpm exec turbo run build
 
+            # Library directories only. packages/config is workspace tooling.
+            # An empty list is a successful preview: there is nothing to publish.
             - name: Publish preview packages
               run: |
                   mapfile -t package_directories < <(find packages -mindepth 1 -maxdepth 1 -type d ! -name config | sort)

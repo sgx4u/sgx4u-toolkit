@@ -1,6 +1,9 @@
 {
     "name": "@sgx4u/{{packageName}}",
     "version": "0.0.0",
+{{#if (eq packageKind "config")}}
+    "private": true,
+{{/if}}
     "description": "TODO: one sentence describing @sgx4u/{{packageName}}.",
     "license": "MIT",
     "author": "Subhajit Ghosh",
@@ -50,10 +53,12 @@
         "typescript": "catalog:",
         "vitest": "catalog:"
     },
+{{#unless (eq packageKind "config")}}
     "publishConfig": {
         "access": "public",
         "provenance": true
     },
+{{/unless}}
     "repository": {
         "type": "git",
         "url": "git+https://github.com/sgx4u/sgx4u-toolkit.git",

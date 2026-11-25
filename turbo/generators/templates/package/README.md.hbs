@@ -7,26 +7,31 @@
 
 <h1 align="center">🌟 @sgx4u/{{packageName}} 🌟</h1>
 
-<p align="center">TODO: what this package is for, in one paragraph.</p>
+<h3 align="center">Replace this sentence with what <code>@sgx4u/{{packageName}}</code> does before the first release.</h3>
 
 <p align="center">
     <a href="{{#if (eq packageKind 'config')}}../../../.github/workflows/ci.yml{{else}}../../.github/workflows/ci.yml{{/if}}"><img src="https://img.shields.io/github/actions/workflow/status/sgx4u/sgx4u-toolkit/ci.yml?branch=develop&style=for-the-badge&label=ci&labelColor=353535" alt="ci" /></a>
     <a href="{{#if (eq packageKind 'config')}}../../../LICENSE{{else}}../../LICENSE{{/if}}"><img src="https://img.shields.io/github/license/sgx4u/sgx4u-toolkit?style=for-the-badge&labelColor=353535&color=4f46e5" alt="License: MIT" /></a>
     <a href="./package.json"><img src="https://img.shields.io/badge/node-%3E%3D22.12-339933?style=for-the-badge&logo=nodedotjs&logoColor=white&labelColor=353535" alt="Node &gt;=22.12" /></a>
+    <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
 </p>
 
 <p align="center">Part of <a href="{{#if (eq packageKind 'config')}}../../../README.md{{else}}../../README.md{{/if}}">sgx4u-toolkit</a>.</p>
 </div>
 
-## About
+<br />
 
-TODO: what this package is for, in one paragraph.
+<h2 id="about">💫 About</h2>
 
-Experimental (`0.x`).
+`packageIdentifier` returns `@sgx4u/{{packageName}}`. The implementation, the folder `index.ts`, and the test live in `src/package-identifier/`. `src/index.ts` re-exports it. Replace the stub, and the sentence in the header, before the first release.
+
+Experimental (`0.x`). Breaking changes may land in minor versions until 1.0.0.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Installation
+<br />
+
+<h2 id="installation">📥 Installation</h2>
 
 {{#if (eq packageKind 'config')}}
 ```sh
@@ -42,35 +47,43 @@ yarn add @sgx4u/{{packageName}}       # yarn
 ```
 {{/if}}
 
-Requires Node `>=22.12`. The package publishes ESM (`import`) and CommonJS (`require`). The export map lists `@sgx4u/source` before `import` and `require`, pointing at `src/index.ts`. TypeScript uses that condition when `customConditions` includes `@sgx4u/source`.
+Requires Node `>=22.12`. The package publishes ESM (`import`) and CommonJS (`require`). The export map lists `@sgx4u/source` before `import` and `require`, pointing at `src/index.ts`. TypeScript uses that condition when `customConditions` includes `@sgx4u/source`. The TypeScript configuration in this repository sets that condition, so workspace builds load the source. Other resolvers load `dist`.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Usage
+<br />
+
+<h2 id="usage">💡 Usage</h2>
 
 ```ts
 import { packageIdentifier } from "@sgx4u/{{packageName}}";
 
-packageIdentifier();
+packageIdentifier(); // "@sgx4u/{{packageName}}"
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## API
+<br />
+
+<h2 id="api">📘 API</h2>
 
 ### `packageIdentifier(): string`
 
-Stub exported so the new package typechecks, tests, and packs. The implementation, the folder `index.ts`, and the test live in `src/package-identifier/`. `src/index.ts` re-exports it. Replace the stub before the first release and update this section.
+Returns the scoped package name `@sgx4u/{{packageName}}`. The stub exists so the new package typechecks, tests, and packs. Replace it before the first release and update this section.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Runtime support
+<br />
+
+<h2 id="runtime-support">🌐 Runtime support</h2>
 
 Runtime: `{{runtimeName}}`. Universal code uses web standards and runs in browsers, workers, and Node. Edge code may use web standards and the Workers `nodejs_compat` modules that have an implementation. Node code may use Node built-ins.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Contributing
+<br />
+
+<h2 id="contributing">🤝 Contributing</h2>
 
 Repository rules are in [CONTRIBUTING.md]({{#if (eq packageKind 'config')}}../../../CONTRIBUTING.md{{else}}../../CONTRIBUTING.md{{/if}}).
 
@@ -78,7 +91,9 @@ Owner: `@{{ownerHandle}}`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## License
+<br />
+
+<h2 id="license">📄 License</h2>
 
 [MIT]({{#if (eq packageKind 'config')}}../../../LICENSE{{else}}../../LICENSE{{/if}}) © 2026 Subhajit Ghosh
 

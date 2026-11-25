@@ -1,5 +1,6 @@
 {
     "name": "@sgx4u/tsconfig",
+    "private": true,
     "version": "0.0.0",
     "description": "Shared TypeScript presets for @sgx4u packages.",
     "license": "MIT",
@@ -46,10 +47,6 @@
         "@sgx4u/eslint-config": "workspace:*",
         "eslint": "catalog:",
         "publint": "catalog:"
-    },
-    "publishConfig": {
-        "access": "public",
-        "provenance": true
     },
     "repository": {
         "type": "git",

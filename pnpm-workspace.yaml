@@ -9,7 +9,6 @@ packages:
 # pnpm rewrites catalog: to a real range when a package is packed or published.
 catalog:
     "@arethetypeswrong/cli": ^0.18.5
-    "@changesets/changelog-github": ^1.0.1
     "@changesets/cli": ^3.0.3
     "@commitlint/cli": ^21.2.4
     "@commitlint/config-conventional": ^21.2.4
