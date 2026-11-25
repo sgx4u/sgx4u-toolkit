@@ -50,7 +50,7 @@ Every library under `packages/<name>` picks one runtime: `universal`, `edge`, or
 
 ## Imports
 
-`@sgx4u/eslint-config` takes `runtime`: `universal`, `edge`, or `node`. Any other value throws.
+`@sgx4u/eslint-config` takes `runtime` (`universal`, `edge`, or `node`) and `rootDir`. `rootDir` must be an absolute path. Pass `import.meta.dirname` from the calling `eslint.config.js`. Any other `runtime` throws. A missing or relative `rootDir` throws.
 
 Universal source uses web standards. The rule rejects Node built-ins, both the `node:` form (including subpaths such as `node:fs/promises`) and the bare names reported by the Node process that runs ESLint. Edge source may use web standards and the Workers `nodejs_compat` modules that have an implementation, including partial ones such as `node:fs`, `node:http`, `node:net`, `node:dns`, and `node:tls`. Node source may use Node built-ins.
 
