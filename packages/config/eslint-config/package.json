@@ -1,7 +1,7 @@
 {
     "name": "@sgx4u/eslint-config",
     "version": "0.0.0",
-    "description": "ESLint flat config for @sgx4u packages, including runtime boundaries.",
+    "description": "ESLint flat config for @sgx4u packages, including runtime import rules.",
     "license": "MIT",
     "author": "Subhajit Ghosh",
     "type": "module",
@@ -37,7 +37,6 @@
     "dependencies": {
         "@eslint/js": "catalog:",
         "eslint-config-prettier": "catalog:",
-        "eslint-plugin-boundaries": "catalog:",
         "eslint-plugin-turbo": "catalog:",
         "globals": "catalog:",
         "typescript-eslint": "catalog:"

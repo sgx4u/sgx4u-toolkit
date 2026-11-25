@@ -12,6 +12,7 @@ export default defineConfig({
     },
     sourcemap: true,
     clean: true,
-    platform: "neutral",
+    // Config presets run on Node. Neutral is for universal and edge libraries.
+    platform: "node",
     fixedExtension: false,
 });

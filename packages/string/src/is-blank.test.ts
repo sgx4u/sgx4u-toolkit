@@ -20,4 +20,19 @@ describe("collapseWhitespace", () => {
     it("trims and collapses internal whitespace", () => {
         expect(collapseWhitespace("  a \t b\nc  ")).toBe("a b c");
     });
+
+    it("collapses a whitespace-only string to empty", () => {
+        expect(collapseWhitespace(" \n\t")).toBe("");
+    });
+
+    it("leaves a single space between words", () => {
+        expect(collapseWhitespace("a b")).toBe("a b");
+    });
+
+    it("returns the same result on a second call", () => {
+        // The pattern is global. replace resets lastIndex, and a second call
+        // must not resume from the previous match.
+        expect(collapseWhitespace("  a \t b  ")).toBe("a b");
+        expect(collapseWhitespace("  a \t b  ")).toBe("a b");
+    });
 });

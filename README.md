@@ -12,7 +12,7 @@ Public Turborepo of shared [`@sgx4u`](https://www.npmjs.com/search?q=%40sgx4u) p
 | Package                                                       | What it is                             |
 | ------------------------------------------------------------- | -------------------------------------- |
 | [`@sgx4u/tsconfig`](./packages/config/tsconfig)               | TypeScript presets                     |
-| [`@sgx4u/eslint-config`](./packages/config/eslint-config)     | ESLint flat config and boundaries      |
+| [`@sgx4u/eslint-config`](./packages/config/eslint-config)     | ESLint flat config and import rules    |
 | [`@sgx4u/prettier-config`](./packages/config/prettier-config) | Prettier preset                        |
 | [`@sgx4u/tsdown-config`](./packages/config/tsdown-config)     | tsdown preset for ESM and CommonJS     |
 | [`@sgx4u/vitest-config`](./packages/config/vitest-config)     | Vitest preset                          |
