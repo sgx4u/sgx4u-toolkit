@@ -1,15 +1,15 @@
 ## What changed
 
-<!-- One short paragraph. Say why, not only what. -->
+<!-- One short paragraph. Include why this changed. -->
 
 ## Checklist
 
-- [ ] Changeset added (`pnpm changeset`) for every publishable package that changed, or this pull request does not change one
+- [ ] Changeset added (`pnpm changeset`) for every publishable package that changed, or this pull request changes none
 - [ ] Tests cover the behavior
 - [ ] README updated when the public API changed
-- [ ] The pull request targets `develop`, or `beta` while the work is experimental. It does not target `production`. A breaking change includes a migration note. Major changes are not opened against `release/**`
-- [ ] No `@sgx4u-private` dependency or import
-- [ ] No `link:` or `file:` dependency that points outside this repository
+- [ ] Targets `develop` for stable work, or `beta` for an experiment. A breaking change includes a migration note. A patch or minor fix for an older major targets `release/**`
+- [ ] Package names and imports use the public `@sgx4u` scope
+- [ ] Every `link:` or `file:` dependency resolves inside this repository
 
 ## Breaking changes
 

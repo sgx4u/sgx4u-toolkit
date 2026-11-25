@@ -1,6 +1,6 @@
 # @sgx4u/string
 
-Small string helpers with no Node, DOM, or React dependency. They run in browsers, Node 22.12+, Cloudflare Workers, and React Native.
+String helpers for browsers, Node 22.12+, Cloudflare Workers, and React Native.
 
 ## Install
 
@@ -35,4 +35,4 @@ Subhajit Ghosh (`@sgx4u`).
 
 ## Status
 
-Experimental (`0.x`). Breaking changes are allowed in minor versions until 1.0.0.
+Experimental (`0.x`). Breaking changes may land in minor versions until 1.0.0.
