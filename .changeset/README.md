@@ -15,6 +15,8 @@ A changeset is required when a published package changes in a way a caller can n
 
 A changeset is not required for README and other docs, comments, tests, internal refactors that do not change behavior, CI, or repository scripts. `packages/config` never needs one.
 
+Removing a package that has no `CHANGELOG.md` does not need a changeset. Changesets creates that file the first time the package is versioned, so a package without one has not been published. A package that already has a changelog still needs a changeset when its published behavior changes.
+
 `node scripts/check-changeset.mjs --base origin/develop` enforces this on pull requests. It compares the branch with the base ref. A published package needs a new or updated changeset in that diff when one of its user-visible files changed. A changeset that was already on the base branch does not cover a new change.
 
 Before the first publish, keep a single changeset for the package and edit it so the notes describe what will ship.

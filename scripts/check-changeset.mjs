@@ -294,6 +294,27 @@ function readWorktreeManifest(rootDirectory, relativePath) {
 }
 
 /**
+ * A package Changesets has versioned has CHANGELOG.md on the base ref.
+ * Removing a package that has no changelog is not a release note.
+ *
+ * @param {string} rootDirectory
+ * @param {string} baseRef
+ * @param {string} relativePath
+ * @returns {boolean}
+ */
+function basePathExists(rootDirectory, baseRef, relativePath) {
+    const result = spawnSync(
+        "git",
+        ["cat-file", "-e", `${baseRef}:${relativePath}`],
+        {
+            cwd: rootDirectory,
+            stdio: "ignore",
+        },
+    );
+    return result.status === 0;
+}
+
+/**
  * @param {string} rootDirectory
  * @param {string} baseRef
  * @param {string} relativePath
@@ -392,6 +413,16 @@ export function findUserVisibleChanges(rootDirectory, baseRef) {
         }
         const packageManifest = packageInfo.after ?? packageInfo.before;
         if (!packageManifest || packageManifest.private === true) {
+            continue;
+        }
+        if (
+            !packageInfo.after &&
+            !basePathExists(
+                rootDirectory,
+                baseRef,
+                `${packageInfo.directory}/CHANGELOG.md`,
+            )
+        ) {
             continue;
         }
         const relativeToPackage = relativePath.slice(

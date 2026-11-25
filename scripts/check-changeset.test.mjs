@@ -5,6 +5,7 @@ import {
     mkdtempSync,
     readFileSync,
     readdirSync,
+    rmSync,
     writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
@@ -35,7 +36,7 @@ test("docs, tests, and dev-only manifest edits are not release notes", () => {
     );
     assert.equal(
         userVisibleChangeReason(
-            "src/is-blank/is-blank.test.ts",
+            "src/format-label/format-label.test.ts",
             libraryManifest,
             libraryManifest,
         ),
@@ -51,7 +52,7 @@ test("docs, tests, and dev-only manifest edits are not release notes", () => {
     );
     assert.equal(
         userVisibleChangeReason(
-            "src/is-blank/is-blank.ts",
+            "src/format-label/format-label.ts",
             libraryManifest,
             libraryManifest,
         ),
@@ -154,6 +155,37 @@ test("a changeset for workspace tooling is rejected", () => {
     const result = evaluateChangesetRequirement(rootDirectory, "main", "");
     assert.equal(result.accepted, false);
     assert.match(result.problems.join("\n"), /not published/);
+});
+
+test("removing a package that was never versioned does not need a changeset", () => {
+    const rootDirectory = createRepository();
+    writeLibrary(rootDirectory);
+    commitAll(rootDirectory, "chore: add the library");
+    rmSync(path.join(rootDirectory, "packages", "example"), {
+        recursive: true,
+        force: true,
+    });
+    const result = evaluateChangesetRequirement(rootDirectory, "main", "");
+    assert.equal(result.accepted, true, result.problems.join("\n"));
+    rmSync(rootDirectory, { recursive: true, force: true });
+});
+
+test("removing a versioned package still needs a changeset", () => {
+    const rootDirectory = createRepository();
+    writeLibrary(rootDirectory);
+    writeFileSync(
+        path.join(rootDirectory, "packages", "example", "CHANGELOG.md"),
+        "# @sgx4u/example\n",
+    );
+    commitAll(rootDirectory, "chore: version the library");
+    rmSync(path.join(rootDirectory, "packages", "example"), {
+        recursive: true,
+        force: true,
+    });
+    const result = evaluateChangesetRequirement(rootDirectory, "main", "");
+    assert.equal(result.accepted, false);
+    assert.match(result.problems.join("\n"), /@sgx4u\/example/);
+    rmSync(rootDirectory, { recursive: true, force: true });
 });
 
 test("workspace tooling packages stay private", () => {
