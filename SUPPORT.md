@@ -1,6 +1,13 @@
 # Support
 
+## Thanks to the Community
+
+I wholeheartedly welcome any contribution from the community. I am deeply grateful to everyone for helping me make a tool that helps my developer friends. Cheers...!!! Keep on making people achieve there digital dream.
 This is a public, best-effort open source project maintained by Subhajit Ghosh.
+
+## Contribute to the Project
+
+If you have anything that can be a great addition to this package then feel free to make a pull request in `develop` branch. I appreciate any contribution.
 
 | Need                    | Where                                                              |
 | ----------------------- | ------------------------------------------------------------------ |
@@ -10,5 +17,3 @@ This is a public, best-effort open source project maintained by Subhajit Ghosh.
 | Pull request            | [CONTRIBUTING.md](./CONTRIBUTING.md)                               |
 
 There is no paid support desk and no service-level agreement. Maintained lines are `beta`, `latest`, and `previous`, as described in [SECURITY.md](./SECURITY.md).
-
-UI components are not part of this repository. Ask about those in [sgx4u-ui](https://github.com/sgx4u/sgx4u-ui).

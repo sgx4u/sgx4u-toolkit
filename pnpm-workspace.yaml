@@ -1,10 +1,8 @@
-# Public toolkit only. UI packages live in sgx4u-ui.
+# Public toolkit only.
 # Libraries live at packages/<name>. Tooling presets live at packages/config/<name>.
 packages:
     - "packages/*"
     - "packages/config/*"
-    - "apps/*"
-    - "tooling/*"
 
 # Add a catalog entry only when a package needs it.
 # Packages opt in with "catalog:".
