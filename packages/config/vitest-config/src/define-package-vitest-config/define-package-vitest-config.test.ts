@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { definePackageVitestConfig } from "./index.js";
+import { definePackageVitestConfig } from "../index.js";
 
 describe("definePackageVitestConfig", () => {
     it("uses the Node environment and the source test glob", () => {
@@ -30,23 +30,26 @@ describe("definePackageVitestConfig", () => {
         expect(config.test?.include).toEqual(["src/**/*.test.ts"]);
     });
 
-    it("rejects a function or a promise", () => {
-        const functionConfig: unknown = () => ({});
-        expect(() =>
-            definePackageVitestConfig(
-                functionConfig as Parameters<
-                    typeof definePackageVitestConfig
-                >[0],
-            ),
-        ).toThrow(/config object/);
-
-        const promiseConfig: unknown = Promise.resolve({});
-        expect(() =>
-            definePackageVitestConfig(
-                promiseConfig as Parameters<
-                    typeof definePackageVitestConfig
-                >[0],
-            ),
-        ).toThrow(/config object/);
+    it("rejects a function, promise, array, or null", () => {
+        const rejectedValues: unknown[] = [
+            () => ({}),
+            Promise.resolve({}),
+            [],
+            null,
+        ];
+        for (const options of rejectedValues) {
+            expect(() =>
+                definePackageVitestConfig(
+                    options as Parameters<typeof definePackageVitestConfig>[0],
+                ),
+            ).toThrow(TypeError);
+            expect(() =>
+                definePackageVitestConfig(
+                    options as Parameters<typeof definePackageVitestConfig>[0],
+                ),
+            ).toThrow(
+                `options must be a Vitest config object. Received ${Object.prototype.toString.call(options)}.`,
+            );
+        }
     });
 });

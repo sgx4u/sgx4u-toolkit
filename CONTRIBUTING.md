@@ -77,7 +77,7 @@ A runtime dependency on another toolkit package uses `workspace:^`. Presets and 
 
 Pick the runtime from [docs/runtimes.md](./docs/runtimes.md).
 
-Libraries export named functions from `src/index.ts`, with explicit return types. Tests sit next to the source. tsdown writes ESM and CommonJS into `dist` (`index.js` with `index.d.ts`, and `index.cjs` with `index.d.cts`). The `files` field publishes `dist`, `src`, and `README.md`, and excludes tests. The export map lists `@sgx4u/source`, then `import` and `require` with `types` before the runtime file, and sets `main`, `module`, and `types`.
+Libraries keep `src/index.ts` as a re-export list. Each feature is a folder under `src` with the implementation, a folder `index.ts`, and the test. Functions have explicit return types. tsdown writes ESM and CommonJS into `dist` (`index.js` with `index.d.ts`, and `index.cjs` with `index.d.cts`). The `files` field publishes `dist`, `src`, and `README.md`, and excludes tests. The export map lists `@sgx4u/source`, then `import` and `require` with `types` before the runtime file, and sets `main`, `module`, and `types`.
 
 ## Local linking
 

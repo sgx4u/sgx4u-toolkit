@@ -12,15 +12,32 @@ pnpm add -D @sgx4u/eslint-config eslint typescript
 
 ## Examples
 
+A package `eslint.config.js`:
+
 ```js
 import { definePackageConfig } from "@sgx4u/eslint-config";
 
 export default definePackageConfig({
     runtime: "universal",
+    rootDir: import.meta.dirname,
 });
 ```
 
-`runtime` is `universal`, `edge`, or `node`. Any other value throws.
+The repository root `eslint.config.js`:
+
+```js
+import { defineRootConfig } from "@sgx4u/eslint-config";
+
+export default defineRootConfig({
+    rootDir: import.meta.dirname,
+});
+```
+
+`runtime` is `universal`, `edge`, or `node`. Any other value throws `TypeError`. The message names `runtime` and the received value.
+
+`rootDir` must be an absolute path to the directory of the calling `eslint.config.js`. Pass `import.meta.dirname`. It is copied to `parserOptions.tsconfigRootDir` and is not resolved against the process working directory. The value is set on a config object with no `files` filter, so every file that config lints uses that directory. typescript-eslint records the directory of each config file that loads its recommended configs. The editor loads the repository root and each package config in one process, so that record holds more than one directory and the parser requires `tsconfigRootDir`. A missing or relative `rootDir` throws `TypeError`. The message names `rootDir` and the received value. `import.meta.dirname` is available on the Node versions this package requires (`>=22.12`).
+
+`defineRootConfig` uses the `node` runtime and ignores `packages/**`, so each package lints itself.
 
 | Runtime     | Imports                                                                                                                                                                                                                            | Globals                                                                                                            |
 | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
