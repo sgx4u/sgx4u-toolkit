@@ -20,7 +20,7 @@ UI packages live in [sgx4u-ui](https://github.com/sgx4u/sgx4u-ui). This reposito
 | [`@sgx4u/vitest-config`](./packages/config/vitest-config)     | Vitest preset                          |
 | [`@sgx4u/string`](./packages/string)                          | Blank checks and whitespace collapsing |
 
-Tooling presets live in `packages/config`. Every other package lives in `packages/<name>`. Server adapters are regular packages with tier `adapter`. None are published yet.
+Tooling presets live in `packages/config`. Every other package lives in `packages/<name>`. A package there chooses a runtime of `universal`, `edge`, or `node`. None of the `edge` or `node` packages are published yet.
 
 Packages publish ESM and CommonJS, are built with tsdown, and declare `"node": ">=22.12"`. `import` resolves `dist/*.js` with `dist/*.d.ts`. `require` resolves `dist/*.cjs` with `dist/*.d.cts`. Inside this repo, runtime dependencies use `workspace:^` and dev tooling uses `workspace:*`. Third-party versions live in the pnpm catalog. Add a catalog entry only when a package needs it. The root workspace package is the private `@sgx4u/toolkit`. It is never published.
 
@@ -57,7 +57,7 @@ Create a package:
 pnpm exec turbo gen package
 ```
 
-The generator asks for the name and whether the package is a config preset or a regular package. Config presets are tier `platform` and runtime `node`, and are written to `packages/config/<name>`. Regular packages also ask for the tier, runtime, and owner, and are written to `packages/<name>`. The generator writes the package, a changeset, and a CODEOWNERS line. Web and native packages belong in sgx4u-ui, so this generator does not offer those runtimes.
+The generator asks for the name and whether the package is a config preset or a regular package. Config presets use the Node runtime and are written to `packages/config/<name>`. Regular packages also ask for the runtime and owner, and are written to `packages/<name>`. The generator writes the package, a changeset, and a CODEOWNERS line. Web and native packages belong in sgx4u-ui, so this generator does not offer those runtimes.
 
 Add a changeset on every pull request that changes a publishable package:
 
@@ -87,13 +87,13 @@ Pull requests can install preview tarballs from pkg.pr.new. Those previews are n
 
 ```text
 packages/config      tooling presets, dev dependencies only
-packages/<name>      libraries and server adapters
+packages/<name>      libraries
 turbo/generators     pnpm exec turbo gen package
 scripts              visibility, link, and pack guards
 docs                 settings checklist and decisions
 ```
 
-Dependency direction is downward only: adapters may use foundation, foundation does not use adapters, and nothing here uses UI. `turbo boundaries` and ESLint both enforce that. A separate check rejects any `@sgx4u-private` or `@sgx4u/ui*` reference in manifests and source.
+`packages/config` does not depend on `packages/<name>`. Packages under `packages/` may depend on the presets and on each other. `turbo boundaries` enforces that split. ESLint enforces each package's runtime import rules. A separate check rejects any `@sgx4u-private` or `@sgx4u/ui*` reference in manifests and source. Nothing here uses UI.
 
 ## License
 

@@ -11,7 +11,6 @@ import type { PlopTypes } from "@turbo/gen";
 interface PackageAnswers {
     packageName: string;
     packageKind: "config" | "regular";
-    tierName: "platform" | "foundation" | "capability" | "adapter";
     runtimeName: "universal" | "edge" | "node";
     ownerHandle: string;
     packageDirectory: string;
@@ -49,10 +48,6 @@ function isPackageAnswers(value: object): value is PackageAnswers {
         typeof candidate.packageName === "string" &&
         (candidate.packageKind === "config" ||
             candidate.packageKind === "regular") &&
-        (candidate.tierName === "platform" ||
-            candidate.tierName === "foundation" ||
-            candidate.tierName === "capability" ||
-            candidate.tierName === "adapter") &&
         (candidate.runtimeName === "universal" ||
             candidate.runtimeName === "edge" ||
             candidate.runtimeName === "node") &&
@@ -70,7 +65,6 @@ function preparePackageAnswers(value: unknown): PackageAnswers {
         throw new Error("Package generator answers were incomplete.");
     }
     if (candidate.packageKind === "config") {
-        candidate.tierName = "platform";
         candidate.runtimeName = "node";
         candidate.packageDirectory = `packages/config/${candidate.packageName}`;
     } else if (candidate.packageKind === "regular") {
@@ -81,33 +75,9 @@ function preparePackageAnswers(value: unknown): PackageAnswers {
     }
     if (
         candidate.packageKind === "config" &&
-        (candidate.tierName !== "platform" || candidate.runtimeName !== "node")
-    ) {
-        throw new Error("Config packages use tier platform and runtime node.");
-    }
-    if (
-        candidate.packageKind === "regular" &&
-        candidate.tierName === "platform"
-    ) {
-        throw new Error(
-            "Tier platform belongs in packages/config. Choose the config package kind.",
-        );
-    }
-    if (
-        (candidate.tierName === "foundation" ||
-            candidate.tierName === "capability") &&
-        candidate.runtimeName !== "universal"
-    ) {
-        throw new Error(
-            "Foundation and capability packages are platform-free. Use runtime universal.",
-        );
-    }
-    if (
-        candidate.tierName === "adapter" &&
-        candidate.runtimeName !== "edge" &&
         candidate.runtimeName !== "node"
     ) {
-        throw new Error("Adapter packages use runtime edge or node.");
+        throw new Error("Config packages use the node runtime.");
     }
     return candidate;
 }
@@ -144,13 +114,6 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
                         value: "regular",
                     },
                 ],
-            },
-            {
-                type: "list",
-                name: "tierName",
-                message: "Tier",
-                when: isRegularPackage,
-                choices: ["foundation", "capability", "adapter"],
             },
             {
                 type: "list",

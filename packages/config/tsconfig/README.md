@@ -14,7 +14,7 @@ pnpm add -D @sgx4u/tsconfig
 | ----------------------------------- | ------------------------------------------------------------------------------------------------ |
 | `@sgx4u/tsconfig/base.json`         | Strict ESM baseline. No DOM, no `@types` auto-include.                                           |
 | `@sgx4u/tsconfig/library.json`      | Published libraries. Declarations and `isolatedDeclarations`.                                    |
-| `@sgx4u/tsconfig/node.json`         | Node 22.12+ adapters. Add `@types/node` in the package.                                          |
+| `@sgx4u/tsconfig/node.json`         | Node 22.12+ packages. Add `@types/node` in the package.                                          |
 | `@sgx4u/tsconfig/react.json`        | React web libraries (`sgx4u-ui`).                                                                |
 | `@sgx4u/tsconfig/nextjs.json`       | Next.js apps. Bundler resolution, `noEmit`, and the Next plugin. Requires `next`.                |
 | `@sgx4u/tsconfig/workers.json`      | Workers and edge libraries. Loads `@cloudflare/workers-types`, which the package must depend on. |

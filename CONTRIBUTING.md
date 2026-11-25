@@ -46,11 +46,10 @@ pnpm exec turbo gen package
 
 Names are lowercase kebab-case. `utils`, `common`, and `shared` are rejected. Config presets live in `packages/config/<name>`. Every other package lives in `packages/<name>`. The npm name is `@sgx4u/<name>`.
 
-| Kind      | Folder                   | Tier                         | Runtime                                         |
-| --------- | ------------------------ | ---------------------------- | ----------------------------------------------- |
-| `config`  | `packages/config/<name>` | `platform`                   | tooling, not imported by published runtime code |
-| `regular` | `packages/<name>`        | `foundation` or `capability` | `universal`                                     |
-| `regular` | `packages/<name>`        | `adapter`                    | `edge` or `node`                                |
+| Kind      | Folder                   | Runtime                                                     |
+| --------- | ------------------------ | ----------------------------------------------------------- |
+| `config`  | `packages/config/<name>` | `node`. Tooling. Published runtime code does not import it. |
+| `package` | `packages/<name>`        | `universal`, `edge`, or `node`                              |
 
 Runtime dependencies on other toolkit packages use `workspace:^`. Presets use `workspace:*`. Third-party versions use `catalog:`. Add a catalog entry only when a package needs it. Do not add a version for a dependency no package in this repository installs.
 
