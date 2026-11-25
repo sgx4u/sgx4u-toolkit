@@ -84,3 +84,59 @@ test("a config preset extends only the Node preset", () => {
         "@sgx4u/tsconfig/node.json",
     );
 });
+
+test("a generated library scaffolds one folder per function", () => {
+    const indexTemplate = readTemplate("src/index.ts.hbs");
+    assert.match(
+        indexTemplate,
+        /export \{ packageIdentifier \} from "\.\/package-identifier\/package-identifier\.js";/,
+    );
+    assert.match(
+        indexTemplate,
+        /export type \{ PackageIdentifier \} from "\.\/package-identifier\/package-identifier\.types\.js";/,
+    );
+
+    const implementation = readTemplate(
+        "src/package-identifier/package-identifier.ts.hbs",
+    );
+    assert.match(implementation, /@returns/);
+    assert.match(implementation, /@remarks/);
+    assert.match(implementation, /@example/);
+    assert.match(implementation, /: PackageIdentifier/);
+
+    const typesTemplate = readTemplate(
+        "src/package-identifier/package-identifier.types.ts.hbs",
+    );
+    assert.match(typesTemplate, /export type PackageIdentifier = string;/);
+
+    const testTemplate = readTemplate(
+        "src/package-identifier/package-identifier.test.ts.hbs",
+    );
+    assert.match(testTemplate, /type PackageIdentifier/);
+
+    const guide = readTemplate(
+        "src/package-identifier/package-identifier.md.hbs",
+    );
+    assert.match(guide, /## Import/);
+    assert.match(guide, /## Signature/);
+    assert.match(guide, /## Accepted inputs/);
+    assert.match(guide, /## Examples/);
+    assert.match(guide, /## Edge cases/);
+
+    const manifest = readTemplate("package.json.hbs");
+    assert.match(manifest, /"!src\/\*\*\/\*\.test\.ts"/);
+    assert.match(manifest, /"!src\/\*\*\/\*\.md"/);
+
+    const readme = readTemplate("README.md.hbs");
+    assert.match(
+        readme,
+        /\]\(\.\/src\/package-identifier\/package-identifier\.md\)/,
+    );
+});
+
+test("a generated function folder has no barrel index", () => {
+    assert.throws(
+        () => readTemplate("src/package-identifier/index.ts.hbs"),
+        /ENOENT/,
+    );
+});

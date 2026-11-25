@@ -8,9 +8,10 @@ This preset is a workspace dev dependency. It is not published.
 Each function lives in a kebab-case folder: `<name>.ts`, `<name>.types.ts`,
 `<name>.test.ts`, and `<name>.md`. Shared code lives in
 `constants/*.constants.ts`, `data/*.data.ts`, and `utils/*.utils.ts`.
-`src/index.ts` re-exports the public functions. This preset starts with
-`package-identifier.ts`, its test, and the folder `index.ts`. Add the types
-file and the notes file when the function needs them.
+`src/index.ts` re-exports the public functions and their public types. This
+preset starts with those four files for `package-identifier`.
+
+See [`packageIdentifier`](./src/package-identifier/package-identifier.md).
 
 ## Usage
 
@@ -58,10 +59,8 @@ Owner: `@{{ownerHandle}}`
 Each function lives in its own kebab-case folder: `<name>.ts`,
 `<name>.types.ts`, `<name>.test.ts`, and `<name>.md`. Shared code lives in
 `constants/*.constants.ts`, `data/*.data.ts`, and `utils/*.utils.ts`.
-`src/index.ts` re-exports the public functions. This package starts with
-`src/package-identifier/package-identifier.ts`, its test, and the folder
-`index.ts`. Add the types file and the notes file when the function needs
-them.
+`src/index.ts` re-exports the public functions and their public types. This
+package starts with those four files for `package-identifier`.
 
 Experimental (`0.x`). Breaking changes may land in minor versions until 1.0.0.
 
@@ -95,11 +94,9 @@ packageIdentifier(); // "@sgx4u/{{packageName}}"
 
 <br />
 
-<h2 id="api">📘 API</h2>
+<h2 id="functions">📘 Functions</h2>
 
-### `packageIdentifier(): string`
-
-Returns the scoped package name `@sgx4u/{{packageName}}`. The stub exists so the new package typechecks, tests, and packs. Replace it before the first release and update this section.
+- [`packageIdentifier`](./src/package-identifier/package-identifier.md) returns `@sgx4u/{{packageName}}`. The stub exists so the new package typechecks, tests, and packs. Replace it before the first release.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
