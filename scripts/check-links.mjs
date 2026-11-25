@@ -38,6 +38,7 @@ export function linkSpecifierEscapesRepository(
     if (protocol.length === 0) {
         return false;
     }
+
     const target = specifier.slice(protocol.length);
     const resolvedTarget = path.resolve(packageDirectory, target);
     return !isInsideRepository(resolvedTarget, rootDirectory);
@@ -82,8 +83,10 @@ export function findEscapingLinks(rootDirectory) {
             ) {
                 continue;
             }
+
             const relativePath = path.relative(rootDirectory, absolutePath);
             const contents = readFileSync(absolutePath, "utf8");
+
             if (entry.name === "package.json") {
                 const packageManifest = JSON.parse(contents);
                 for (const fieldName of dependencyFieldNames) {
@@ -114,6 +117,7 @@ export function findEscapingLinks(rootDirectory) {
                 }
                 continue;
             }
+
             const specifierExpression = /(?:link|file):[^\s"'`,]+/g;
             for (const match of contents.matchAll(specifierExpression)) {
                 const specifier = match[0];
@@ -145,6 +149,7 @@ function main() {
     if (findings.length === 0) {
         return;
     }
+
     for (const finding of findings) {
         console.error(
             `${finding.relativePath} ${finding.dependencyName} uses ${finding.specifier}, which points outside the repository. Commit workspace: ranges instead of local links.`,

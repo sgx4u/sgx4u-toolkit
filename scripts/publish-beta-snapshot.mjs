@@ -130,6 +130,7 @@ function removeUntrackedChangelogs(rootDirectory) {
         path.join(rootDirectory, "packages"),
         path.join(rootDirectory, "packages", "config"),
     ];
+
     for (const parentDirectory of parentDirectories) {
         if (
             !existsSync(parentDirectory) ||

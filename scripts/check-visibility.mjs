@@ -80,6 +80,7 @@ export function findForbiddenReferences(rootDirectory) {
             if (skippedRelativePaths.has(relativePath)) {
                 continue;
             }
+
             const contents = readFileSync(absolutePath, "utf8");
             const lines = contents.split(/\r?\n/);
             for (const [index, line] of lines.entries()) {
@@ -109,6 +110,7 @@ function main() {
     if (findings.length === 0) {
         return;
     }
+
     for (const finding of findings) {
         console.error(
             `${finding.relativePath}:${finding.lineNumber} ${finding.message}`,

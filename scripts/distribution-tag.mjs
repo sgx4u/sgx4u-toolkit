@@ -19,6 +19,7 @@ export function distributionTagForBranch(branchName) {
             'Refusing to publish committed versions from "beta". That branch publishes uncommitted Changesets snapshots to the beta dist-tag.',
         );
     }
+
     throw new Error(
         `Refusing to publish from branch "${branchName}". Stable releases run on production and release/** only. develop does not publish.`,
     );
