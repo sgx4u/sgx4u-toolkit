@@ -1,16 +1,18 @@
 {
     "$schema": "https://json.schemastore.org/tsconfig",
     "compilerOptions": {
-        "target": "ES2022",
+        "customConditions": ["@sgx4u/source"],
+        "forceConsistentCasingInFileNames": true,
+        "lib": ["ES2022"],
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
-        "customConditions": ["@sgx4u/source"],
-        "strict": true,
-        "noUncheckedIndexedAccess": true,
         "noEmit": true,
+        "noImplicitAny": true,
+        "noUncheckedIndexedAccess": true,
         "skipLibCheck": true,
-        "types": ["node"],
-        "lib": ["ES2022"]
+        "strict": true,
+        "target": "ES2022",
+        "types": ["node"]
     },
     "include": ["turbo/generators/**/*.ts", "scripts/**/*.ts"]
 }

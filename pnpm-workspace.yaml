@@ -1,10 +1,8 @@
-# Public toolkit only. UI packages live in sgx4u-ui.
+# Public toolkit only.
 # Libraries live at packages/<name>. Tooling presets live at packages/config/<name>.
 packages:
     - "packages/*"
     - "packages/config/*"
-    - "apps/*"
-    - "tooling/*"
 
 # One version for every third-party dependency. Packages opt in with "catalog:".
 # pnpm rewrites catalog: to a real range when a package is packed or published.

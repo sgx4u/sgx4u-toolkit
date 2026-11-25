@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping with the public `@sgx4u` toolkit. UI work belongs in [sgx4u-ui](https://github.com/sgx4u/sgx4u-ui). Private code does not belong in this repository at all.
+Thanks for helping with the public `@sgx4u` toolkit. Private code does not belong in this repository at all.
 
 ## Setup
 
