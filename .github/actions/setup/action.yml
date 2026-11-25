@@ -1,0 +1,46 @@
+name: Setup toolkit
+description: Install pnpm and Node.js, then install the workspace with a frozen lockfile.
+inputs:
+  node-version:
+    description: Node.js version to install
+    required: false
+    default: "24"
+  cache:
+    description: Use the pnpm store cache. Release publishes pass false.
+    required: false
+    default: "true"
+  install-args:
+    description: Extra arguments for pnpm install
+    required: false
+    default: ""
+runs:
+  using: composite
+  steps:
+    - name: Install pnpm
+      uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+
+    - name: Install Node.js
+      uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: ${{ inputs.cache == 'true' && 'pnpm' || '' }}
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile ${{ inputs.install-args }}
+
+    - name: Configure Turborepo remote cache
+      shell: bash
+      env:
+        TURBO_TOKEN_INPUT: ${{ env.TURBO_TOKEN_INPUT }}
+        TURBO_TEAM_INPUT: ${{ env.TURBO_TEAM_INPUT }}
+        TURBO_SIGNATURE_INPUT: ${{ env.TURBO_SIGNATURE_INPUT }}
+      run: |
+        if [ -n "${TURBO_TOKEN_INPUT}" ] && [ -n "${TURBO_TEAM_INPUT}" ] && [ -n "${TURBO_SIGNATURE_INPUT}" ]; then
+          echo "TURBO_TOKEN=${TURBO_TOKEN_INPUT}" >> "${GITHUB_ENV}"
+          echo "TURBO_TEAM=${TURBO_TEAM_INPUT}" >> "${GITHUB_ENV}"
+          echo "TURBO_REMOTE_CACHE_SIGNATURE_KEY=${TURBO_SIGNATURE_INPUT}" >> "${GITHUB_ENV}"
+          echo "Remote cache is on for this run."
+        else
+          echo "Remote cache is off for this run. Fork pull requests never receive these credentials."
+        fi

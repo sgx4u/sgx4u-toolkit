@@ -1,0 +1,239 @@
+# Pull requests and release branches. pull_request keeps fork code away from secrets.
+# Required check names, once the ruleset exists: ci / lint, ci / typecheck, ci / test, ci / build, ci / package-checks.
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - next
+      - "release/**"
+
+permissions: {}
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          filter: blob:none
+          persist-credentials: false
+
+      - name: Fetch the pull request base
+        if: github.event_name == 'pull_request'
+        run: git fetch origin "${{ github.base_ref }}" --filter=blob:none
+
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
+        env:
+          TURBO_TOKEN_INPUT: ${{ secrets.TURBO_TOKEN }}
+          TURBO_TEAM_INPUT: ${{ vars.TURBO_TEAM }}
+          TURBO_SIGNATURE_INPUT: ${{ secrets.TURBO_REMOTE_CACHE_SIGNATURE_KEY }}
+
+      - name: Lint affected packages
+        run: pnpm exec turbo run lint --affected
+
+      - name: Lint repository scripts
+        run: pnpm run lint:root
+
+      - name: Check package boundaries
+        run: pnpm exec turbo boundaries
+
+      - name: Check monorepo consistency
+        run: pnpm exec sherif
+
+      - name: Reject private and UI references
+        run: node scripts/check-visibility.mjs
+
+      - name: Reject links that leave the repository
+        run: node scripts/check-links.mjs
+
+  typecheck:
+    name: typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          filter: blob:none
+          persist-credentials: false
+
+      - name: Fetch the pull request base
+        if: github.event_name == 'pull_request'
+        run: git fetch origin "${{ github.base_ref }}" --filter=blob:none
+
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
+        env:
+          TURBO_TOKEN_INPUT: ${{ secrets.TURBO_TOKEN }}
+          TURBO_TEAM_INPUT: ${{ vars.TURBO_TEAM }}
+          TURBO_SIGNATURE_INPUT: ${{ secrets.TURBO_REMOTE_CACHE_SIGNATURE_KEY }}
+
+      - name: Typecheck affected packages
+        run: pnpm exec turbo run typecheck --affected
+
+      - name: Typecheck the package generator
+        run: pnpm run typecheck:root
+
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          filter: blob:none
+          persist-credentials: false
+
+      - name: Fetch the pull request base
+        if: github.event_name == 'pull_request'
+        run: git fetch origin "${{ github.base_ref }}" --filter=blob:none
+
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
+        env:
+          TURBO_TOKEN_INPUT: ${{ secrets.TURBO_TOKEN }}
+          TURBO_TEAM_INPUT: ${{ vars.TURBO_TEAM }}
+          TURBO_SIGNATURE_INPUT: ${{ secrets.TURBO_REMOTE_CACHE_SIGNATURE_KEY }}
+
+      - name: Test affected packages and repository guards
+        run: pnpm test
+
+  test-node-22:
+    name: test-node-22
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          filter: blob:none
+          persist-credentials: false
+
+      - name: Fetch the pull request base
+        if: github.event_name == 'pull_request'
+        run: git fetch origin "${{ github.base_ref }}" --filter=blob:none
+
+      # Published packages declare node >=22.12. The root toolchain still requires Node 24,
+      # so this job turns engine-strict off only for the install.
+      - name: Set up Node.js 22
+        uses: ./.github/actions/setup
+        with:
+          node-version: "22"
+          install-args: "--config.engine-strict=false"
+        env:
+          TURBO_TOKEN_INPUT: ${{ secrets.TURBO_TOKEN }}
+          TURBO_TEAM_INPUT: ${{ vars.TURBO_TEAM }}
+          TURBO_SIGNATURE_INPUT: ${{ secrets.TURBO_REMOTE_CACHE_SIGNATURE_KEY }}
+
+      - name: Test affected packages on Node.js 22
+        run: pnpm exec turbo run test --affected
+
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          filter: blob:none
+          persist-credentials: false
+
+      - name: Fetch the pull request base
+        if: github.event_name == 'pull_request'
+        run: git fetch origin "${{ github.base_ref }}" --filter=blob:none
+
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
+        env:
+          TURBO_TOKEN_INPUT: ${{ secrets.TURBO_TOKEN }}
+          TURBO_TEAM_INPUT: ${{ vars.TURBO_TEAM }}
+          TURBO_SIGNATURE_INPUT: ${{ secrets.TURBO_REMOTE_CACHE_SIGNATURE_KEY }}
+
+      - name: Build affected packages
+        run: pnpm exec turbo run build --affected
+
+  package-checks:
+    name: package-checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          filter: blob:none
+          persist-credentials: false
+
+      - name: Fetch the pull request base
+        if: github.event_name == 'pull_request'
+        run: git fetch origin "${{ github.base_ref }}" --filter=blob:none
+
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
+        env:
+          TURBO_TOKEN_INPUT: ${{ secrets.TURBO_TOKEN }}
+          TURBO_TEAM_INPUT: ${{ vars.TURBO_TEAM }}
+          TURBO_SIGNATURE_INPUT: ${{ secrets.TURBO_REMOTE_CACHE_SIGNATURE_KEY }}
+
+      - name: Build packages before packing
+        run: pnpm exec turbo run build --affected
+
+      - name: Run publint and attw
+        run: pnpm exec turbo run check:package --affected
+
+      - name: Review packed files
+        run: node scripts/check-pack.mjs
+
+      - name: Require a changeset when a publishable package changes
+        if: github.event_name == 'pull_request'
+        run: pnpm exec changeset status --since "origin/${{ github.base_ref }}"
+
+  secrets:
+    name: secrets
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          filter: blob:none
+          persist-credentials: false
+
+      - name: Scan Git history with gitleaks
+        uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
