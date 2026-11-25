@@ -1,0 +1,4 @@
+{
+  "extends": ["//"],
+  "tags": ["domain:platform", "tier:platform"]
+}

@@ -1,0 +1,57 @@
+{
+  "name": "@sgx4u/eslint-config",
+  "version": "0.0.0",
+  "description": "ESLint flat config for @sgx4u packages, including tier and runtime boundaries.",
+  "license": "MIT",
+  "author": "Subhajit Ghosh",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "README.md"
+  ],
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "check:package": "publint && attw --pack . --profile esm-only"
+  },
+  "dependencies": {
+    "@eslint/js": "catalog:",
+    "eslint-config-prettier": "catalog:",
+    "eslint-plugin-boundaries": "catalog:",
+    "eslint-plugin-turbo": "catalog:",
+    "globals": "catalog:",
+    "typescript-eslint": "catalog:"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "catalog:",
+    "eslint": "catalog:",
+    "publint": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "eslint": "^10.0.0",
+    "typescript": ">=6"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sgx4u/sgx4u-toolkit.git",
+    "directory": "domains/platform/eslint-config"
+  },
+  "homepage": "https://github.com/sgx4u/sgx4u-toolkit/tree/develop/domains/platform/eslint-config",
+  "bugs": "https://github.com/sgx4u/sgx4u-toolkit/issues",
+  "engines": {
+    "node": ">=22.12"
+  }
+}

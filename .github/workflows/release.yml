@@ -1,0 +1,290 @@
+# production publishes stable versions (dist-tag latest) after a Version Packages pull request.
+# develop publishes Changesets snapshots to dist-tag beta and does not commit those versions.
+#   Pre mode is the wrong tool here: develop is rebase-merged into production, so a
+#   committed .changeset/pre.json would make production publish prereleases as latest.
+# release/** publishes older majors with dist-tag previous.
+# Do not rename this file: trusted publishers are bound to release.yml.
+name: release
+
+on:
+  push:
+    branches:
+      - develop
+      - production
+      - "release/**"
+
+permissions: {}
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  select-mode:
+    name: select-mode
+    if: github.ref != 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      mode: ${{ steps.select-mode.outputs.mode }}
+      publish-plan-artifact-id: ${{ steps.select-mode.outputs.publish-plan-artifact-id }}
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
+        with:
+          cache: "false"
+
+      - name: Select Changesets mode
+        id: select-mode
+        uses: changesets/action/select-mode@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+
+  version:
+    name: version
+    needs: select-mode
+    if: needs.select-mode.outputs.mode == 'version'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          filter: blob:none
+          persist-credentials: false
+
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
+        with:
+          cache: "false"
+
+      - name: Create a release app token
+        id: app-token
+        uses: actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc # v3.4.0
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+
+      - name: Open or update the version pull request
+        uses: changesets/action/version@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          script: pnpm run version-packages
+          commit-message: "chore: version packages"
+          pr-title: "Version Packages"
+        env:
+          LEFTHOOK: "0"
+
+  pack:
+    name: pack
+    needs: select-mode
+    if: needs.select-mode.outputs.mode == 'publish'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      pack-dir-artifact-id: ${{ steps.pack.outputs.pack-dir-artifact-id }}
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
+        with:
+          cache: "false"
+
+      - name: Build packages
+        run: pnpm exec turbo run build
+
+      - name: Review packed files
+        run: node scripts/check-pack.mjs
+
+      - name: Pack publishable packages
+        id: pack
+        uses: changesets/action/pack@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        with:
+          publish-plan-artifact-id: ${{ needs.select-mode.outputs.publish-plan-artifact-id }}
+
+  publish:
+    name: publish
+    needs: pack
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: release
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
+        with:
+          cache: "false"
+
+      # Publish the tarballs the pack job reviewed, not a second build of the workspace.
+      - name: Download packed packages
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          artifact-ids: ${{ needs.pack.outputs.pack-dir-artifact-id }}
+          path: packed-packages
+
+      # production -> latest, release/** -> previous.
+      # The dist-tag is written into publish-plan.json. Changesets rejects
+      # --tag together with --from-pack-dir.
+      # develop does not use this job. It publishes snapshots from the snapshot job.
+      # No NPM_TOKEN and no registry-url: npm CLI 11.5.1+ uses OIDC for this environment.
+      - name: Publish to npm
+        uses: changesets/action/publish@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        with:
+          script: node scripts/publish-packages.mjs
+          create-github-releases: true
+          push-git-tags: true
+        env:
+          CHANGESET_PACK_DIR: packed-packages
+          LEFTHOOK: "0"
+
+  sync-develop:
+    name: sync-develop
+    needs: publish
+    if: github.ref == 'refs/heads/production' && needs.publish.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          filter: blob:none
+          persist-credentials: false
+
+      - name: Create a release app token
+        id: app-token
+        uses: actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc # v3.4.0
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+
+      # Do not open this pull request with production as the head.
+      # develop only squash-merges, so that merge would not record production's
+      # commits as ancestors. The next publish would open the same pairing again,
+      # GitHub would list the already applied commits, and the pull request would conflict.
+      # A new branch from develop, containing only the deletion of consumed changesets,
+      # squash-merges cleanly and can be repeated after every release.
+      - name: Open a pull request that drops consumed changesets from develop
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          git fetch origin develop:refs/remotes/origin/develop
+          git fetch origin production:refs/remotes/origin/production
+          production_sha="$(git rev-parse origin/production)"
+          sync_branch="sync/consumed-changesets-${production_sha}"
+          # Three-dot diff: only files production deleted since it diverged from develop.
+          # A two-dot tree diff also matches changesets added on develop after promotion.
+          mapfile -t changed_files < <(git diff --name-only --diff-filter=D origin/develop...origin/production -- .changeset)
+          consumed_files=()
+          for file in "${changed_files[@]}"; do
+            case "${file}" in
+              .changeset/README.md) ;;
+              .changeset/*.md)
+                if git cat-file -e "origin/develop:${file}" 2>/dev/null; then
+                  consumed_files+=("${file}")
+                fi
+                ;;
+            esac
+          done
+          if [ "${#consumed_files[@]}" -eq 0 ]; then
+            echo "develop has no changeset files that production already released."
+            exit 0
+          fi
+          open_count="$(gh pr list --repo "${GITHUB_REPOSITORY}" --base develop --head "${sync_branch}" --state open --json number --jq 'length')"
+          if [ "${open_count}" != "0" ]; then
+            echo "A sync pull request for ${sync_branch} is already open."
+            exit 0
+          fi
+          git config user.name "sgx4u-release"
+          git config user.email "55203602+sgx4u@users.noreply.github.com"
+          git checkout -B "${sync_branch}" origin/develop
+          git rm -- "${consumed_files[@]}"
+          git commit -m "chore: drop changesets already released from production"
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/${sync_branch}"
+          gh pr create \
+            --repo "${GITHUB_REPOSITORY}" \
+            --base develop \
+            --head "${sync_branch}" \
+            --title "chore: drop changesets already released from production" \
+            --body "Squash-merge this into develop before the next promotion. It deletes only changeset files that production removed since the two branches diverged. Changesets added on develop after that split stay. The head is a new branch, not production, because develop squash-merges and does not record production as an ancestor."
+
+  snapshot-check:
+    name: snapshot-check
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      has_changesets: ${{ steps.changesets.outputs.has_changesets }}
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Look for pending changesets
+        id: changesets
+        run: |
+          changeset_count="$(find .changeset -name '*.md' ! -name 'README.md' | wc -l | tr -d ' ')"
+          if [ "${changeset_count}" -gt 0 ]; then
+            echo "has_changesets=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "has_changesets=false" >> "${GITHUB_OUTPUT}"
+          fi
+
+  snapshot:
+    name: snapshot
+    needs: snapshot-check
+    if: needs.snapshot-check.outputs.has_changesets == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: release
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
+        with:
+          cache: "false"
+
+      - name: Build packages
+        run: pnpm exec turbo run build
+
+      - name: Publish beta snapshots
+        run: node scripts/publish-beta-snapshot.mjs
+        env:
+          LEFTHOOK: "0"

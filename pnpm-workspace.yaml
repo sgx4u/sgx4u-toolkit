@@ -1,3 +1,55 @@
+# Public toolkit only. UI packages live in sgx4u-ui.
+# Two-level domain globs stay stable as packages are added.
 packages:
+  - "domains/*/*"
   - "apps/*"
-  - "packages/*"
+  - "tooling/*"
+
+# One version for every third-party dependency. Packages opt in with "catalog:".
+# pnpm rewrites catalog: to a real range when a package is packed or published.
+catalog:
+  typescript: ~6.0.3
+  react: ^19.3.0
+  react-dom: ^19.3.0
+  next: ^16.4.0
+  hono: ^4.13.0
+  eslint: ^10.15.0
+  "@eslint/js": ^10.0.1
+  typescript-eslint: ^8.74.0
+  prettier: 3.9.6
+  eslint-config-prettier: ^10.1.8
+  eslint-plugin-boundaries: ^7.4.4
+  eslint-plugin-turbo: ^2.11.13
+  vitest: ^5.1.1
+  tsdown: ^0.23.7
+  publint: ^0.3.25
+  "@arethetypeswrong/cli": ^0.18.5
+  sherif: ^1.13.0
+  "@changesets/cli": ^3.0.3
+  "@changesets/changelog-github": ^1.0.1
+  "@commitlint/cli": ^21.2.4
+  "@commitlint/config-conventional": ^21.2.4
+  lefthook: ^2.2.2
+  lint-staged: ^17.6.2
+  "@turbo/gen": ^2.11.13
+  "@types/node": ^26.6.8
+  globals: ^17.12.0
+  pkg-pr-new: ^0.0.94
+  turbo: ^2.11.13
+  "@cloudflare/workers-types": 5.20261119.1
+
+catalogs:
+  native:
+    # React Native moves on its own cadence. Nothing in this repo depends on it yet.
+    react-native: ^0.88.0
+
+# pnpm's release-age policy blocked this just-published @types/node build.
+# The exception is the exact version in the catalog, not a blanket bypass.
+minimumReleaseAgeExclude:
+  - "@types/node@26.6.8"
+
+# pnpm 11 runs dependency lifecycle scripts only when allowBuilds says so.
+# esbuild installs its binary; lefthook installs its hook binary.
+allowBuilds:
+  esbuild: true
+  lefthook: true

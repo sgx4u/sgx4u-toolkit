@@ -1,0 +1,15 @@
+# Local commits stay formatted and conventional.
+# The release workflow sets LEFTHOOK=0 so generated version commits are not rewritten.
+pre-commit:
+  commands:
+    lint-staged:
+      run: pnpm exec lint-staged
+    visibility:
+      run: node scripts/check-visibility.mjs
+    links:
+      run: node scripts/check-links.mjs
+
+commit-msg:
+  commands:
+    commitlint:
+      run: pnpm exec commitlint --edit {1}
