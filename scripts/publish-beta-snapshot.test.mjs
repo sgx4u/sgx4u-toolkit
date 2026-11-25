@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, readFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 import {
     assertBetaSnapshotBranch,
@@ -25,6 +27,18 @@ test("snapshot publish only includes packages whose version changed", () => {
             },
         ],
     );
+});
+
+test("an empty version list publishes nothing", () => {
+    assert.deepEqual(packagesWithChangedVersions(new Map(), new Map()), []);
+});
+
+test("a repository with no package manifests has no versions", () => {
+    const rootDirectory = mkdtempSync(path.join(tmpdir(), "sgx4u-snapshot-"));
+    mkdirSync(path.join(rootDirectory, "packages", "config"), {
+        recursive: true,
+    });
+    assert.equal(readPackageVersions(rootDirectory).size, 0);
 });
 
 test("snapshots run on the beta branch only", () => {
@@ -61,4 +75,5 @@ test("the repository versions can be read without publishing", () => {
     }
     assert.equal(versions.has("@sgx4u/eslint-config"), false);
     assert.equal(versions.has("@sgx4u/tsconfig"), false);
+    assert.equal(versions.size, 0);
 });

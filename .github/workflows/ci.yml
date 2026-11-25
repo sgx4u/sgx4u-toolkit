@@ -257,6 +257,8 @@ jobs:
             - name: Build packages
               run: pnpm exec turbo run build
 
+            # Library directories only. packages/config is workspace tooling.
+            # An empty list is a successful preview: there is nothing to publish.
             - name: Publish preview packages
               run: |
                   mapfile -t package_directories < <(find packages -mindepth 1 -maxdepth 1 -type d ! -name config | sort)

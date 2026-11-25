@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { readdirSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readdirSync } from "node:fs";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
@@ -9,6 +10,14 @@ import {
 } from "./check-pack.mjs";
 
 const repositoryRoot = fileURLToPath(new URL("..", import.meta.url));
+
+test("an empty repository has no publishable packages", () => {
+    const rootDirectory = mkdtempSync(path.join(tmpdir(), "sgx4u-pack-"));
+    mkdirSync(path.join(rootDirectory, "packages", "config"), {
+        recursive: true,
+    });
+    assert.deepEqual(listPublishablePackages(rootDirectory), []);
+});
 
 test("workspace tooling is reviewed and is not on the npm publish list", () => {
     const relative = (absolutePath) =>
