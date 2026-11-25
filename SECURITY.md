@@ -17,7 +17,7 @@ Older majors are deprecated on npm.
 1. Land the fix on `develop` through a pull request.
 2. Promote `develop` to `production` so `latest` publishes it.
 3. Cherry-pick a patch or minor fix onto each supported `release/**` branch.
-4. Merge `develop` into `beta` with a merge commit so the `beta` dist-tag publishes the fix. Commands are in [Keeping beta in sync](./docs/repo-settings.md#keeping-beta-in-sync).
+4. Merge `develop` into `beta` with a merge commit so the `beta` dist-tag publishes the fix. Commands are in [Keeping beta in sync](./README.md#keeping-beta-in-sync).
 
 A breaking security fix ships on `develop` and `production`. `release/**` takes patch and minor fixes.
 

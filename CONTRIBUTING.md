@@ -21,13 +21,13 @@ Open a pull request from a fork.
 | `beta`                       | The change is an experiment.                             |
 | `release/<package>/v<major>` | A patch or minor fix for that older major.               |
 
-Pull requests are squash-merged. Promote `develop` into `production` with a rebase merge when a stable release is ready. Publishing runs from `beta`, `production`, and `release/**`. Merge settings are in [docs/repo-settings.md](./docs/repo-settings.md).
+Pull requests are squash-merged. Promote `develop` into `production` with a rebase merge when a stable release is ready. Publishing runs from `beta`, `production`, and `release/**`. Merge settings are in [Releases](./README.md#releases).
 
 Graduate an experiment from its feature branch:
 
 1. Squash-merge the feature branch into `beta` so the snapshot publish includes it.
 2. Rebase that branch onto `develop` and open the pull request into `develop`, with a changeset when published behavior changed.
-3. After it lands, merge `develop` into `beta` with a merge commit so the experimental line picks up the stable copy. Commands are in [Keeping beta in sync](./docs/repo-settings.md#keeping-beta-in-sync).
+3. After it lands, merge `develop` into `beta` with a merge commit so the experimental line picks up the stable copy. Commands are in [Keeping beta in sync](./README.md#keeping-beta-in-sync).
 
 `beta` holds every experiment still in progress, so the graduation pull request comes from the feature branch. If that branch was deleted, recreate the change on a new branch from `develop`.
 
@@ -75,7 +75,7 @@ The generator writes the package and a CODEOWNERS line. A regular package also g
 
 A runtime dependency on another toolkit package uses `workspace:^`. Presets and other dev tooling use `workspace:*`. Third-party versions use `catalog:`. Add a catalog entry when a package in this repository needs that dependency.
 
-Pick the runtime from [docs/runtimes.md](./docs/runtimes.md).
+Pick the runtime from [Runtimes](./README.md#runtimes).
 
 Libraries keep `src/index.ts` as a re-export list. Each feature is a folder under `src` with the implementation, a folder `index.ts`, and the test. Functions have explicit return types. tsdown writes ESM and CommonJS into `dist` (`index.js` with `index.d.ts`, and `index.cjs` with `index.d.cts`). The `files` field publishes `dist`, `src`, and `README.md`, and excludes tests. The export map lists `@sgx4u/source`, then `import` and `require` with `types` before the runtime file, and sets `main`, `module`, and `types`.
 

@@ -387,8 +387,8 @@ function documentationFiles(rootDirectory) {
     for (const relativePath of [
         "CONTRIBUTING.md",
         "README.md",
+        "CHANGELOG.md",
         ".changeset",
-        "docs",
     ]) {
         collectMarkdown(rootDirectory, relativePath, files);
     }

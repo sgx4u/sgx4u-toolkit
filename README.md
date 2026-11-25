@@ -27,6 +27,8 @@
 <p align="center">
     <a href="./CONTRIBUTING.md">Contributing</a>
     &middot;
+    <a href="./CHANGELOG.md">Changelog</a>
+    &middot;
     <a href="./.github/ISSUE_TEMPLATE/bug-report.yml">Report a bug</a>
     &middot;
     <a href="./.github/ISSUE_TEMPLATE/feature.yml">Request a feature</a>
@@ -82,7 +84,29 @@ Each library picks one runtime.
 | `edge`      | The code targets an edge runtime and may use web standards plus the Workers `nodejs_compat` modules that have an implementation. |
 | `node`      | The code needs Node itself: processes, the full filesystem, or another API outside the edge subset.                              |
 
-`turbo boundaries` enforces the dependency rules. `pnpm exec turbo gen package` writes a package for the runtime you pick, including the TypeScript, build, and test config for that runtime. The rules are in [docs/runtimes.md](./docs/runtimes.md).
+`pnpm exec turbo gen package` writes the TypeScript preset, the tsdown platform, and the Vitest environment for the runtime you pick. Change those as a set.
+
+`turbo boundaries` reads the tags in each package's `turbo.json`. A library carries one layout tag and one runtime tag, and each rule has to allow the dependency. A dependency matches an allow list when it carries at least one listed tag. The lists are explicit because an empty allow list permits every dependency.
+
+| Source tag          | May depend on                                                        |
+| ------------------- | -------------------------------------------------------------------- |
+| `runtime:universal` | `runtime:universal`, `layout:config`                                 |
+| `runtime:edge`      | `runtime:universal`, `runtime:edge`, `layout:config`                 |
+| `runtime:node`      | `runtime:universal`, `runtime:edge`, `runtime:node`, `layout:config` |
+| `layout:package`    | `layout:package`, `layout:config`                                    |
+| `layout:config`     | Denies `layout:package`. Tooling may not depend on a library.        |
+
+| Runtime     | TypeScript preset              | tsdown `platform`                        | Vitest |
+| ----------- | ------------------------------ | ---------------------------------------- | ------ |
+| `universal` | `@sgx4u/tsconfig/library.json` | `neutral`, the preset default            | `node` |
+| `edge`      | `@sgx4u/tsconfig/edge.json`    | `neutral`, the preset default            | `node` |
+| `node`      | `@sgx4u/tsconfig/node.json`    | `node`, passed as `{ platform: "node" }` | `node` |
+
+`@sgx4u/tsconfig/base.json` is the strict ESM baseline: `ES2022`, `NodeNext`, `strict`, `types` set to `[]`, and `customConditions` set to `@sgx4u/source`. `library.json` adds `declaration`, `declarationMap`, `sourceMap`, `isolatedDeclarations`, and `exactOptionalPropertyTypes`. `edge.json` sets `lib` to `ES2022` and `WebWorker`, and `types` to `[]`. `node.json` sets `types` to `["node"]` and keeps the baseline `lib`. Add `@types/node` in a Node package. An edge package that imports an allowed Node built-in, such as `node:buffer`, adds `@types/node` in that package too. A package that needs Cloudflare-only types adds `@cloudflare/workers-types` in that package and a catalog entry in the same change.
+
+`neutral` is platform-agnostic. tsdown builds CommonJS with the `node` platform for every runtime. The test process is Node for every runtime. ESLint decides which imports `src` may use.
+
+`@sgx4u/eslint-config` takes `runtime` (`universal`, `edge`, or `node`) and `rootDir`. `rootDir` must be an absolute path. Pass `import.meta.dirname` from the calling `eslint.config.js`. Any other `runtime` throws `TypeError`. A missing or relative `rootDir` throws `TypeError`. Universal source uses web standards and may not import Node built-ins, including `node:` subpaths and the bare names reported by the Node process that runs ESLint. Edge source may use web standards and the Workers `nodejs_compat` modules that have an implementation, including partial ones such as `node:fs`, `node:http`, `node:net`, `node:dns`, and `node:tls`. Node source may use Node built-ins. Static `import`, `import()`, `require()`, and `import name = require(...)` are all checked. Non-functional Workers stubs stay rejected. Add a name to that list when Workers documents a new stub, and leave a newly implemented module allowed.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -152,11 +176,29 @@ pnpm check
 
 Pushes to `beta`, `production`, and `release/**` run [`.github/workflows/release.yml`](./.github/workflows/release.yml).
 
-- `beta` publishes with `changeset version --snapshot beta`. The snapshot job has `contents: read`, and `scripts/publish-beta-snapshot.mjs` restores the checkout, so the prerelease version stays uncommitted.
-- `production` opens a **Version Packages** pull request through the release GitHub App. Merging it publishes `latest` from the `release` environment with npm trusted publishing and provenance, and creates GitHub releases. The workflow then opens `sync/consumed-changesets-*` into `develop`. Squash-merge that pull request before the next promotion.
+- `beta` publishes with `changeset version --snapshot beta`. The version is `0.0.0-beta-<timestamp>` and stays uncommitted. The snapshot job has `contents: read`, and `scripts/publish-beta-snapshot.mjs` restores the checkout. A committed prerelease could ride a graduation onto `develop`, and the rebase into `production` would publish it as `latest`.
+- `production` opens a **Version Packages** pull request through the release GitHub App. Merging it publishes `latest` from the `release` environment with npm trusted publishing and provenance, and creates GitHub releases. The workflow then opens `sync/consumed-changesets-*` into `develop`. Squash-merge that pull request before the next promotion. The branch only deletes changeset files `production` already consumed. A pull request whose head is `production` would list commits already on `develop`, because a squash merge is not an ancestor.
 - `release/**` publishes the `previous` dist-tag.
 
-Branch setup, the `develop` into `beta` sync, graduation, and the first `0.1.0` of a package are in [docs/repo-settings.md](./docs/repo-settings.md). Security fixes are in [SECURITY.md](./SECURITY.md). The reasoning is in [docs/adr/0001-public-toolkit-monorepo.md](./docs/adr/0001-public-toolkit-monorepo.md).
+The first `0.1.0` of a library is published once from a laptop, with npm CLI 11.5.1 or newer, so npm can attach a trusted publisher: `npm trust github --repo sgx4u/sgx4u-toolkit --file release.yml --env release --allow-publish`. Later versions come from `release.yml`. Leave `registry-url` unset on `actions/setup-node`, and add no `NPM_TOKEN` secret. Either one writes an empty `_authToken`, and npm then skips the trusted publisher. A release with no libraries exits without publishing.
+
+<h3 id="keeping-beta-in-sync">Keeping beta in sync</h3>
+
+Merge `develop` into `beta` with a merge commit after a security fix, and on a regular cadence:
+
+```sh
+git fetch origin
+git checkout -b sync/develop-into-beta origin/beta
+git merge origin/develop
+```
+
+Open a pull request into `beta` and merge it with a merge commit. A squash would drop `develop` from the ancestry of `beta`, and the next sync would replay the same commits. Linear history is required on `develop`, `production`, and `release/**`. It stays off `beta` so this merge commit can land. Feature pull requests are still squash-merged.
+
+Graduate an experiment from its feature branch. `beta` also holds unfinished experiments, so the graduation pull request does not come from `beta`. After the change lands on `develop`, sync `beta` as above. When the same lines conflict, keep the `develop` side.
+
+What shipped for people using the libraries is in [CHANGELOG.md](./CHANGELOG.md). Each published library keeps its own changelog beside that library, and the toolkit changelog links to it once the library is published.
+
+Security fixes are in [SECURITY.md](./SECURITY.md).
 
 Pull requests run the `pkg-pr-new` job, which publishes preview tarballs. Those previews are separate from npm releases.
 
@@ -170,10 +212,9 @@ Pull requests run the `pkg-pr-new` job, which publishes preview tarballs. Those 
 packages/<name>      published libraries
 turbo/generators     pnpm exec turbo gen package
 scripts              checks and publish scripts
-docs                 settings, runtimes, and decisions
 ```
 
-`layout:package` covers the libraries. The dependency rules are in [docs/runtimes.md](./docs/runtimes.md).
+`layout:package` covers the libraries. The dependency rules are in [Runtimes](#runtimes).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
