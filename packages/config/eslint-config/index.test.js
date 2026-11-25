@@ -138,7 +138,7 @@ test("every runtime rejects the private scope", async () => {
 
 test("every runtime rejects deep imports", async () => {
     for (const specifier of [
-        "@sgx4u/string/src/is-blank",
+        "@sgx4u/string/src/is-blank/is-blank.ts",
         "@sgx4u/string/dist/index.js",
     ]) {
         const messages = await restrictedImportMessages(
@@ -171,23 +171,52 @@ test("an unknown runtime throws instead of using the Node rules", () => {
                 runtime: "web",
                 rootDir: packageDirectory,
             }),
-        /runtime must be "universal", "edge", or "node"/,
+        (error) => {
+            assert.ok(error instanceof TypeError);
+            assert.match(
+                error.message,
+                /runtime must be "universal", "edge", or "node"\. Received "web"\./,
+            );
+            return true;
+        },
     );
 });
 
 test("rootDir is required and must be absolute", () => {
     assert.throws(
         () => definePackageConfig({ runtime: "node" }),
-        /rootDir must be an absolute path/,
+        (error) => {
+            assert.ok(error instanceof TypeError);
+            assert.match(
+                error.message,
+                /rootDir must be an absolute path to the directory of the ESLint config file\. Pass import\.meta\.dirname\. Received undefined\./,
+            );
+            return true;
+        },
     );
     assert.throws(
         () => definePackageConfig({ runtime: "node", rootDir: "packages" }),
-        /rootDir must be an absolute path/,
+        (error) => {
+            assert.ok(error instanceof TypeError);
+            assert.match(error.message, /Received "packages"\./);
+            return true;
+        },
     );
-    assert.throws(() => defineRootConfig(), /rootDir must be an absolute path/);
+    assert.throws(
+        () => defineRootConfig(),
+        (error) => {
+            assert.ok(error instanceof TypeError);
+            assert.match(error.message, /Received undefined\./);
+            return true;
+        },
+    );
     assert.throws(
         () => defineRootConfig({ rootDir: "relative" }),
-        /rootDir must be an absolute path/,
+        (error) => {
+            assert.ok(error instanceof TypeError);
+            assert.match(error.message, /Received "relative"\./);
+            return true;
+        },
     );
 });
 
@@ -261,9 +290,12 @@ const filesLintedAcrossConfigs = [
     "packages/string/eslint.config.js",
     "packages/string/tsdown.config.ts",
     "packages/string/src/index.ts",
-    "packages/string/src/is-blank.ts",
-    "packages/string/src/is-blank.test.ts",
-    "packages/string/src/collapse-whitespace.ts",
+    "packages/string/src/is-blank/index.ts",
+    "packages/string/src/is-blank/is-blank.ts",
+    "packages/string/src/is-blank/is-blank.test.ts",
+    "packages/string/src/collapse-whitespace/index.ts",
+    "packages/string/src/collapse-whitespace/collapse-whitespace.ts",
+    "packages/string/src/collapse-whitespace/collapse-whitespace.test.ts",
     "packages/config/eslint-config/eslint.config.js",
     "packages/config/eslint-config/index.js",
     "packages/config/eslint-config/index.test.js",
@@ -274,11 +306,15 @@ const filesLintedAcrossConfigs = [
     "packages/config/prettier-config/tsdown.config.ts",
     "packages/config/tsdown-config/eslint.config.js",
     "packages/config/tsdown-config/src/index.ts",
-    "packages/config/tsdown-config/src/index.test.ts",
+    "packages/config/tsdown-config/src/define-library-config/index.ts",
+    "packages/config/tsdown-config/src/define-library-config/define-library-config.ts",
+    "packages/config/tsdown-config/src/define-library-config/define-library-config.test.ts",
     "packages/config/tsdown-config/tsdown.config.ts",
     "packages/config/vitest-config/eslint.config.js",
     "packages/config/vitest-config/src/index.ts",
-    "packages/config/vitest-config/src/index.test.ts",
+    "packages/config/vitest-config/src/define-package-vitest-config/index.ts",
+    "packages/config/vitest-config/src/define-package-vitest-config/define-package-vitest-config.ts",
+    "packages/config/vitest-config/src/define-package-vitest-config/define-package-vitest-config.test.ts",
     "packages/config/vitest-config/tsdown.config.ts",
     "packages/config/tsconfig/eslint.config.js",
     "packages/config/tsconfig/index.test.js",

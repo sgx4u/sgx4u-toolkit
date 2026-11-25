@@ -1,20 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { collapseWhitespace } from "./collapse-whitespace.js";
-import { isBlank } from "./is-blank.js";
-
-describe("isBlank", () => {
-    it("accepts an empty string", () => {
-        expect(isBlank("")).toBe(true);
-    });
-
-    it("accepts whitespace", () => {
-        expect(isBlank(" \n\t")).toBe(true);
-    });
-
-    it("rejects text", () => {
-        expect(isBlank(" sgx ")).toBe(false);
-    });
-});
+import { collapseWhitespace } from "../index.js";
 
 describe("collapseWhitespace", () => {
     it("trims and collapses internal whitespace", () => {
@@ -23,6 +8,10 @@ describe("collapseWhitespace", () => {
 
     it("collapses a whitespace-only string to empty", () => {
         expect(collapseWhitespace(" \n\t")).toBe("");
+    });
+
+    it("collapses a no-break space", () => {
+        expect(collapseWhitespace("a\u00A0\u00A0b")).toBe("a b");
     });
 
     it("leaves a single space between words", () => {
