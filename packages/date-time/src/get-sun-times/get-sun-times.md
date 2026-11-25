@@ -11,7 +11,11 @@ import { getSunTimes } from "@sgx4u/date-time/astronomy";
 ## Signature
 
 ```ts
-function getSunTimes(date: DateInput, location: { latitude: number; longitude: number }, options?: TimeZoneOptions): SunTimes;
+function getSunTimes(
+    date: DateInput,
+    location: { latitude: number; longitude: number },
+    options?: TimeZoneOptions,
+): SunTimes;
 ```
 
 ## Examples

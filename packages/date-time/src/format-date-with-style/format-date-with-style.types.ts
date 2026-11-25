@@ -3,7 +3,8 @@ import type { LocaleOptions, TimeZoneOptions } from "../types/options.types.js";
 /**
  * Locale styles passed through to `Intl.DateTimeFormat`.
  */
-export interface FormatDateWithStyleOptions extends TimeZoneOptions, LocaleOptions {
+export interface FormatDateWithStyleOptions
+    extends TimeZoneOptions, LocaleOptions {
     /**
      * The date length. Used alone when `timeStyle` is omitted.
      *

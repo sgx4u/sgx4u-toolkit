@@ -7,7 +7,9 @@ import {
 
 describe("duration lengths", () => {
     it("converts clock durations and compares them", () => {
-        expect(durationToMilliseconds({ hours: 1, minutes: 30 })).toBe(5_400_000);
+        expect(durationToMilliseconds({ hours: 1, minutes: 30 })).toBe(
+            5_400_000,
+        );
         expect(millisecondsToDuration(5_400_000)).toEqual({
             hours: 1,
             minutes: 30,
@@ -19,6 +21,9 @@ describe("duration lengths", () => {
                 { months: 1 },
                 { relativeTo: "2026-01-31T00:00:00Z", timeZone: "UTC" },
             ),
-        ).toBe(Date.parse("2026-02-28T00:00:00Z") - Date.parse("2026-01-31T00:00:00Z"));
+        ).toBe(
+            Date.parse("2026-02-28T00:00:00Z") -
+                Date.parse("2026-01-31T00:00:00Z"),
+        );
     });
 });

@@ -1,0 +1,107 @@
+[
+    {
+        "name": "root entry",
+        "path": "dist/index.js",
+        "import": "*",
+        "limit": "25 kB",
+        "brotli": true
+    },
+    {
+        "name": "getDateParts",
+        "path": "dist/index.js",
+        "import": "{ getDateParts }",
+        "limit": "2.6 kB",
+        "brotli": true
+    },
+    {
+        "name": "toDate",
+        "path": "dist/index.js",
+        "import": "{ toDate }",
+        "limit": "2.5 kB",
+        "brotli": true
+    },
+    {
+        "name": "formatDate",
+        "path": "dist/index.js",
+        "import": "{ formatDate }",
+        "limit": "4.2 kB",
+        "brotli": true
+    },
+    {
+        "name": "parseDateWithPattern",
+        "path": "dist/index.js",
+        "import": "{ parseDateWithPattern }",
+        "limit": "3.7 kB",
+        "brotli": true
+    },
+    {
+        "name": "formatDuration",
+        "path": "dist/index.js",
+        "import": "{ formatDuration }",
+        "limit": "2 kB",
+        "brotli": true
+    },
+    {
+        "name": "findAvailableSlots",
+        "path": "dist/index.js",
+        "import": "{ findAvailableSlots }",
+        "limit": "4.2 kB",
+        "brotli": true
+    },
+    {
+        "name": "addBusinessHours",
+        "path": "dist/index.js",
+        "import": "{ addBusinessHours }",
+        "limit": "4.6 kB",
+        "brotli": true
+    },
+    {
+        "name": "recurrence",
+        "path": "dist/recurrence.js",
+        "import": "*",
+        "limit": "8 kB",
+        "brotli": true
+    },
+    {
+        "name": "cron",
+        "path": "dist/cron.js",
+        "import": "*",
+        "limit": "6.1 kB",
+        "brotli": true
+    },
+    {
+        "name": "natural language",
+        "path": "dist/natural-language.js",
+        "import": "*",
+        "limit": "15 kB",
+        "brotli": true
+    },
+    {
+        "name": "holidays india",
+        "path": "dist/holidays/india.js",
+        "import": "*",
+        "limit": "2 kB",
+        "brotli": true
+    },
+    {
+        "name": "holidays united states",
+        "path": "dist/holidays/united-states.js",
+        "import": "*",
+        "limit": "2 kB",
+        "brotli": true
+    },
+    {
+        "name": "holidays united kingdom",
+        "path": "dist/holidays/united-kingdom.js",
+        "import": "*",
+        "limit": "2 kB",
+        "brotli": true
+    },
+    {
+        "name": "astronomy",
+        "path": "dist/astronomy.js",
+        "import": "*",
+        "limit": "3.6 kB",
+        "brotli": true
+    }
+]

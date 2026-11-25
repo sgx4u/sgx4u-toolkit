@@ -4,7 +4,9 @@ import { rangeError } from "../utils/error.utils.js";
 import { isTimeUnit } from "../utils/unit.utils.js";
 import type { NormalizeDurationOptions } from "./normalize-duration.types.js";
 
-const carryInto: Readonly<Record<string, { unit: keyof Duration; size: number }>> = {
+const carryInto: Readonly<
+    Record<string, { unit: keyof Duration; size: number }>
+> = {
     milliseconds: { unit: "seconds", size: 1_000 },
     seconds: { unit: "minutes", size: 60 },
     minutes: { unit: "hours", size: 60 },
@@ -56,7 +58,10 @@ export function normalizeDuration(
         if (carry === undefined) {
             continue;
         }
-        const targetRank = rank[carry.unit === "days" ? "day" : carry.unit.replace(/s$/, "")] ?? 0;
+        const targetRank =
+            rank[
+                carry.unit === "days" ? "day" : carry.unit.replace(/s$/, "")
+            ] ?? 0;
         if (targetRank < largestRank) {
             continue;
         }

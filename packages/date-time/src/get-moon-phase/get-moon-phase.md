@@ -11,7 +11,10 @@ import { getMoonPhase } from "@sgx4u/date-time/astronomy";
 ## Signature
 
 ```ts
-function getMoonPhase(date: DateInput): { fraction: number; name: MoonPhaseName };
+function getMoonPhase(date: DateInput): {
+    fraction: number;
+    name: MoonPhaseName;
+};
 ```
 
 ## Examples

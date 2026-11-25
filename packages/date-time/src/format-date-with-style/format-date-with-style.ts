@@ -40,5 +40,7 @@ export function formatDateWithStyle(
     if (options?.hourCycle !== undefined) {
         formatOptions.hourCycle = options.hourCycle;
     }
-    return new Intl.DateTimeFormat(options?.locale, formatOptions).format(instant);
+    return new Intl.DateTimeFormat(options?.locale, formatOptions).format(
+        instant,
+    );
 }

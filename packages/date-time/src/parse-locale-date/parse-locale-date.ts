@@ -1,6 +1,9 @@
 import type { LocaleOptions, TimeZoneOptions } from "../types/options.types.js";
 import { getLocaleDatePattern } from "../get-locale-date-pattern/get-locale-date-pattern.js";
-import { instantFromWallTime, resolveTimeZone } from "../utils/time-zone.utils.js";
+import {
+    instantFromWallTime,
+    resolveTimeZone,
+} from "../utils/time-zone.utils.js";
 import { isRealGregorianDay } from "../utils/gregorian.utils.js";
 import { typeError } from "../utils/error.utils.js";
 
@@ -30,7 +33,10 @@ export function parseLocaleDate(
         ...(options?.locale !== undefined ? { locale: options.locale } : {}),
     });
     const fields = readNumericDate(value, pattern);
-    if (fields === undefined || !isRealGregorianDay(fields.year, fields.month, fields.day)) {
+    if (
+        fields === undefined ||
+        !isRealGregorianDay(fields.year, fields.month, fields.day)
+    ) {
         return undefined;
     }
     return new Date(

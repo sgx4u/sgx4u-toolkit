@@ -1,6 +1,10 @@
 import type { Interval } from "../types/interval.types.js";
 import { typeError } from "../utils/error.utils.js";
-import { mergeIntervalList, readInterval, subtractIntervalList } from "../utils/interval.utils.js";
+import {
+    mergeIntervalList,
+    readInterval,
+    subtractIntervalList,
+} from "../utils/interval.utils.js";
 
 /**
  * Returns the uncovered time between intervals.

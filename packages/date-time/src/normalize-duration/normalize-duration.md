@@ -11,16 +11,19 @@ import { normalizeDuration } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function normalizeDuration(duration: Duration, options?: NormalizeDurationOptions): Duration;
+function normalizeDuration(
+    duration: Duration,
+    options?: NormalizeDurationOptions,
+): Duration;
 ```
 
 ## Options
 
-| Name | Type | Default | Meaning |
-| --- | --- | --- | --- |
-| `largestUnit` | `TimeUnit` | `"day"` | The largest unit clock fields may carry into. |
-| `relativeTo` | `DateInput` | none | Reserved for calendar balancing. Without it, a day is 24 hours. |
-| `timeZone` | `string` | System zone | Used when `relativeTo` is set. |
+| Name          | Type        | Default     | Meaning                                                         |
+| ------------- | ----------- | ----------- | --------------------------------------------------------------- |
+| `largestUnit` | `TimeUnit`  | `"day"`     | The largest unit clock fields may carry into.                   |
+| `relativeTo`  | `DateInput` | none        | Reserved for calendar balancing. Without it, a day is 24 hours. |
+| `timeZone`    | `string`    | System zone | Used when `relativeTo` is set.                                  |
 
 ## Examples
 

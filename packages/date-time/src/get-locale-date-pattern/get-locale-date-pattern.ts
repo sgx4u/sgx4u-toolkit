@@ -14,7 +14,9 @@ import type { LocaleDatePatternOptions } from "./get-locale-date-pattern.types.j
  * @example
  * getLocaleDatePattern({ locale: "en-US" }); // "MM/dd/yyyy" or the runtime's numeric order
  */
-export function getLocaleDatePattern(options?: LocaleDatePatternOptions): string {
+export function getLocaleDatePattern(
+    options?: LocaleDatePatternOptions,
+): string {
     const style = options?.style ?? "short";
     if (style !== "short" && style !== "medium") {
         throw rangeError("style", `"short" or "medium"`, style);

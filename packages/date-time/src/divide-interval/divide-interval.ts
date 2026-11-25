@@ -17,7 +17,10 @@ import { readInterval } from "../utils/interval.utils.js";
  * @example
  * divideInterval({ start: new Date(0), end: new Date(10) }, 2).map((part) => part.end.getTime()); // [5, 10]
  */
-export function divideInterval(interval: Interval, partCount: number): Interval[] {
+export function divideInterval(
+    interval: Interval,
+    partCount: number,
+): Interval[] {
     const checked = readInterval(interval);
     const count = assertInteger(partCount, "partCount");
     if (count < 1) {

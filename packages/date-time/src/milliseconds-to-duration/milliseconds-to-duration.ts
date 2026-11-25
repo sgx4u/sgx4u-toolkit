@@ -21,7 +21,14 @@ const fieldNames: Readonly<Record<string, keyof Duration>> = {
     millisecond: "milliseconds",
 };
 
-const order = ["week", "day", "hour", "minute", "second", "millisecond"] as const;
+const order = [
+    "week",
+    "day",
+    "hour",
+    "minute",
+    "second",
+    "millisecond",
+] as const;
 
 /**
  * Splits a millisecond length into duration fields.
@@ -50,7 +57,11 @@ export function millisecondsToDuration(
         throw rangeError("smallestUnit", "a clock unit", smallest);
     }
     if (smallestIndex < largestIndex) {
-        throw rangeError("smallestUnit", `a unit no larger than \`${largest}\``, smallest);
+        throw rangeError(
+            "smallestUnit",
+            `a unit no larger than \`${largest}\``,
+            smallest,
+        );
     }
     const sign = value < 0 ? -1 : 1;
     let remaining = Math.abs(value);

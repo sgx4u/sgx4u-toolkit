@@ -2,7 +2,11 @@ import type { DateInput } from "../types/date-input.types.js";
 import { resolveDateInput } from "../utils/date-input.utils.js";
 import { rangeError } from "../utils/error.utils.js";
 import { formatCalendarText, formatOffsetText } from "../utils/iso.utils.js";
-import { parseFixedOffsetMinutes, readDateParts, resolveTimeZone } from "../utils/time-zone.utils.js";
+import {
+    parseFixedOffsetMinutes,
+    readDateParts,
+    resolveTimeZone,
+} from "../utils/time-zone.utils.js";
 import type { FormatIsoDateTimeOptions } from "./format-iso-date-time.types.js";
 
 /**
@@ -48,7 +52,10 @@ export function formatIsoDateTime(
         text += `.${String(parts.millisecond).padStart(3, "0")}`;
     }
     text += formatOffsetText(parts.offsetMinutes, timeZone === "UTC");
-    if (options?.includeTimeZoneName === true && parseFixedOffsetMinutes(timeZone) === undefined) {
+    if (
+        options?.includeTimeZoneName === true &&
+        parseFixedOffsetMinutes(timeZone) === undefined
+    ) {
         text += `[${timeZone}]`;
     }
     return text;

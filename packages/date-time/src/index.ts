@@ -202,7 +202,10 @@ export type { CalendarUnit } from "./types/time.types.js";
 export type { FiscalYearOptions, NowOptions } from "./types/options.types.js";
 export type { Interval } from "./types/interval.types.js";
 export type { BusinessCalendar } from "./types/business.types.js";
-export type { TemporalInstant, TemporalInstantLike } from "./types/temporal.types.js";
+export type {
+    TemporalInstant,
+    TemporalInstantLike,
+} from "./types/temporal.types.js";
 export type { Season } from "./types/astronomy.types.js";
 export type { EasterOptions } from "./get-easter-sunday/get-easter-sunday.types.js";
 export type { GetSeasonOptions } from "./get-season/get-season.types.js";

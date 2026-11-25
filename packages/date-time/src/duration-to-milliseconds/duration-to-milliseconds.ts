@@ -47,8 +47,15 @@ export function durationToMilliseconds(
     }
     if (options?.relativeTo !== undefined) {
         const timeZone = resolveTimeZone(options.timeZone);
-        const start = resolveDateInput(options.relativeTo, "relativeTo", timeZone);
-        return addDuration(start, checked, { timeZone }).getTime() - start.getTime();
+        const start = resolveDateInput(
+            options.relativeTo,
+            "relativeTo",
+            timeZone,
+        );
+        return (
+            addDuration(start, checked, { timeZone }).getTime() -
+            start.getTime()
+        );
     }
     return (
         (checked.weeks ?? 0) * 7 * 86_400_000 +

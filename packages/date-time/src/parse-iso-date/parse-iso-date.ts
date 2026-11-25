@@ -1,5 +1,8 @@
 import type { TimeZoneOptions } from "../types/options.types.js";
-import { instantFromWallTime, resolveTimeZone } from "../utils/time-zone.utils.js";
+import {
+    instantFromWallTime,
+    resolveTimeZone,
+} from "../utils/time-zone.utils.js";
 import { parseCalendarText } from "../utils/iso.utils.js";
 
 /**

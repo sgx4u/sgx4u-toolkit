@@ -20,10 +20,10 @@ function formatDate(
 
 ## Options
 
-| Name | Type | Default | Meaning |
-| --- | --- | --- | --- |
-| `timeZone` | `string` | System zone | IANA name or fixed offset. |
-| `locale` | `string \| readonly string[]` | Runtime locale | Locale for names. |
+| Name       | Type                          | Default        | Meaning                    |
+| ---------- | ----------------------------- | -------------- | -------------------------- |
+| `timeZone` | `string`                      | System zone    | IANA name or fixed offset. |
+| `locale`   | `string \| readonly string[]` | Runtime locale | Locale for names.          |
 
 ## Examples
 
