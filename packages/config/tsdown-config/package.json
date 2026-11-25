@@ -29,8 +29,5 @@
     },
     "peerDependencies": {
         "tsdown": "^0.23.0"
-    },
-    "engines": {
-        "node": ">=22.12"
     }
 }

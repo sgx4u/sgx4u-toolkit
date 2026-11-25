@@ -110,17 +110,6 @@ export function listPublishablePackages(repositoryDirectory) {
 }
 
 /**
- * Pack review follows the publish list. Private workspace tooling is not
- * packed. publint, attw, and this review run on published libraries.
- *
- * @param {string} repositoryDirectory
- * @returns {string[]}
- */
-export function listPackReviewPackages(repositoryDirectory) {
-    return listPublishablePackages(repositoryDirectory);
-}
-
-/**
  * @param {string} filePath
  */
 function statExists(filePath) {
@@ -148,7 +137,7 @@ export function readPackPreview(packageDirectory) {
 }
 
 function main() {
-    const packageDirectories = listPackReviewPackages(repositoryRoot);
+    const packageDirectories = listPublishablePackages(repositoryRoot);
     let failed = false;
 
     for (const packageDirectory of packageDirectories) {

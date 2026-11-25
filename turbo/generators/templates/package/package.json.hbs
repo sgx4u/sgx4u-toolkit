@@ -63,8 +63,7 @@
         "tsdown": "catalog:",
         "typescript": "catalog:",
         "vitest": "catalog:"
-    },
-{{#unless (eq packageKind "config")}}
+    }{{#unless (eq packageKind "config")}},
     "publishConfig": {
         "access": "public",
         "provenance": true
@@ -76,8 +75,7 @@
     },
     "homepage": "https://github.com/sgx4u/sgx4u-toolkit/tree/develop/{{packageDirectory}}",
     "bugs": "https://github.com/sgx4u/sgx4u-toolkit/issues",
-{{/unless}}
     "engines": {
         "node": ">=22.12"
-    }
+    }{{/unless}}
 }

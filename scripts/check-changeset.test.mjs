@@ -201,8 +201,11 @@ test("workspace tooling packages stay private", () => {
             ),
         );
         assert.equal(packageManifest.private, true, entry.name);
-        assert.equal(packageManifest.type, "module", entry.name);
-        assert.equal(packageManifest.engines?.node, ">=22.12", entry.name);
+        if (entry.name === "tsconfig") {
+            assert.equal(packageManifest.type, undefined, entry.name);
+        } else {
+            assert.equal(packageManifest.type, "module", entry.name);
+        }
         for (const fieldName of [
             "version",
             "license",
@@ -216,6 +219,7 @@ test("workspace tooling packages stay private", () => {
             "repository",
             "homepage",
             "bugs",
+            "engines",
         ]) {
             assert.equal(
                 packageManifest[fieldName],

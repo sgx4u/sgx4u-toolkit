@@ -4,10 +4,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import {
-    listPackReviewPackages,
-    listPublishablePackages,
-} from "./check-pack.mjs";
+import { listPublishablePackages } from "./check-pack.mjs";
 
 const repositoryRoot = fileURLToPath(new URL("..", import.meta.url));
 
@@ -19,14 +16,11 @@ test("an empty repository has no publishable packages", () => {
     assert.deepEqual(listPublishablePackages(rootDirectory), []);
 });
 
-test("workspace tooling is not published and is not pack-reviewed", () => {
+test("workspace tooling is not on the npm publish list", () => {
     const relative = (absolutePath) =>
         path.relative(repositoryRoot, absolutePath).split(path.sep).join("/");
     const published = new Set(
         listPublishablePackages(repositoryRoot).map(relative),
-    );
-    const reviewed = new Set(
-        listPackReviewPackages(repositoryRoot).map(relative),
     );
     const configDirectory = path.join(repositoryRoot, "packages", "config");
 
@@ -36,6 +30,5 @@ test("workspace tooling is not published and is not pack-reviewed", () => {
         }
         const toolingPath = `packages/config/${entry.name}`;
         assert.equal(published.has(toolingPath), false, toolingPath);
-        assert.equal(reviewed.has(toolingPath), false, toolingPath);
     }
 });
