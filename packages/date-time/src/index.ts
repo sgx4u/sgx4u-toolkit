@@ -2,9 +2,12 @@
  * Public entry for `@sgx4u/date-time`.
  */
 export { addBusinessDays } from "./add-business-days/add-business-days.js";
+export { addBusinessHours } from "./add-business-hours/add-business-hours.js";
 export { addDurations } from "./add-durations/add-durations.js";
 export { addDuration } from "./add-duration/add-duration.js";
 export { clampDate } from "./clamp-date/clamp-date.js";
+export { differenceInBusinessDays } from "./difference-in-business-days/difference-in-business-days.js";
+export { differenceInBusinessHours } from "./difference-in-business-hours/difference-in-business-hours.js";
 export { compareDates } from "./compare-dates/compare-dates.js";
 export { compareDurations } from "./compare-durations/compare-durations.js";
 export { compareTimesOfDay } from "./compare-times-of-day/compare-times-of-day.js";
@@ -33,12 +36,17 @@ export { getDaysInYear } from "./get-days-in-year/get-days-in-year.js";
 export { getEarliestDate } from "./get-earliest-date/get-earliest-date.js";
 export { getLatestDate } from "./get-latest-date/get-latest-date.js";
 export { getLocalTimeZone } from "./get-local-time-zone/get-local-time-zone.js";
+export { getNextBusinessDay } from "./get-next-business-day/get-next-business-day.js";
+export { getNextBusinessHoursStart } from "./get-next-business-hours-start/get-next-business-hours-start.js";
+export { getPreviousBusinessDay } from "./get-previous-business-day/get-previous-business-day.js";
 export { getNextWeekday } from "./get-next-weekday/get-next-weekday.js";
 export { getNthWeekdayOfMonth } from "./get-nth-weekday-of-month/get-nth-weekday-of-month.js";
 export { getPreviousWeekday } from "./get-previous-weekday/get-previous-weekday.js";
 export { getUtcOffset } from "./get-utc-offset/get-utc-offset.js";
 export { isAfter } from "./is-after/is-after.js";
 export { isBusinessDay } from "./is-business-day/is-business-day.js";
+export { isWithinBusinessHours } from "./is-within-business-hours/is-within-business-hours.js";
+export { listBusinessDaysInInterval } from "./list-business-days-in-interval/list-business-days-in-interval.js";
 export { isBefore } from "./is-before/is-before.js";
 export { isBetween } from "./is-between/is-between.js";
 export { isDate } from "./is-date/is-date.js";
