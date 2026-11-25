@@ -13,7 +13,7 @@ import { distributionTagForBranch } from "./distribution-tag.mjs";
  * @returns {string[]}
  */
 export function publishArguments(packDirectory) {
-  return ["exec", "changeset", "publish", "--from-pack-dir", packDirectory];
+    return ["exec", "changeset", "publish", "--from-pack-dir", packDirectory];
 }
 
 /**
@@ -21,14 +21,14 @@ export function publishArguments(packDirectory) {
  * @param {string} distributionTag
  */
 export function applyDistributionTagToPlan(planDocument, distributionTag) {
-  for (const batch of planDocument.plan) {
-    for (const release of batch) {
-      if (release.kind === "publish") {
-        release.tag = distributionTag;
-      }
+    for (const batch of planDocument.plan) {
+        for (const release of batch) {
+            if (release.kind === "publish") {
+                release.tag = distributionTag;
+            }
+        }
     }
-  }
-  return planDocument;
+    return planDocument;
 }
 
 /**
@@ -36,41 +36,41 @@ export function applyDistributionTagToPlan(planDocument, distributionTag) {
  * @param {string} distributionTag
  */
 export function writeDistributionTag(packDirectory, distributionTag) {
-  const planPath = path.join(packDirectory, "publish-plan.json");
-  const planDocument = JSON.parse(readFileSync(planPath, "utf8"));
-  applyDistributionTagToPlan(planDocument, distributionTag);
-  writeFileSync(planPath, `${JSON.stringify(planDocument, null, 2)}\n`);
+    const planPath = path.join(packDirectory, "publish-plan.json");
+    const planDocument = JSON.parse(readFileSync(planPath, "utf8"));
+    applyDistributionTagToPlan(planDocument, distributionTag);
+    writeFileSync(planPath, `${JSON.stringify(planDocument, null, 2)}\n`);
 }
 
 function main() {
-  const branchName = process.env.GITHUB_REF_NAME;
-  if (!branchName) {
-    console.error(
-      "GITHUB_REF_NAME is required. This script is the release workflow publish command.",
-    );
-    process.exit(1);
-  }
+    const branchName = process.env.GITHUB_REF_NAME;
+    if (!branchName) {
+        console.error(
+            "GITHUB_REF_NAME is required. This script is the release workflow publish command.",
+        );
+        process.exit(1);
+    }
 
-  const packDirectory = process.env.CHANGESET_PACK_DIR;
-  if (!packDirectory) {
-    console.error(
-      "CHANGESET_PACK_DIR is required. Publish the tarballs produced by the pack job.",
-    );
-    process.exit(1);
-  }
+    const packDirectory = process.env.CHANGESET_PACK_DIR;
+    if (!packDirectory) {
+        console.error(
+            "CHANGESET_PACK_DIR is required. Publish the tarballs produced by the pack job.",
+        );
+        process.exit(1);
+    }
 
-  writeDistributionTag(packDirectory, distributionTagForBranch(branchName));
-  const result = spawnSync("pnpm", publishArguments(packDirectory), {
-    stdio: "inherit",
-    env: process.env,
-  });
+    writeDistributionTag(packDirectory, distributionTagForBranch(branchName));
+    const result = spawnSync("pnpm", publishArguments(packDirectory), {
+        stdio: "inherit",
+        env: process.env,
+    });
 
-  process.exit(result.status ?? 1);
+    process.exit(result.status ?? 1);
 }
 
 if (
-  process.argv[1] &&
-  path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+    process.argv[1] &&
+    path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)
 ) {
-  main();
+    main();
 }

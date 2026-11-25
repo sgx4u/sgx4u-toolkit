@@ -2,57 +2,57 @@ name: Bug report
 description: A package does something wrong.
 title: "fix: "
 labels:
-  - bug
+    - bug
 body:
-  - type: markdown
-    attributes:
-      value: |
-        Security vulnerabilities go to a [private advisory](https://github.com/sgx4u/sgx4u-toolkit/security/advisories/new), not here.
-  - type: dropdown
-    id: package
-    attributes:
-      label: Package
-      options:
-        - "@sgx4u/string"
-        - "@sgx4u/tsconfig"
-        - "@sgx4u/eslint-config"
-        - "@sgx4u/prettier-config"
-        - "@sgx4u/tsdown-config"
-        - "@sgx4u/vitest-config"
-        - other
-    validations:
-      required: true
-  - type: input
-    id: version
-    attributes:
-      label: Version
-      description: The published version, or the git commit if you linked the workspace.
-      placeholder: 0.1.0
-    validations:
-      required: true
-  - type: dropdown
-    id: runtime
-    attributes:
-      label: Runtime
-      options:
-        - Node.js
-        - Browser
-        - Cloudflare Workers
-        - React Native
-        - Other
-    validations:
-      required: true
-  - type: textarea
-    id: steps
-    attributes:
-      label: What happened
-      description: What you ran, what you expected, and what you saw instead.
-    validations:
-      required: true
-  - type: textarea
-    id: reproduction
-    attributes:
-      label: Reproduction
-      description: A small snippet or a link is enough.
-    validations:
-      required: false
+    - type: markdown
+      attributes:
+          value: |
+              Security vulnerabilities go to a [private advisory](https://github.com/sgx4u/sgx4u-toolkit/security/advisories/new), not here.
+    - type: dropdown
+      id: package
+      attributes:
+          label: Package
+          options:
+              - "@sgx4u/string"
+              - "@sgx4u/tsconfig"
+              - "@sgx4u/eslint-config"
+              - "@sgx4u/prettier-config"
+              - "@sgx4u/tsdown-config"
+              - "@sgx4u/vitest-config"
+              - other
+      validations:
+          required: true
+    - type: input
+      id: version
+      attributes:
+          label: Version
+          description: The published version, or the git commit if you linked the workspace.
+          placeholder: 0.1.0
+      validations:
+          required: true
+    - type: dropdown
+      id: runtime
+      attributes:
+          label: Runtime
+          options:
+              - Node.js
+              - Browser
+              - Cloudflare Workers
+              - React Native
+              - Other
+      validations:
+          required: true
+    - type: textarea
+      id: steps
+      attributes:
+          label: What happened
+          description: What you ran, what you expected, and what you saw instead.
+      validations:
+          required: true
+    - type: textarea
+      id: reproduction
+      attributes:
+          label: Reproduction
+          description: A small snippet or a link is enough.
+      validations:
+          required: false
