@@ -1,0 +1,56 @@
+{
+  "name": "@sgx4u/tsdown-config",
+  "version": "0.0.0",
+  "description": "tsdown preset for ESM-only @sgx4u libraries.",
+  "license": "MIT",
+  "author": "Subhajit Ghosh",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "!src/**/*.test.ts",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "check:package": "publint && attw --pack . --profile esm-only"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "catalog:",
+    "@sgx4u/eslint-config": "workspace:*",
+    "@sgx4u/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "publint": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "tsdown": "^0.23.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sgx4u/sgx4u-toolkit.git",
+    "directory": "domains/platform/tsdown-config"
+  },
+  "homepage": "https://github.com/sgx4u/sgx4u-toolkit/tree/main/domains/platform/tsdown-config",
+  "bugs": "https://github.com/sgx4u/sgx4u-toolkit/issues",
+  "engines": {
+    "node": ">=22.12"
+  }
+}

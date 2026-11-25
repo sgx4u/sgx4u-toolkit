@@ -1,0 +1,9 @@
+{
+  "extends": "{{#if (eq runtimeName "node")}}@sgx4u/tsconfig/node.json{{else if (eq runtimeName "edge")}}@sgx4u/tsconfig/workers.json{{else}}@sgx4u/tsconfig/library.json{{/if}}",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "noEmit": true
+  },
+  "include": ["src/**/*.ts"]
+}

@@ -1,20 +1,62 @@
 {
   "name": "sgx4u-toolkit",
   "private": true,
+  "type": "module",
+  "description": "Public Turborepo of shared non-UI @sgx4u packages.",
+  "license": "MIT",
+  "author": "Subhajit Ghosh",
+  "engines": {
+    "node": ">=24",
+    "pnpm": ">=11"
+  },
+  "packageManager": "pnpm@11.25.0",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
+    "lint:root": "eslint . --max-warnings 0",
+    "typecheck": "turbo run typecheck",
+    "typecheck:root": "tsc --noEmit",
+    "test": "turbo run test && node --test \"scripts/*.test.mjs\"",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check:boundaries": "turbo boundaries",
+    "check:sherif": "sherif",
+    "check:visibility": "node scripts/check-visibility.mjs",
+    "check:links": "node scripts/check-links.mjs",
+    "check:pack": "node scripts/check-pack.mjs",
+    "check:packages": "turbo run check:package",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "node scripts/publish-packages.mjs",
+    "prepare": "node scripts/install-git-hooks.mjs"
   },
   "devDependencies": {
-    "prettier": "3.9.6",
-    "turbo": "^2.11.13",
-    "typescript": "7.0.2"
+    "@changesets/changelog-github": "catalog:",
+    "@changesets/cli": "catalog:",
+    "@commitlint/cli": "catalog:",
+    "@commitlint/config-conventional": "catalog:",
+    "@sgx4u/eslint-config": "workspace:*",
+    "@sgx4u/prettier-config": "workspace:*",
+    "@turbo/gen": "catalog:",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "lefthook": "catalog:",
+    "lint-staged": "catalog:",
+    "pkg-pr-new": "catalog:",
+    "prettier": "catalog:",
+    "sherif": "catalog:",
+    "turbo": "catalog:",
+    "typescript": "catalog:"
   },
-  "packageManager": "pnpm@11.25.0",
-  "engines": {
-    "node": ">=24"
+  "prettier": "@sgx4u/prettier-config",
+  "sherif": {
+    "ignoreRule": [
+      "non-existant-packages"
+    ]
+  },
+  "lint-staged": {
+    "*.{js,mjs,cjs,ts,tsx,json,md,yml,yaml,css}": "prettier --write",
+    "*.{js,mjs,cjs,ts,tsx}": "eslint --fix --max-warnings 0"
   }
 }

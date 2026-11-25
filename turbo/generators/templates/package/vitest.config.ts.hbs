@@ -1,0 +1,3 @@
+import { definePackageVitestConfig } from "@sgx4u/vitest-config";
+
+export default definePackageVitestConfig();

@@ -1,0 +1,55 @@
+{
+  "name": "@sgx4u/tsconfig",
+  "version": "0.0.0",
+  "description": "Shared TypeScript presets for @sgx4u packages and the apps that consume them.",
+  "license": "MIT",
+  "author": "Subhajit Ghosh",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./base.json": "./base.json",
+    "./library.json": "./library.json",
+    "./node.json": "./node.json",
+    "./react.json": "./react.json",
+    "./nextjs.json": "./nextjs.json",
+    "./workers.json": "./workers.json",
+    "./react-native.json": "./react-native.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "base.json",
+    "library.json",
+    "node.json",
+    "react.json",
+    "nextjs.json",
+    "workers.json",
+    "react-native.json",
+    "README.md"
+  ],
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "check:package": "publint"
+  },
+  "dependencies": {
+    "@types/node": "catalog:"
+  },
+  "devDependencies": {
+    "@sgx4u/eslint-config": "workspace:*",
+    "eslint": "catalog:",
+    "publint": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sgx4u/sgx4u-toolkit.git",
+    "directory": "domains/platform/tsconfig"
+  },
+  "homepage": "https://github.com/sgx4u/sgx4u-toolkit/tree/main/domains/platform/tsconfig",
+  "bugs": "https://github.com/sgx4u/sgx4u-toolkit/issues",
+  "engines": {
+    "node": ">=22.12"
+  }
+}
