@@ -1,7 +1,9 @@
 import { defineRootConfig } from "@sgx4u/eslint-config";
 
 export default [
-    ...defineRootConfig(),
+    ...defineRootConfig({
+        rootDir: import.meta.dirname,
+    }),
     {
         files: [
             "scripts/publish-packages.mjs",

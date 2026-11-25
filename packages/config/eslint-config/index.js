@@ -1,4 +1,5 @@
 import { builtinModules } from "node:module";
+import path from "node:path";
 import eslint from "@eslint/js";
 import eslintConfigPrettier from "eslint-config-prettier";
 import turboPlugin from "eslint-plugin-turbo";
@@ -80,6 +81,21 @@ function assertPackageRuntime(runtime) {
     if (!packageRuntimes.includes(runtime)) {
         throw new Error(
             `runtime must be "universal", "edge", or "node". Received ${JSON.stringify(runtime)}.`,
+        );
+    }
+}
+
+/**
+ * typescript-eslint requires an absolute directory. `import.meta.dirname`
+ * from the calling `eslint.config.js` is that directory on Node 20.11+.
+ *
+ * @param {unknown} rootDirectory
+ * @returns {asserts rootDirectory is string}
+ */
+function assertRootDirectory(rootDirectory) {
+    if (typeof rootDirectory !== "string" || !path.isAbsolute(rootDirectory)) {
+        throw new Error(
+            `rootDir must be an absolute path to the directory of the ESLint config file. Pass import.meta.dirname. Received ${JSON.stringify(rootDirectory)}.`,
         );
     }
 }
@@ -187,11 +203,20 @@ function globalsForRuntime(runtime) {
  * This config enforces the runtime import rules for the runtime you pass,
  * and rejects @sgx4u-private imports in the editor.
  *
+ * `rootDir` is the directory of the calling `eslint.config.js`. Pass
+ * `import.meta.dirname`. It is set as `parserOptions.tsconfigRootDir` for
+ * every file. typescript-eslint otherwise records that directory from each
+ * config file loaded in the process, and parsing fails once more than one
+ * directory has been recorded.
+ *
  * @param {import("./index.js").PackageLintOptions} options
  * @returns {import("eslint").Linter.Config[]}
  */
 export function definePackageConfig(options) {
-    assertPackageRuntime(options.runtime);
+    const runtime = options?.runtime;
+    assertPackageRuntime(runtime);
+    const rootDirectory = options?.rootDir;
+    assertRootDirectory(rootDirectory);
     return tseslint.config(
         {
             ignores: ["dist/**", "coverage/**", "node_modules/**"],
@@ -201,7 +226,10 @@ export function definePackageConfig(options) {
         {
             languageOptions: {
                 globals: {
-                    ...globalsForRuntime(options.runtime),
+                    ...globalsForRuntime(runtime),
+                },
+                parserOptions: {
+                    tsconfigRootDir: rootDirectory,
                 },
             },
             plugins: {
@@ -221,12 +249,8 @@ export function definePackageConfig(options) {
         {
             files: ["src/**/*.{ts,tsx,js,mjs,cjs}"],
             rules: {
-                "no-restricted-imports": restrictedImportsForRuntime(
-                    options.runtime,
-                ),
-                "no-restricted-syntax": restrictedSyntaxForRuntime(
-                    options.runtime,
-                ),
+                "no-restricted-imports": restrictedImportsForRuntime(runtime),
+                "no-restricted-syntax": restrictedSyntaxForRuntime(runtime),
             },
         },
         {
@@ -247,12 +271,15 @@ export function definePackageConfig(options) {
 
 /**
  * Root config. Package directories lint themselves so rules can see their runtime.
+ * `rootDir` is the repository directory. Pass `import.meta.dirname`.
  *
+ * @param {import("./index.js").RootLintOptions} options
  * @returns {import("eslint").Linter.Config[]}
  */
-export function defineRootConfig() {
+export function defineRootConfig(options) {
     return definePackageConfig({
         runtime: "node",
+        rootDir: options?.rootDir,
     }).map((config) => {
         // typescript-eslint names every config object. The global ignore
         // entry is the one with no files, rules, or plugins. Matching it by

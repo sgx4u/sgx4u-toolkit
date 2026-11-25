@@ -17,8 +17,11 @@ import { definePackageConfig } from "@sgx4u/eslint-config";
 
 export default definePackageConfig({
     runtime: "universal",
+    rootDir: import.meta.dirname,
 });
 ```
+
+`rootDir` is required. Pass `import.meta.dirname` from the `eslint.config.js` that calls this. It is set as `parserOptions.tsconfigRootDir` for every file that config lints. typescript-eslint otherwise records the directory of each config file that loads it. The editor loads several of those files in one process, sees more than one directory, and reports a parsing error on every file. `import.meta.dirname` has been part of Node.js since 20.11, and this package requires `>=22.12`. The repository root calls `defineRootConfig({ rootDir: import.meta.dirname })`.
 
 `runtime` is `universal`, `edge`, or `node`. Any other value throws. A typo used to fall through to the Node rules.
 

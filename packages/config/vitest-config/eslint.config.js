@@ -2,4 +2,5 @@ import { definePackageConfig } from "@sgx4u/eslint-config";
 
 export default definePackageConfig({
     runtime: "node",
+    rootDir: import.meta.dirname,
 });
