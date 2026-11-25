@@ -119,18 +119,18 @@
         "test:zones": "node scripts/test-time-zones.mjs"
     },
     "devDependencies": {
-        "@size-limit/preset-small-lib": "catalog:",
         "@arethetypeswrong/cli": "catalog:",
         "@sgx4u/eslint-config": "workspace:*",
         "@sgx4u/tsconfig": "workspace:*",
         "@sgx4u/tsdown-config": "workspace:*",
         "@sgx4u/vitest-config": "workspace:*",
+        "@size-limit/preset-small-lib": "catalog:",
         "eslint": "catalog:",
-        "publint": "catalog:",
-        "tsdown": "catalog:",
         "fast-check": "catalog:",
+        "publint": "catalog:",
         "size-limit": "catalog:",
         "temporal-polyfill": "catalog:",
+        "tsdown": "catalog:",
         "typescript": "catalog:",
         "vitest": "catalog:"
     },

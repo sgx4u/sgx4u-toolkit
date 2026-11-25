@@ -178,7 +178,7 @@ jobs:
                   TURBO_SIGNATURE_INPUT: ${{ secrets.TURBO_REMOTE_CACHE_SIGNATURE_KEY }}
 
             - name: Test date-time in each CI time zone
-              run: pnpm --filter @sgx4u/date-time test:zones
+              run: pnpm exec turbo run test:zones --filter=@sgx4u/date-time
 
     build:
         name: build
