@@ -1,5 +1,6 @@
 {
     "name": "@sgx4u/prettier-config",
+    "private": true,
     "version": "0.0.0",
     "description": "Prettier preset for @sgx4u repositories.",
     "license": "MIT",
@@ -48,10 +49,6 @@
     },
     "peerDependencies": {
         "prettier": "^3.0.0"
-    },
-    "publishConfig": {
-        "access": "public",
-        "provenance": true
     },
     "repository": {
         "type": "git",

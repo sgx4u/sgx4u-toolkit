@@ -118,7 +118,7 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
 
     plop.setGenerator("package", {
         description:
-            "Create a public @sgx4u package under packages/ or packages/config",
+            "Create an @sgx4u package under packages/ or private tooling under packages/config",
         prompts: [
             {
                 type: "input",
@@ -132,7 +132,7 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
                 message: "Package kind",
                 choices: [
                     {
-                        name: "Config package (packages/config/<name>)",
+                        name: "Config package (packages/config/<name>, private, not published)",
                         value: "config",
                     },
                     {
@@ -182,7 +182,7 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
             (answers: unknown) => {
                 const packageAnswers = preparePackageAnswers(answers);
                 if (packageAnswers.packageKind === "config") {
-                    return "Config presets stay in the repository and do not get a changeset.";
+                    return "Config packages are private workspace tooling. They stay in the repository and do not get a changeset.";
                 }
                 const changesetDirectory = path.join(
                     repositoryRoot(),
@@ -206,11 +206,9 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
                         `"${packageName}": minor`,
                         "---",
                         "",
-                        `Add ${packageName}.`,
+                        `Summary: First release of ${packageName}.`,
                         "",
-                        "The package starts at 0.0.0. This changeset releases 0.1.0.",
-                        "Publish 0.1.0 once from a laptop so an npm trusted publisher can be attached.",
-                        "Later versions are published by .github/workflows/release.yml.",
+                        `Added: \`packageIdentifier\` returns \`${packageName}\`.`,
                         "",
                     ].join("\n"),
                 );

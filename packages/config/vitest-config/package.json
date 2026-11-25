@@ -1,5 +1,6 @@
 {
     "name": "@sgx4u/vitest-config",
+    "private": true,
     "version": "0.0.0",
     "description": "Vitest preset for @sgx4u packages.",
     "license": "MIT",
@@ -51,10 +52,6 @@
     },
     "peerDependencies": {
         "vitest": "^5.0.0"
-    },
-    "publishConfig": {
-        "access": "public",
-        "provenance": true
     },
     "repository": {
         "type": "git",

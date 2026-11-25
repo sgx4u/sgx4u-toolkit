@@ -1,10 +1,15 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, mkdirSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import test from "node:test";
-import { listPublishablePackages } from "./check-pack.mjs";
+import { fileURLToPath } from "node:url";
+import {
+    listPackReviewPackages,
+    listPublishablePackages,
+} from "./check-pack.mjs";
+
+const repositoryRoot = fileURLToPath(new URL("..", import.meta.url));
 
 test("an empty repository has no publishable packages", () => {
     const rootDirectory = mkdtempSync(path.join(tmpdir(), "sgx4u-pack-"));
@@ -14,19 +19,23 @@ test("an empty repository has no publishable packages", () => {
     assert.deepEqual(listPublishablePackages(rootDirectory), []);
 });
 
-test("packages that are not private are included in the pack review", () => {
-    const rootDirectory = path.resolve(
-        path.dirname(fileURLToPath(import.meta.url)),
-        "..",
+test("workspace tooling is reviewed and is not on the npm publish list", () => {
+    const relative = (absolutePath) =>
+        path.relative(repositoryRoot, absolutePath).split(path.sep).join("/");
+    const published = new Set(
+        listPublishablePackages(repositoryRoot).map(relative),
     );
-    const relativeDirectories = listPublishablePackages(rootDirectory).map(
-        (packageDirectory) => path.relative(rootDirectory, packageDirectory),
+    const reviewed = new Set(
+        listPackReviewPackages(repositoryRoot).map(relative),
     );
-    assert.deepEqual(relativeDirectories, [
-        "packages/config/eslint-config",
-        "packages/config/prettier-config",
-        "packages/config/tsconfig",
-        "packages/config/tsdown-config",
-        "packages/config/vitest-config",
-    ]);
+    const configDirectory = path.join(repositoryRoot, "packages", "config");
+
+    for (const entry of readdirSync(configDirectory, { withFileTypes: true })) {
+        if (!entry.isDirectory()) {
+            continue;
+        }
+        const toolingPath = `packages/config/${entry.name}`;
+        assert.equal(published.has(toolingPath), false, toolingPath);
+        assert.equal(reviewed.has(toolingPath), true, toolingPath);
+    }
 });

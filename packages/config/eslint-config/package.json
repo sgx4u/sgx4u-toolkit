@@ -1,5 +1,6 @@
 {
     "name": "@sgx4u/eslint-config",
+    "private": true,
     "version": "0.0.0",
     "description": "ESLint flat config for @sgx4u packages, including runtime import rules.",
     "license": "MIT",
@@ -53,10 +54,6 @@
     "peerDependencies": {
         "eslint": "^10.0.0",
         "typescript": ">=6"
-    },
-    "publishConfig": {
-        "access": "public",
-        "provenance": true
     },
     "repository": {
         "type": "git",
