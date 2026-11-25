@@ -1,2 +1,2 @@
-export { collapseWhitespace } from "./collapse-whitespace.js";
-export { isBlank } from "./is-blank.js";
+export { collapseWhitespace } from "./collapse-whitespace/index.js";
+export { isBlank } from "./is-blank/index.js";

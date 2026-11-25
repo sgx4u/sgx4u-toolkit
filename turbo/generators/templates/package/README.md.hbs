@@ -10,13 +10,13 @@ Runtime: `{{runtimeName}}`. Universal code uses web standards and runs in browse
 pnpm add @sgx4u/{{packageName}}
 ```
 
-Requires Node `>=22.12`. The package publishes ESM (`import`) and CommonJS (`require`).
+Requires Node `>=22.12`. The package publishes ESM (`import`) and CommonJS (`require`). The export map lists `@sgx4u/source` before `import` and `require`, pointing at `src/index.ts`. TypeScript uses that condition when `customConditions` includes `@sgx4u/source`.
 
 ## API
 
 ### `packageIdentifier(): string`
 
-Stub exported so the new package typechecks, tests, and packs. Replace it before the first release and update this section.
+Stub exported so the new package typechecks, tests, and packs. The implementation, the folder `index.ts`, and the test live in `src/package-identifier/`. `src/index.ts` re-exports it. Replace the stub before the first release and update this section.
 
 ## Examples
 
