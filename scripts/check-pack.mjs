@@ -37,7 +37,9 @@ export function listPublishablePackages(repositoryDirectory) {
             if (
                 entry.name === "node_modules" ||
                 entry.name === "dist" ||
-                entry.name === ".git"
+                entry.name === ".git" ||
+                (entry.name === "config" &&
+                    path.basename(directory) === "packages")
             ) {
                 continue;
             }

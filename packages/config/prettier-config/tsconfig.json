@@ -1,5 +1,5 @@
 {
-    "extends": "@sgx4u/tsconfig/node.json",
+    "extends": "../tsconfig/node.json",
     "compilerOptions": {
         "noEmit": true
     },

@@ -1,6 +1,6 @@
 # Runtimes
 
-Every library under `packages/<name>` picks one runtime: `universal`, `edge`, or `node`. Config presets under `packages/config/<name>` are tooling. They use Node, they are tagged `layout:config`, and they are dev dependencies.
+Every library under `packages/<name>` picks one runtime: `universal`, `edge`, or `node`. Presets under `packages/config` support those libraries. They use Node, they are tagged `layout:config`, and they stay in this repository.
 
 `pnpm exec turbo gen package` asks for the runtime and writes the tag, the ESLint runtime, the TypeScript preset, the tsdown config, and the Vitest config together. Change those as a set.
 

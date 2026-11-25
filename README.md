@@ -27,9 +27,9 @@
 <p align="center">
     <a href="./CONTRIBUTING.md">Contributing</a>
     &middot;
-    <a href="./.github/ISSUE_TEMPLATE/bug_report.yml">Report a bug</a>
+    <a href="./.github/ISSUE_TEMPLATE/bug-report.yml">Report a bug</a>
     &middot;
-    <a href="./.github/ISSUE_TEMPLATE/feature_request.yml">Request a feature</a>
+    <a href="./.github/ISSUE_TEMPLATE/feature.yml">Request a feature</a>
 </p>
 </div>
 
@@ -41,6 +41,7 @@
 - [Packages](#packages)
 - [Runtimes](#runtimes)
 - [Installation](#installation)
+- [Usage](#usage)
 - [Development](#development)
 - [Releases](#releases)
 - [Repository](#repository)
@@ -51,7 +52,7 @@
 
 <h2 id="about">💫 About</h2>
 
-A published library declares `"node": ">=22.12"`. It builds with tsdown and ships ESM and CommonJS. `import` resolves `dist/*.js` with `dist/*.d.ts`. `require` resolves `dist/*.cjs` with `dist/*.d.cts`. The `@sgx4u/source` export condition points at TypeScript source (`src/index.ts`). This workspace resolves it through `customConditions`. A published install uses `dist`.
+Libraries live in `packages/<name>`. A published library declares `"node": ">=22.12"`. It builds with tsdown and ships ESM and CommonJS. `import` resolves `dist/*.js` with `dist/*.d.ts`. `require` resolves `dist/*.cjs` with `dist/*.d.cts`. The `@sgx4u/source` export condition points at TypeScript source (`src/index.ts`). This workspace resolves it through `customConditions`. A published install uses `dist`.
 
 Inside this repo, a runtime dependency on another toolkit package uses `workspace:^`. Dev dependencies use `workspace:*`. Third-party versions live in the pnpm catalog in `pnpm-workspace.yaml`. Add a catalog entry when a package needs that dependency.
 
@@ -103,6 +104,14 @@ Node 22.12 or newer. `import` loads the ESM build. `require()` loads the CommonJ
 
 <br />
 
+<h2 id="usage">💡 Usage</h2>
+
+Import the export you need from the package. The package README lists the exports and what each one does for a caller.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<br />
+
 <h2 id="development">🛠️ Development</h2>
 
 Install Node 24 (`.nvmrc`) and pnpm 11.25.0 (the `packageManager` field in `package.json`). The workspace `engines.node` range is `>=24`.
@@ -126,7 +135,7 @@ pnpm check
 | `pnpm check`        | `turbo boundaries`, sherif, `scripts/check-links.mjs`, `turbo run check:package` (publint and attw), and `scripts/check-pack.mjs`. |
 | `pnpm format:check` | Prettier. `pnpm format` writes the same format.                                                                                    |
 
-`pnpm changeset` runs the Changesets CLI.
+`pnpm changeset` adds a release note for a published package. The format is in [.changeset/README.md](./.changeset/README.md).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

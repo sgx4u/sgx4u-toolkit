@@ -17,7 +17,7 @@ export default [
             "turbo/no-undeclared-env-vars": [
                 "error",
                 {
-                    allowList: ["^GITHUB_REF_NAME$", "^CHANGESET_PACK_DIR$"],
+                    allowList: ["^GITHUB_REF_NAME$", "^CHANGESETS_OUTPUT$"],
                 },
             ],
         },
