@@ -14,11 +14,13 @@ Node 22.12 or newer. `import` loads the ESM build. `require()` loads the CommonJ
 
 ### `isBlank(value: string): boolean`
 
-Returns true when `value` is empty or only whitespace.
+Returns true when `value` is empty or only whitespace. Whitespace is the set `String.prototype.trim` removes. `value` is left unchanged.
 
 ### `collapseWhitespace(value: string): string`
 
-Trims `value` and replaces each internal whitespace run with a single space.
+Trims `value` and replaces each internal whitespace run with a single space. Whitespace is the same set. `value` is left unchanged.
+
+`src/index.ts` re-exports both functions. Each one lives in its own folder under `src`, with the test beside the implementation.
 
 ## Examples
 
