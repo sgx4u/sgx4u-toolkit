@@ -8,10 +8,15 @@
 #   production would publish prereleases as latest.
 # develop does not publish. It is the stable integration branch and is promoted to production.
 # release/** publishes older majors with dist-tag previous.
+# Only libraries under packages/<name> are published. Presets under packages/config are not.
 # Do not rename this file: trusted publishers are bound to release.yml.
 # This workflow stays separate from ci.yml. Pull requests must not receive
 # id-token: write or the release environment, and a publish must not be
 # cancelled when a later push starts.
+# The publish job is one sequence: checkout, install, build, pack review, publish.
+# Version and publish stay separate jobs so the GitHub App token and the npm
+# OIDC token are not in the same job. The snapshot check stays its own job so an
+# empty beta push does not wait on the release environment.
 name: release
 
 on:
@@ -30,12 +35,11 @@ concurrency:
 jobs:
     select-mode:
         name: select-mode
-        if: github.ref == 'refs/heads/production' || startsWith(github.ref, 'refs/heads/release/')
+        if: github.repository == 'sgx4u/sgx4u-toolkit' && (github.ref == 'refs/heads/production' || startsWith(github.ref, 'refs/heads/release/'))
         runs-on: ubuntu-latest
         timeout-minutes: 15
         outputs:
             mode: ${{ steps.select-mode.outputs.mode }}
-            publish-plan-artifact-id: ${{ steps.select-mode.outputs.publish-plan-artifact-id }}
         permissions:
             contents: read
         steps:
@@ -56,7 +60,7 @@ jobs:
     version:
         name: version
         needs: select-mode
-        if: needs.select-mode.outputs.mode == 'version'
+        if: github.repository == 'sgx4u/sgx4u-toolkit' && needs.select-mode.outputs.mode == 'version'
         runs-on: ubuntu-latest
         timeout-minutes: 20
         permissions:
@@ -93,42 +97,10 @@ jobs:
               env:
                   LEFTHOOK: "0"
 
-    pack:
-        name: pack
-        needs: select-mode
-        if: needs.select-mode.outputs.mode == 'publish'
-        runs-on: ubuntu-latest
-        timeout-minutes: 20
-        outputs:
-            pack-dir-artifact-id: ${{ steps.pack.outputs.pack-dir-artifact-id }}
-        permissions:
-            contents: read
-        steps:
-            - name: Check out repository
-              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-              with:
-                  persist-credentials: false
-
-            - name: Set up the workspace
-              uses: ./.github/actions/setup
-              with:
-                  cache: "false"
-
-            - name: Build packages
-              run: pnpm exec turbo run build
-
-            - name: Review packed files
-              run: node scripts/check-pack.mjs
-
-            - name: Pack publishable packages
-              id: pack
-              uses: changesets/action/pack@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
-              with:
-                  publish-plan-artifact-id: ${{ needs.select-mode.outputs.publish-plan-artifact-id }}
-
     publish:
         name: publish
-        needs: pack
+        needs: select-mode
+        if: github.repository == 'sgx4u/sgx4u-toolkit' && needs.select-mode.outputs.mode == 'publish'
         runs-on: ubuntu-latest
         timeout-minutes: 20
         environment: release
@@ -146,19 +118,19 @@ jobs:
               with:
                   cache: "false"
 
-            # Publish the tarballs the pack job reviewed, not a second build of the workspace.
-            - name: Download packed packages
-              uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-              with:
-                  artifact-ids: ${{ needs.pack.outputs.pack-dir-artifact-id }}
-                  path: packed-packages
+            - name: Build packages
+              run: pnpm exec turbo run build
 
-            # production -> latest, release/** -> previous.
-            # The dist-tag is written into publish-plan.json. Changesets rejects
-            # --tag together with --from-pack-dir.
+            - name: Review packed files
+              run: node scripts/check-pack.mjs
+
+            # production -> latest, release/** -> previous, inside the publish script.
             # beta does not use this job. It publishes uncommitted snapshots from the snapshot job.
             # develop is not a trigger. It does not publish.
-            # No NPM_TOKEN and no registry-url: npm CLI 11.5.1+ uses OIDC for this environment.
+            # No NPM_TOKEN and no registry-url: setup-node writes an empty auth token
+            # when registry-url is set, and that token skips trusted publishing.
+            # Libraries under packages/<name> are published. Presets under packages/config are not.
+            # Zero libraries is a successful run: the script logs and exits 0.
             - name: Publish to npm
               uses: changesets/action/publish@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
               with:
@@ -166,13 +138,12 @@ jobs:
                   create-github-releases: true
                   push-git-tags: true
               env:
-                  CHANGESET_PACK_DIR: packed-packages
                   LEFTHOOK: "0"
 
     sync-develop:
         name: sync-develop
         needs: publish
-        if: github.ref == 'refs/heads/production' && needs.publish.result == 'success'
+        if: github.repository == 'sgx4u/sgx4u-toolkit' && github.ref == 'refs/heads/production' && needs.publish.result == 'success'
         runs-on: ubuntu-latest
         timeout-minutes: 10
         permissions:
@@ -246,7 +217,7 @@ jobs:
 
     snapshot-check:
         name: snapshot-check
-        if: github.ref == 'refs/heads/beta'
+        if: github.repository == 'sgx4u/sgx4u-toolkit' && github.ref == 'refs/heads/beta'
         runs-on: ubuntu-latest
         timeout-minutes: 5
         outputs:
@@ -272,7 +243,7 @@ jobs:
     snapshot:
         name: snapshot
         needs: snapshot-check
-        if: needs.snapshot-check.outputs.has_changesets == 'true'
+        if: github.repository == 'sgx4u/sgx4u-toolkit' && needs.snapshot-check.outputs.has_changesets == 'true'
         runs-on: ubuntu-latest
         timeout-minutes: 20
         environment: release

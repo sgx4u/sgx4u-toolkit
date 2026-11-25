@@ -181,6 +181,9 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
             },
             (answers: unknown) => {
                 const packageAnswers = preparePackageAnswers(answers);
+                if (packageAnswers.packageKind === "config") {
+                    return "Config presets stay in the repository and do not get a changeset.";
+                }
                 const changesetDirectory = path.join(
                     repositoryRoot(),
                     ".changeset",
