@@ -2,6 +2,7 @@ version: 2
 updates:
     - package-ecosystem: github-actions
       directory: /
+      # develop only. beta receives these updates when develop is merged into beta.
       target-branch: develop
       schedule:
           interval: weekly

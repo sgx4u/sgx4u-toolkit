@@ -26,6 +26,9 @@ function assertPackageName(value: string): true | string {
     if (value === "config") {
         return "config is the tooling folder. Name the preset itself, such as eslint-config.";
     }
+    if (value === "toolkit") {
+        return "toolkit is the private workspace @sgx4u/toolkit. It is not a publishable package.";
+    }
     if (reservedPackageNames.has(value)) {
         return "utils, common, and shared are not package names. Name the one job the package does.";
     }

@@ -6,29 +6,65 @@ The GitHub owner is the personal account `sgx4u`. Where a team name would have b
 
 ## 1. Branches
 
-There is no `main`. Two long-lived branches stay protected:
+There is no `main`. Three long-lived branches stay protected, plus backport branches:
 
-| Branch       | Role                                                                                                                                       |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `develop`    | Default branch. Feature pull requests squash-merge here. Pushes publish Changesets snapshots on the npm `beta` dist-tag.                   |
-| `production` | Stable releases. Promote `develop` into `production` with a rebase merge. Pushes publish `latest` after the Version Packages pull request. |
+| Branch                       | Role                                                                                                                                                                                                   |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `develop`                    | Default branch. Stable integration. Feature pull requests that are ready for production squash-merge here. Pushes do not publish.                                                                      |
+| `beta`                       | Experimental line. It may run ahead of `develop`. Experimental pull requests squash-merge here. Pushes publish uncommitted Changesets snapshots on the npm `beta` dist-tag (`0.0.0-beta-<timestamp>`). |
+| `production`                 | Stable releases. Promote `develop` into `production` with a rebase merge. Pushes publish `latest` after the Version Packages pull request.                                                             |
+| `release/<package>/v<major>` | Older majors. Publish the `previous` dist-tag.                                                                                                                                                         |
 
-Create `production` from `develop` when the first stable release is ready. Create `release/<package>/v<major>` only when the first backport for that older major is needed. Those branches publish the `previous` dist-tag. Pull requests into them run the same required checks as `develop` and `production`.
+Create `beta` from `develop` before the first experiment. The workflows do not create that branch. Create `production` from `develop` when the first stable release is ready. Create `release/<package>/v<major>` only when the first backport for that older major is needed. Pull requests into `develop`, `beta`, `production`, and `release/**` run the same required checks.
 
-After `production` publishes, `release.yml` opens a pull request into `develop` from a new `sync/consumed-changesets-*` branch. Squash-merge it before the next promotion. The head is not `production`. Squash merges do not record `production`'s commits as ancestors, so a pull request whose head is the long-lived release branch would list those commits again next time and conflict. The sync commit only deletes changeset files that `production` removed since the branches diverged. A changeset added on `develop` after promotion is not in that set. Left on `develop`, an already released changeset would be added again by a later rebase, and the next Version Packages pull request would release the same work twice.
+### Why snapshots, not pre mode
+
+`beta` publishes with `changeset version --snapshot beta`. The configured snapshot template is `{tag}-{timestamp}` and `useCalculatedVersion` is false, so the published version is `0.0.0-beta-<timestamp>`. Changesets turns `commit` off for snapshot runs, the workflow job has `contents: read`, and `scripts/publish-beta-snapshot.mjs` restores `package.json`, changelogs, and changesets before the job ends. The prerelease version never lands on the branch.
+
+Pre mode (`changeset pre enter beta`) would commit `.changeset/pre.json` and versions such as `0.1.0-beta.0`. Those commits live on `beta`. A graduation pull request, or merging `beta` into `develop` by mistake, would carry them into `develop`. The rebase that promotes `develop` into `production` would then publish prereleases as `latest`.
+
+### Keeping beta in sync with develop
+
+Merge `develop` into `beta` with a merge commit, regularly, and again after every security fix:
+
+1. `git fetch origin`
+2. `git checkout -b sync/develop-into-beta origin/beta`
+3. `git merge origin/develop`
+4. Open a pull request into `beta` and merge it with **Create a merge commit**.
+
+Squash and rebase do not make `develop`'s commits ancestors of `beta`. The next sync pull request would list those commits again and conflict. This is the same reason the consumed-changeset sync below does not use `production` as its head. A merge commit moves the merge base forward, so the next sync contains only what landed on `develop` since the last one. `beta` keeps the experimental commits that are not on `develop`.
+
+### How a beta feature graduates
+
+Open the graduation pull request from the feature branch into `develop`, not from `beta`.
+
+1. Do the experiment on a feature branch and squash-merge it into `beta` so the snapshot publish includes it.
+2. When it is ready for the stable line, rebase that feature branch onto `develop` and open a pull request into `develop`. Include the changeset.
+3. Squash-merge it into `develop`.
+4. Merge `develop` back into `beta` so the experimental line picks up the graduated copy.
+
+`beta` contains every unfinished experiment and the sync merge commits. Merging that branch into `develop` would put all of it on the stable line. If the feature branch was already deleted, recreate the change on a new branch from `develop`. Still do not open the pull request from `beta`.
+
+The next `develop` into `beta` merge can conflict on a feature that was squash-merged to both branches. Keep the `develop` side for that feature. The two copies are the same change.
+
+After `production` publishes, `release.yml` opens a pull request into `develop` from a new `sync/consumed-changesets-*` branch. Squash-merge it before the next promotion. The head is not `production`. Squash merges do not record `production`'s commits as ancestors, so a pull request whose head is the long-lived release branch would list those commits again next time and conflict. The sync commit only deletes changeset files that `production` removed since the branches diverged. A changeset added on `develop` after promotion is not in that set. Left on `develop`, an already released changeset would be added again by a later rebase, and the next Version Packages pull request would release the same work twice. The following merge of `develop` into `beta` removes those consumed changesets from `beta` as well.
 
 Settings → General → Pull Requests:
 
-| Setting              | Value                                                    |
-| -------------------- | -------------------------------------------------------- |
-| Allow merge commits  | Off                                                      |
-| Allow squash merging | On. This is how feature pull requests enter `develop`.   |
-| Allow rebase merging | On. This is how `develop` is promoted into `production`. |
-| Default branch       | `develop`                                                |
+| Setting              | Value                                                                                        |
+| -------------------- | -------------------------------------------------------------------------------------------- |
+| Allow merge commits  | On. Used only to merge `develop` into `beta`. Feature pull requests are still squash-merged. |
+| Allow squash merging | On. This is how feature pull requests enter `develop` and `beta`.                            |
+| Allow rebase merging | On. This is how `develop` is promoted into `production`.                                     |
+| Default branch       | `develop`                                                                                    |
 
-## 2. Ruleset
+## 2. Rulesets
 
-Settings → Rules → New ruleset. Target `develop`, `production`, and `release/**`.
+Two rulesets. Protections apply to every long-lived branch. Linear history stays off `beta` so the `develop` merge commit can land.
+
+### Protected branches
+
+Settings → Rules → New ruleset, or edit the existing one. Target `develop`, `production`, `beta`, and `release/**`.
 
 | Setting                         | Value                                                                           |
 | ------------------------------- | ------------------------------------------------------------------------------- |
@@ -41,10 +77,24 @@ Settings → Rules → New ruleset. Target `develop`, `production`, and `release
 | Require conversation resolution | On                                                                              |
 | Require status checks           | `ci / lint`, `ci / typecheck`, `ci / test`, `ci / build`, `ci / package-checks` |
 | Branches up to date             | On                                                                              |
-| Require linear history          | On. Squash and rebase are the only merge methods, so history stays linear.      |
 | Bypass                          | Repository admin role, mode **For pull requests only**                          |
 
+Do not turn on **Require linear history** in this ruleset. That rule lives in the next ruleset, which does not include `beta`.
+
+If this ruleset already exists and targets only `develop`, `production`, and `release/**`, add `beta`. If it already requires linear history, turn that rule off here and add the ruleset below. Leaving linear history on `beta` blocks the merge commit, and squash or rebase cannot sync `develop` without replaying the same commits.
+
 You are the only admin, so you can merge your own pull requests. GitHub will not let you approve them yourself. That is expected. The bypass still requires a pull request.
+
+### Linear history
+
+Settings → Rules → New ruleset. Target `develop`, `production`, and `release/**`. Do not include `beta`.
+
+| Setting                | Value                                                                                         |
+| ---------------------- | --------------------------------------------------------------------------------------------- |
+| Enforcement            | Active                                                                                        |
+| Require linear history | On. Feature pull requests are squash-merged and `develop` is rebase-merged into `production`. |
+
+`beta` is omitted on purpose. The sync from `develop` is a merge commit. Feature pull requests into `beta` are still squash-merged.
 
 Optional extra checks once you trust them: `ci / test-node-22`, `ci / dependency-review`, `ci / pkg-pr-new`, `security / analyze`, `security / secrets`.
 
@@ -86,10 +136,10 @@ Settings → Environments → New environment → `release`.
 | Setting             | Value                                                                   |
 | ------------------- | ----------------------------------------------------------------------- |
 | Required reviewers  | Subhajit (`sgx4u`). Allow self-review, because there is one maintainer. |
-| Deployment branches | Selected: `develop`, `production`, `release/*`                          |
+| Deployment branches | Selected: `beta`, `production`, `release/*`                             |
 | Environment secrets | None                                                                    |
 
-The publish job is the only job with `id-token: write`. Approving the environment is the publish gate.
+The publish job and the beta snapshot job are the jobs with `id-token: write`. Approving the environment is the publish gate. `develop` is not a deployment branch: it does not publish. Replace `develop` with `beta` on an environment that already lists `develop`.
 
 ## 6. npm trusted publishing
 
@@ -139,7 +189,7 @@ Install the [pkg.pr.new GitHub App](https://github.com/apps/pkg-pr-new) on this 
 
 ## 10. Renovate
 
-Dependabot updates GitHub Actions only (`dependabot.yml`). npm updates belong to Renovate (`renovate.json`).
+Dependabot updates GitHub Actions only (`dependabot.yml`). npm updates belong to Renovate (`renovate.json`). Both open pull requests against `develop` only. `beta` is not a base branch. A second lockfile stream would conflict every time `develop` is merged in. Dependency updates reach experimental builds through that merge.
 
 If Renovate runs from `sgx4u-devops`, point that job at this repository. The checked-in config groups `@sgx4u/**` minor and patch updates and turns automerge on for that group. Majors stay for review. This file does not mention a private scope.
 

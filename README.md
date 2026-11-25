@@ -22,7 +22,7 @@ UI packages live in [sgx4u-ui](https://github.com/sgx4u/sgx4u-ui). This reposito
 
 Tooling presets live in `packages/config`. Every other package lives in `packages/<name>`. Server adapters are regular packages with tier `adapter`. None are published yet.
 
-Packages publish ESM and CommonJS, are built with tsdown, and declare `"node": ">=22.12"`. `import` resolves `dist/*.js` with `dist/*.d.ts`. `require` resolves `dist/*.cjs` with `dist/*.d.cts`. Inside this repo, runtime dependencies use `workspace:^` and dev tooling uses `workspace:*`. Third-party versions live in the pnpm catalog.
+Packages publish ESM and CommonJS, are built with tsdown, and declare `"node": ">=22.12"`. `import` resolves `dist/*.js` with `dist/*.d.ts`. `require` resolves `dist/*.cjs` with `dist/*.d.cts`. Inside this repo, runtime dependencies use `workspace:^` and dev tooling uses `workspace:*`. Third-party versions live in the pnpm catalog. Add a catalog entry only when a package needs it. The root workspace package is the private `@sgx4u/toolkit`. It is never published.
 
 ## Usage
 
@@ -69,13 +69,15 @@ Versions are independent. `updateInternalDependencies` is `minor`, so a minor bu
 
 ## Releases
 
-Feature pull requests squash-merge into `develop`. `develop` is promoted into `production` with a rebase merge. There is no `main` branch.
+Stable feature pull requests squash-merge into `develop`. That branch is stable integration: code there is ready for production, and pushes to `develop` do not publish. Promote `develop` into `production` with a rebase merge. Experimental work squash-merges into `beta`, which may run ahead of `develop`. There is no `main` branch.
 
-Pushes to `develop`, `production`, and `release/**` run [`.github/workflows/release.yml`](./.github/workflows/release.yml).
+Pushes to `beta`, `production`, and `release/**` run [`.github/workflows/release.yml`](./.github/workflows/release.yml).
 
-- `develop` publishes Changesets snapshots to the `beta` dist-tag. Those version numbers are not committed. Snapshot is used instead of pre mode because a committed pre-mode file would ride the rebase into `production` and publish prereleases as `latest`.
+- `beta` publishes Changesets snapshots to the `beta` dist-tag, for example `0.0.0-beta-<timestamp>`. The base stays `0.0.0` (`snapshot.useCalculatedVersion` is false) and the suffix is the tag plus a timestamp. Snapshot mode does not commit, the publish job cannot push (`contents: read`), and the script restores the checkout afterward. Pre mode is the wrong tool: it would commit `.changeset/pre.json` and prerelease versions on `beta`, and those commits could ride a graduation pull request or a mistaken `beta` merge into `develop`, then the rebase into `production`, which would publish prereleases as `latest`.
+- Keep `beta` current by merging `develop` into `beta` with a merge commit. Do that regularly, and after every security fix. Squash and rebase do not record `develop` as an ancestor, so the next sync would replay the same commits and conflict. See [docs/repo-settings.md](./docs/repo-settings.md).
+- A feature graduates from its own branch. Squash-merge that branch into `beta` while it is experimental. When it is ready, rebase it onto `develop` and open the pull request into `develop`. Do not merge `beta` into `develop`. `beta` holds every unfinished experiment, and merging it wholesale would put those experiments on the stable line.
 - `production` opens a **Version Packages** pull request through a GitHub App, so CI runs on it. Merging that pull request publishes `latest` from the `release` environment with npm trusted publishing (OIDC) and provenance. The workflow then opens a pull request from a new `sync/consumed-changesets-*` branch into `develop`. Squash-merge it before the next promotion. The head is not `production`: develop only squash-merges, so a pull request from the long-lived release branch would not record those commits as ancestors, and the next release would open the same pairing again and conflict. The sync commit only deletes changeset files that production removed since the branches diverged, so changesets added on develop after promotion stay, and a later rebase does not release the old ones a second time.
-- `release/**` publishes older majors on the `previous` dist-tag. Pull requests into those branches run the same required checks.
+- `release/**` publishes older majors on the `previous` dist-tag. Pull requests into `develop`, `beta`, `production`, and `release/**` run the same required checks.
 
 The first version of a new package is published from a laptop. npm can attach a trusted publisher only after the package exists. Later versions are published only by the workflow. See [docs/repo-settings.md](./docs/repo-settings.md).
 

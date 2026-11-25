@@ -1,7 +1,12 @@
 # production publishes stable versions (dist-tag latest) after a Version Packages pull request.
-# develop publishes Changesets snapshots to dist-tag beta and does not commit those versions.
-#   Pre mode is the wrong tool here: develop is rebase-merged into production, so a
-#   committed .changeset/pre.json would make production publish prereleases as latest.
+# beta publishes Changesets snapshots to dist-tag beta and does not commit those versions.
+#   Versions look like 0.0.0-beta-<timestamp>. Snapshot mode forces commit off, the job
+#   has contents: read, and scripts/publish-beta-snapshot.mjs restores the checkout.
+#   Pre mode is the wrong tool: changeset pre enter commits .changeset/pre.json and
+#   prerelease versions on beta. A graduation pull request, or a mistaken merge of beta
+#   into develop, would carry that file into develop and then into production, and
+#   production would publish prereleases as latest.
+# develop does not publish. It is the stable integration branch and is promoted to production.
 # release/** publishes older majors with dist-tag previous.
 # Do not rename this file: trusted publishers are bound to release.yml.
 # This workflow stays separate from ci.yml. Pull requests must not receive
@@ -12,7 +17,7 @@ name: release
 on:
     push:
         branches:
-            - develop
+            - beta
             - production
             - "release/**"
 
@@ -25,7 +30,7 @@ concurrency:
 jobs:
     select-mode:
         name: select-mode
-        if: github.ref != 'refs/heads/develop'
+        if: github.ref == 'refs/heads/production' || startsWith(github.ref, 'refs/heads/release/')
         runs-on: ubuntu-latest
         timeout-minutes: 15
         outputs:
@@ -151,7 +156,8 @@ jobs:
             # production -> latest, release/** -> previous.
             # The dist-tag is written into publish-plan.json. Changesets rejects
             # --tag together with --from-pack-dir.
-            # develop does not use this job. It publishes snapshots from the snapshot job.
+            # beta does not use this job. It publishes uncommitted snapshots from the snapshot job.
+            # develop is not a trigger. It does not publish.
             # No NPM_TOKEN and no registry-url: npm CLI 11.5.1+ uses OIDC for this environment.
             - name: Publish to npm
               uses: changesets/action/publish@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
@@ -240,7 +246,7 @@ jobs:
 
     snapshot-check:
         name: snapshot-check
-        if: github.ref == 'refs/heads/develop'
+        if: github.ref == 'refs/heads/beta'
         runs-on: ubuntu-latest
         timeout-minutes: 5
         outputs:
@@ -287,6 +293,8 @@ jobs:
             - name: Build packages
               run: pnpm exec turbo run build
 
+            # contents: read on this job, plus the script restoring the worktree,
+            # keeps 0.0.0-beta-<timestamp> versions from being committed.
             - name: Publish beta snapshots
               run: node scripts/publish-beta-snapshot.mjs
               env:

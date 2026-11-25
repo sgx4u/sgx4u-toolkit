@@ -1,5 +1,5 @@
 {
-    "name": "sgx4u-toolkit",
+    "name": "@sgx4u/toolkit",
     "private": true,
     "type": "module",
     "description": "Public Turborepo of shared non-UI @sgx4u packages.",

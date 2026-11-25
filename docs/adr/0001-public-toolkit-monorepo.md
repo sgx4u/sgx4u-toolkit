@@ -28,5 +28,5 @@ The plan pins TypeScript `~6.0.3` and treats TypeScript 7 as a later, separate u
 
 - A change that crosses foundation and backend can land in one pull request.
 - The first `0.1.0` of each package is published from a laptop. npm cannot attach a trusted publisher before the package exists. Later versions come from CI, with provenance, and no npm write token is stored.
-- `develop` stays the default branch. `production` is the stable release branch. There is no `main`. Changesets uses `develop` as `baseBranch`. `develop` publishes beta snapshots so a rebase into `production` does not carry pre-mode state.
+- `develop` stays the default branch and the stable integration branch. It does not publish. `production` is the stable release branch. `beta` is the experimental branch and publishes uncommitted Changesets snapshots (`0.0.0-beta-<timestamp>`), so a prerelease version is never committed and cannot ride into `develop` or `production`. There is no `main`. Changesets uses `develop` as `baseBranch`. Revised November 2026: snapshots moved off `develop` onto `beta`.
 - A later folder move leaves the published name `@sgx4u/<name>` unchanged.

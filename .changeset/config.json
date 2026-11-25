@@ -11,6 +11,10 @@
     "baseBranch": "develop",
     "updateInternalDependencies": "minor",
     "ignore": [],
+    "snapshot": {
+        "useCalculatedVersion": false,
+        "prereleaseTemplate": "{tag}-{timestamp}"
+    },
     "privatePackages": {
         "version": false,
         "tag": false
