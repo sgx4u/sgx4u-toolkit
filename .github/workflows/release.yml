@@ -160,6 +160,57 @@ jobs:
           CHANGESET_PACK_DIR: packed-packages
           LEFTHOOK: "0"
 
+  sync-develop:
+    name: sync-develop
+    needs: publish
+    if: github.ref == 'refs/heads/production' && needs.publish.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          filter: blob:none
+          persist-credentials: false
+
+      - name: Create a release app token
+        id: app-token
+        uses: actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc # v3.4.0
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          permission-contents: read
+          permission-pull-requests: write
+
+      # Rebase-merging develop into production replays develop's commits.
+      # Beta snapshots leave the changeset files on develop. After production
+      # consumes them, those files must land back on develop or the next
+      # promotion adds the same changesets and releases the work again.
+      - name: Open a pull request from production into develop
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          git fetch origin develop:refs/remotes/origin/develop
+          git fetch origin production:refs/remotes/origin/production
+          if git merge-base --is-ancestor origin/production origin/develop; then
+            echo "develop already contains production."
+            exit 0
+          fi
+          open_count="$(gh pr list --repo "${GITHUB_REPOSITORY}" --base develop --head production --state open --json number --jq 'length')"
+          if [ "${open_count}" != "0" ]; then
+            echo "A sync pull request is already open."
+            exit 0
+          fi
+          gh pr create \
+            --repo "${GITHUB_REPOSITORY}" \
+            --base develop \
+            --head production \
+            --title "chore: sync production into develop" \
+            --body "Production published a release and removed the changesets it used. Merge this into develop before the next promotion. A later rebase of develop onto production replays develop's commits, and changeset files that are still only on develop would be added again and released a second time."
+
   snapshot-check:
     name: snapshot-check
     if: github.ref == 'refs/heads/develop'

@@ -13,7 +13,9 @@ There is no `main`. Two long-lived branches stay protected:
 | `develop`    | Default branch. Feature pull requests squash-merge here. Pushes publish Changesets snapshots on the npm `beta` dist-tag.                   |
 | `production` | Stable releases. Promote `develop` into `production` with a rebase merge. Pushes publish `latest` after the Version Packages pull request. |
 
-Create `production` from `develop` when the first stable release is ready. Create `release/<package>/v<major>` only when the first backport for that older major is needed. Those branches publish the `previous` dist-tag.
+Create `production` from `develop` when the first stable release is ready. Create `release/<package>/v<major>` only when the first backport for that older major is needed. Those branches publish the `previous` dist-tag. Pull requests into them run the same required checks as `develop` and `production`.
+
+After `production` publishes, `release.yml` opens a pull request from `production` into `develop`. Merge it before the next promotion. The promotion is a rebase, so it replays commits that are still only on `develop`. Changeset files left behind by the beta snapshot would be added again and the next Version Packages pull request would release the same work twice.
 
 Settings → General → Pull Requests:
 

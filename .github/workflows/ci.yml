@@ -1,5 +1,6 @@
-# Pull requests into develop or production, plus pushes to those branches and
-# maintenance branches. pull_request keeps fork code away from secrets.
+# Pull requests into develop, production, or a release branch, plus pushes to
+# those branches. pull_request keeps fork code away from secrets.
+# release/** is included because the ruleset requires these checks there too.
 # Required check names, once the ruleset exists: ci / lint, ci / typecheck, ci / test, ci / build, ci / package-checks.
 name: ci
 
@@ -8,6 +9,7 @@ on:
     branches:
       - develop
       - production
+      - "release/**"
   push:
     branches:
       - develop
