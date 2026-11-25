@@ -6,7 +6,7 @@ Accepted. 25 November 2026.
 
 ## Context
 
-Shared non-UI packages need one place to version, test, and publish. The repository was created with `create-turbo`, which added two Next.js apps and a private `@repo/ui` package. That starter is a demo. The architecture plan puts UI in `sgx4u-ui` and keeps this repository public.
+Shared packages need one place to version, test, and publish. The repository was created with `create-turbo`, which added two Next.js apps and a private `@repo/ui` package. That starter is a demo. Those files were removed. This repository publishes libraries and tooling presets only.
 
 The GitHub owner is the personal account `sgx4u`. There is no `sgx4u` organization, so CODEOWNERS cannot mention a team.
 
@@ -15,8 +15,8 @@ The plan pins TypeScript `~6.0.3` and treats TypeScript 7 as a later, separate u
 ## Decision
 
 - One public pnpm workspace. Tooling presets live in `packages/config`. Every other package lives in `packages/<name>`.
-- The Next.js starter apps and `@repo/ui` are removed. UI stays in `sgx4u-ui`.
-- Nothing in this repository references `@sgx4u-private` or a private registry. CI rejects those references, and it rejects `@sgx4u/ui*`.
+- The Next.js starter apps and `@repo/ui` are removed.
+- Nothing in this repository references `@sgx4u-private` or a private registry. CI rejects those references.
 - Config presets in `packages/config` are public packages. Sibling repositories install them from npm. Inside this repo they are `workspace:*` dev dependencies. They do not depend on packages under `packages/`.
 - Runtime dependencies between packages use `workspace:^`.
 - Libraries are built with tsdown and publish both ESM and CommonJS. Published packages declare `node >= 22.12`. Development and CI use Node 24.

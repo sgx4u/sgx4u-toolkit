@@ -36,7 +36,7 @@ Major (breaking) changes are never backported to `release/**`. Those branches re
 
 A security fix lands on `develop` first, is promoted to `production` for `latest`, is cherry-picked onto each supported `release/**` branch when it is a patch or minor fix, and is merged into `beta` so experimental builds pick it up. A major security fix is not backported. See [SECURITY.md](./SECURITY.md).
 
-CI runs the affected lint, typecheck, test, and build tasks, then publint, attw, pack review, Turborepo boundaries, and sherif. It fails if a change introduces `@sgx4u-private`, `@sgx4u/ui*`, or a `link:` / `file:` dependency that points outside the repo.
+CI runs the affected lint, typecheck, test, and build tasks, then publint, attw, pack review, Turborepo boundaries, and sherif. It fails if a change introduces `@sgx4u-private` or a `link:` / `file:` dependency that points outside the repo.
 
 ## Packages
 
@@ -53,7 +53,7 @@ Names are lowercase kebab-case. `utils`, `common`, and `shared` are rejected. Co
 
 Runtime dependencies on other toolkit packages use `workspace:^`. Presets use `workspace:*`. Third-party versions use `catalog:`. Add a catalog entry only when a package needs it. Do not add a version for a dependency no package in this repository installs.
 
-`@sgx4u/tsconfig` still publishes React, Next.js, React Native, and Workers presets for `sgx4u-ui` and future packages. `@sgx4u/eslint-config` still rejects React imports in toolkit runtimes. None of `react`, `react-dom`, `next`, `hono`, `react-native`, or `@cloudflare/workers-types` are in the catalog. The generator can still scaffold an `edge` package against `@sgx4u/tsconfig/workers.json`. Before that package installs and typechecks, add `@cloudflare/workers-types` to the catalog and to the package, because that preset loads those types.
+The generator can scaffold an `edge` package against `@sgx4u/tsconfig/workers.json`. That preset loads `@cloudflare/workers-types`, which is not in the catalog. Before that package installs and typechecks, add `@cloudflare/workers-types` to the catalog and to the package.
 
 Libraries export named functions from `src/index.ts`, with explicit return types. Tests sit next to the source. tsdown writes ESM and CommonJS into `dist` (`index.js` / `index.d.ts` and `index.cjs` / `index.d.cts`). The `files` field publishes `dist` and `src` (so the `@sgx4u/source` condition resolves) and excludes tests. Export maps list `types` before the runtime file for both `import` and `require`, and set `main`, `module`, and `types` as fallbacks.
 

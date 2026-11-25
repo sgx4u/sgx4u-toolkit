@@ -8,17 +8,14 @@ import tseslint from "typescript-eslint";
 const privateScopeMessage =
   "Public toolkit packages never depend on @sgx4u-private. Private code stays in its own repository.";
 
-const userInterfaceScopeMessage =
-  "Toolkit packages never depend on @sgx4u/ui or @sgx4u/ui-*. UI lives in sgx4u-ui.";
-
 const deepImportMessage =
   "Import @sgx4u packages through their exports map. Deep imports into src/ or dist/ are not supported.";
 
 const universalRuntimeMessage =
-  "Universal packages may use web-standard APIs only (fetch, URL, Web Crypto, TextEncoder, streams). Node built-ins and React are not allowed.";
+  "Universal packages may use web-standard APIs only (fetch, URL, Web Crypto, TextEncoder, streams). Node built-ins are not allowed.";
 
 const edgeRuntimeMessage =
-  "Edge packages may use web standards and the Workers nodejs_compat subset. Node-only, DOM-framework, and React Native modules are not allowed.";
+  "Edge packages may use web standards and the Workers nodejs_compat subset. Node-only built-ins outside that subset are not allowed.";
 
 /**
  * @param {import("./index.js").PackageRuntime} runtime
@@ -31,10 +28,6 @@ function restrictedImportsForRuntime(runtime) {
       message: privateScopeMessage,
     },
     {
-      group: ["@sgx4u/ui", "@sgx4u/ui/*", "@sgx4u/ui-*"],
-      message: userInterfaceScopeMessage,
-    },
-    {
       group: [
         "@sgx4u/*/src",
         "@sgx4u/*/src/**",
@@ -45,7 +38,7 @@ function restrictedImportsForRuntime(runtime) {
     },
   ];
 
-  if (runtime === "universal" || runtime === "web" || runtime === "native") {
+  if (runtime === "universal") {
     patterns.push({
       group: [
         "node:*",
@@ -64,14 +57,6 @@ function restrictedImportsForRuntime(runtime) {
         "module",
       ],
       message: universalRuntimeMessage,
-    });
-  }
-
-  if (runtime === "universal" || runtime === "edge" || runtime === "node") {
-    patterns.push({
-      group: ["react", "react-dom", "react-native", "react-native/*"],
-      message:
-        "React belongs to sgx4u-ui. Packages in this repository do not import React.",
     });
   }
 
@@ -122,7 +107,7 @@ function restrictedImportsForRuntime(runtime) {
  * Flat config shared by every package.
  * `turbo boundaries` keeps packages/config from depending on packages/<name>.
  * This config enforces the runtime import rules for the runtime you pass,
- * and rejects @sgx4u-private and @sgx4u/ui imports in the editor.
+ * and rejects @sgx4u-private imports in the editor.
  *
  * @param {import("./index.js").PackageLintOptions} options
  * @returns {import("eslint").Linter.Config[]}
@@ -177,18 +162,12 @@ export function definePackageConfig(options) {
                 disallow: {
                   to: {
                     module: {
-                      source: [
-                        "@sgx4u-private",
-                        "@sgx4u-private/*",
-                        "@sgx4u/ui",
-                        "@sgx4u/ui/*",
-                        "@sgx4u/ui-*",
-                      ],
+                      source: ["@sgx4u-private", "@sgx4u-private/*"],
                     },
                   },
                 },
                 message:
-                  "Public toolkit source cannot import @sgx4u-private or @sgx4u/ui packages.",
+                  "Public toolkit source cannot import @sgx4u-private packages.",
               },
             ],
           },
@@ -230,12 +209,7 @@ export function defineRootConfig() {
     }
     return {
       ...config,
-      ignores: [
-        ...(config.ignores ?? []),
-        "packages/**",
-        "apps/**",
-        "tooling/**",
-      ],
+      ignores: [...(config.ignores ?? []), "packages/**"],
     };
   });
 }

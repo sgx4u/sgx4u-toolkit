@@ -32,7 +32,6 @@ const skippedRelativePaths = new Set([
     // These files name the forbidden scopes in order to reject them.
     "scripts/check-visibility.mjs",
     "scripts/check-visibility.test.mjs",
-    "scripts/check-links.test.mjs",
     "packages/config/eslint-config/index.js",
 ]);
 
@@ -42,12 +41,6 @@ const forbiddenReferences = [
         expression: /@sgx4u-private\b/,
         message:
             "Public toolkit files cannot reference @sgx4u-private. Private packages live in a separate repository.",
-    },
-    {
-        name: "ui-scope",
-        expression: /@sgx4u\/ui(?:[\s"'`/]|$|-)/,
-        message:
-            "Toolkit files cannot reference @sgx4u/ui or @sgx4u/ui-*. UI packages live in sgx4u-ui.",
     },
 ];
 

@@ -39,11 +39,12 @@ test("package manifests cannot link outside the repository", () => {
         path.join(packageDirectory, "package.json"),
         JSON.stringify({
             dependencies: {
-                "@sgx4u/ui": "link:../../../../sgx4u-ui/packages/ui",
+                "example-library":
+                    "link:../../../../other-repo/packages/example",
             },
         }),
     );
     const findings = findEscapingLinks(rootDirectory);
     assert.equal(findings.length, 1);
-    assert.equal(findings[0]?.dependencyName, "@sgx4u/ui");
+    assert.equal(findings[0]?.dependencyName, "example-library");
 });

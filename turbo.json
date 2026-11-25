@@ -54,24 +54,10 @@
             },
             "runtime:edge": {
                 "dependencies": {
-                    "deny": ["runtime:node", "runtime:web", "runtime:native"]
+                    "deny": ["runtime:node"]
                 }
             },
-            "runtime:web": {
-                "dependencies": {
-                    "deny": ["runtime:node", "runtime:native"]
-                }
-            },
-            "runtime:native": {
-                "dependencies": {
-                    "deny": ["runtime:node", "runtime:web"]
-                }
-            },
-            "runtime:node": {
-                "dependencies": {
-                    "deny": ["runtime:web", "runtime:native"]
-                }
-            }
+            "runtime:node": {}
         }
     }
 }

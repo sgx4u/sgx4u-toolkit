@@ -1,7 +1,7 @@
 {
   "name": "@sgx4u/tsconfig",
   "version": "0.0.0",
-  "description": "Shared TypeScript presets for @sgx4u packages and the apps that consume them.",
+  "description": "Shared TypeScript presets for @sgx4u packages.",
   "license": "MIT",
   "author": "Subhajit Ghosh",
   "type": "module",
@@ -22,25 +22,10 @@
       "require": "./node.json",
       "default": "./node.json"
     },
-    "./react.json": {
-      "import": "./react.json",
-      "require": "./react.json",
-      "default": "./react.json"
-    },
-    "./nextjs.json": {
-      "import": "./nextjs.json",
-      "require": "./nextjs.json",
-      "default": "./nextjs.json"
-    },
     "./workers.json": {
       "import": "./workers.json",
       "require": "./workers.json",
       "default": "./workers.json"
-    },
-    "./react-native.json": {
-      "import": "./react-native.json",
-      "require": "./react-native.json",
-      "default": "./react-native.json"
     },
     "./package.json": "./package.json"
   },
@@ -48,10 +33,7 @@
     "base.json",
     "library.json",
     "node.json",
-    "react.json",
-    "nextjs.json",
     "workers.json",
-    "react-native.json",
     "README.md"
   ],
   "scripts": {
