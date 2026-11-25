@@ -30,6 +30,7 @@ export { mergeIntervals } from "./merge-intervals/merge-intervals.js";
 export { splitInterval } from "./split-interval/split-interval.js";
 export { subtractIntervals } from "./subtract-intervals/subtract-intervals.js";
 export { endOfUnit } from "./end-of-unit/end-of-unit.js";
+export { findAvailableSlots } from "./find-available-slots/find-available-slots.js";
 export { findClosestDate } from "./find-closest-date/find-closest-date.js";
 export { findClosestDateIndex } from "./find-closest-date-index/find-closest-date-index.js";
 export { getDateParts } from "./get-date-parts/get-date-parts.js";
