@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping with the public `@sgx4u` toolkit. Private code does not belong in this repository at all.
+Thanks for helping with the public `@sgx4u` toolkit.
 
 ## Setup
 
@@ -9,13 +9,13 @@ Thanks for helping with the public `@sgx4u` toolkit. Private code does not belon
 3. `pnpm install`
 4. `pnpm test`
 
-The root `package.json` name is `@sgx4u/toolkit`. It stays `"private": true` and is never published.
+The root `package.json` name is `@sgx4u/toolkit`.
 
 Lefthook installs on `pnpm install`. Commits are checked with commitlint (Conventional Commits) and lint-staged.
 
 ## Pull requests
 
-Open a pull request from a fork into `develop` for work that is ready for production. That is the default branch, and it is the stable integration branch. Pushes to `develop` do not publish. Pull requests are squash-merged. `develop` is promoted into `production` with a rebase merge when a stable release is ready. There is no `main` branch. See [docs/repo-settings.md](./docs/repo-settings.md).
+Open a pull request from a fork into `develop` for work that is ready for production. That is the default branch, and it is the stable integration branch. Pushes to `develop` do not publish. Pull requests are squash-merged. `develop` is promoted into `production` with a rebase merge when a stable release is ready. See [docs/repo-settings.md](./docs/repo-settings.md).
 
 Experimental work opens a pull request into `beta`. `beta` may run ahead of `develop`. Squash-merge there too. Pushes to `beta` publish an uncommitted snapshot on the npm `beta` dist-tag (`0.0.0-beta-<timestamp>`). Those versions are not committed, so they cannot leak into `develop` or `production`.
 

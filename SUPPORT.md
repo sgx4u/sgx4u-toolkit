@@ -16,4 +16,4 @@ If you have anything that can be a great addition to this package then feel free
 | Vulnerability           | Private advisory, see [SECURITY.md](./SECURITY.md)                 |
 | Pull request            | [CONTRIBUTING.md](./CONTRIBUTING.md)                               |
 
-There is no paid support desk and no service-level agreement. Maintained lines are `beta`, `latest`, and `previous`, as described in [SECURITY.md](./SECURITY.md).
+Maintained lines are `beta`, `latest`, and `previous`, as described in [SECURITY.md](./SECURITY.md).
