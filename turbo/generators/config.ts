@@ -1,23 +1,58 @@
+/**
+ * Plop generator for a new `@sgx4u` package.
+ *
+ * Run it with `pnpm exec turbo gen package`. Turbo loads this file as the
+ * root generator. The prompts ask for a kebab-case name, a package kind, a
+ * runtime for a published library, and a GitHub handle.
+ */
+
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import type { PlopTypes } from "@turbo/gen";
 
+/** Runtime a generated package lints and typechecks as. */
 type RuntimeName = "universal" | "edge" | "node";
 
+/**
+ * Answers collected from the prompts, before derived fields are added.
+ *
+ * A config preset forces `runtimeName` to `"node"` and sets
+ * `packageDirectory` to `packages/config/<name>`. A regular package sets
+ * `packageDirectory` to `packages/<name>` and keeps the chosen runtime.
+ */
 interface PackagePromptAnswers {
+    /** Kebab-case name, without the `@sgx4u/` scope. */
     packageName: string;
+    /** `"config"` for a private preset, `"regular"` for a published library. */
     packageKind: "config" | "regular";
+    /** Runtime written into the ESLint config and the boundary tag. */
     runtimeName: RuntimeName;
+    /** GitHub handle without `@`, used in the README owner line. */
     ownerHandle: string;
+    /** Repository-relative directory the templates are written to. */
     packageDirectory: string;
 }
 
+/**
+ * Prompt answers plus the JSON `extends` text the tsconfig template inserts.
+ */
 interface PackageAnswers extends PackagePromptAnswers {
+    /**
+     * JSON text for `tsconfig.json` `extends`. A string literal for one
+     * preset, or a JSON array when a library extends two presets.
+     */
     tsconfigExtends: string;
 }
 
+// Catch-all names hide the one job a package does, so the prompt rejects them.
 const reservedPackageNames = new Set(["utils", "common", "shared"]);
 
+/**
+ * Prompt validator for the package name.
+ *
+ * @param value - Text the user typed, without the `@sgx4u/` scope.
+ * @returns `true` when the name can be used, or a message Plop shows.
+ */
 function assertPackageName(value: string): true | string {
     if (!/^[a-z][a-z0-9]*(-[a-z0-9]+)*$/.test(value)) {
         return "Use lowercase kebab-case, starting with a letter.";
@@ -35,6 +70,15 @@ function assertPackageName(value: string): true | string {
     return true;
 }
 
+/**
+ * Whether the runtime prompt should be shown.
+ *
+ * A config preset always uses Node, so that prompt is skipped and the
+ * runtime is filled in later.
+ *
+ * @param answers - Partial prompt answers. Plop may pass an incomplete object.
+ * @returns `true` when the package kind is `"regular"`.
+ */
 function isRegularPackage(answers: unknown): boolean {
     return (
         typeof answers === "object" &&
@@ -57,8 +101,26 @@ function isPackagePromptAnswers(value: object): value is PackagePromptAnswers {
     );
 }
 
-// Every published library extends library.json for its declaration settings.
-// Edge and Node libraries add their runtime preset on top.
+/**
+ * JSON text for a generated package's `tsconfig.json` `extends` field.
+ *
+ * The template inserts the return value raw, so this is already a JSON
+ * string or a JSON array, not a JavaScript value. Call it when rendering
+ * `tsconfig.json.hbs`, or from a test that checks that render.
+ *
+ * A config preset extends `@sgx4u/tsconfig/node.json` only. A universal
+ * library extends `@sgx4u/tsconfig/library.json` only: it adds no runtime
+ * `lib` or `types` beyond the baseline that preset extends. An edge or Node
+ * library extends `library.json` and then the runtime preset, so declaration
+ * settings and the runtime `lib` or `types` both apply. `runtimeName` is
+ * ignored for a config preset.
+ *
+ * @param packageKind - `"config"` for a private preset, `"regular"` for a published library.
+ * @param runtimeName - `"universal"`, `"edge"`, or `"node"`.
+ * @returns A JSON string literal, or a JSON array of two string literals.
+ * @example
+ * tsconfigExtendsFor("regular", "edge")
+ */
 export function tsconfigExtendsFor(
     packageKind: PackagePromptAnswers["packageKind"],
     runtimeName: RuntimeName,
@@ -73,6 +135,13 @@ export function tsconfigExtendsFor(
     return `[${JSON.stringify("@sgx4u/tsconfig/library.json")}, ${JSON.stringify(`@sgx4u/tsconfig/${runtimeName}.json`)}]`;
 }
 
+/**
+ * Fills derived answers and copies them back onto the object Plop renders.
+ *
+ * @param value - The answers object Plop passes to an action. It is mutated.
+ * @returns The completed answers, including `tsconfigExtends`.
+ * @throws {Error} When a required answer is missing, or a config preset is not on the Node runtime.
+ */
 function preparePackageAnswers(value: unknown): PackageAnswers {
     if (typeof value !== "object" || value === null) {
         throw new Error("Package generator answers were incomplete.");
@@ -110,12 +179,32 @@ function preparePackageAnswers(value: unknown): PackageAnswers {
     return packageAnswers;
 }
 
+/**
+ * Repository root the generator writes into.
+ *
+ * @returns The current working directory. Turbo runs a root generator there.
+ */
 function repositoryRoot(): string {
-    // turbo gen runs a root generator with the repository as the working directory.
     return process.cwd();
 }
 
+/**
+ * Registers the `package` generator on the Plop instance Turbo provides.
+ *
+ * A config preset is written under `packages/config/<name>`, forced to the
+ * Node runtime, and left private with no changeset. A regular package is
+ * written under `packages/<name>` and receives
+ * `.changeset/<name>-initial.md` with a minor bump. The directory action
+ * runs before any file is written.
+ *
+ * @param plop - The Plop API Turbo passes to a generator module.
+ * @returns Nothing. The generator is registered on `plop`.
+ * @throws {Error} The directory action throws when that folder already exists. The changeset action throws when `<name>-initial.md` already exists, or when the prompt answers are incomplete.
+ * @example
+ * // pnpm exec turbo gen package
+ */
 export default function generator(plop: PlopTypes.NodePlopAPI): void {
+    // Templates branch on packageKind and runtimeName with `{{#if (eq ...)}}`.
     plop.setHelper("eq", (left: unknown, right: unknown) => left === right);
 
     plop.setGenerator("package", {

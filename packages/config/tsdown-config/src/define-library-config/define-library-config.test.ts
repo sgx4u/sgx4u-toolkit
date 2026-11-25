@@ -2,7 +2,9 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 // Node loads this test by its `.ts` path and does not map a `.js` specifier
 // back to `.ts`, so the import names the implementation file. `src/index.ts`
-// re-exports that file, and `tsc` checks the re-export.
+// re-exports that file, and `tsc` checks the re-export. This package's
+// `tsconfig.json` excludes `src/**/*.test.ts`, so that `.ts` specifier stays
+// out of the declaration build.
 import { defineLibraryConfig } from "./define-library-config.ts";
 
 test("builds ESM and CommonJS with a neutral platform", () => {

@@ -1,3 +1,10 @@
+/**
+ * Checks the package generator templates without running the prompts.
+ *
+ * `tsconfigExtendsFor` is imported from the generator and substituted into
+ * `tsconfig.json.hbs`, which is the value Plop inserts at render time.
+ */
+
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";

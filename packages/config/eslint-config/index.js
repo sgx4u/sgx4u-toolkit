@@ -43,6 +43,11 @@ const edgeStubModuleNames = [
 ];
 
 /**
+ * Escapes a module name so it is literal text inside a regular expression.
+ *
+ * Import bans interpolate names into a pattern. A name such as
+ * `_stream_wrap` must not be read as a character class.
+ *
  * @param {string} value
  * @returns {string}
  */
@@ -54,7 +59,7 @@ const bareBuiltinModuleNames = builtinModules.filter(
     (builtinModuleName) => !builtinModuleName.startsWith("node:"),
 );
 
-// `node:*` globs do not cross `/`, so `node:*` missed `node:fs/promises`.
+// `node:*` does not match across `/`, so `node:fs/promises` needs `node:.+`.
 // `node:.+` covers every prefixed builtin, including ones Node adds later.
 // Bare names come from the Node that runs ESLint.
 const universalBuiltinImportPattern = `^(?:node:.+|${bareBuiltinModuleNames
@@ -97,9 +102,11 @@ function assertRootDirectory(rootDirectory) {
 }
 
 /**
- * `no-restricted-imports` only sees static `import` and `export` declarations,
- * plus `import x = require(...)`. `require()` and `import()` are a different
- * AST, so the same patterns are also applied with `no-restricted-syntax`.
+ * Import patterns rejected for `runtime`, each with the message ESLint shows.
+ *
+ * Every runtime rejects a deep `@sgx4u` import. Universal also rejects Node
+ * built-ins. Edge also rejects Workers stub modules. The Node runtime uses
+ * the deep-import ban on its own.
  *
  * @param {import("./index.js").PackageRuntime} runtime
  * @returns {{ pattern: string, message: string }[]}
@@ -125,6 +132,9 @@ function importBansForRuntime(runtime) {
 }
 
 /**
+ * `no-restricted-imports` entry for static `import` and `export` declarations,
+ * including `import name = require(...)`.
+ *
  * @param {import("./index.js").PackageRuntime} runtime
  * @returns {import("eslint").Linter.RuleEntry}
  */
@@ -143,6 +153,13 @@ function restrictedImportsForRuntime(runtime) {
 }
 
 /**
+ * `no-restricted-syntax` entry for `import()` and `require()`.
+ *
+ * `no-restricted-imports` only sees static `import` and `export`
+ * declarations. Dynamic import and `require()` are a different AST, so the
+ * same patterns are applied here. Slashes in the pattern are escaped because
+ * the selector stores the expression between `/` delimiters.
+ *
  * @param {import("./index.js").PackageRuntime} runtime
  * @returns {import("eslint").Linter.RuleEntry}
  */
@@ -243,6 +260,7 @@ function applyTsconfigRootDirectory(configs, rootDirectory) {
 /**
  * Returns a flat ESLint config for one package.
  *
+ * Use this as the default export of a package `eslint.config.js`.
  * Normalizes `options.rootDir` with `path.resolve` and copies it to
  * `parserOptions.tsconfigRootDir` on every config object that has
  * `languageOptions`, including the object that sets the TypeScript parser,
@@ -324,6 +342,7 @@ export function definePackageConfig(options) {
 /**
  * Returns a flat ESLint config for the repository root.
  *
+ * Use this as the default export of the repository `eslint.config.js`.
  * Uses the Node runtime, then adds `packages` to the ignore list so each
  * package lints itself. `options.rootDir` is normalized and copied to
  * `parserOptions.tsconfigRootDir` the same way as `definePackageConfig`.
@@ -342,8 +361,8 @@ export function defineRootConfig(options) {
     }).map((config) => {
         // typescript-eslint names every config object. The global ignore
         // entry is the one with no files, rules, or plugins. Matching it by
-        // shape survives a reorder. Index 0 is that entry today, and it is
-        // not a contract.
+        // shape keeps working if those objects are reordered. The array
+        // index is not the contract.
         const keysBesidesName = Object.keys(config).filter(
             (key) => key !== "name",
         );

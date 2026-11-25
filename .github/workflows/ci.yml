@@ -23,8 +23,10 @@ on:
             - production
             - "release/**"
 
+# Each job adds only the permissions it needs. The default is none.
 permissions: {}
 
+# A newer commit on the same ref replaces the in-progress run.
 concurrency:
     group: ci-${{ github.workflow }}-${{ github.ref }}
     cancel-in-progress: true

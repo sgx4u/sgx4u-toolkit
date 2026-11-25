@@ -1,3 +1,17 @@
+/**
+ * Requires a changeset when a published package changed in a way a caller
+ * can notice.
+ *
+ * Pull requests run
+ * `node scripts/check-changeset.mjs --base origin/<base> --labels <names>`.
+ * `--labels` is the comma-separated pull request label list. The
+ * `no-changeset` label accepts a diff that would otherwise need a changeset.
+ * Packages under `packages/config` are private tooling and are skipped.
+ *
+ * @example
+ * node scripts/check-changeset.mjs --base origin/develop --labels ""
+ */
+
 import { spawnSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
@@ -7,6 +21,8 @@ import { parseChangesetFile } from "./changelog-format.mjs";
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(scriptDirectory, "..");
 
+// Fields a caller can observe on the published package. A script, test, or
+// repository file is outside this list, so editing one needs no changeset.
 const contractFieldNames = [
     "name",
     "type",
@@ -60,9 +76,18 @@ function normalizeGitPath(line) {
 }
 
 /**
- * @param {string} rootDirectory
- * @param {string} baseRef
- * @returns {string[]}
+ * Paths that differ from `baseRef`, plus untracked files, sorted.
+ *
+ * `git diff` sees tracked edits and deletions. Untracked files are added
+ * from `git ls-files` because a new source file is still a published change.
+ * The diff filter is added, copied, modified, renamed, and deleted.
+ *
+ * @param {string} rootDirectory Repository root passed to git as the working directory.
+ * @param {string} baseRef Commit-ish to compare, such as `origin/develop`.
+ * @returns {string[]} Repository-relative paths using `/`.
+ * @throws {Error} When git exits non-zero. The message is the git error text.
+ * @example
+ * listChangedPaths(repositoryRoot, "origin/develop")
  */
 export function listChangedPaths(rootDirectory, baseRef) {
     const diff = gitOutput(rootDirectory, [
@@ -118,7 +143,15 @@ function sameJson(left, right) {
 }
 
 /**
- * @param {string} relativePath
+ * True when `relativePath` is a `test` or `spec` file.
+ *
+ * Test edits are invisible to package callers, so they do not require a
+ * changeset. The match is the file name, not a `tests/` directory.
+ *
+ * @param {string} relativePath Path relative to the package root, using `/`.
+ * @returns {boolean}
+ * @example
+ * isTestPath("src/format-label/format-label.test.ts")
  */
 export function isTestPath(relativePath) {
     return /(?:^|\/)[^/]+\.(?:test|spec)\.[cm]?[jt]sx?$/.test(relativePath);
@@ -139,8 +172,14 @@ function escapeRegularExpression(value) {
 }
 
 /**
+ * True when `relativePath` matches one npm `files` pattern.
+ *
+ * `**` crosses directories. A single `*` stays inside one path segment.
+ * A pattern with no star matches that path and everything under it.
+ *
  * @param {string} relativePath
  * @param {string} pattern
+ * @returns {boolean}
  */
 function fileMatchesPattern(relativePath, pattern) {
     const normalized = pattern.replace(/^\.\//, "").replace(/\/$/, "");
@@ -215,13 +254,22 @@ function isPublishedPath(relativePath, packageManifest) {
     if (exportPaths.has(relativePath)) {
         return true;
     }
+    // npm publishes the whole package when `files` is omitted.
     return !Array.isArray(filesField);
 }
 
 /**
- * @param {Record<string, unknown> | null} beforeManifest
- * @param {Record<string, unknown> | null} afterManifest
- * @returns {string[]}
+ * Names of publish-contract fields whose JSON value changed.
+ *
+ * Key order is ignored, so a reorder of `exports` is not a change. A field
+ * present on only one side counts as a change. Pass null for a missing
+ * manifest, which is how a new or deleted package is compared.
+ *
+ * @param {Record<string, unknown> | null} beforeManifest `package.json` on the base ref, or null when the package is new.
+ * @param {Record<string, unknown> | null} afterManifest `package.json` in the working tree, or null when the package was removed.
+ * @returns {string[]} Field names, in the contract list order.
+ * @example
+ * contractFieldChanges({ name: "@sgx4u/example" }, { name: "@sgx4u/example", exports: {} })
  */
 export function contractFieldChanges(beforeManifest, afterManifest) {
     /** @type {string[]} */
@@ -241,10 +289,17 @@ export function contractFieldChanges(beforeManifest, afterManifest) {
 /**
  * Why a path inside a package needs a changeset, or null when it does not.
  *
- * @param {string} relativeToPackage
- * @param {Record<string, unknown> | null} beforeManifest
- * @param {Record<string, unknown> | null} afterManifest
- * @returns {string | null}
+ * Markdown and tests return null. A private package returns null. A new,
+ * removed, or contract-field change in `package.json` returns a short
+ * reason. Anything under `src/` returns `"source"`. Any other path npm
+ * would publish returns `"published file"`.
+ *
+ * @param {string} relativeToPackage Path relative to the package directory.
+ * @param {Record<string, unknown> | null} beforeManifest Manifest on the base ref, or null when the package is new.
+ * @param {Record<string, unknown> | null} afterManifest Manifest in the working tree, or null when the package was removed.
+ * @returns {string | null} A short reason, or null when the path is invisible to callers.
+ * @example
+ * userVisibleChangeReason("src/index.ts", { private: false }, { private: false })
  */
 export function userVisibleChangeReason(
     relativeToPackage,
@@ -277,6 +332,7 @@ export function userVisibleChangeReason(
     if (isPublishedPath(relativeToPackage, packageManifest)) {
         return "published file";
     }
+    // Tooling such as `eslint.config.js` is not part of the published package.
     return null;
 }
 
@@ -342,7 +398,15 @@ function parentDirectory(directory) {
 }
 
 /**
- * @param {string} relativeDirectory
+ * True when the directory is private workspace tooling.
+ *
+ * Those packages are not published, so a change there never requires a
+ * changeset. The match is `packages/config` and everything under it.
+ *
+ * @param {string} relativeDirectory Repository-relative directory, using `/`.
+ * @returns {boolean}
+ * @example
+ * isWorkspaceToolingPath("packages/config/eslint-config")
  */
 export function isWorkspaceToolingPath(relativeDirectory) {
     return (
@@ -384,9 +448,19 @@ function findPackage(rootDirectory, baseRef, relativePath, cache) {
 }
 
 /**
- * @param {string} rootDirectory
- * @param {string} baseRef
- * @returns {{ packageName: string, files: { relativePath: string, reason: string }[] }[]}
+ * Published packages whose diff a caller can notice, grouped by package name.
+ *
+ * Paths outside `packages/` are ignored. Tooling packages and private
+ * packages are ignored. Removing a package that has no `CHANGELOG.md` on
+ * the base ref is ignored, because Changesets creates that file on the
+ * first version and a package without one has not been published.
+ *
+ * @param {string} rootDirectory Repository root.
+ * @param {string} baseRef Commit-ish to compare, such as `origin/develop`.
+ * @returns {{ packageName: string, files: { relativePath: string, reason: string }[] }[]} One entry per affected package. `files` lists the repository-relative path and the reason from {@link userVisibleChangeReason}.
+ * @throws {Error} When git cannot list the diff or show a base manifest.
+ * @example
+ * findUserVisibleChanges(repositoryRoot, "origin/develop")
  */
 export function findUserVisibleChanges(rootDirectory, baseRef) {
     const changedPaths = listChangedPaths(rootDirectory, baseRef);
@@ -579,7 +653,15 @@ function publicToolingProblems(rootDirectory) {
 }
 
 /**
- * @param {string} labels
+ * True when the pull request labels include `no-changeset`.
+ *
+ * The workflow joins `github.event.pull_request.labels` with commas. Blank
+ * segments from a trailing comma are ignored.
+ *
+ * @param {string} labels Comma-separated label names. An empty string means no labels.
+ * @returns {boolean}
+ * @example
+ * hasNoChangesetLabel("dependencies,no-changeset")
  */
 export function hasNoChangesetLabel(labels) {
     return labels
@@ -628,10 +710,21 @@ function formatMissingChange(change) {
 }
 
 /**
- * @param {string} rootDirectory
- * @param {string} baseRef
- * @param {string} labels
- * @returns {{ accepted: boolean, problems: string[], notices: string[] }}
+ * Decides whether this branch satisfies the changeset rule.
+ *
+ * Malformed changeset files and a public package under `packages/config`
+ * fail even when the `no-changeset` label is set, because those are not
+ * coverage questions. The label then accepts any remaining diff. With no
+ * user-visible change, the result is accepted. Otherwise every affected
+ * package must be named by a changeset file added or updated in the diff.
+ *
+ * @param {string} rootDirectory Repository root.
+ * @param {string} baseRef Commit-ish to compare, such as `origin/develop`.
+ * @param {string} labels Comma-separated pull request labels.
+ * @returns {{ accepted: boolean, problems: string[], notices: string[] }} `accepted` is false when `problems` has entries. `notices` are the lines printed on success.
+ * @throws {Error} When git fails while listing the diff.
+ * @example
+ * evaluateChangesetRequirement(repositoryRoot, "origin/develop", "")
  */
 export function evaluateChangesetRequirement(rootDirectory, baseRef, labels) {
     const problems = [
@@ -694,7 +787,17 @@ export function evaluateChangesetRequirement(rootDirectory, baseRef, labels) {
 }
 
 /**
- * @param {string[]} argv
+ * Reads `--base` and `--labels` from the command arguments.
+ *
+ * Unknown flags throw so a typo cannot skip the check. `--base` is required.
+ * `--labels` defaults to an empty string, which means the pull request has
+ * no labels.
+ *
+ * @param {string[]} argv Arguments after the script name (`process.argv.slice(2)`).
+ * @returns {{ baseRef: string, labels: string }}
+ * @throws {Error} When an argument is unknown, or `--base` is missing or empty.
+ * @example
+ * readCommandOptions(["--base", "origin/develop", "--labels", "no-changeset"])
  */
 export function readCommandOptions(argv) {
     let baseRef = "";

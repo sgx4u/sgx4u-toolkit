@@ -43,6 +43,7 @@ export interface RootLintOptions {
 /**
  * Returns a flat ESLint config for one package.
  *
+ * Use this as the default export of a package `eslint.config.js`.
  * Normalizes `options.rootDir` with `path.resolve` and copies it to
  * `parserOptions.tsconfigRootDir` on every config object that has
  * `languageOptions`, including the object that sets the TypeScript parser,
@@ -68,6 +69,7 @@ export function definePackageConfig(
 /**
  * Returns a flat ESLint config for the repository root.
  *
+ * Use this as the default export of the repository `eslint.config.js`.
  * Uses the Node runtime, then adds `packages` to the ignore list so each
  * package lints itself. `options.rootDir` is normalized and copied to
  * `parserOptions.tsconfigRootDir` the same way as

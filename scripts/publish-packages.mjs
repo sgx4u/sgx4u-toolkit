@@ -1,3 +1,13 @@
+/**
+ * Publishes committed library versions for the release workflow.
+ *
+ * `release.yml` runs `node scripts/publish-packages.mjs` with
+ * `GITHUB_REF_NAME` set. The dist-tag comes from `distributionTagForBranch`.
+ * A version already on npm is skipped. After a successful publish, the
+ * package name and version are appended to `CHANGESETS_OUTPUT` so Changesets
+ * can push the git tag. Zero libraries is a successful run.
+ */
+
 import {
     appendFileSync,
     existsSync,
@@ -14,10 +24,16 @@ const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(scriptDirectory, "..");
 
 /**
- * Libraries live in packages/<name>. Presets live in packages/config and are not published.
+ * True when `relativeDirectory` is a library folder, `packages/<name>`.
  *
- * @param {string} relativeDirectory
+ * Presets live in `packages/config/<name>` and are not published, so a path
+ * with any other shape returns false. The name `config` is reserved for
+ * that tooling folder.
+ *
+ * @param {string} relativeDirectory Repository-relative path. Separators may be `\` or `/`.
  * @returns {boolean}
+ * @example
+ * isRealPackage("packages/example")
  */
 export function isRealPackage(relativeDirectory) {
     const normalized = relativeDirectory.split(path.sep).join("/");
@@ -28,18 +44,33 @@ export function isRealPackage(relativeDirectory) {
 }
 
 /**
- * @param {string} packageName
- * @param {string} version
+ * Git tag Changesets records after a package is published.
+ *
+ * The shape is `<name>@<version>`, which is the tag `release.yml` pushes.
+ *
+ * @param {string} packageName Scoped package name.
+ * @param {string} version Version that was published.
  * @returns {string}
+ * @example
+ * gitTagForPackage("@sgx4u/example", "0.1.0")
  */
 export function gitTagForPackage(packageName, version) {
     return `${packageName}@${version}`;
 }
 
 /**
- * @param {string} packageName
- * @param {string} distributionTag
+ * Arguments for `pnpm --filter <name> publish` of one library.
+ *
+ * `--access public` is required for a scoped package. `--no-git-checks`
+ * lets the release job publish from the workflow checkout. The caller still
+ * chooses the working directory and the environment, including the npm
+ * trusted-publishing token.
+ *
+ * @param {string} packageName Package name passed to `--filter`.
+ * @param {string} distributionTag npm dist-tag, `latest` or `previous`.
  * @returns {string[]}
+ * @example
+ * publishArguments("@sgx4u/example", "latest")
  */
 export function publishArguments(packageName, distributionTag) {
     return [
@@ -55,8 +86,16 @@ export function publishArguments(packageName, distributionTag) {
 }
 
 /**
- * @param {string} rootDirectory
- * @returns {{ name: string, version: string, relativeDirectory: string }[]}
+ * Libraries under `packages/<name>` that have a public name and version.
+ *
+ * Private packages, the `packages/config` directory, and a manifest missing
+ * a string `name` or `version` are omitted. The result order follows the
+ * directory listing.
+ *
+ * @param {string} rootDirectory Repository root.
+ * @returns {{ name: string, version: string, relativeDirectory: string }[]} `relativeDirectory` uses `/`.
+ * @example
+ * listRealPackages(repositoryRoot)
  */
 export function listRealPackages(rootDirectory) {
     const packagesDirectory = path.join(rootDirectory, "packages");
@@ -101,8 +140,17 @@ export function listRealPackages(rootDirectory) {
 }
 
 /**
- * @param {string} packageName
- * @param {string} version
+ * Appends one git-tag record for Changesets after a publish succeeds.
+ *
+ * Changesets reads `CHANGESETS_OUTPUT` as newline-delimited JSON. When that
+ * variable is unset, this returns without writing, which is how a local
+ * invocation avoids touching a missing file.
+ *
+ * @param {string} packageName Package that was published.
+ * @param {string} version Version that was published.
+ * @returns {void}
+ * @example
+ * recordPublishedPackage("@sgx4u/example", "0.1.0")
  */
 export function recordPublishedPackage(packageName, version) {
     const outputPath = process.env.CHANGESETS_OUTPUT;
@@ -120,11 +168,18 @@ export function recordPublishedPackage(packageName, version) {
 }
 
 /**
- * npm view exits 0 when that exact version is already on the registry.
+ * True when `npm view` reported that the exact version is already published.
  *
- * @param {{ status: number | null, stdout: string }} result
- * @param {string} version
+ * A non-zero status means the version is absent or the registry could not
+ * be read. Those two cases are not distinguished: the publish command then
+ * runs, and a real registry failure fails that command. Stdout must equal
+ * the version exactly, so a different version on the same line does not count.
+ *
+ * @param {{ status: number | null, stdout: string }} result Status and stdout from `npm view <name>@<version> version`.
+ * @param {string} version Version that was queried.
  * @returns {boolean}
+ * @example
+ * registryHasVersion({ status: 0, stdout: "0.1.0\n" }, "0.1.0")
  */
 export function registryHasVersion(result, version) {
     return result.status === 0 && result.stdout.trim() === version;
