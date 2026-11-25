@@ -14,7 +14,7 @@ test("an empty repository has no publishable packages", () => {
     assert.deepEqual(listPublishablePackages(rootDirectory), []);
 });
 
-test("the repository publishes the config presets", () => {
+test("packages that are not private are included in the pack review", () => {
     const rootDirectory = path.resolve(
         path.dirname(fileURLToPath(import.meta.url)),
         "..",

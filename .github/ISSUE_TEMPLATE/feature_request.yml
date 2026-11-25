@@ -4,18 +4,12 @@ title: "feat: "
 labels:
     - enhancement
 body:
-    - type: dropdown
+    - type: input
       id: package
       attributes:
           label: Package
-          options:
-              - "@sgx4u/tsconfig"
-              - "@sgx4u/eslint-config"
-              - "@sgx4u/prettier-config"
-              - "@sgx4u/tsdown-config"
-              - "@sgx4u/vitest-config"
-              - new package
-              - other
+          description: The public package this request is about.
+          placeholder: "@sgx4u/<name>"
       validations:
           required: true
     - type: textarea

@@ -41,15 +41,9 @@
 
 ## About
 
-Tooling presets live in `packages/config`. A library lives in `packages/<name>`. The first library will be `date-time`.
+A library lives in `packages/<name>`. The first library will be `date-time`.
 
-Published packages declare `"node": ">=22.12"`.
-
-`@sgx4u/tsdown-config` and `@sgx4u/vitest-config` build with tsdown and ship ESM and CommonJS. `import` resolves `dist/*.js` with `dist/*.d.ts`. `require` resolves `dist/*.cjs` with `dist/*.d.cts`. The `@sgx4u/source` export condition points at TypeScript source (`src/index.ts`). This workspace resolves it through `customConditions`. A published install uses `dist`.
-
-`@sgx4u/eslint-config` and `@sgx4u/prettier-config` keep the ESM entry at `index.js` with `index.d.ts`, so ESLint can load `@sgx4u/eslint-config` and Prettier can load `@sgx4u/prettier-config` before a build. `require` resolves `dist/*.cjs` with `dist/*.d.cts`.
-
-`@sgx4u/tsconfig` publishes the JSON presets `base.json`, `library.json`, `edge.json`, and `node.json`.
+A published library declares `"node": ">=22.12"`. It builds with tsdown and ships ESM and CommonJS. `import` resolves `dist/*.js` with `dist/*.d.ts`. `require` resolves `dist/*.cjs` with `dist/*.d.cts`. The `@sgx4u/source` export condition points at TypeScript source (`src/index.ts`). This workspace resolves it through `customConditions`. A published install uses `dist`.
 
 Inside this repo, a runtime dependency on another toolkit package uses `workspace:^`. Dev dependencies use `workspace:*`. Third-party versions live in the pnpm catalog in `pnpm-workspace.yaml`. Add a catalog entry when a package needs that dependency.
 
@@ -59,55 +53,39 @@ The root workspace package is `@sgx4u/toolkit`. Its manifest is `"private": fals
 
 ## Packages
 
-| Package                                                       | What it is                          |
-| ------------------------------------------------------------- | ----------------------------------- |
-| [`@sgx4u/tsconfig`](./packages/config/tsconfig)               | TypeScript presets                  |
-| [`@sgx4u/eslint-config`](./packages/config/eslint-config)     | ESLint flat config and import rules |
-| [`@sgx4u/prettier-config`](./packages/config/prettier-config) | Prettier preset                     |
-| [`@sgx4u/tsdown-config`](./packages/config/tsdown-config)     | tsdown preset for ESM and CommonJS  |
-| [`@sgx4u/vitest-config`](./packages/config/vitest-config)     | Vitest preset                       |
+A library lives in `packages/<name>`. `pnpm exec turbo gen package` writes the package, including its TypeScript, build, and test config.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Runtimes
 
-Each library picks one runtime. Presets in `packages/config` are Node tooling, tagged `layout:config`, and installed as dev dependencies.
+Each library picks one runtime.
 
-| Runtime     | Choose it when                                                                                                     | It may depend on                                      |
-| ----------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------- |
-| `universal` | The same source runs in browsers, workers, and Node, using web standards.                                          | Universal packages, and presets.                      |
-| `edge`      | The code targets an edge runtime and may use web standards plus the Workers `nodejs_compat` modules that are real. | Universal packages, other edge packages, and presets. |
-| `node`      | The code needs Node itself: processes, the full filesystem, or another API outside the edge subset.                | Universal, edge, and node packages, and presets.      |
+| Runtime     | Choose it when                                                                                                     | It may depend on                            |
+| ----------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------- |
+| `universal` | The same source runs in browsers, workers, and Node, using web standards.                                          | Universal packages.                         |
+| `edge`      | The code targets an edge runtime and may use web standards plus the Workers `nodejs_compat` modules that are real. | Universal packages and other edge packages. |
+| `node`      | The code needs Node itself: processes, the full filesystem, or another API outside the edge subset.                | Universal, edge, and node packages.         |
 
-`turbo boundaries` enforces that table. `@sgx4u/eslint-config` enforces the imports. `pnpm exec turbo gen package` writes the matching TypeScript preset, tsdown config, and Vitest config. The rules are in [docs/runtimes.md](./docs/runtimes.md).
+`turbo boundaries` enforces that table. `pnpm exec turbo gen package` writes the matching TypeScript, build, and test config. The rules are in [docs/runtimes.md](./docs/runtimes.md).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Installation
 
-Presets in `packages/config` are dev dependencies. Each package README has its own install line.
+Install a published library from the `@sgx4u` scope. `<name>` is that library's kebab-case name.
 
 ```sh
-pnpm add -D @sgx4u/prettier-config              # pnpm
-npm install --save-dev @sgx4u/prettier-config   # npm
-yarn add --dev @sgx4u/prettier-config           # yarn
+pnpm add @sgx4u/<name>       # pnpm
+npm install @sgx4u/<name>    # npm
+yarn add @sgx4u/<name>       # yarn
 ```
-
-A library is a runtime dependency: `pnpm add @sgx4u/<name>`.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Usage
 
-Each package README shows how that package is imported. Presets are dev dependencies.
-
-```json
-{
-    "prettier": "@sgx4u/prettier-config"
-}
-```
-
-A library is imported from `@sgx4u/<name>`.
+Each library README shows how to import that package. A library is imported from `@sgx4u/<name>`.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -126,7 +104,7 @@ pnpm check
 
 | Command             | What it runs                                                                                                                                                       |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `pnpm dev`          | `turbo run dev`. The task stays running. `@sgx4u/tsdown-config` and `@sgx4u/vitest-config` run `tsdown --watch`.                                                   |
+| `pnpm dev`          | `turbo run dev`. The task stays running. A library that builds with tsdown runs `tsdown --watch`.                                                                  |
 | `pnpm lint`         | Package lint tasks, then root ESLint. The root config ignores `packages/**`, so package sources are linted once.                                                   |
 | `pnpm typecheck`    | Package typecheck tasks, then `tsc --noEmit` for the generator.                                                                                                    |
 | `pnpm test`         | Package tests, then `node --test` on `scripts/*.test.mjs`.                                                                                                         |
@@ -162,14 +140,13 @@ Pull requests run the `pkg-pr-new` job, which publishes preview tarballs. Those 
 ## Repository
 
 ```text
-packages/config      tooling presets
 packages/<name>      libraries
 turbo/generators     pnpm exec turbo gen package
 scripts              visibility, link, and pack checks
 docs                 settings, runtimes, and decisions
 ```
 
-`layout:config` covers the presets. `layout:package` covers the libraries and may depend on presets and on other libraries within the runtime table above.
+`layout:package` covers the libraries. A library may depend on other libraries within the runtime table above.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

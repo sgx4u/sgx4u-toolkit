@@ -8,17 +8,12 @@ body:
       attributes:
           value: |
               Report a security vulnerability through a [private advisory](https://github.com/sgx4u/sgx4u-toolkit/security/advisories/new).
-    - type: dropdown
+    - type: input
       id: package
       attributes:
           label: Package
-          options:
-              - "@sgx4u/tsconfig"
-              - "@sgx4u/eslint-config"
-              - "@sgx4u/prettier-config"
-              - "@sgx4u/tsdown-config"
-              - "@sgx4u/vitest-config"
-              - other
+          description: The public package this report is about.
+          placeholder: "@sgx4u/<name>"
       validations:
           required: true
     - type: input
