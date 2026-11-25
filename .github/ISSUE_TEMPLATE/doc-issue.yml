@@ -13,7 +13,7 @@ body:
       id: doc-page
       attributes:
           label: Documentation page or section
-          placeholder: e.g. README.md, CONTRIBUTING.md, docs/runtimes.md, packages/string/README.md
+          placeholder: e.g. README.md, CONTRIBUTING.md, docs/runtimes.md
 
     - type: textarea
       id: issue

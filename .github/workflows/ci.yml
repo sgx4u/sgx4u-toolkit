@@ -260,4 +260,8 @@ jobs:
             - name: Publish preview packages
               run: |
                   mapfile -t package_directories < <(find packages -mindepth 1 -maxdepth 1 -type d ! -name config | sort)
+                  if [ "${#package_directories[@]}" -eq 0 ]; then
+                    echo "No library packages to preview."
+                    exit 0
+                  fi
                   pnpm exec pkg-pr-new publish --pnpm --packageManager=pnpm "${package_directories[@]}"

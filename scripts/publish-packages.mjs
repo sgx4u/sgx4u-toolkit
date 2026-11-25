@@ -1,4 +1,10 @@
-import { appendFileSync, readdirSync, readFileSync, statSync } from "node:fs";
+import {
+    appendFileSync,
+    existsSync,
+    readdirSync,
+    readFileSync,
+    statSync,
+} from "node:fs";
 import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -56,6 +62,9 @@ export function listRealPackages(rootDirectory) {
     const packagesDirectory = path.join(rootDirectory, "packages");
     /** @type {{ name: string, version: string, relativeDirectory: string }[]} */
     const packages = [];
+    if (!existsSync(packagesDirectory)) {
+        return packages;
+    }
     for (const entry of readdirSync(packagesDirectory, {
         withFileTypes: true,
     })) {

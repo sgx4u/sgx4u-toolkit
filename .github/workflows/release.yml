@@ -130,6 +130,7 @@ jobs:
             # No NPM_TOKEN and no registry-url: setup-node writes an empty auth token
             # when registry-url is set, and that token skips trusted publishing.
             # Libraries under packages/<name> are published. Presets under packages/config are not.
+            # Zero libraries is a successful run: the script logs and exits 0.
             - name: Publish to npm
               uses: changesets/action/publish@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
               with:

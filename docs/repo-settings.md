@@ -138,15 +138,13 @@ The version job holds the release GitHub App token and does not have `id-token: 
 
 ## 6. npm trusted publishing
 
-For `@sgx4u/string`, publish `0.1.0` once from a laptop so npm can attach a trusted publisher. Later versions are published by `release.yml`. Presets in `packages/config` are not published.
+For each library, publish `0.1.0` once from a laptop so npm can attach a trusted publisher. Later versions are published by `release.yml`. Presets in `packages/config` are not published. A release with no libraries exits without publishing.
 
 1. Let the Version Packages pull request bump the package to `0.1.0`, or check out that commit. `develop` leaves the changeset in git. `beta` publishes an uncommitted snapshot and also leaves the changeset in git.
 2. From the package directory, with npm CLI 11.5.1 or newer and 2FA: `npm publish --access public`.
 3. Attach the trusted publisher. On the package's npm page, or with `npm trust github --repo sgx4u/sgx4u-toolkit --file release.yml --env release --allow-publish`.
 4. Cancel the GitHub `release` run that is waiting to publish that same version.
 5. Turn off token publishing when npm shows that switch. CI uses the trusted publisher. Add no `NPM_TOKEN` secret.
-
-The published library is `@sgx4u/string`.
 
 Turn on 2FA for the npm account that owns `@sgx4u`.
 

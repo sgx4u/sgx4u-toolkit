@@ -15,5 +15,5 @@ body:
           label: Details
           description: Name the package when you know it.
           placeholder: |
-              @sgx4u/string, or a new library.
+              The library, or a new one.
               Start typing here...

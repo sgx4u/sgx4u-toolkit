@@ -50,4 +50,4 @@ body:
               - Runtime: Node.js / Browser / Cloudflare Workers / React Native
               - Node.js Version: x.x.x
               - Package Manager: pnpm/npm/yarn/bun
-              - Package and version: @sgx4u/string x.x.x
+              - Package and version: @sgx4u/<library> x.x.x

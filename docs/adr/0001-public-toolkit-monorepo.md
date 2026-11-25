@@ -27,5 +27,5 @@ Shared `@sgx4u` packages need one public place to version, test, and publish. Th
 ## Consequences
 
 - A change that crosses several packages can land in one pull request.
-- The first `0.1.0` of `@sgx4u/string` is published from a laptop, because npm attaches a trusted publisher after the package exists. Later versions come from CI with trusted publishing and provenance.
+- The first `0.1.0` of a library is published from a laptop, because npm attaches a trusted publisher after the package exists. Later versions come from CI with trusted publishing and provenance. A release with no libraries does not publish.
 - The published name stays `@sgx4u/<name>` when the folder moves.
