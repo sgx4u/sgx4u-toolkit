@@ -64,14 +64,14 @@ Optional checks, once the repository requires them: `ci / test-node-22`, `ci / d
 pnpm exec turbo gen package
 ```
 
-The generator asks for the name and the kind. Use lowercase kebab-case starting with a letter, and name the one job the package does. The generator reserves `config`, `toolkit`, `utils`, `common`, and `shared`. A library publishes as `@sgx4u/<name>`. A config preset stays in this repository and is not published.
+The generator asks for the name, the kind, the runtime of a library, and the owner. Use lowercase kebab-case starting with a letter, and name the one job the package does. The generator reserves `config`, `toolkit`, `utils`, `common`, and `shared`. A library publishes as `@sgx4u/<name>`. A config preset stays in this repository and is not published.
 
 | Kind      | Folder                   | Runtime                                                                      |
 | --------- | ------------------------ | ---------------------------------------------------------------------------- |
 | `config`  | `packages/config/<name>` | `node`. Private workspace tooling. Not published, and no changeset.          |
 | `regular` | `packages/<name>`        | `universal`, `edge`, or `node`. Published. The generator writes a changeset. |
 
-The generator writes the package and a CODEOWNERS line. A regular package also gets one initial changeset. A config package is `"private": true` and does not.
+The generator writes the package files and puts the owner in the package README. A regular package also gets one initial changeset. A config package is `"private": true`, keeps version `0.0.0`, and does not get a changeset. `CODEOWNERS` already assigns every path to `@sgx4u`.
 
 A runtime dependency on another toolkit package uses `workspace:^`. Presets and other dev tooling use `workspace:*`. Third-party versions use `catalog:`. Add a catalog entry when a package in this repository needs that dependency.
 

@@ -3,7 +3,6 @@
 # tests, and package builds. Pull requests into beta run this workflow too.
 #
 # Optional check names: security / analyze, security / secrets.
-# The previous names were codeql / analyze and ci / secrets.
 name: security
 
 on:
