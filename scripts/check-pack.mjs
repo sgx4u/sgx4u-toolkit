@@ -22,9 +22,10 @@ const maximumTarballBytes = 1_000_000;
 
 /**
  * @param {string} repositoryDirectory
+ * @param {(absolutePath: string, packageManifest: { name?: string, private?: boolean }) => boolean} includePackage
  * @returns {string[]}
  */
-export function listPublishablePackages(repositoryDirectory) {
+function listPackageDirectories(repositoryDirectory, includePackage) {
     /** @type {string[]} */
     const packageDirectories = [];
 
@@ -50,10 +51,7 @@ export function listPublishablePackages(repositoryDirectory) {
                 const packageManifest = JSON.parse(
                     readFileSync(manifestPath, "utf8"),
                 );
-                if (
-                    packageManifest.private !== true &&
-                    packageManifest.name !== "@sgx4u/toolkit"
-                ) {
+                if (includePackage(absolutePath, packageManifest)) {
                     packageDirectories.push(absolutePath);
                 }
                 continue;
@@ -66,6 +64,50 @@ export function listPublishablePackages(repositoryDirectory) {
 
     walk(repositoryDirectory, 0);
     return packageDirectories.sort();
+}
+
+/**
+ * Packages npm will publish. The workspace root is not one of them.
+ * Packages under `packages/config` are private workspace tooling.
+ *
+ * @param {string} repositoryDirectory
+ * @returns {string[]}
+ */
+export function listPublishablePackages(repositoryDirectory) {
+    return listPackageDirectories(
+        repositoryDirectory,
+        (_absolutePath, packageManifest) =>
+            packageManifest.private !== true &&
+            packageManifest.name !== "@sgx4u/toolkit",
+    );
+}
+
+/**
+ * Tarball review covers published libraries and the private tooling under
+ * `packages/config`. Tooling is not published. publint, attw, and this
+ * review still run so a preset cannot grow a test file or a config file
+ * in its pack.
+ *
+ * @param {string} repositoryDirectory
+ * @returns {string[]}
+ */
+export function listPackReviewPackages(repositoryDirectory) {
+    return listPackageDirectories(
+        repositoryDirectory,
+        (absolutePath, packageManifest) => {
+            if (packageManifest.name === "@sgx4u/toolkit") {
+                return false;
+            }
+            if (packageManifest.private !== true) {
+                return true;
+            }
+            const relativePath = path
+                .relative(repositoryDirectory, absolutePath)
+                .split(path.sep)
+                .join("/");
+            return relativePath.startsWith("packages/config/");
+        },
+    );
 }
 
 /**
@@ -96,7 +138,7 @@ export function readPackPreview(packageDirectory) {
 }
 
 function main() {
-    const packageDirectories = listPublishablePackages(repositoryRoot);
+    const packageDirectories = listPackReviewPackages(repositoryRoot);
     let failed = false;
 
     for (const packageDirectory of packageDirectories) {

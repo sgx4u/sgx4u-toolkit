@@ -87,7 +87,7 @@ Settings → Rules → New ruleset. Target `develop`, `production`, and `release
 
 Optional checks to require once you trust them: `ci / test-node-22`, `ci / dependency-review`, `ci / pkg-pr-new`, `security / analyze`, `security / secrets`.
 
-`ci / package-checks` runs `check:package` (publint and `@arethetypeswrong/cli`; the task depends on `build`), then `scripts/check-pack.mjs`. Pull requests also run `changeset status`. Dependency review and the pkg.pr.new preview run on pull requests, in `ci.yml`. CodeQL (`security / analyze`) and gitleaks (`security / secrets`) run from `security.yml`, including a weekly schedule.
+`ci / package-checks` runs `check:package` (publint and `@arethetypeswrong/cli`; the task depends on `build`), then `scripts/check-pack.mjs`. Pull requests also run `scripts/check-changeset.mjs`, which requires a changeset when published behavior changes. A `no-changeset` label skips that coverage check for a comment-only edit or an internal refactor. Dependency review and the pkg.pr.new preview run on pull requests, in `ci.yml`. CodeQL (`security / analyze`) and gitleaks (`security / secrets`) run from `security.yml`, including a weekly schedule.
 
 ## 3. Actions permissions
 
@@ -140,7 +140,7 @@ For each package, publish `0.1.0` once from a laptop so npm can attach a trusted
 4. Cancel the GitHub `release` run that is waiting to publish that same version.
 5. Turn off token publishing when npm shows that switch. CI uses the trusted publisher. Add no `NPM_TOKEN` secret.
 
-The packages in the first changeset are `@sgx4u/tsconfig`, `@sgx4u/eslint-config`, `@sgx4u/prettier-config`, `@sgx4u/tsdown-config`, `@sgx4u/vitest-config`, and `@sgx4u/string`.
+The first published package is `@sgx4u/string`. Packages under `packages/config` are private workspace tooling and are not published.
 
 Turn on 2FA for the npm account that owns `@sgx4u`.
 

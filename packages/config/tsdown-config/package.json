@@ -1,5 +1,6 @@
 {
     "name": "@sgx4u/tsdown-config",
+    "private": true,
     "version": "0.0.0",
     "description": "tsdown preset for dual ESM and CJS @sgx4u libraries.",
     "license": "MIT",
@@ -49,10 +50,6 @@
     },
     "peerDependencies": {
         "tsdown": "^0.23.0"
-    },
-    "publishConfig": {
-        "access": "public",
-        "provenance": true
     },
     "repository": {
         "type": "git",

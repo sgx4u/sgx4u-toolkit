@@ -22,7 +22,6 @@
         "prepare": "node scripts/install-git-hooks.mjs"
     },
     "devDependencies": {
-        "@changesets/changelog-github": "catalog:",
         "@changesets/cli": "catalog:",
         "@commitlint/cli": "catalog:",
         "@commitlint/config-conventional": "catalog:",

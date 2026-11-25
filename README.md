@@ -41,15 +41,11 @@
 
 ## About
 
-Tooling presets live in `packages/config`. Libraries live in `packages/<name>`.
+Libraries live in `packages/<name>`. `@sgx4u/string` is the published library. It builds with tsdown and ships ESM and CommonJS. `import` resolves `dist/*.js` with `dist/*.d.ts`. `require` resolves `dist/*.cjs` with `dist/*.d.cts`. The `@sgx4u/source` export condition points at TypeScript source (`src/index.ts`). This workspace resolves it through `customConditions`. A published install uses `dist`.
 
 Published packages declare `"node": ">=22.12"`.
 
-`@sgx4u/string`, `@sgx4u/tsdown-config`, and `@sgx4u/vitest-config` build with tsdown and ship ESM and CommonJS. `import` resolves `dist/*.js` with `dist/*.d.ts`. `require` resolves `dist/*.cjs` with `dist/*.d.cts`. The `@sgx4u/source` export condition points at TypeScript source (`src/index.ts`). This workspace resolves it through `customConditions`. A published install uses `dist`.
-
-`@sgx4u/eslint-config` and `@sgx4u/prettier-config` keep the ESM entry at `index.js` with `index.d.ts`, so ESLint can load `@sgx4u/eslint-config` and Prettier can load `@sgx4u/prettier-config` before a build. `require` resolves `dist/*.cjs` with `dist/*.d.cts`.
-
-`@sgx4u/tsconfig` publishes the JSON presets `base.json`, `library.json`, `edge.json`, and `node.json`.
+`packages/config` is private workspace tooling used to build the libraries. It is not published and does not appear in release notes.
 
 Inside this repo, a runtime dependency on another toolkit package uses `workspace:^`. Dev dependencies use `workspace:*`. Third-party versions live in the pnpm catalog in `pnpm-workspace.yaml`. Add a catalog entry when a package needs that dependency.
 
@@ -59,20 +55,15 @@ The root workspace package is `@sgx4u/toolkit`. Its manifest is `"private": fals
 
 ## Packages
 
-| Package                                                       | What it is                             |
-| ------------------------------------------------------------- | -------------------------------------- |
-| [`@sgx4u/tsconfig`](./packages/config/tsconfig)               | TypeScript presets                     |
-| [`@sgx4u/eslint-config`](./packages/config/eslint-config)     | ESLint flat config and import rules    |
-| [`@sgx4u/prettier-config`](./packages/config/prettier-config) | Prettier preset                        |
-| [`@sgx4u/tsdown-config`](./packages/config/tsdown-config)     | tsdown preset for ESM and CommonJS     |
-| [`@sgx4u/vitest-config`](./packages/config/vitest-config)     | Vitest preset                          |
-| [`@sgx4u/string`](./packages/string)                          | Blank checks and whitespace collapsing |
+| Package                              | What it is                             |
+| ------------------------------------ | -------------------------------------- |
+| [`@sgx4u/string`](./packages/string) | Blank checks and whitespace collapsing |
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Runtimes
 
-Each library picks one runtime. Presets in `packages/config` are Node tooling, tagged `layout:config`, and installed as dev dependencies.
+Each library picks one runtime. Presets in `packages/config` are private Node tooling, tagged `layout:config`, and used as dev dependencies inside this workspace.
 
 | Runtime     | Choose it when                                                                                                     | It may depend on                                      |
 | ----------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------- |
@@ -86,7 +77,7 @@ Each library picks one runtime. Presets in `packages/config` are Node tooling, t
 
 ## Installation
 
-`@sgx4u/string` is the universal string package. Each package README has its own install line. Presets in `packages/config` are dev dependencies.
+`@sgx4u/string` is the published package. Its README has the same install line.
 
 ```sh
 pnpm add @sgx4u/string       # pnpm
@@ -120,17 +111,17 @@ pnpm build
 pnpm check
 ```
 
-| Command             | What it runs                                                                                                                                                       |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `pnpm dev`          | `turbo run dev`. The task stays running. `@sgx4u/string`, `@sgx4u/tsdown-config`, and `@sgx4u/vitest-config` run `tsdown --watch`.                                 |
-| `pnpm lint`         | Package lint tasks, then root ESLint. The root config ignores `packages/**`, so package sources are linted once.                                                   |
-| `pnpm typecheck`    | Package typecheck tasks, then `tsc --noEmit` for the generator.                                                                                                    |
-| `pnpm test`         | Package tests, then `node --test` on `scripts/*.test.mjs`.                                                                                                         |
-| `pnpm build`        | `turbo run build`.                                                                                                                                                 |
-| `pnpm check`        | `turbo boundaries`, sherif, `scripts/check-visibility.mjs`, `scripts/check-links.mjs`, `turbo run check:package` (publint and attw), and `scripts/check-pack.mjs`. |
-| `pnpm format:check` | Prettier. `pnpm format` writes the same format.                                                                                                                    |
+| Command             | What it runs                                                                                                                       |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm dev`          | `turbo run dev`. The task stays running. Packages with a `dev` script run `tsdown --watch`.                                        |
+| `pnpm lint`         | Package lint tasks, then root ESLint. The root config ignores `packages/**`, so package sources are linted once.                   |
+| `pnpm typecheck`    | Package typecheck tasks, then `tsc --noEmit` for the generator.                                                                    |
+| `pnpm test`         | Package tests, then `node --test` on `scripts/*.test.mjs`.                                                                         |
+| `pnpm build`        | `turbo run build`.                                                                                                                 |
+| `pnpm check`        | `turbo boundaries`, sherif, `scripts/check-links.mjs`, `turbo run check:package` (publint and attw), and `scripts/check-pack.mjs`. |
+| `pnpm format:check` | Prettier. `pnpm format` writes the same format.                                                                                    |
 
-`pnpm changeset` runs the Changesets CLI.
+`pnpm changeset` adds a release note for a published package. The format is in [.changeset/README.md](./.changeset/README.md).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -158,10 +149,10 @@ Pull requests run the `pkg-pr-new` job, which publishes preview tarballs. Those 
 ## Repository
 
 ```text
-packages/config      tooling presets
-packages/<name>      libraries
+packages/config      private workspace tooling, not published
+packages/<name>      published libraries
 turbo/generators     pnpm exec turbo gen package
-scripts              visibility, link, and pack checks
+scripts              link and pack checks
 docs                 settings, runtimes, and decisions
 ```
 
