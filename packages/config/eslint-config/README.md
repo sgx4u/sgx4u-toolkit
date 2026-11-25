@@ -22,11 +22,9 @@
 
 ESLint flat config for `@sgx4u` packages. It turns on TypeScript recommended rules, Prettier compatibility, and the Turborepo undeclared-env check. Unused variables and arguments that start with `_` are allowed. Pass `runtime`. Import rules then match that runtime.
 
-The rule covers a static `import`, `import()`, `require()`, and `import name = require(...)`. In the toolkit repository, `turbo boundaries` is the separate check for which packages may depend on each other. See [the runtime notes](../../../docs/runtimes.md).
+The rule covers a static `import`, `import()`, `require()`, and `import name = require(...)`. In the toolkit repository, `turbo boundaries` is the separate check for which packages may depend on each other. See [the runtime notes](../../../README.md#runtimes).
 
-`import` loads `index.js` with `index.d.ts`. `require` loads `dist/index.cjs` with `dist/index.d.cts`. The ESM entry stays `index.js` so lint can load this package before a build.
-
-Experimental (`0.x`).
+`import` loads `index.js` with `index.d.ts`.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

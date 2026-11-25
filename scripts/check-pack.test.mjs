@@ -19,7 +19,7 @@ test("an empty repository has no publishable packages", () => {
     assert.deepEqual(listPublishablePackages(rootDirectory), []);
 });
 
-test("workspace tooling is reviewed and is not on the npm publish list", () => {
+test("workspace tooling is not published and is not pack-reviewed", () => {
     const relative = (absolutePath) =>
         path.relative(repositoryRoot, absolutePath).split(path.sep).join("/");
     const published = new Set(
@@ -36,6 +36,6 @@ test("workspace tooling is reviewed and is not on the npm publish list", () => {
         }
         const toolingPath = `packages/config/${entry.name}`;
         assert.equal(published.has(toolingPath), false, toolingPath);
-        assert.equal(reviewed.has(toolingPath), true, toolingPath);
+        assert.equal(reviewed.has(toolingPath), false, toolingPath);
     }
 });

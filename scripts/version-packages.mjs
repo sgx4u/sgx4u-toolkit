@@ -16,6 +16,18 @@ export function versionCommandArguments(extraArguments = []) {
 }
 
 /**
+ * Changesets writes each library changelog beside that library.
+ * The repository root CHANGELOG.md is the toolkit index. It is not a
+ * version section, and copying library notes into it would repeat them.
+ *
+ * @param {string} relativePath
+ * @returns {boolean}
+ */
+export function isLibraryChangelog(relativePath) {
+    return relativePath.split(path.sep).join("/") !== "CHANGELOG.md";
+}
+
+/**
  * @param {string} rootDirectory
  * @returns {string[]}
  */
@@ -41,12 +53,13 @@ export function rewriteChangelogFiles(rootDirectory) {
                 continue;
             }
             if (entry.isFile() && entry.name === "CHANGELOG.md") {
-                relativePaths.push(
-                    path
-                        .relative(rootDirectory, absolutePath)
-                        .split(path.sep)
-                        .join("/"),
-                );
+                const relativePath = path
+                    .relative(rootDirectory, absolutePath)
+                    .split(path.sep)
+                    .join("/");
+                if (isLibraryChangelog(relativePath)) {
+                    relativePaths.push(relativePath);
+                }
             }
         }
     }

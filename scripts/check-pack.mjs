@@ -67,8 +67,32 @@ function listPackageDirectories(repositoryDirectory, includePackage) {
 }
 
 /**
+ * @param {string} repositoryDirectory
+ * @param {string} absolutePath
+ * @param {{ name?: string, private?: boolean }} packageManifest
+ * @returns {boolean}
+ */
+function isPublishablePackage(
+    repositoryDirectory,
+    absolutePath,
+    packageManifest,
+) {
+    if (
+        packageManifest.private === true ||
+        packageManifest.name === "@sgx4u/toolkit"
+    ) {
+        return false;
+    }
+    const relativePath = path
+        .relative(repositoryDirectory, absolutePath)
+        .split(path.sep)
+        .join("/");
+    return !relativePath.startsWith("packages/config/");
+}
+
+/**
  * Packages npm will publish. The workspace root is not one of them.
- * Packages under `packages/config` are private workspace tooling.
+ * Private packages are workspace tooling and are not published.
  *
  * @param {string} repositoryDirectory
  * @returns {string[]}
@@ -76,48 +100,24 @@ function listPackageDirectories(repositoryDirectory, includePackage) {
 export function listPublishablePackages(repositoryDirectory) {
     return listPackageDirectories(
         repositoryDirectory,
-        (absolutePath, packageManifest) => {
-            if (
-                packageManifest.private === true ||
-                packageManifest.name === "@sgx4u/toolkit"
-            ) {
-                return false;
-            }
-            const relativePath = path
-                .relative(repositoryDirectory, absolutePath)
-                .split(path.sep)
-                .join("/");
-            return !relativePath.startsWith("packages/config/");
-        },
+        (absolutePath, packageManifest) =>
+            isPublishablePackage(
+                repositoryDirectory,
+                absolutePath,
+                packageManifest,
+            ),
     );
 }
 
 /**
- * Tarball review covers published libraries and the private tooling under
- * `packages/config`. Tooling is not published. publint, attw, and this
- * review still run so a preset cannot grow a test file or a config file
- * in its pack.
+ * Pack review follows the publish list. Private workspace tooling is not
+ * packed. publint, attw, and this review run on published libraries.
  *
  * @param {string} repositoryDirectory
  * @returns {string[]}
  */
 export function listPackReviewPackages(repositoryDirectory) {
-    return listPackageDirectories(
-        repositoryDirectory,
-        (absolutePath, packageManifest) => {
-            if (packageManifest.name === "@sgx4u/toolkit") {
-                return false;
-            }
-            if (packageManifest.private !== true) {
-                return true;
-            }
-            const relativePath = path
-                .relative(repositoryDirectory, absolutePath)
-                .split(path.sep)
-                .join("/");
-            return relativePath.startsWith("packages/config/");
-        },
-    );
+    return listPublishablePackages(repositoryDirectory);
 }
 
 /**

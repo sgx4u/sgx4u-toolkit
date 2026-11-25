@@ -1,54 +1,65 @@
 {
     "name": "@sgx4u/{{packageName}}",
-    "version": "0.0.0",
 {{#if (eq packageKind "config")}}
     "private": true,
+{{else}}
+    "version": "0.0.0",
 {{/if}}
     "description": "TODO: one sentence describing @sgx4u/{{packageName}}.",
+{{#unless (eq packageKind "config")}}
     "license": "MIT",
     "author": "Subhajit Ghosh",
+{{/unless}}
     "type": "module",
+{{#unless (eq packageKind "config")}}
     "sideEffects": false,
     "main": "./dist/index.cjs",
     "module": "./dist/index.js",
     "types": "./dist/index.d.cts",
+{{/unless}}
     "exports": {
         ".": {
             "@sgx4u/source": "./src/index.ts",
             "import": {
                 "types": "./dist/index.d.ts",
                 "default": "./dist/index.js"
-            },
+            }{{#unless (eq packageKind "config")}},
             "require": {
                 "types": "./dist/index.d.cts",
                 "default": "./dist/index.cjs"
-            }
-        },
-        "./package.json": "./package.json"
+            }{{/unless}}
+        }{{#unless (eq packageKind "config")}},
+        "./package.json": "./package.json"{{/unless}}
     },
+{{#unless (eq packageKind "config")}}
     "files": [
         "dist",
         "src",
         "!src/**/*.test.ts",
         "README.md"
     ],
+{{/unless}}
     "scripts": {
         "build": "tsdown",
         "dev": "tsdown --watch",
         "typecheck": "tsc --noEmit",
         "test": "vitest run",
-        "lint": "eslint . --max-warnings 0",
-        "check:package": "publint && attw --pack ."
+        "lint": "eslint . --max-warnings 0"{{#unless (eq packageKind "config")}},
+        "check:package": "publint && attw --pack ."{{/unless}}
     },
     "devDependencies": {
+{{#unless (eq packageKind "config")}}
         "@arethetypeswrong/cli": "catalog:",
+{{/unless}}
         "@sgx4u/eslint-config": "workspace:*",
         "@sgx4u/tsconfig": "workspace:*",
         "@sgx4u/tsdown-config": "workspace:*",
         "@sgx4u/vitest-config": "workspace:*",{{#if (eq runtimeName "node")}}
         "@types/node": "catalog:",{{/if}}
         "eslint": "catalog:",
+{{#unless (eq packageKind "config")}}
         "publint": "catalog:",
+{{/unless}}
         "tsdown": "catalog:",
         "typescript": "catalog:",
         "vitest": "catalog:"
@@ -58,7 +69,6 @@
         "access": "public",
         "provenance": true
     },
-{{/unless}}
     "repository": {
         "type": "git",
         "url": "git+https://github.com/sgx4u/sgx4u-toolkit.git",
@@ -66,6 +76,7 @@
     },
     "homepage": "https://github.com/sgx4u/sgx4u-toolkit/tree/develop/{{packageDirectory}}",
     "bugs": "https://github.com/sgx4u/sgx4u-toolkit/issues",
+{{/unless}}
     "engines": {
         "node": ">=22.12"
     }

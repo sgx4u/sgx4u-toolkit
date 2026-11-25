@@ -22,9 +22,7 @@
 
 Universal, edge, and node packages use this environment. The test runner is Node. Which imports the source may use is enforced by `@sgx4u/eslint-config`.
 
-This package's export map lists `@sgx4u/source` before `import` and `require`, pointing at `src/index.ts`. TypeScript uses that condition when `customConditions` includes `@sgx4u/source`, which `@sgx4u/tsconfig/base.json` sets. Other resolvers load `dist`. `types` stays under `import` and `require`, after `@sgx4u/source`, so the source condition stays reachable.
-
-Experimental (`0.x`).
+This package's export map lists `@sgx4u/source` before `import`, pointing at `src/index.ts`. TypeScript uses that condition when `customConditions` includes `@sgx4u/source`, which `@sgx4u/tsconfig/base.json` sets. Other resolvers load `dist`. `types` stays under `import`, after `@sgx4u/source`, so the source condition stays reachable.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

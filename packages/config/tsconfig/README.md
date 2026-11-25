@@ -22,8 +22,6 @@
 
 Shared TypeScript presets for `@sgx4u` packages. Each preset is a JSON file on the export map.
 
-Experimental (`0.x`).
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Installation
