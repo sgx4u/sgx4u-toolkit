@@ -118,7 +118,7 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
             {
                 type: "list",
                 name: "runtimeName",
-                message: "Runtime (web and native belong in sgx4u-ui)",
+                message: "Runtime",
                 when: isRegularPackage,
                 choices: ["universal", "edge", "node"],
             },

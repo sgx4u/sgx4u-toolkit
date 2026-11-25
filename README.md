@@ -1,8 +1,8 @@
 # sgx4u-toolkit
 
-Public Turborepo of shared non-UI [`@sgx4u`](https://www.npmjs.com/search?q=%40sgx4u) packages.
+Public Turborepo of shared [`@sgx4u`](https://www.npmjs.com/search?q=%40sgx4u) packages.
 
-UI packages live in [sgx4u-ui](https://github.com/sgx4u/sgx4u-ui). This repository never depends on them, and it never depends on a private scope.
+This repository never depends on a private scope.
 
 [![ci](https://github.com/sgx4u/sgx4u-toolkit/actions/workflows/ci.yml/badge.svg)](https://github.com/sgx4u/sgx4u-toolkit/actions/workflows/ci.yml)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
@@ -37,7 +37,7 @@ isBlank("  ");
 collapseWhitespace("  a \n b  ");
 ```
 
-The `@sgx4u/source` export condition points at TypeScript source. Apps in this workspace resolve it through `customConditions`. Published installs use `dist`.
+The `@sgx4u/source` export condition points at TypeScript source. Packages in this workspace resolve it through `customConditions`. Published installs use `dist`.
 
 ## Development
 
@@ -57,7 +57,7 @@ Create a package:
 pnpm exec turbo gen package
 ```
 
-The generator asks for the name and whether the package is a config preset or a regular package. Config presets use the Node runtime and are written to `packages/config/<name>`. Regular packages also ask for the runtime and owner, and are written to `packages/<name>`. The generator writes the package, a changeset, and a CODEOWNERS line. Web and native packages belong in sgx4u-ui, so this generator does not offer those runtimes.
+The generator asks for the name and whether the package is a config preset or a regular package. Config presets use the Node runtime and are written to `packages/config/<name>`. Regular packages also ask for the runtime (`universal`, `edge`, or `node`) and owner, and are written to `packages/<name>`. The generator writes the package, a changeset, and a CODEOWNERS line.
 
 Add a changeset on every pull request that changes a publishable package:
 
@@ -93,7 +93,7 @@ scripts              visibility, link, and pack guards
 docs                 settings checklist and decisions
 ```
 
-`packages/config` does not depend on `packages/<name>`. Packages under `packages/` may depend on the presets and on each other. `turbo boundaries` enforces that split. ESLint enforces each package's runtime import rules. A separate check rejects any `@sgx4u-private` or `@sgx4u/ui*` reference in manifests and source. Nothing here uses UI.
+`packages/config` does not depend on `packages/<name>`. Packages under `packages/` may depend on the presets and on each other. `turbo boundaries` enforces that split. ESLint enforces each package's runtime import rules. A separate check rejects any `@sgx4u-private` reference in manifests and source.
 
 ## License
 

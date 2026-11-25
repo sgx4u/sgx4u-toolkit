@@ -38,5 +38,5 @@ body:
       attributes:
           label: Scope check
           options:
-              - label: This belongs in the public toolkit, not in sgx4u-ui and not in a private package.
+              - label: This belongs in the public toolkit and not in a private package.
                 required: true

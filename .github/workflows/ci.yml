@@ -66,7 +66,7 @@ jobs:
             - name: Check monorepo consistency
               run: pnpm exec sherif
 
-            - name: Reject private and UI references
+            - name: Reject private references
               run: node scripts/check-visibility.mjs
 
             - name: Reject links that leave the repository

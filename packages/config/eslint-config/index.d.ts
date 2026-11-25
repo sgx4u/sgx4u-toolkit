@@ -1,6 +1,6 @@
 import type { Linter } from "eslint";
 
-export type PackageRuntime = "universal" | "edge" | "node" | "web" | "native";
+export type PackageRuntime = "universal" | "edge" | "node";
 
 export interface PackageLintOptions {
   runtime: PackageRuntime;

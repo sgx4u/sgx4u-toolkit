@@ -2,7 +2,7 @@
     "name": "@sgx4u/toolkit",
     "private": true,
     "type": "module",
-    "description": "Public Turborepo of shared non-UI @sgx4u packages.",
+    "description": "Public Turborepo of shared @sgx4u packages.",
     "license": "MIT",
     "author": "Subhajit Ghosh",
     "engines": {
