@@ -71,6 +71,7 @@ export { parseIsoDateTime } from "./parse-iso-date-time/parse-iso-date-time.js";
 export { reviveIsoDateTimes } from "./revive-iso-date-times/revive-iso-date-times.js";
 export { toJulianDate } from "./to-julian-date/to-julian-date.js";
 export { toUnixSeconds } from "./to-unix-seconds/to-unix-seconds.js";
+export { formatDate } from "./format-date/format-date.js";
 export { formatHttpDate } from "./format-http-date/format-http-date.js";
 export { parseHttpDate } from "./parse-http-date/parse-http-date.js";
 export { toExcelSerialDate } from "./to-excel-serial-date/to-excel-serial-date.js";
