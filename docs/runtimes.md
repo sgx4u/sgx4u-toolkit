@@ -1,6 +1,6 @@
 # Runtimes
 
-Every library under `packages/<name>` picks one runtime: `universal`, `edge`, or `node`. Config presets under `packages/config/<name>` are private workspace tooling. They use Node, they are tagged `layout:config`, and libraries depend on them with `workspace:*`. They are not published.
+Every library under `packages/<name>` picks one runtime: `universal`, `edge`, or `node`. Config presets under `packages/config/<name>` are private workspace tooling. They use Node, they are tagged `layout:config`, libraries depend on them with `workspace:*`, and they stay in this repository. They are not published.
 
 `pnpm exec turbo gen package` asks for the runtime and writes the tag, the ESLint runtime, the TypeScript preset, the tsdown config, and the Vitest config together. Change those as a set.
 

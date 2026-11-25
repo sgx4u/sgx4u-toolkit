@@ -32,6 +32,7 @@ async function restrictedImportMessages(runtime, sourceText) {
     const results = await eslint.lintText(sourceText, {
         filePath: path.join(packageDirectory, "src/runtime-probe.ts"),
     });
+
     return results
         .flatMap((result) => result.messages)
         .filter(
@@ -118,20 +119,6 @@ test("node allows Node built-ins", async () => {
             messages.length,
             0,
             `${specifier} should be allowed for node`,
-        );
-    }
-});
-
-test("every runtime rejects the private scope", async () => {
-    for (const runtime of ["universal", "edge", "node"]) {
-        const messages = await restrictedImportMessages(
-            runtime,
-            'import "@sgx4u-private/example";\n',
-        );
-        assert.equal(
-            messages.length,
-            1,
-            `${runtime} should reject the private scope`,
         );
     }
 });

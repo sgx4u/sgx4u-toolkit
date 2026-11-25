@@ -76,9 +76,19 @@ function listPackageDirectories(repositoryDirectory, includePackage) {
 export function listPublishablePackages(repositoryDirectory) {
     return listPackageDirectories(
         repositoryDirectory,
-        (_absolutePath, packageManifest) =>
-            packageManifest.private !== true &&
-            packageManifest.name !== "@sgx4u/toolkit",
+        (absolutePath, packageManifest) => {
+            if (
+                packageManifest.private === true ||
+                packageManifest.name === "@sgx4u/toolkit"
+            ) {
+                return false;
+            }
+            const relativePath = path
+                .relative(repositoryDirectory, absolutePath)
+                .split(path.sep)
+                .join("/");
+            return !relativePath.startsWith("packages/config/");
+        },
     );
 }
 

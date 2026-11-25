@@ -46,6 +46,9 @@ function collectPackageVersions(parentDirectory, versions) {
     }
 
     for (const packageDirectoryName of readdirSync(parentDirectory)) {
+        if (packageDirectoryName === "config") {
+            continue;
+        }
         const manifestPath = path.join(
             parentDirectory,
             packageDirectoryName,
@@ -80,7 +83,6 @@ export function readPackageVersions(rootDirectory) {
     const versions = new Map();
     const packagesDirectory = path.join(rootDirectory, "packages");
     collectPackageVersions(packagesDirectory, versions);
-    collectPackageVersions(path.join(packagesDirectory, "config"), versions);
     return versions;
 }
 

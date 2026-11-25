@@ -1,8 +1,18 @@
 blank_issues_enabled: false
 contact_links:
-    - name: Ask a question
-      url: https://github.com/sgx4u/sgx4u-toolkit/discussions
-      about: Questions and usage help belong in Discussions.
     - name: Report a vulnerability
       url: https://github.com/sgx4u/sgx4u-toolkit/security/advisories/new
       about: Report security issues through a private advisory.
+issue_templates:
+    - name: 🐞 Bug Report
+      description: Report something that isn't working properly.
+      file: bug-report.yml
+    - name: 📝 Documentation Issue
+      description: Report a problem in the docs or suggest improvements.
+      file: doc-issue.yml
+    - name: ✨ Feature Request
+      description: Request a new feature or improvement.
+      file: feature.yml
+    - name: 🪶 Blank Issue
+      description: Start with a blank issue.
+      file: blank.yml

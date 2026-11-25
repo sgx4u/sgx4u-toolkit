@@ -182,7 +182,7 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
             (answers: unknown) => {
                 const packageAnswers = preparePackageAnswers(answers);
                 if (packageAnswers.packageKind === "config") {
-                    return "Config packages are private workspace tooling and do not get a changeset.";
+                    return "Config packages are private workspace tooling. They stay in the repository and do not get a changeset.";
                 }
                 const changesetDirectory = path.join(
                     repositoryRoot(),

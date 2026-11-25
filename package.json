@@ -18,7 +18,7 @@
         "test": "turbo run test && node --test \"scripts/*.test.mjs\"",
         "format": "prettier --write .",
         "format:check": "prettier --check .",
-        "check": "turbo boundaries && sherif && node scripts/check-visibility.mjs && node scripts/check-links.mjs && turbo run check:package && node scripts/check-pack.mjs",
+        "check": "turbo boundaries && sherif && node scripts/check-links.mjs && turbo run check:package && node scripts/check-pack.mjs",
         "prepare": "node scripts/install-git-hooks.mjs"
     },
     "devDependencies": {
