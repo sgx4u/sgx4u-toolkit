@@ -44,3 +44,16 @@ test("edge.json adds the WebWorker library and clears types", () => {
 test("workers.json is not part of the preset", () => {
     assert.equal(existsSync(new URL("./workers.json", import.meta.url)), false);
 });
+
+test("preset paths resolve through the package exports", () => {
+    for (const specifier of [
+        "@sgx4u/tsconfig/base.json",
+        "@sgx4u/tsconfig/library.json",
+        "@sgx4u/tsconfig/node.json",
+        "@sgx4u/tsconfig/edge.json",
+    ]) {
+        const resolved = import.meta.resolve(specifier);
+        assert.equal(resolved.startsWith("file:"), true, specifier);
+        assert.equal(existsSync(new URL(resolved)), true, specifier);
+    }
+});

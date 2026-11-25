@@ -34,20 +34,18 @@ Experimental (`0.x`). Breaking changes may land in minor versions until 1.0.0.
 <h2 id="installation">📥 Installation</h2>
 
 {{#if (eq packageKind 'config')}}
-```sh
-pnpm add -D @sgx4u/{{packageName}}          # pnpm
-npm install --save-dev @sgx4u/{{packageName}}    # npm
-yarn add --dev @sgx4u/{{packageName}}       # yarn
-```
+This preset stays in this repository. It is a workspace dev dependency and is not published.
+
+Requires Node `>=22.12`. `import` loads `dist/index.js` with `dist/index.d.ts`. The export map lists `@sgx4u/source` before `import`, pointing at `src/index.ts`. TypeScript uses that condition when `customConditions` includes `@sgx4u/source`. The TypeScript configuration in this repository sets that condition, so workspace builds load the source. Other resolvers load `dist`.
 {{else}}
 ```sh
 pnpm add @sgx4u/{{packageName}}       # pnpm
 npm install @sgx4u/{{packageName}}    # npm
 yarn add @sgx4u/{{packageName}}       # yarn
 ```
-{{/if}}
 
 Requires Node `>=22.12`. The package publishes ESM (`import`) and CommonJS (`require`). The export map lists `@sgx4u/source` before `import` and `require`, pointing at `src/index.ts`. TypeScript uses that condition when `customConditions` includes `@sgx4u/source`. The TypeScript configuration in this repository sets that condition, so workspace builds load the source. Other resolvers load `dist`.
+{{/if}}
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -69,7 +67,7 @@ packageIdentifier(); // "@sgx4u/{{packageName}}"
 
 ### `packageIdentifier(): string`
 
-Returns the scoped package name `@sgx4u/{{packageName}}`. The stub exists so the new package typechecks, tests, and packs. Replace it before the first release and update this section.
+Returns the scoped package name `@sgx4u/{{packageName}}`. The stub exists so the new package typechecks and tests{{#unless (eq packageKind 'config')}}, and packs{{/unless}}. Replace it before the first release and update this section.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

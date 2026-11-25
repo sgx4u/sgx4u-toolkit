@@ -304,8 +304,6 @@ test("the parser block parses tsdown.config.ts after several configs were loaded
     }
 
     for (const [relativeDirectory, runtime] of [
-        ["packages/config/eslint-config", "node"],
-        ["packages/config/prettier-config", "node"],
         ["packages/config/tsdown-config", "node"],
         ["packages/config/vitest-config", "node"],
     ]) {
@@ -378,11 +376,9 @@ const filesLintedAcrossConfigs = [
     "packages/config/eslint-config/eslint.config.js",
     "packages/config/eslint-config/index.js",
     "packages/config/eslint-config/index.test.js",
-    "packages/config/eslint-config/tsdown.config.ts",
     "packages/config/prettier-config/eslint.config.js",
     "packages/config/prettier-config/index.js",
     "packages/config/prettier-config/index.test.js",
-    "packages/config/prettier-config/tsdown.config.ts",
     "packages/config/tsdown-config/eslint.config.js",
     "packages/config/tsdown-config/src/index.ts",
     "packages/config/tsdown-config/src/define-library-config/index.ts",

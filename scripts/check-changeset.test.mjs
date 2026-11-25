@@ -201,9 +201,65 @@ test("workspace tooling packages stay private", () => {
             ),
         );
         assert.equal(packageManifest.private, true, entry.name);
-        assert.equal(packageManifest.publishConfig, undefined, entry.name);
+        assert.equal(packageManifest.type, "module", entry.name);
+        assert.equal(packageManifest.engines?.node, ">=22.12", entry.name);
+        for (const fieldName of [
+            "version",
+            "license",
+            "author",
+            "sideEffects",
+            "main",
+            "module",
+            "types",
+            "files",
+            "publishConfig",
+            "repository",
+            "homepage",
+            "bugs",
+        ]) {
+            assert.equal(
+                packageManifest[fieldName],
+                undefined,
+                `${entry.name} ${fieldName}`,
+            );
+        }
+        assert.equal(
+            packageManifest.scripts?.["check:package"],
+            undefined,
+            entry.name,
+        );
+        assert.equal(
+            packageManifest.devDependencies?.publint,
+            undefined,
+            entry.name,
+        );
+        assert.equal(
+            packageManifest.devDependencies?.["@arethetypeswrong/cli"],
+            undefined,
+            entry.name,
+        );
+        /** @type {string[]} */
+        const publishConditions = [];
+        collectPublishConditions(packageManifest.exports, publishConditions);
+        assert.deepEqual(publishConditions, [], entry.name);
     }
 });
+
+/**
+ * @param {unknown} value
+ * @param {string[]} found
+ */
+function collectPublishConditions(value, found) {
+    if (!value || typeof value !== "object") {
+        return;
+    }
+    for (const [key, child] of Object.entries(value)) {
+        if (key === "require" || key === "./package.json") {
+            found.push(key);
+        }
+        collectPublishConditions(child, found);
+    }
+}
 
 /**
  * @param {string} [prefix]
