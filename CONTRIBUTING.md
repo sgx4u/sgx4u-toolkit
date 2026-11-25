@@ -53,7 +53,9 @@ Names are lowercase kebab-case. `utils`, `common`, and `shared` are rejected. Co
 
 Runtime dependencies on other toolkit packages use `workspace:^`. Presets use `workspace:*`. Third-party versions use `catalog:`. Add a catalog entry only when a package needs it. Do not add a version for a dependency no package in this repository installs.
 
-The generator can scaffold an `edge` package against `@sgx4u/tsconfig/workers.json`. That preset loads `@cloudflare/workers-types`, which is not in the catalog. Before that package installs and typechecks, add `@cloudflare/workers-types` to the catalog and to the package.
+Pick the runtime from [docs/runtimes.md](./docs/runtimes.md). Universal packages extend `@sgx4u/tsconfig/library.json`. Edge packages extend `@sgx4u/tsconfig/edge.json` (ES2022 plus the WebWorker library, no extra types package). Node packages extend `@sgx4u/tsconfig/node.json` and depend on `@types/node`. An edge package that imports an allowed Node built-in adds `@types/node` itself. Do not add `@cloudflare/workers-types` unless that package needs Cloudflare-only types.
+
+`pnpm lint`, `pnpm typecheck`, and `pnpm check` are the local equivalents of the CI steps. `pnpm changeset` runs the Changesets binary directly.
 
 Libraries export named functions from `src/index.ts`, with explicit return types. Tests sit next to the source. tsdown writes ESM and CommonJS into `dist` (`index.js` / `index.d.ts` and `index.cjs` / `index.d.cts`). The `files` field publishes `dist` and `src` (so the `@sgx4u/source` condition resolves) and excludes tests. Export maps list `types` before the runtime file for both `import` and `require`, and set `main`, `module`, and `types` as fallbacks.
 

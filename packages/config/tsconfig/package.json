@@ -22,10 +22,10 @@
             "require": "./node.json",
             "default": "./node.json"
         },
-        "./workers.json": {
-            "import": "./workers.json",
-            "require": "./workers.json",
-            "default": "./workers.json"
+        "./edge.json": {
+            "import": "./edge.json",
+            "require": "./edge.json",
+            "default": "./edge.json"
         },
         "./package.json": "./package.json"
     },
@@ -33,7 +33,7 @@
         "base.json",
         "library.json",
         "node.json",
-        "workers.json",
+        "edge.json",
         "README.md"
     ],
     "scripts": {

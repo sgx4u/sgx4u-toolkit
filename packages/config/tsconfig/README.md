@@ -10,14 +10,14 @@ pnpm add -D @sgx4u/tsconfig
 
 ## Presets
 
-| Export                         | Use                                                                                              |
-| ------------------------------ | ------------------------------------------------------------------------------------------------ |
-| `@sgx4u/tsconfig/base.json`    | Strict ESM baseline. No DOM, no `@types` auto-include.                                           |
-| `@sgx4u/tsconfig/library.json` | Published libraries. Declarations and `isolatedDeclarations`.                                    |
-| `@sgx4u/tsconfig/node.json`    | Node 22.12+ packages. Add `@types/node` in the package.                                          |
-| `@sgx4u/tsconfig/workers.json` | Workers and edge libraries. Loads `@cloudflare/workers-types`, which the package must depend on. |
+| Export                         | Use                                                                                                                                                                                          |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@sgx4u/tsconfig/base.json`    | Strict ESM baseline. No DOM, no `@types` auto-include.                                                                                                                                       |
+| `@sgx4u/tsconfig/library.json` | Universal libraries. Declarations and `isolatedDeclarations`.                                                                                                                                |
+| `@sgx4u/tsconfig/edge.json`    | Edge libraries. ES2022 plus the WebWorker library (`fetch`, streams, and the other web standards). `types` stays empty, so no `@cloudflare/workers-types` and no `@types/node` are required. |
+| `@sgx4u/tsconfig/node.json`    | Node 22.12+ packages. Add `@types/node` in the package.                                                                                                                                      |
 
-`workers.json` loads `@cloudflare/workers-types`. That package is not in the catalog. The first edge package in this repo adds the catalog entry and the dependency. Add a catalog entry only when a package in this repo needs it.
+`edge.json` does not load a vendor types package. TypeScript's WebWorker library is enough for the web standards edge runtimes share. A package that imports an allowed Node built-in adds `@types/node` itself. A package that needs Cloudflare-only types can add `@cloudflare/workers-types` itself. Add a catalog entry only when a package in this repo needs it.
 
 `customConditions` includes `@sgx4u/source`, so workspace and `pnpm link` builds can resolve TypeScript source.
 

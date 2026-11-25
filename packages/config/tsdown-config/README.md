@@ -18,6 +18,8 @@ import { defineLibraryConfig } from "@sgx4u/tsdown-config";
 export default defineLibraryConfig();
 ```
 
+The default `platform` is `"neutral"`, which is what universal and edge packages use. Node packages pass `{ platform: "node" }` so Node built-ins stay external. Caller options override the preset.
+
 ## Owner
 
 Subhajit Ghosh (`@sgx4u`).

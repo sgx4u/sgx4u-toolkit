@@ -1,11 +1,15 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "extends": ["config:recommended"],
-    "baseBranches": ["develop"],
-    "dependencyDashboard": {
-        "enabled": true
-    },
+    "baseBranchPatterns": ["develop"],
     "labels": ["dependencies"],
+    "minimumReleaseAge": "3 days",
+    "automerge": false,
+    "schedule": ["before 5am on Monday"],
+    "lockFileMaintenance": {
+        "enabled": true,
+        "schedule": ["before 5am on Monday"]
+    },
     "packageRules": [
         {
             "description": "GitHub Actions updates are opened by Dependabot, not Renovate.",
@@ -13,18 +17,15 @@
             "enabled": false
         },
         {
-            "description": "Group public @sgx4u minor and patch updates and merge them when CI passes.",
-            "matchPackageNames": ["@sgx4u/**"],
-            "matchUpdateTypes": ["minor", "patch"],
-            "groupName": "sgx4u packages",
-            "automerge": true
+            "description": "Open one pull request for every non-major update. Major updates stay on their own pull requests.",
+            "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+            "groupName": "non-major dependencies"
         },
         {
-            "description": "Major @sgx4u updates stay for review.",
-            "matchPackageNames": ["@sgx4u/**"],
-            "matchUpdateTypes": ["major"],
-            "groupName": "sgx4u majors",
-            "automerge": false
+            "description": "Update pnpm catalog entries in pnpm-workspace.yaml. The npm manager reads that file; this rule keeps those dependencies enabled.",
+            "matchManagers": ["npm"],
+            "matchDepTypes": ["/^pnpm\\.catalog\\./"],
+            "enabled": true
         }
     ]
 }

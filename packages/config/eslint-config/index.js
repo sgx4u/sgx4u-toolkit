@@ -1,3 +1,4 @@
+import { builtinModules } from "node:module";
 import eslint from "@eslint/js";
 import eslintConfigPrettier from "eslint-config-prettier";
 import boundaries from "eslint-plugin-boundaries";
@@ -15,7 +16,57 @@ const universalRuntimeMessage =
     "Universal packages may use web-standard APIs only (fetch, URL, Web Crypto, TextEncoder, streams). Node built-ins are not allowed.";
 
 const edgeRuntimeMessage =
-    "Edge packages may use web standards and the Workers nodejs_compat subset. Node-only built-ins outside that subset are not allowed.";
+    "Edge packages may use web standards and Workers nodejs_compat modules that have an implementation. Non-functional stub modules are not allowed.";
+
+/**
+ * Workers documents these as importable stubs whose methods throw.
+ * Supported and partially supported modules stay allowed, including
+ * node:fs, node:http, node:net, node:dns, and node:tls.
+ * Add a name here only when Workers lists a new non-functional stub.
+ *
+ * @type {readonly string[]}
+ */
+const edgeStubModuleNames = [
+    "_stream_wrap",
+    "child_process",
+    "cluster",
+    "dgram",
+    "domain",
+    "http2",
+    "inspector",
+    "readline",
+    "repl",
+    "sqlite",
+    "trace_events",
+    "tty",
+    "v8",
+    "vm",
+    "wasi",
+    "worker_threads",
+];
+
+/**
+ * @param {string} value
+ * @returns {string}
+ */
+function escapeRegularExpression(value) {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+const bareBuiltinModuleNames = builtinModules.filter(
+    (builtinModuleName) => !builtinModuleName.startsWith("node:"),
+);
+
+// `node:*` globs do not cross `/`, so `node:*` missed `node:fs/promises`.
+// `node:.+` covers every prefixed builtin, including ones Node adds later.
+// Bare names come from the Node that runs ESLint.
+const universalBuiltinImportPattern = `^(?:node:.+|${bareBuiltinModuleNames
+    .map((builtinModuleName) => escapeRegularExpression(builtinModuleName))
+    .join("|")})$`;
+
+const edgeStubImportPattern = `^(?:node:)?(?:${edgeStubModuleNames
+    .map((moduleName) => escapeRegularExpression(moduleName))
+    .join("|")})(?:/.+)?$`;
 
 /**
  * @param {import("./index.js").PackageRuntime} runtime
@@ -40,57 +91,14 @@ function restrictedImportsForRuntime(runtime) {
 
     if (runtime === "universal") {
         patterns.push({
-            group: [
-                "node:*",
-                "fs",
-                "path",
-                "os",
-                "crypto",
-                "child_process",
-                "http",
-                "https",
-                "net",
-                "tls",
-                "stream",
-                "zlib",
-                "url",
-                "module",
-            ],
+            regex: universalBuiltinImportPattern,
             message: universalRuntimeMessage,
         });
     }
 
     if (runtime === "edge") {
         patterns.push({
-            group: [
-                "node:child_process",
-                "node:cluster",
-                "node:dgram",
-                "node:dns",
-                "node:fs",
-                "node:fs/promises",
-                "node:http",
-                "node:https",
-                "node:net",
-                "node:readline",
-                "node:repl",
-                "node:tls",
-                "node:v8",
-                "node:vm",
-                "node:worker_threads",
-                "child_process",
-                "cluster",
-                "dgram",
-                "dns",
-                "fs",
-                "http",
-                "https",
-                "net",
-                "readline",
-                "repl",
-                "tls",
-                "worker_threads",
-            ],
+            regex: edgeStubImportPattern,
             message: edgeRuntimeMessage,
         });
     }
@@ -104,6 +112,30 @@ function restrictedImportsForRuntime(runtime) {
 }
 
 /**
+ * Universal globals are the web standards Node and browsers share.
+ * Edge adds worker globals plus the Node globals Workers actually provide
+ * under nodejs_compat. Node keeps the full Node global set.
+ *
+ * @param {import("./index.js").PackageRuntime} runtime
+ */
+function globalsForRuntime(runtime) {
+    if (runtime === "universal") {
+        return globals["shared-node-browser"];
+    }
+    if (runtime === "edge") {
+        return {
+            ...globals.worker,
+            process: globals.node.process,
+            Buffer: globals.node.Buffer,
+            global: globals.node.global,
+            setImmediate: globals.node.setImmediate,
+            clearImmediate: globals.node.clearImmediate,
+        };
+    }
+    return globals.node;
+}
+
+/**
  * Flat config shared by every package.
  * `turbo boundaries` keeps packages/config from depending on packages/<name>.
  * This config enforces the runtime import rules for the runtime you pass,
@@ -113,11 +145,6 @@ function restrictedImportsForRuntime(runtime) {
  * @returns {import("eslint").Linter.Config[]}
  */
 export function definePackageConfig(options) {
-    const nodeGlobals =
-        options.runtime === "node" || options.runtime === "edge"
-            ? globals.node
-            : {};
-
     return tseslint.config(
         {
             ignores: ["dist/**", "coverage/**", "node_modules/**"],
@@ -127,7 +154,7 @@ export function definePackageConfig(options) {
         {
             languageOptions: {
                 globals: {
-                    ...nodeGlobals,
+                    ...globalsForRuntime(options.runtime),
                 },
             },
             plugins: {
