@@ -1,8 +1,0 @@
-{
-    "extends": "@sgx4u/tsconfig/library.json",
-    "compilerOptions": {
-        "outDir": "dist",
-        "noEmit": true
-    },
-    "include": ["src/**/*.ts", "*.config.ts"]
-}

@@ -33,12 +33,12 @@ Graduate an experiment from its feature branch:
 
 ## Pull requests
 
-Every pull request that changes a publishable package includes:
+Every pull request that changes published behavior includes:
 
-- a changeset (`pnpm changeset`). What happens to it is in [.changeset/README.md](./.changeset/README.md)
+- a changeset (`pnpm changeset`), or an update to the pending one before the first publish. The format is in [.changeset/README.md](./.changeset/README.md). Docs, comments, tests, refactors, CI, and `packages/config` do not need one
 - tests for the behavior you changed
 - a README update when the public API changes
-- a migration note in the changeset when the change is breaking
+- a `Breaking` entry and a migration snippet when the change is breaking
 
 A security fix follows [SECURITY.md](./SECURITY.md).
 
@@ -46,13 +46,13 @@ A security fix follows [SECURITY.md](./SECURITY.md).
 
 Pull requests into `develop`, `beta`, `production`, and `release/**` run [`.github/workflows/ci.yml`](./.github/workflows/ci.yml).
 
-| Check                 | What it runs                                                                                                                                  |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ci / lint`           | Affected package lint, root ESLint, `turbo boundaries`, sherif, and `scripts/check-links.mjs`.                                                |
-| `ci / typecheck`      | Affected package typecheck, then `tsc --noEmit` for the generator.                                                                            |
-| `ci / test`           | `pnpm test`.                                                                                                                                  |
-| `ci / build`          | Affected `turbo run build`.                                                                                                                   |
-| `ci / package-checks` | Affected `check:package` (publint and attw; the task depends on `build`), `scripts/check-pack.mjs`, and on a pull request `changeset status`. |
+| Check                 | What it runs                                                                                                                                             |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ci / lint`           | Affected package lint, root ESLint, `turbo boundaries`, sherif, and `scripts/check-links.mjs`.                                                           |
+| `ci / typecheck`      | Affected package typecheck, then `tsc --noEmit` for the generator.                                                                                       |
+| `ci / test`           | `pnpm test`.                                                                                                                                             |
+| `ci / build`          | Affected `turbo run build`.                                                                                                                              |
+| `ci / package-checks` | Affected `check:package` (publint and attw; the task depends on `build`), `scripts/check-pack.mjs`, and on a pull request `scripts/check-changeset.mjs`. |
 
 `scripts/check-links.mjs` requires every `link:` and `file:` dependency to resolve inside this repository. See [Local linking](#local-linking). Keep package names and imports on the public `@sgx4u` scope.
 
@@ -66,12 +66,12 @@ pnpm exec turbo gen package
 
 The generator asks for the name and the kind. Use lowercase kebab-case starting with a letter, and name the one job the package does. The generator reserves `config`, `toolkit`, `utils`, `common`, and `shared`. A library publishes as `@sgx4u/<name>`. A config preset stays in this repository and is not published.
 
-| Kind      | Folder                   | Runtime                                         |
-| --------- | ------------------------ | ----------------------------------------------- |
-| `config`  | `packages/config/<name>` | `node`. Tooling, installed as a dev dependency. |
-| `regular` | `packages/<name>`        | `universal`, `edge`, or `node`.                 |
+| Kind      | Folder                   | Runtime                                                                      |
+| --------- | ------------------------ | ---------------------------------------------------------------------------- |
+| `config`  | `packages/config/<name>` | `node`. Private workspace tooling. Not published, and no changeset.          |
+| `regular` | `packages/<name>`        | `universal`, `edge`, or `node`. Published. The generator writes a changeset. |
 
-The generator writes the package, a changeset, and a CODEOWNERS line.
+The generator writes the package and a CODEOWNERS line. A regular package also gets one initial changeset. A config package is `"private": true` and does not.
 
 A runtime dependency on another toolkit package uses `workspace:^`. Presets and other dev tooling use `workspace:*`. Third-party versions use `catalog:`. Add a catalog entry when a package in this repository needs that dependency.
 
@@ -84,7 +84,7 @@ Libraries keep `src/index.ts` as a re-export list. Each feature is a folder unde
 From the app you are changing alongside a package:
 
 ```sh
-pnpm link --hard ../sgx4u-toolkit/packages/string
+pnpm link --hard ../sgx4u-toolkit/packages/<name>
 ```
 
 That writes a `link:` or `file:` entry. `pnpm unlink` removes it. Commit `workspace:` ranges.

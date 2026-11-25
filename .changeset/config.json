@@ -1,8 +1,8 @@
 {
     "$schema": "https://unpkg.com/@changesets/config@3.0.3/schema.json",
     "changelog": [
-        "@changesets/changelog-github",
-        { "repo": "sgx4u/sgx4u-toolkit" }
+        "../scripts/changelog-format.mjs",
+        { "repository": "sgx4u/sgx4u-toolkit" }
     ],
     "commit": false,
     "fixed": [],
@@ -11,6 +11,7 @@
     "baseBranch": "develop",
     "updateInternalDependencies": "minor",
     "ignore": [],
+    "format": false,
     "snapshot": {
         "useCalculatedVersion": false,
         "prereleaseTemplate": "{tag}-{timestamp}"

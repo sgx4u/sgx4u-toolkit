@@ -87,7 +87,7 @@ Settings → Rules → New ruleset. Target `develop`, `production`, and `release
 
 Optional checks to require once you trust them: `ci / test-node-22`, `ci / dependency-review`, `ci / pkg-pr-new`, `security / analyze`, `security / secrets`.
 
-`ci / package-checks` runs `check:package` (publint and `@arethetypeswrong/cli`; the task depends on `build`), then `scripts/check-pack.mjs`. Pull requests also run `changeset status`. Dependency review and the pkg.pr.new preview run on pull requests, in `ci.yml`. CodeQL (`security / analyze`) and gitleaks (`security / secrets`) run from `security.yml`, including a weekly schedule.
+`ci / package-checks` runs `check:package` (publint and `@arethetypeswrong/cli`; the task depends on `build`), then `scripts/check-pack.mjs`. Pull requests also run `scripts/check-changeset.mjs`. Dependency review and the pkg.pr.new preview run on pull requests, in `ci.yml`. CodeQL (`security / analyze`) and gitleaks (`security / secrets`) run from `security.yml`, including a weekly schedule.
 
 ## 3. Actions permissions
 
