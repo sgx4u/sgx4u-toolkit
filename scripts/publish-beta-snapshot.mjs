@@ -44,6 +44,7 @@ function collectPackageVersions(parentDirectory, versions) {
     ) {
         return;
     }
+
     for (const packageDirectoryName of readdirSync(parentDirectory)) {
         const manifestPath = path.join(
             parentDirectory,
@@ -138,6 +139,7 @@ function removeUntrackedChangelogs(rootDirectory) {
         ) {
             continue;
         }
+
         for (const entryName of readdirSync(parentDirectory)) {
             const changelogPath = path.join(
                 parentDirectory,
@@ -205,6 +207,7 @@ function discardUncommittedSnapshotEdits(rootDirectory) {
 function main() {
     assertBetaSnapshotBranch(process.env.GITHUB_REF_NAME);
     const versionsBefore = readPackageVersions(repositoryRoot);
+
     try {
         execFileSync(
             "pnpm",
