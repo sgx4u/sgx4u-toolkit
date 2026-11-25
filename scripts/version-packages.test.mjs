@@ -25,12 +25,12 @@ test("version arguments stay the Changesets version command", () => {
 
 test("rewrite updates a changelog that still has release markers", () => {
     const rootDirectory = mkdtempSync(path.join(tmpdir(), "sgx4u-version-"));
-    const packageDirectory = path.join(rootDirectory, "packages", "string");
+    const packageDirectory = path.join(rootDirectory, "packages", "example");
     mkdirSync(packageDirectory, { recursive: true });
     writeFileSync(
         path.join(packageDirectory, "CHANGELOG.md"),
         [
-            "# @sgx4u/string",
+            "# @sgx4u/example",
             "",
             "## 0.1.0",
             "",
@@ -38,16 +38,16 @@ test("rewrite updates a changelog that still has release markers", () => {
             "",
             "<!-- changelog-date: 2026-11-25 -->",
             "<!-- changelog-summary -->",
-            "First release of the string helpers.",
+            "First release of the example package.",
             "<!-- /changelog-summary -->",
             "<!-- changelog-entry: Added -->",
-            "`isBlank` reports whether a string is empty or only whitespace.",
+            "`formatLabel` returns the label callers display.",
             "<!-- /changelog-entry -->",
             "",
         ].join("\n"),
     );
     const rewritten = rewriteChangelogFiles(rootDirectory);
-    assert.deepEqual(rewritten, ["packages/string/CHANGELOG.md"]);
+    assert.deepEqual(rewritten, ["packages/example/CHANGELOG.md"]);
     const changelog = readFileSync(
         path.join(packageDirectory, "CHANGELOG.md"),
         "utf8",

@@ -41,7 +41,7 @@
 
 ## About
 
-Libraries live in `packages/<name>`. `@sgx4u/string` is the published library. It builds with tsdown and ships ESM and CommonJS. `import` resolves `dist/*.js` with `dist/*.d.ts`. `require` resolves `dist/*.cjs` with `dist/*.d.cts`. The `@sgx4u/source` export condition points at TypeScript source (`src/index.ts`). This workspace resolves it through `customConditions`. A published install uses `dist`.
+Libraries live in `packages/<name>`. A published library builds with tsdown and ships ESM and CommonJS. `import` resolves `dist/*.js` with `dist/*.d.ts`. `require` resolves `dist/*.cjs` with `dist/*.d.cts`. The `@sgx4u/source` export condition points at TypeScript source (`src/index.ts`). This workspace resolves it through `customConditions`. A published install uses `dist`.
 
 Published packages declare `"node": ">=22.12"`.
 
@@ -55,9 +55,7 @@ The root workspace package is `@sgx4u/toolkit`. Its manifest is `"private": fals
 
 ## Packages
 
-| Package                              | What it is                             |
-| ------------------------------------ | -------------------------------------- |
-| [`@sgx4u/string`](./packages/string) | Blank checks and whitespace collapsing |
+Published libraries live in `packages/<name>`. Each package README has the install line and the exports. `packages/config` is not published.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -77,24 +75,19 @@ Each library picks one runtime. Presets in `packages/config` are private Node to
 
 ## Installation
 
-`@sgx4u/string` is the published package. Its README has the same install line.
+Install a published library by its package name. The same command works for each one.
 
 ```sh
-pnpm add @sgx4u/string       # pnpm
-npm install @sgx4u/string    # npm
-yarn add @sgx4u/string       # yarn
+pnpm add @sgx4u/<name>       # pnpm
+npm install @sgx4u/<name>    # npm
+yarn add @sgx4u/<name>       # yarn
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Usage
 
-```ts
-import { collapseWhitespace, isBlank } from "@sgx4u/string";
-
-isBlank("  ");
-collapseWhitespace("  a \n b  ");
-```
+Import the export you need from the package. The package README lists the exports and what each one does for a caller.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

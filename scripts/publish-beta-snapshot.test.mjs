@@ -9,18 +9,18 @@ import {
 
 test("snapshot publish only includes packages whose version changed", () => {
     const versionsBefore = new Map([
-        ["@sgx4u/string", "0.0.0"],
-        ["@sgx4u/tsconfig", "0.0.0"],
+        ["@sgx4u/example", "0.0.0"],
+        ["@sgx4u/other", "0.0.0"],
     ]);
     const versionsAfter = new Map([
-        ["@sgx4u/string", "0.0.0-beta-1732521600000"],
-        ["@sgx4u/tsconfig", "0.0.0"],
+        ["@sgx4u/example", "0.0.0-beta-1732521600000"],
+        ["@sgx4u/other", "0.0.0"],
     ]);
     assert.deepEqual(
         packagesWithChangedVersions(versionsBefore, versionsAfter),
         [
             {
-                packageName: "@sgx4u/string",
+                packageName: "@sgx4u/example",
                 version: "0.0.0-beta-1732521600000",
             },
         ],
@@ -56,5 +56,8 @@ test("the repository versions can be read without publishing", () => {
     const versions = readPackageVersions(
         new URL("..", import.meta.url).pathname,
     );
-    assert.equal(versions.get("@sgx4u/string"), "0.0.0");
+    for (const [packageName, version] of versions) {
+        assert.equal(version, "0.0.0", packageName);
+    }
+    assert.equal(versions.has("@sgx4u/tsconfig"), false);
 });

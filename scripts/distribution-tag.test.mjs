@@ -46,7 +46,7 @@ test("the publish plan carries the branch dist-tag", () => {
             [
                 {
                     kind: "publish",
-                    name: "@sgx4u/string",
+                    name: "@sgx4u/example",
                     version: "1.2.0",
                     tag: "latest",
                 },

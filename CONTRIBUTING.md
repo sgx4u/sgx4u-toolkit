@@ -84,7 +84,7 @@ Libraries keep `src/index.ts` as a re-export list. Each feature is a folder unde
 From the app you are changing alongside a package:
 
 ```sh
-pnpm link --hard ../sgx4u-toolkit/packages/string
+pnpm link --hard ../sgx4u-toolkit/packages/<name>
 ```
 
 That writes a `link:` or `file:` entry. `pnpm unlink` removes it. Commit `workspace:` ranges.

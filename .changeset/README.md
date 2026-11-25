@@ -29,24 +29,24 @@ Each entry starts with a category tag. The categories, in changelog order, are `
 
 ```md
 ---
-"@sgx4u/string": minor
+"@sgx4u/<name>": minor
 ---
 
-Summary: First release of string helpers for blank checks and collapsed whitespace.
+Summary: First release of the package.
 
-Added: `isBlank` reports whether a string is empty or only whitespace.
+Added: `formatLabel` returns the label callers display.
 ```
 
 A `Breaking` entry puts the migration snippet in a fence after the first line:
 
 ````md
-Breaking: `isBlank` rejects a non-string.
+Breaking: `formatLabel` requires `locale`.
 
 ```js
-isBlank("  ");
+formatLabel({ locale: "en" });
 ```
 
-Pass a string. The previous call accepted other values and returned false.
+Pass `locale`. Callers that omitted it used the runtime default.
 ````
 
 `node scripts/version-packages.mjs` runs `changeset version`, then groups the entries. The release workflow uses that command. Changesets wraps each note under Major, Minor, and Patch headings, and one `getReleaseLine` call cannot see the other notes in the version. The module writes a tagged block per entry. The version script replaces those headings with the category sections, puts the date on the version heading, and keeps only the categories that have entries. `.changeset/config.json` sets `format` to false so that rewrite sees the tags intact, then the script formats the finished changelog.

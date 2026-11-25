@@ -17,7 +17,6 @@ import { fileURLToPath } from "node:url";
 import {
     getDependencyReleaseLine,
     getReleaseLine,
-    parseChangesetFile,
     parseChangesetNotes,
     pullRequestNumberFromCommitSubject,
     rewriteChangelog,
@@ -31,12 +30,12 @@ test("category sections stay in order and empty categories are omitted", () => {
         [
             "Summary: Helpers for blank text.",
             "",
-            "Fixed: `isBlank` treats a non-breaking space as whitespace.",
+            "Fixed: `formatLabel` keeps an empty label unchanged.",
             "",
-            "Added: `collapseWhitespace` returns a new string with each whitespace run replaced by one space.",
+            "Added: `normalizeLabel` returns the label callers display.",
             "",
         ].join("\n"),
-        [{ name: "@sgx4u/string", type: "minor" }],
+        [{ name: "@sgx4u/example", type: "minor" }],
     );
     assert.equal(notes.summary, "Helpers for blank text.");
     assert.deepEqual(
@@ -46,13 +45,13 @@ test("category sections stay in order and empty categories are omitted", () => {
 
     const releaseLine = getReleaseLine(
         {
-            id: "string-notes",
+            id: "example-notes",
             summary: [
                 "Summary: Helpers for blank text.",
-                "Fixed: `isBlank` treats a non-breaking space as whitespace.",
-                "Added: `collapseWhitespace` returns a new string with each whitespace run replaced by one space.",
+                "Fixed: `formatLabel` keeps an empty label unchanged.",
+                "Added: `normalizeLabel` returns the label callers display.",
             ].join("\n"),
-            releases: [{ name: "@sgx4u/string", type: "minor" }],
+            releases: [{ name: "@sgx4u/example", type: "minor" }],
             commit: "abcdef1234567890abcdef1234567890abcdef12",
         },
         "minor",
@@ -66,13 +65,13 @@ test("category sections stay in order and empty categories are omitted", () => {
         },
     );
     const rewritten = rewriteChangelog(
-        `# @sgx4u/string\n\n## 0.1.0\n\n### Minor Changes\n\n${releaseLine.trim()}\n`,
+        `# @sgx4u/example\n\n## 0.1.0\n\n### Minor Changes\n\n${releaseLine.trim()}\n`,
     );
     assert.match(
         rewritten,
-        /^# @sgx4u\/string\n\n## 0\.1\.0 — 2026-11-25\n\nHelpers for blank text\.\n\n### Added\n/,
+        /^# @sgx4u\/example\n\n## 0\.1\.0 — 2026-11-25\n\nHelpers for blank text\.\n\n### Added\n/,
     );
-    assert.match(rewritten, /### Added\n\n- `collapseWhitespace`/);
+    assert.match(rewritten, /### Added\n\n- `normalizeLabel`/);
     assert.ok(rewritten.indexOf("### Added") < rewritten.indexOf("### Fixed"));
     assert.doesNotMatch(rewritten, /### Minor Changes/);
     assert.doesNotMatch(rewritten, /### Changed/);
@@ -97,7 +96,7 @@ test("a breaking entry indents the migration snippet and rejects a patch bump", 
     assert.throws(
         () =>
             parseChangesetNotes(summary, [
-                { name: "@sgx4u/string", type: "patch" },
+                { name: "@sgx4u/example", type: "patch" },
             ]),
         /cannot use a patch bump/,
     );
@@ -106,7 +105,7 @@ test("a breaking entry indents the migration snippet and rejects a patch bump", 
         {
             id: "breaking-option",
             summary,
-            releases: [{ name: "@sgx4u/string", type: "minor" }],
+            releases: [{ name: "@sgx4u/example", type: "minor" }],
         },
         "minor",
         {
@@ -116,7 +115,7 @@ test("a breaking entry indents the migration snippet and rejects a patch bump", 
         },
     );
     const rewritten = rewriteChangelog(
-        `# @sgx4u/string\n\n## 0.2.0\n\n### Minor Changes\n\n${releaseLine.trim()}\n`,
+        `# @sgx4u/example\n\n## 0.2.0\n\n### Minor Changes\n\n${releaseLine.trim()}\n`,
     );
     assert.match(
         rewritten,
@@ -135,9 +134,9 @@ test("an explicit pull request link wins over the commit subject", () => {
             id: "linked",
             summary: [
                 "Pull request: 12",
-                "Added: `isBlank` reports whether a string is empty or only whitespace.",
+                "Added: `formatLabel` returns the label callers display.",
             ].join("\n"),
-            releases: [{ name: "@sgx4u/string", type: "minor" }],
+            releases: [{ name: "@sgx4u/example", type: "minor" }],
             commit: "1234567890abcdef1234567890abcdef12345678",
         },
         "minor",
@@ -145,7 +144,7 @@ test("an explicit pull request link wins over the commit subject", () => {
             date: "2026-11-25",
             commitSubjects: {
                 "1234567890abcdef1234567890abcdef12345678":
-                    "feat: add isBlank (#99)",
+                    "feat: add formatLabel (#99)",
             },
         },
     );
@@ -162,15 +161,14 @@ test("a commit without a pull request number links to the commit", () => {
     const releaseLine = getReleaseLine(
         {
             id: "commit-only",
-            summary:
-                "Added: `isBlank` reports whether a string is empty or only whitespace.",
-            releases: [{ name: "@sgx4u/string", type: "patch" }],
+            summary: "Added: `formatLabel` returns the label callers display.",
+            releases: [{ name: "@sgx4u/example", type: "patch" }],
             commit: commitHash,
         },
         "patch",
         {
             date: "2026-11-25",
-            commitSubjects: { [commitHash]: "feat: add isBlank" },
+            commitSubjects: { [commitHash]: "feat: add formatLabel" },
         },
     );
     const rewritten = rewriteChangelog(
@@ -183,10 +181,13 @@ test("a commit without a pull request number links to the commit", () => {
         ),
     );
     assert.equal(
-        pullRequestNumberFromCommitSubject("feat: add isBlank (#7)"),
+        pullRequestNumberFromCommitSubject("feat: add formatLabel (#7)"),
         "7",
     );
-    assert.equal(pullRequestNumberFromCommitSubject("feat: add isBlank"), null);
+    assert.equal(
+        pullRequestNumberFromCommitSubject("feat: add formatLabel"),
+        null,
+    );
 });
 
 test("dependency updates render under Changed and an older section stays", () => {
@@ -200,16 +201,15 @@ test("dependency updates render under Changed and an older section stays", () =>
     const releaseLine = getReleaseLine(
         {
             id: "feature",
-            summary:
-                "Added: `isBlank` reports whether a string is empty or only whitespace.",
-            releases: [{ name: "@sgx4u/string", type: "minor" }],
+            summary: "Added: `formatLabel` returns the label callers display.",
+            releases: [{ name: "@sgx4u/example", type: "minor" }],
         },
         "minor",
         { date: "2026-11-25", commitSubjects: {} },
     );
     const rewritten = rewriteChangelog(
         [
-            "# @sgx4u/string",
+            "# @sgx4u/example",
             "",
             "## 0.2.0",
             "",
@@ -247,7 +247,10 @@ test("notes without a category are rejected", () => {
         /category tag/,
     );
     assert.throws(
-        () => parseChangesetNotes("Added: isBlank reports a blank string.\n"),
+        () =>
+            parseChangesetNotes(
+                "Added: formatLabel returns the label callers display.\n",
+            ),
         /backticks/,
     );
 });
@@ -257,13 +260,7 @@ test("pending changesets use the category format", () => {
     const names = readdirSync(directory).filter(
         (name) => name.endsWith(".md") && name !== "README.md",
     );
-    assert.deepEqual(names, ["string-initial.md"]);
-    const markdown = readFileSync(new URL(names[0], directory), "utf8");
-    const parsed = parseChangesetFile(markdown, `.changeset/${names[0]}`);
-    assert.deepEqual(
-        parsed.releases.map((release) => release.name),
-        ["@sgx4u/string"],
-    );
+    assert.deepEqual(names, []);
 });
 
 test("changeset version output is rewritten into category sections", () => {
@@ -279,7 +276,7 @@ test("changeset version output is rewritten into category sections", () => {
         path.join(rootDirectory, "package.json"),
         `${JSON.stringify(
             {
-                name: "@sgx4u/string",
+                name: "@sgx4u/example",
                 version: "0.0.0",
                 private: false,
             },
@@ -308,14 +305,14 @@ test("changeset version output is rewritten into category sections", () => {
         path.join(rootDirectory, ".changeset", "demo.md"),
         [
             "---",
-            '"@sgx4u/string": minor',
+            '"@sgx4u/example": minor',
             "---",
             "",
-            "Summary: First release of the string helpers.",
+            "Summary: First release of the example package.",
             "",
             "Pull request: 12",
             "",
-            "Added: `isBlank` reports whether a string is empty or only whitespace.",
+            "Added: `formatLabel` returns the label callers display.",
             "",
         ].join("\n"),
     );
@@ -323,7 +320,7 @@ test("changeset version output is rewritten into category sections", () => {
     runGit(rootDirectory, ["config", "user.email", "test@example.com"]);
     runGit(rootDirectory, ["config", "user.name", "Changeset Test"]);
     runGit(rootDirectory, ["add", "."]);
-    runGit(rootDirectory, ["commit", "-m", "feat: add the string package"]);
+    runGit(rootDirectory, ["commit", "-m", "feat: add the example package"]);
 
     const result = spawnSync(process.execPath, [changesetCli, "version"], {
         cwd: rootDirectory,
@@ -339,7 +336,7 @@ test("changeset version output is rewritten into category sections", () => {
     const rewritten = rewriteChangelog(intermediate);
     assert.match(
         rewritten,
-        /^# @sgx4u\/string\n\n## 0\.1\.0 — \d{4}-\d{2}-\d{2}\n\nFirst release of the string helpers\.\n\n### Added\n\n- `isBlank` reports whether a string is empty or only whitespace\. \(\[#12\]\(https:\/\/github\.com\/sgx4u\/sgx4u-toolkit\/pull\/12\)\)\n$/,
+        /^# @sgx4u\/example\n\n## 0\.1\.0 — \d{4}-\d{2}-\d{2}\n\nFirst release of the example package\.\n\n### Added\n\n- `formatLabel` returns the label callers display\. \(\[#12\]\(https:\/\/github\.com\/sgx4u\/sgx4u-toolkit\/pull\/12\)\)\n$/,
     );
     assert.equal(
         JSON.parse(

@@ -8,7 +8,7 @@ Every library under `packages/<name>` picks one runtime: `universal`, `edge`, or
 
 | Runtime     | Pick it when                                                                                                                                        |
 | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `universal` | The same source runs in browsers, workers, and Node, using web standards. `@sgx4u/string` is universal.                                             |
+| `universal` | The same source runs in browsers, workers, and Node, using web standards.                                                                           |
 | `edge`      | The code runs on an edge runtime, such as Cloudflare Workers, and may use the Workers `nodejs_compat` modules that have an implementation.          |
 | `node`      | The code needs Node itself: processes, a Node server, or an API outside the edge subset. Config presets are Node because they run in the toolchain. |
 
