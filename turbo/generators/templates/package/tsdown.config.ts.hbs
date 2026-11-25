@@ -1,5 +1,9 @@
 import { defineLibraryConfig } from "@sgx4u/tsdown-config";
 
+{{#if (eq runtimeName "node")}}
 export default defineLibraryConfig({
-    platform: "{{buildPlatform}}",
+    platform: "node",
 });
+{{else}}
+export default defineLibraryConfig();
+{{/if}}

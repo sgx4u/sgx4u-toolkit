@@ -2,7 +2,7 @@
 
 Every library under `packages/<name>` picks one runtime: `universal`, `edge`, or `node`. Config presets under `packages/config/<name>` are tooling. They use Node, they are tagged `layout:config`, and they are not tagged with a runtime. Published libraries do not import them at runtime. They are dev dependencies.
 
-The generator asks for the runtime and writes the tag, the ESLint runtime, the TypeScript preset, the tsdown platform, and the Vitest environment together. Change those as a set. A package whose tag says `edge` and whose ESLint config says `node` is a mistake.
+The generator asks for the runtime and writes the tag, the ESLint runtime, the TypeScript preset, the tsdown config, and the Vitest config together. Change those as a set. The Vitest file calls the shared preset and does not choose an environment. The tsdown file passes `platform: "node"` only for Node packages. Universal and edge packages keep the preset default, `neutral`. A package whose tag says `edge` and whose ESLint config says `node` is a mistake.
 
 ## When to pick one
 

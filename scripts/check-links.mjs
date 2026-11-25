@@ -30,15 +30,15 @@ export function linkSpecifierEscapesRepository(
     packageDirectory,
     rootDirectory,
 ) {
-    if (!specifier.startsWith("link:") && !specifier.startsWith("file:")) {
+    const protocol = specifier.startsWith("link:")
+        ? "link:"
+        : specifier.startsWith("file:")
+          ? "file:"
+          : "";
+    if (protocol.length === 0) {
         return false;
     }
-    if (specifier.startsWith("link:")) {
-        const target = specifier.slice("link:".length);
-        const resolvedTarget = path.resolve(packageDirectory, target);
-        return !isInsideRepository(resolvedTarget, rootDirectory);
-    }
-    const target = specifier.slice("file:".length);
+    const target = specifier.slice(protocol.length);
     const resolvedTarget = path.resolve(packageDirectory, target);
     return !isInsideRepository(resolvedTarget, rootDirectory);
 }
