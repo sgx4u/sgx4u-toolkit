@@ -4,7 +4,7 @@ Public Turborepo of shared [`@sgx4u`](https://www.npmjs.com/search?q=%40sgx4u) p
 
 [![ci](https://github.com/sgx4u/sgx4u-toolkit/actions/workflows/ci.yml/badge.svg)](https://github.com/sgx4u/sgx4u-toolkit/actions/workflows/ci.yml)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
-[![node](https://img.shields.io/badge/node-%3E%3D22.12-339933.svg)](./package.json)
+[![node](https://img.shields.io/badge/node-%3E%3D22.12-339933.svg)](./packages/string/package.json)
 [![npm @sgx4u/string](https://img.shields.io/npm/v/@sgx4u/string.svg)](https://www.npmjs.com/package/@sgx4u/string)
 
 ## Packages
@@ -14,7 +14,7 @@ Public Turborepo of shared [`@sgx4u`](https://www.npmjs.com/search?q=%40sgx4u) p
 | [`@sgx4u/tsconfig`](./packages/config/tsconfig)               | TypeScript presets                     |
 | [`@sgx4u/eslint-config`](./packages/config/eslint-config)     | ESLint flat config and boundaries      |
 | [`@sgx4u/prettier-config`](./packages/config/prettier-config) | Prettier preset                        |
-| [`@sgx4u/tsdown-config`](./packages/config/tsdown-config)     | tsdown preset for ESM libraries        |
+| [`@sgx4u/tsdown-config`](./packages/config/tsdown-config)     | tsdown preset for ESM and CommonJS     |
 | [`@sgx4u/vitest-config`](./packages/config/vitest-config)     | Vitest preset                          |
 |                                                               |                                        |
 | [`@sgx4u/string`](./packages/string)                          | Blank checks and whitespace collapsing |
@@ -27,9 +27,9 @@ Tooling presets live in `packages/config`. Every other package lives in `package
 | `edge`      | The code targets an edge runtime and may use web standards plus the Workers `nodejs_compat` modules that are real. | Universal packages, other edge packages, and presets. |
 | `node`      | The code needs Node itself: processes, the full filesystem, or another API the edge subset does not implement.     | Universal, edge, and node packages, and presets.      |
 
-`turbo boundaries` enforces that table. ESLint enforces the imports. The generator writes the matching TypeScript preset, tsdown platform, and Vitest environment. The full rules, including why edge does not depend on `@cloudflare/workers-types`, are in [docs/runtimes.md](./docs/runtimes.md).
+`turbo boundaries` enforces that table. ESLint enforces the imports. The generator writes the matching TypeScript preset, tsdown config, and Vitest config. The full rules, including why edge does not depend on `@cloudflare/workers-types`, are in [docs/runtimes.md](./docs/runtimes.md).
 
-Packages publish ESM and CommonJS, are built with tsdown, and declare `"node": ">=22.12"`. `import` resolves `dist/*.js` with `dist/*.d.ts`. `require` resolves `dist/*.cjs` with `dist/*.d.cts`. Inside this repo, runtime dependencies use `workspace:^` and dev tooling uses `workspace:*`. Third-party versions live in the pnpm catalog. Add a catalog entry only when a package needs it. The root workspace package is the private `@sgx4u/toolkit`. It is never published.
+Packages publish ESM and CommonJS, are built with tsdown, and declare `"node": ">=22.12"`. `import` resolves `dist/*.js` with `dist/*.d.ts`. `require` resolves `dist/*.cjs` with `dist/*.d.cts`. Inside this repo, runtime dependencies use `workspace:^` and dev tooling uses `workspace:*`. Third-party versions live in the pnpm catalog. Add a catalog entry only when a package needs it. The root workspace package is `@sgx4u/toolkit`. Its manifest is `"private": false` and it has no `version`. The pack review skips that name, so the workspace package is not published.
 
 ## Usage
 

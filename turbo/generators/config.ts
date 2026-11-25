@@ -20,9 +20,6 @@ interface PackagePromptAnswers {
 
 interface PackageAnswers extends PackagePromptAnswers {
     tsconfigPreset: string;
-    buildPlatform: "neutral" | "node";
-    testEnvironment: "node";
-    includeNodeTypes: boolean;
 }
 
 const reservedPackageNames = new Set(["utils", "common", "shared"]);
@@ -35,7 +32,7 @@ function assertPackageName(value: string): true | string {
         return "config is the tooling folder. Name the preset itself, such as eslint-config.";
     }
     if (value === "toolkit") {
-        return "toolkit is the private workspace @sgx4u/toolkit. It is not a publishable package.";
+        return "toolkit is the workspace package @sgx4u/toolkit. It has no version and is not published.";
     }
     if (reservedPackageNames.has(value)) {
         return "utils, common, and shared are not package names. Name the one job the package does.";
@@ -65,37 +62,14 @@ function isPackagePromptAnswers(value: object): value is PackagePromptAnswers {
     );
 }
 
-function runtimeChoices(
-    runtimeName: RuntimeName,
-): Pick<
-    PackageAnswers,
-    "tsconfigPreset" | "buildPlatform" | "testEnvironment" | "includeNodeTypes"
-> {
+function tsconfigPresetForRuntime(runtimeName: RuntimeName): string {
     if (runtimeName === "node") {
-        return {
-            tsconfigPreset: "@sgx4u/tsconfig/node.json",
-            buildPlatform: "node",
-            testEnvironment: "node",
-            includeNodeTypes: true,
-        };
+        return "@sgx4u/tsconfig/node.json";
     }
     if (runtimeName === "edge") {
-        // Neutral keeps Node built-ins external without assuming Node or the
-        // browser. Tests still run on Node; ESLint enforces the edge imports.
-        // Types come from the WebWorker library, not a Cloudflare package.
-        return {
-            tsconfigPreset: "@sgx4u/tsconfig/edge.json",
-            buildPlatform: "neutral",
-            testEnvironment: "node",
-            includeNodeTypes: false,
-        };
+        return "@sgx4u/tsconfig/edge.json";
     }
-    return {
-        tsconfigPreset: "@sgx4u/tsconfig/library.json",
-        buildPlatform: "neutral",
-        testEnvironment: "node",
-        includeNodeTypes: false,
-    };
+    return "@sgx4u/tsconfig/library.json";
 }
 
 function preparePackageAnswers(value: unknown): PackageAnswers {
@@ -123,7 +97,7 @@ function preparePackageAnswers(value: unknown): PackageAnswers {
     }
     const packageAnswers: PackageAnswers = {
         ...candidate,
-        ...runtimeChoices(candidate.runtimeName),
+        tsconfigPreset: tsconfigPresetForRuntime(candidate.runtimeName),
     };
     // Plop renders templates from the original answers object. Copy the
     // derived fields back onto it so the templates can see them.

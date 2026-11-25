@@ -23,7 +23,12 @@
         },
         "./package.json": "./package.json"
     },
-    "files": ["dist", "src", "!src/**/*.test.ts", "README.md"],
+    "files": [
+        "dist",
+        "src",
+        "!src/**/*.test.ts",
+        "README.md"
+    ],
     "scripts": {
         "build": "tsdown",
         "dev": "tsdown --watch",
@@ -37,7 +42,7 @@
         "@sgx4u/eslint-config": "workspace:*",
         "@sgx4u/tsconfig": "workspace:*",
         "@sgx4u/tsdown-config": "workspace:*",
-        "@sgx4u/vitest-config": "workspace:*",{{#if includeNodeTypes}}
+        "@sgx4u/vitest-config": "workspace:*",{{#if (eq runtimeName "node")}}
         "@types/node": "catalog:",{{/if}}
         "eslint": "catalog:",
         "publint": "catalog:",
