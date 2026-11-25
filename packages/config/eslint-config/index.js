@@ -1,7 +1,6 @@
 import { builtinModules } from "node:module";
 import eslint from "@eslint/js";
 import eslintConfigPrettier from "eslint-config-prettier";
-import boundaries from "eslint-plugin-boundaries";
 import turboPlugin from "eslint-plugin-turbo";
 import globals from "globals";
 import tseslint from "typescript-eslint";
@@ -68,47 +67,94 @@ const edgeStubImportPattern = `^(?:node:)?(?:${edgeStubModuleNames
     .map((moduleName) => escapeRegularExpression(moduleName))
     .join("|")})(?:/.+)?$`;
 
+const privateScopePattern = "^@sgx4u-private(?:/.+)?$";
+const deepImportPattern = "^@sgx4u/[^/]+/(?:src|dist)(?:/.+)?$";
+
+const packageRuntimes = ["universal", "edge", "node"];
+
 /**
- * @param {import("./index.js").PackageRuntime} runtime
- * @returns {import("eslint").Linter.RuleEntry}
+ * @param {string} runtime
+ * @returns {asserts runtime is import("./index.js").PackageRuntime}
  */
-function restrictedImportsForRuntime(runtime) {
-    const patterns = [
-        {
-            group: ["@sgx4u-private", "@sgx4u-private/*"],
-            message: privateScopeMessage,
-        },
-        {
-            group: [
-                "@sgx4u/*/src",
-                "@sgx4u/*/src/**",
-                "@sgx4u/*/dist",
-                "@sgx4u/*/dist/**",
-            ],
-            message: deepImportMessage,
-        },
+function assertPackageRuntime(runtime) {
+    if (!packageRuntimes.includes(runtime)) {
+        throw new Error(
+            `runtime must be "universal", "edge", or "node". Received ${JSON.stringify(runtime)}.`,
+        );
+    }
+}
+
+/**
+ * `no-restricted-imports` only sees static `import` and `export` declarations,
+ * plus `import x = require(...)`. `require()` and `import()` are a different
+ * AST, so the same patterns are also applied with `no-restricted-syntax`.
+ *
+ * @param {import("./index.js").PackageRuntime} runtime
+ * @returns {{ pattern: string, message: string }[]}
+ */
+function importBansForRuntime(runtime) {
+    const bans = [
+        { pattern: privateScopePattern, message: privateScopeMessage },
+        { pattern: deepImportPattern, message: deepImportMessage },
     ];
 
     if (runtime === "universal") {
-        patterns.push({
-            regex: universalBuiltinImportPattern,
+        bans.push({
+            pattern: universalBuiltinImportPattern,
             message: universalRuntimeMessage,
         });
     }
 
     if (runtime === "edge") {
-        patterns.push({
-            regex: edgeStubImportPattern,
+        bans.push({
+            pattern: edgeStubImportPattern,
             message: edgeRuntimeMessage,
         });
     }
 
+    return bans;
+}
+
+/**
+ * @param {import("./index.js").PackageRuntime} runtime
+ * @returns {import("eslint").Linter.RuleEntry}
+ */
+function restrictedImportsForRuntime(runtime) {
     return [
         "error",
         {
-            patterns,
+            patterns: importBansForRuntime(runtime).map(
+                ({ pattern, message }) => ({
+                    regex: pattern,
+                    message,
+                }),
+            ),
         },
     ];
+}
+
+/**
+ * @param {import("./index.js").PackageRuntime} runtime
+ * @returns {import("eslint").Linter.RuleEntry}
+ */
+function restrictedSyntaxForRuntime(runtime) {
+    const selectors = importBansForRuntime(runtime).flatMap(
+        ({ pattern, message }) => {
+            const expression = pattern.replaceAll("/", "\\/");
+            return [
+                {
+                    selector: `ImportExpression[source.value=/${expression}/]`,
+                    message,
+                },
+                {
+                    selector: `CallExpression[callee.name='require'][arguments.0.value=/${expression}/]`,
+                    message,
+                },
+            ];
+        },
+    );
+
+    return ["error", ...selectors];
 }
 
 /**
@@ -145,6 +191,7 @@ function globalsForRuntime(runtime) {
  * @returns {import("eslint").Linter.Config[]}
  */
 export function definePackageConfig(options) {
+    assertPackageRuntime(options.runtime);
     return tseslint.config(
         {
             ignores: ["dist/**", "coverage/**", "node_modules/**"],
@@ -159,15 +206,6 @@ export function definePackageConfig(options) {
             },
             plugins: {
                 turbo: turboPlugin,
-                boundaries,
-            },
-            settings: {
-                "boundaries/elements": [
-                    {
-                        type: "source",
-                        pattern: "src",
-                    },
-                ],
             },
             rules: {
                 "turbo/no-undeclared-env-vars": "error",
@@ -178,36 +216,15 @@ export function definePackageConfig(options) {
                         varsIgnorePattern: "^_",
                     },
                 ],
-                "boundaries/dependencies": [
-                    "error",
-                    {
-                        default: "allow",
-                        checkAllOrigins: true,
-                        policies: [
-                            {
-                                from: { element: { type: "source" } },
-                                disallow: {
-                                    to: {
-                                        module: {
-                                            source: [
-                                                "@sgx4u-private",
-                                                "@sgx4u-private/*",
-                                            ],
-                                        },
-                                    },
-                                },
-                                message:
-                                    "Public toolkit source cannot import @sgx4u-private packages.",
-                            },
-                        ],
-                    },
-                ],
             },
         },
         {
             files: ["src/**/*.{ts,tsx,js,mjs,cjs}"],
             rules: {
                 "no-restricted-imports": restrictedImportsForRuntime(
+                    options.runtime,
+                ),
+                "no-restricted-syntax": restrictedSyntaxForRuntime(
                     options.runtime,
                 ),
             },
@@ -221,6 +238,7 @@ export function definePackageConfig(options) {
             ignores: ["src/**"],
             rules: {
                 "no-restricted-imports": restrictedImportsForRuntime("node"),
+                "no-restricted-syntax": restrictedSyntaxForRuntime("node"),
             },
         },
         eslintConfigPrettier,
@@ -235,8 +253,15 @@ export function definePackageConfig(options) {
 export function defineRootConfig() {
     return definePackageConfig({
         runtime: "node",
-    }).map((config, index) => {
-        if (index !== 0) {
+    }).map((config) => {
+        // typescript-eslint names every config object. The global ignore
+        // entry is the one with no files, rules, or plugins. Matching it by
+        // shape survives a reorder. Index 0 is that entry today, and it is
+        // not a contract.
+        const keysBesidesName = Object.keys(config).filter(
+            (key) => key !== "name",
+        );
+        if (keysBesidesName.length !== 1 || keysBesidesName[0] !== "ignores") {
             return config;
         }
         return {

@@ -12,6 +12,7 @@ export default defineConfig({
     },
     sourcemap: true,
     clean: true,
-    platform: "neutral",
+    // This package imports node:module and runs in the toolchain.
+    platform: "node",
     fixedExtension: false,
 });

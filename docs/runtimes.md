@@ -46,10 +46,10 @@ Vitest `environment` is `node` for all three. The test process is Node. ESLint, 
 
 `@sgx4u/eslint-config` takes `runtime`.
 
-Universal source cannot import a Node built-in. The rule rejects the `node:` form, including subpaths such as `node:fs/promises`, and the bare names reported by the Node process that runs ESLint.
+Universal source cannot import a Node built-in. The rule rejects the `node:` form, including subpaths such as `node:fs/promises`, and the bare names reported by the Node process that runs ESLint. Static `import`, `import()`, `require()`, and `import name = require(...)` are all checked.
 
 Edge source may import web standards and the Workers `nodejs_compat` modules that Workers implements, including partial implementations such as `node:fs`, `node:http`, `node:net`, `node:dns`, and `node:tls`. It rejects the modules Workers documents as non-functional stubs: `child_process`, `cluster`, `dgram`, `domain`, `http2`, `inspector`, `readline`, `repl`, `sqlite`, `trace_events`, `tty`, `v8`, `vm`, `wasi`, `worker_threads`, and `_stream_wrap`, with or without the `node:` prefix. Those stubs can be imported and then throw. A newly implemented module does not need a rule change. A newly added stub does.
 
 Node source may import Node built-ins.
 
-Every runtime rejects `@sgx4u-private` and deep imports into `src/` or `dist/`.
+Every runtime rejects `@sgx4u-private` and deep imports into `src/` or `dist/`, including `import()`, `require()`, and `import name = require(...)`.

@@ -38,10 +38,8 @@
     ],
     "scripts": {
         "lint": "eslint . --max-warnings 0",
+        "test": "node --test index.test.js",
         "check:package": "publint && attw --pack ."
-    },
-    "dependencies": {
-        "@types/node": "catalog:"
     },
     "devDependencies": {
         "@arethetypeswrong/cli": "catalog:",

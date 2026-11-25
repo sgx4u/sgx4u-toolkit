@@ -3,7 +3,7 @@ import path from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { ESLint } from "eslint";
-import { definePackageConfig } from "./index.js";
+import { definePackageConfig, defineRootConfig } from "./index.js";
 
 const packageDirectory = path.dirname(fileURLToPath(import.meta.url));
 
@@ -22,7 +22,11 @@ async function restrictedImportMessages(runtime, sourceText) {
     });
     return results
         .flatMap((result) => result.messages)
-        .filter((message) => message.ruleId === "no-restricted-imports");
+        .filter(
+            (message) =>
+                message.ruleId === "no-restricted-imports" ||
+                message.ruleId === "no-restricted-syntax",
+        );
 }
 
 test("universal rejects Node built-ins, including subpaths", async () => {
@@ -118,4 +122,76 @@ test("every runtime rejects the private scope", async () => {
             `${runtime} should reject the private scope`,
         );
     }
+});
+
+test("every runtime rejects deep imports", async () => {
+    for (const specifier of [
+        "@sgx4u/string/src/is-blank",
+        "@sgx4u/string/dist/index.js",
+    ]) {
+        const messages = await restrictedImportMessages(
+            "node",
+            `import "${specifier}";\n`,
+        );
+        assert.equal(messages.length, 1, `${specifier} should be rejected`);
+    }
+});
+
+test("universal rejects require, dynamic import, and import equals", async () => {
+    for (const sourceText of [
+        'require("node:fs");\n',
+        'await import("node:fs/promises");\n',
+        'import fileSystem from "node:fs";\n',
+        'import fileSystem = require("node:fs");\n',
+    ]) {
+        const messages = await restrictedImportMessages(
+            "universal",
+            sourceText,
+        );
+        assert.equal(messages.length, 1, sourceText);
+    }
+});
+
+test("an unknown runtime throws instead of using the Node rules", () => {
+    assert.throws(
+        () => definePackageConfig({ runtime: "web" }),
+        /runtime must be "universal", "edge", or "node"/,
+    );
+});
+
+test("the root config ignores package directories and package configs do not", () => {
+    const rootIgnores = defineRootConfig().flatMap(
+        (config) => config.ignores ?? [],
+    );
+    assert.ok(rootIgnores.includes("packages/**"));
+
+    const packageIgnores = definePackageConfig({
+        runtime: "universal",
+    }).flatMap((config) => config.ignores ?? []);
+    assert.equal(packageIgnores.includes("packages/**"), false);
+});
+
+test("globals follow the runtime", () => {
+    function globalsFor(runtime) {
+        const configWithGlobals = definePackageConfig({ runtime }).find(
+            (config) => config.languageOptions?.globals,
+        );
+        return configWithGlobals.languageOptions.globals;
+    }
+
+    // The globals package uses false for a read-only global. undefined means
+    // the name is not declared, so no-undef would report it.
+    const universalGlobals = globalsFor("universal");
+    assert.equal(universalGlobals.fetch, false);
+    assert.equal(universalGlobals.process, undefined);
+    assert.equal(universalGlobals.window, undefined);
+
+    const edgeGlobals = globalsFor("edge");
+    assert.equal(edgeGlobals.process, false);
+    assert.equal(edgeGlobals.Buffer, false);
+    assert.equal(edgeGlobals.window, undefined);
+
+    const nodeGlobals = globalsFor("node");
+    assert.equal(nodeGlobals.process, false);
+    assert.equal(nodeGlobals.window, undefined);
 });

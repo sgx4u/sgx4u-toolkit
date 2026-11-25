@@ -1,8 +1,8 @@
 # @sgx4u/eslint-config
 
-ESLint flat config for the toolkit. It turns on TypeScript recommended rules, Prettier compatibility, Turborepo environment checks, and boundaries rules that reject `@sgx4u-private` imports.
+ESLint flat config for the toolkit. It turns on TypeScript recommended rules, Prettier compatibility, and Turborepo environment checks. Import rules reject `@sgx4u-private`, deep imports into `src/` or `dist/`, and the Node built-ins the runtime does not allow. That covers a static `import`, `import()`, `require()`, and `import name = require(...)`.
 
-`turbo boundaries` keeps `packages/config` from depending on `packages/<name>`. This package enforces the runtime import rules for the `runtime` you pass, and rejects `@sgx4u-private` imports.
+`turbo boundaries` keeps `packages/config` from depending on `packages/<name>`. That check is separate from this package. This package enforces the runtime import rules for the `runtime` you pass.
 
 ## Install
 
@@ -20,7 +20,7 @@ export default definePackageConfig({
 });
 ```
 
-`runtime` is `universal`, `edge`, or `node`.
+`runtime` is `universal`, `edge`, or `node`. Any other value throws. A typo used to fall through to the Node rules.
 
 | Runtime     | Imports                                                                                                                                                                                                                                                                          | Globals                                                                                                |
 | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
