@@ -1,42 +1,62 @@
 # Contributing
 
-Thanks for helping with the public `@sgx4u` toolkit.
-
 ## Setup
 
-1. Install Node 24. `.nvmrc` pins the major version used for development and CI. Published packages still declare `node >= 22.12`.
-2. Enable Corepack, or install pnpm 11.25. The `packageManager` field is the source of truth.
-3. `pnpm install`
-4. `pnpm test`
+1. Install Node 24. `.nvmrc` is the version for development and CI. Published packages declare `node >= 22.12`.
+2. Enable Corepack, or install pnpm 11.25.0. The `packageManager` field is the pin.
+3. Run `pnpm install`.
+4. Run `pnpm test`.
 
-The root `package.json` name is `@sgx4u/toolkit`.
+The root package is `@sgx4u/toolkit`.
 
-Lefthook installs on `pnpm install`. Commits are checked with commitlint (Conventional Commits) and lint-staged.
+`pnpm install` runs Lefthook through the `prepare` script. When `core.hooksPath` is already set, that hook path stays. Commits go through commitlint (Conventional Commits) and lint-staged. The development commands are in the [README](./README.md#development).
+
+## Branches
+
+Open a pull request from a fork.
+
+| Target                       | When                                                     |
+| ---------------------------- | -------------------------------------------------------- |
+| `develop`                    | The change is ready for the stable line. Default branch. |
+| `beta`                       | The change is an experiment.                             |
+| `release/<package>/v<major>` | A patch or minor fix for that older major.               |
+
+Pull requests are squash-merged. Promote `develop` into `production` with a rebase merge when a stable release is ready. Publishing runs from `beta`, `production`, and `release/**`. Merge settings are in [docs/repo-settings.md](./docs/repo-settings.md).
+
+Graduate an experiment from its feature branch:
+
+1. Squash-merge the feature branch into `beta` so the snapshot publish includes it.
+2. Rebase that branch onto `develop` and open the pull request into `develop`, with a changeset.
+3. After it lands, merge `develop` into `beta` with a merge commit so the experimental line picks up the stable copy. Commands are in [Keeping beta in sync](./docs/repo-settings.md#keeping-beta-in-sync).
+
+`beta` holds every experiment still in progress, so the graduation pull request comes from the feature branch. If that branch was deleted, recreate the change on a new branch from `develop`.
 
 ## Pull requests
 
-Open a pull request from a fork into `develop` for work that is ready for production. That is the default branch, and it is the stable integration branch. Pushes to `develop` do not publish. Pull requests are squash-merged. `develop` is promoted into `production` with a rebase merge when a stable release is ready. See [docs/repo-settings.md](./docs/repo-settings.md).
-
-Experimental work opens a pull request into `beta`. `beta` may run ahead of `develop`. Squash-merge there too. Pushes to `beta` publish an uncommitted snapshot on the npm `beta` dist-tag (`0.0.0-beta-<timestamp>`). Those versions are not committed, so they cannot leak into `develop` or `production`.
-
-Keep `beta` in sync by merging `develop` into `beta` with a merge commit. Do this regularly, and whenever a security fix lands on `develop`. Squash and rebase do not record `develop` as an ancestor, so the next sync would replay the same commits.
-
-A beta feature graduates through its feature branch. Rebase that branch onto `develop` and open a pull request into `develop`. Do not merge `beta` into `develop`. `beta` contains every experiment still in progress.
-
 Every pull request that changes a publishable package includes:
 
-- a changeset (`pnpm changeset`)
+- a changeset (`pnpm changeset`). What happens to it is in [.changeset/README.md](./.changeset/README.md)
 - tests for the behavior you changed
 - a README update when the public API changes
 - a migration note in the changeset when the change is breaking
 
-Every change, whether patch, minor, or major, lands on `develop` through a pull request. It becomes `latest` only when `develop` is promoted into `production`. Do not commit directly on `production`. Experimental work may go to `beta` first, then graduate through a pull request into `develop`.
+A security fix follows [SECURITY.md](./SECURITY.md).
 
-Major (breaking) changes are never backported to `release/**`. Those branches receive only patch and minor fixes for the previous major.
+## Checks
 
-A security fix lands on `develop` first, is promoted to `production` for `latest`, is cherry-picked onto each supported `release/**` branch when it is a patch or minor fix, and is merged into `beta` so experimental builds pick it up. A major security fix is not backported. See [SECURITY.md](./SECURITY.md).
+Pull requests into `develop`, `beta`, `production`, and `release/**` run [`.github/workflows/ci.yml`](./.github/workflows/ci.yml).
 
-CI runs the affected lint, typecheck, test, and build tasks, then publint, attw, pack review, Turborepo boundaries, and sherif. It fails if a change introduces `@sgx4u-private` or a `link:` / `file:` dependency that points outside the repo.
+| Check                 | What it runs                                                                                                                                  |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ci / lint`           | Affected package lint, root ESLint, `turbo boundaries`, sherif, `scripts/check-visibility.mjs`, and `scripts/check-links.mjs`.                |
+| `ci / typecheck`      | Affected package typecheck, then `tsc --noEmit` for the generator.                                                                            |
+| `ci / test`           | `pnpm test`.                                                                                                                                  |
+| `ci / build`          | Affected `turbo run build`.                                                                                                                   |
+| `ci / package-checks` | Affected `check:package` (publint and attw; the task depends on `build`), `scripts/check-pack.mjs`, and on a pull request `changeset status`. |
+
+`scripts/check-visibility.mjs` fails when a scanned file references `@sgx4u-private`. Keep package names and imports on the public `@sgx4u` scope. `scripts/check-links.mjs` requires every `link:` and `file:` dependency to resolve inside this repository. See [Local linking](#local-linking).
+
+Optional checks, once the repository requires them: `ci / test-node-22`, `ci / dependency-review`, `ci / pkg-pr-new`, `security / analyze`, `security / secrets`. `test-node-22` runs affected package tests on Node 22. The `security` workflow is CodeQL and gitleaks, including a weekly run.
 
 ## Packages
 
@@ -44,42 +64,31 @@ CI runs the affected lint, typecheck, test, and build tasks, then publint, attw,
 pnpm exec turbo gen package
 ```
 
-Names are lowercase kebab-case. `utils`, `common`, and `shared` are rejected. Config presets live in `packages/config/<name>`. Every other package lives in `packages/<name>`. The npm name is `@sgx4u/<name>`.
+The generator asks for the name and the kind. Use lowercase kebab-case starting with a letter, and name the one job the package does. The generator reserves `config`, `toolkit`, `utils`, `common`, and `shared`. The npm name is `@sgx4u/<name>`.
 
-| Kind      | Folder                   | Runtime                                                     |
-| --------- | ------------------------ | ----------------------------------------------------------- |
-| `config`  | `packages/config/<name>` | `node`. Tooling. Published runtime code does not import it. |
-| `package` | `packages/<name>`        | `universal`, `edge`, or `node`                              |
+| Kind      | Folder                   | Runtime                                         |
+| --------- | ------------------------ | ----------------------------------------------- |
+| `config`  | `packages/config/<name>` | `node`. Tooling, installed as a dev dependency. |
+| `regular` | `packages/<name>`        | `universal`, `edge`, or `node`.                 |
 
-Runtime dependencies on other toolkit packages use `workspace:^`. Presets use `workspace:*`. Third-party versions use `catalog:`. Add a catalog entry only when a package needs it. Do not add a version for a dependency no package in this repository installs.
+The generator writes the package, a changeset, and a CODEOWNERS line.
 
-Pick the runtime from [docs/runtimes.md](./docs/runtimes.md). Universal packages extend `@sgx4u/tsconfig/library.json`. Edge packages extend `@sgx4u/tsconfig/edge.json` (ES2022 plus the WebWorker library, no extra types package). Node packages extend `@sgx4u/tsconfig/node.json` and depend on `@types/node`. An edge package that imports an allowed Node built-in adds `@types/node` itself. Do not add `@cloudflare/workers-types` unless that package needs Cloudflare-only types.
+A runtime dependency on another toolkit package uses `workspace:^`. Presets and other dev tooling use `workspace:*`. Third-party versions use `catalog:`. Add a catalog entry when a package in this repository needs that dependency.
 
-`pnpm lint`, `pnpm typecheck`, and `pnpm check` are the local equivalents of the CI steps. `pnpm changeset` runs the Changesets binary directly.
+Pick the runtime from [docs/runtimes.md](./docs/runtimes.md).
 
-Libraries export named functions from `src/index.ts`, with explicit return types. Tests sit next to the source. tsdown writes ESM and CommonJS into `dist` (`index.js` / `index.d.ts` and `index.cjs` / `index.d.cts`). The `files` field publishes `dist` and `src` (so the `@sgx4u/source` condition resolves) and excludes tests. Export maps list `types` before the runtime file for both `import` and `require`, and set `main`, `module`, and `types` as fallbacks.
+Libraries export named functions from `src/index.ts`, with explicit return types. Tests sit next to the source. tsdown writes ESM and CommonJS into `dist` (`index.js` with `index.d.ts`, and `index.cjs` with `index.d.cts`). The `files` field publishes `dist`, `src`, and `README.md`, and excludes tests. The export map lists `@sgx4u/source`, then `import` and `require` with `types` before the runtime file, and sets `main`, `module`, and `types`.
 
 ## Local linking
 
-While you are changing a package together with an app, from the app:
+From the app you are changing alongside a package:
 
 ```sh
 pnpm link --hard ../sgx4u-toolkit/packages/string
 ```
 
-That writes a `link:` or `file:` entry. Remove it with `pnpm unlink` before you commit. The pre-commit hook and CI reject an entry that points outside this repo.
-
-## First publish of a new package
-
-npm trusted publishing can be attached only after the package exists.
-
-1. Promote the package to `production` and let the Version Packages pull request bump it to `0.1.0`, or check out that commit. `develop` does not publish and does not consume the changeset. `beta` publishes an uncommitted snapshot and also leaves the changeset in git.
-2. From the package directory, with npm CLI 11.5.1+ and 2FA: `npm publish --access public`.
-3. On npm, add a trusted publisher: repository `sgx4u/sgx4u-toolkit`, workflow `release.yml`, environment `release`. The npm command is `npm trust github --repo sgx4u/sgx4u-toolkit --file release.yml --env release --allow-publish`.
-4. Cancel the release workflow run that is waiting to publish that same `0.1.0`. Later versions are published by CI only.
-
-Do not create an npm token for CI.
+That writes a `link:` or `file:` entry. `pnpm unlink` removes it. Commit `workspace:` ranges.
 
 ## Questions
 
-Use [Discussions](https://github.com/sgx4u/sgx4u-toolkit/discussions) for questions. Use issues for bugs and features. Security reports go through private vulnerability reporting. See [SECURITY.md](./SECURITY.md) and [SUPPORT.md](./SUPPORT.md).
+Where to ask is in [SUPPORT.md](./SUPPORT.md).

@@ -1,6 +1,6 @@
 # @sgx4u/tsconfig
 
-Shared TypeScript presets for packages in this repository.
+Shared TypeScript presets for `@sgx4u` packages.
 
 ## Install
 
@@ -10,16 +10,16 @@ pnpm add -D @sgx4u/tsconfig
 
 ## Presets
 
-| Export                         | Use                                                                                                                                                                                          |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `@sgx4u/tsconfig/base.json`    | Strict ESM baseline. No DOM, no `@types` auto-include.                                                                                                                                       |
-| `@sgx4u/tsconfig/library.json` | Universal libraries. Declarations and `isolatedDeclarations`.                                                                                                                                |
-| `@sgx4u/tsconfig/edge.json`    | Edge libraries. ES2022 plus the WebWorker library (`fetch`, streams, and the other web standards). `types` stays empty, so no `@cloudflare/workers-types` and no `@types/node` are required. |
-| `@sgx4u/tsconfig/node.json`    | Node 22.12+ packages. `lib` stays the base `ES2022`. Add `@types/node` in the package.                                                                                                       |
+| Export                         | Use                                                                                                                               |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `@sgx4u/tsconfig/base.json`    | Strict ESM baseline. `ES2022`, `NodeNext`, `strict`, `types` set to `[]`, and `customConditions` set to `@sgx4u/source`.          |
+| `@sgx4u/tsconfig/library.json` | Universal libraries. Adds `declaration`, `declarationMap`, `sourceMap`, `isolatedDeclarations`, and `exactOptionalPropertyTypes`. |
+| `@sgx4u/tsconfig/edge.json`    | Edge libraries. `lib` is `ES2022` and `WebWorker`. `types` is `[]`.                                                               |
+| `@sgx4u/tsconfig/node.json`    | Node 22.12+ packages. `types` is `["node"]`. `lib` stays the baseline `ES2022`. Add `@types/node` in the package that extends it. |
 
-`edge.json` does not load a vendor types package. TypeScript's WebWorker library is enough for the web standards edge runtimes share. A package that imports an allowed Node built-in adds `@types/node` itself. A package that needs Cloudflare-only types can add `@cloudflare/workers-types` itself. Add a catalog entry only when a package in this repo needs it.
+`edge.json` types the worker web standards that ship with TypeScript (`fetch`, streams, `URL`). An edge package that imports an allowed Node built-in adds `@types/node` in that package. A package that needs Cloudflare-only types adds `@cloudflare/workers-types` in that package. In this repository, add the catalog entry in the same change.
 
-This package does not depend on `@types/node`. `node.json` sets `"types": ["node"]`, and TypeScript looks that package up from the project being compiled, not from this preset's `node_modules`.
+`node.json` sets `"types": ["node"]`. TypeScript resolves `@types/node` from the package being compiled.
 
 `customConditions` includes `@sgx4u/source`, so workspace and `pnpm link` builds can resolve TypeScript source.
 
