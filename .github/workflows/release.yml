@@ -26,6 +26,7 @@ on:
             - production
             - "release/**"
 
+# Each job adds only the permissions it needs. The default is none.
 permissions: {}
 
 concurrency:

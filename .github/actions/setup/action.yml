@@ -29,6 +29,8 @@ runs:
           shell: bash
           run: pnpm install --frozen-lockfile ${{ inputs.install-args }}
 
+        # Callers pass cache credentials as *_INPUT. A missing value leaves the
+        # cache off instead of writing an empty token into the job environment.
         - name: Configure Turborepo remote cache
           shell: bash
           env:

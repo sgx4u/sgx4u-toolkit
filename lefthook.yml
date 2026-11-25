@@ -1,4 +1,5 @@
-# Local commits stay formatted and conventional.
+# Local commits stay formatted and conventional, and a link: dependency
+# cannot point outside this repository.
 # The release workflow sets LEFTHOOK=0 so generated version commits are not rewritten.
 pre-commit:
     commands:

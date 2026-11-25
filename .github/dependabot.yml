@@ -3,6 +3,7 @@ updates:
     - package-ecosystem: github-actions
       directory: /
       # develop only. beta receives these updates when develop is merged into beta.
+      # GitHub Actions updates stay on this file. renovate.json turns that manager off.
       target-branch: develop
       schedule:
           interval: weekly

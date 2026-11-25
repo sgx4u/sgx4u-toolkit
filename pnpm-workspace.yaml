@@ -31,8 +31,8 @@ catalog:
     typescript-eslint: ^8.74.0
     vitest: ^5.1.1
 
-# pnpm's release-age policy blocked this just-published @types/node build.
-# The exception is the exact version in the catalog, not a blanket bypass.
+# This catalog pin is newer than pnpm's release-age window. The exclusion is
+# this exact version, so the next pin waits out the window again.
 minimumReleaseAgeExclude:
     - "@types/node@26.6.8"
 
