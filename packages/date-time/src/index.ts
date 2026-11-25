@@ -81,6 +81,9 @@ export { reviveIsoDateTimes } from "./revive-iso-date-times/revive-iso-date-time
 export { toJulianDate } from "./to-julian-date/to-julian-date.js";
 export { toUnixSeconds } from "./to-unix-seconds/to-unix-seconds.js";
 export { formatDate } from "./format-date/format-date.js";
+export { formatRelativeCalendarDay } from "./format-relative-calendar-day/format-relative-calendar-day.js";
+export { formatRelativeTime } from "./format-relative-time/format-relative-time.js";
+export { getRelativeTimeParts } from "./get-relative-time-parts/get-relative-time-parts.js";
 export { formatDuration } from "./format-duration/format-duration.js";
 export { formatDurationAsClock } from "./format-duration-as-clock/format-duration-as-clock.js";
 export { formatDurationCompact } from "./format-duration-compact/format-duration-compact.js";
