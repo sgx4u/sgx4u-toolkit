@@ -1,0 +1,43 @@
+import { describe, expect, it } from "vitest";
+import {
+    formatDuration,
+    formatDurationAsClock,
+    formatDurationCompact,
+    formatIsoDuration,
+    isValidDuration,
+    parseDurationText,
+    parseIsoDuration,
+} from "../index.js";
+
+describe("duration text", () => {
+    it("parses English text and ISO durations and writes them back", () => {
+        expect(parseDurationText("1h 30m")).toEqual({ hours: 1, minutes: 30 });
+        expect(parseDurationText("-1.5 hours")).toEqual({ hours: -1.5 });
+        expect(parseDurationText("1:30:00")).toEqual({
+            hours: 1,
+            minutes: 30,
+            seconds: 0,
+        });
+        expect(parseDurationText("nope")).toBeUndefined();
+        expect(parseIsoDuration("PT1H30M")).toEqual({ hours: 1, minutes: 30 });
+        expect(parseIsoDuration("P")).toBeUndefined();
+        expect(formatIsoDuration({ hours: 1, minutes: 30 })).toBe("PT1H30M");
+        expect(
+            parseIsoDuration(formatIsoDuration({ hours: 1, minutes: 30 })),
+        ).toEqual({
+            hours: 1,
+            minutes: 30,
+        });
+        expect(isValidDuration({ hours: 1, minutes: 30 })).toBe(true);
+        expect(isValidDuration({})).toBe(true);
+        expect(isValidDuration({ hours: 1, days: -1 })).toBe(false);
+        expect(
+            formatDurationAsClock({ hours: 1, minutes: 2, seconds: 3 }),
+        ).toBe("01:02:03");
+        expect(formatDurationCompact({ hours: 1, minutes: 30 })).toBe("1h 30m");
+        expect(formatDurationCompact(0)).toBe("0s");
+        expect(
+            formatDuration({ hours: 1, minutes: 30 }, { locale: "en" }),
+        ).toBe("1 hour, 30 minutes");
+    });
+});

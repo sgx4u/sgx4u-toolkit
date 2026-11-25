@@ -72,6 +72,13 @@ export { reviveIsoDateTimes } from "./revive-iso-date-times/revive-iso-date-time
 export { toJulianDate } from "./to-julian-date/to-julian-date.js";
 export { toUnixSeconds } from "./to-unix-seconds/to-unix-seconds.js";
 export { formatDate } from "./format-date/format-date.js";
+export { formatDuration } from "./format-duration/format-duration.js";
+export { formatDurationAsClock } from "./format-duration-as-clock/format-duration-as-clock.js";
+export { formatDurationCompact } from "./format-duration-compact/format-duration-compact.js";
+export { formatIsoDuration } from "./format-iso-duration/format-iso-duration.js";
+export { isValidDuration } from "./is-valid-duration/is-valid-duration.js";
+export { parseDurationText } from "./parse-duration-text/parse-duration-text.js";
+export { parseIsoDuration } from "./parse-iso-duration/parse-iso-duration.js";
 export { formatHttpDate } from "./format-http-date/format-http-date.js";
 export { parseHttpDate } from "./parse-http-date/parse-http-date.js";
 export { toExcelSerialDate } from "./to-excel-serial-date/to-excel-serial-date.js";
