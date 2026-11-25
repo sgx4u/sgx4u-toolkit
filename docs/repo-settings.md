@@ -8,14 +8,14 @@ The GitHub owner is the personal account `sgx4u`. Where a team name would have b
 
 There is no `main`. Three long-lived branches stay protected, plus backport branches:
 
-| Branch                       | Role                                                                                                                                                                                                   |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `develop`                    | Default branch. Stable integration. Feature pull requests that are ready for production squash-merge here. Pushes do not publish.                                                                      |
-| `beta`                       | Experimental line. It may run ahead of `develop`. Experimental pull requests squash-merge here. Pushes publish uncommitted Changesets snapshots on the npm `beta` dist-tag (`0.0.0-beta-<timestamp>`). |
-| `production`                 | Stable releases. Promote `develop` into `production` with a rebase merge. Pushes publish `latest` after the Version Packages pull request.                                                             |
-| `release/<package>/v<major>` | Older majors. Publish the `previous` dist-tag.                                                                                                                                                         |
+| Branch                       | Role                                                                                                                                                                                            |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `develop`                    | Default branch. Stable integration. Every change (patch, minor, or major) squash-merges here through a pull request. Pushes do not publish. Do not commit directly on `production`.             |
+| `beta`                       | Experimental line. It may run ahead of `develop`. Experimental work may land here first. Pushes publish uncommitted Changesets snapshots on the npm `beta` dist-tag (`0.0.0-beta-<timestamp>`). |
+| `production`                 | Stable releases. Promote `develop` into `production` with a rebase merge. Pushes publish `latest` after the Version Packages pull request.                                                      |
+| `release/<package>/v<major>` | Older majors on the `previous` dist-tag. Patch and minor fixes only. Major (breaking) changes are never backported.                                                                             |
 
-Create `beta` from `develop` before the first experiment. The workflows do not create that branch. Create `production` from `develop` when the first stable release is ready. Create `release/<package>/v<major>` only when the first backport for that older major is needed. Pull requests into `develop`, `beta`, `production`, and `release/**` run the same required checks.
+Create `beta` from `develop` before the first experiment. The workflows do not create that branch. Create `production` from `develop` when the first stable release is ready. Create `release/<package>/v<major>` only when the first backport for that older major is needed. That branch receives patch and minor fixes for the previous major. A major change stays on `develop` and is not cherry-picked there. Pull requests into `develop`, `beta`, `production`, and `release/**` run the same required checks.
 
 ### Why snapshots, not pre mode
 

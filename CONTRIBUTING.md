@@ -30,9 +30,11 @@ Every pull request that changes a publishable package includes:
 - a README update when the public API changes
 - a migration note in the changeset when the change is breaking
 
-Breaking changes that are ready for production land on `develop`. They become `latest` only when `develop` is promoted into `production`. An experiment may break on `beta` first. Do not commit a breaking change directly on `production`.
+Every change, whether patch, minor, or major, lands on `develop` through a pull request. It becomes `latest` only when `develop` is promoted into `production`. Do not commit directly on `production`. Experimental work may go to `beta` first, then graduate through a pull request into `develop`.
 
-A security fix lands on `develop` first, is promoted to `production` for `latest`, is cherry-picked onto each supported `release/**` branch, and is merged into `beta` so experimental builds pick it up. See [SECURITY.md](./SECURITY.md).
+Major (breaking) changes are never backported to `release/**`. Those branches receive only patch and minor fixes for the previous major.
+
+A security fix lands on `develop` first, is promoted to `production` for `latest`, is cherry-picked onto each supported `release/**` branch when it is a patch or minor fix, and is merged into `beta` so experimental builds pick it up. A major security fix is not backported. See [SECURITY.md](./SECURITY.md).
 
 CI runs the affected lint, typecheck, test, and build tasks, then publint, attw, pack review, Turborepo boundaries, and sherif. It fails if a change introduces `@sgx4u-private`, `@sgx4u/ui*`, or a `link:` / `file:` dependency that points outside the repo.
 
