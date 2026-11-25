@@ -2,26 +2,29 @@
 
 ## Supported lines
 
-Each package keeps three lines:
+| Line     | npm dist-tag | Branch                       | Receives                                                                     |
+| -------- | ------------ | ---------------------------- | ---------------------------------------------------------------------------- |
+| Beta     | `beta`       | `beta`                       | Snapshot releases of the experimental branch. It can run ahead of `develop`. |
+| Latest   | `latest`     | `production`                 | Features, fixes, and security fixes promoted from `develop`.                 |
+| Previous | `previous`   | `release/<package>/v<major>` | Patch and minor bug fixes and security fixes.                                |
 
-| Line     | npm dist-tag | Branch                       | Receives                                                                        |
-| -------- | ------------ | ---------------------------- | ------------------------------------------------------------------------------- |
-| Beta     | `beta`       | `beta`                       | Snapshot prereleases of the experimental branch. It can run ahead of `develop`. |
-| Latest   | `latest`     | `production`                 | Features, fixes, and security fixes promoted from `develop`                     |
-| Previous | `previous`   | `release/<package>/v<major>` | Patch and minor bug fixes and security fixes. Major changes are not backported. |
+`develop` is the stable integration branch. Promoting it to `production` is what ships `latest`.
 
-`develop` is the stable integration branch. It does not publish a dist-tag. Code on `develop` is what gets promoted to `production`.
+Older majors are deprecated on npm.
 
-Older majors are end of life. They are deprecated on npm and do not receive fixes.
+## Releasing a fix
 
-A security fix lands on `develop` first, is promoted to `production` for `latest`, is cherry-picked onto each supported `release/**` branch when it is a patch or minor fix, and is merged into `beta` so experimental builds pick it up. A major security fix is not backported. Merge `develop` into `beta` with a merge commit. That sync is how the fix reaches the `beta` dist-tag. See [docs/repo-settings.md](./docs/repo-settings.md).
+1. Land the fix on `develop` through a pull request.
+2. Promote `develop` to `production` so `latest` publishes it.
+3. Cherry-pick a patch or minor fix onto each supported `release/**` branch.
+4. Merge `develop` into `beta` with a merge commit so the `beta` dist-tag publishes the fix. Commands are in [Keeping beta in sync](./docs/repo-settings.md#keeping-beta-in-sync).
+
+A breaking security fix ships on `develop` and `production`. `release/**` takes patch and minor fixes.
 
 ## Reporting a vulnerability
 
-Please report vulnerabilities privately.
+Report a vulnerability through a [private security advisory](https://github.com/sgx4u/sgx4u-toolkit/security/advisories/new).
 
-[Open a private security advisory](https://github.com/sgx4u/sgx4u-toolkit/security/advisories/new).
+Turn on private vulnerability reporting in the repository settings ([Code security and discussions](./docs/repo-settings.md#7-code-security-and-discussions)). Until that setting is on, contact [@sgx4u](https://github.com/sgx4u) directly and keep exploit details off public channels.
 
-Do not open a public issue, discussion, or pull request for a vulnerability. Private vulnerability reporting has to be enabled in the repository settings; until that toggle is on, contact [@sgx4u](https://github.com/sgx4u) directly and do not include exploit details in a public channel.
-
-Fixes are prepared from the advisory's private fork and released to every supported line. You will get credit in the advisory if you want it.
+Prepare the fix from the advisory's private fork and release it to every supported line. You will get credit in the advisory if you want it.

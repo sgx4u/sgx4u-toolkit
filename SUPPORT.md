@@ -1,13 +1,6 @@
 # Support
 
-## Thanks to the Community
-
-I wholeheartedly welcome any contribution from the community. I am deeply grateful to everyone for helping me make a tool that helps my developer friends. Cheers...!!! Keep on making people achieve there digital dream.
-This is a public, best-effort open source project maintained by Subhajit Ghosh.
-
-## Contribute to the Project
-
-If you have anything that can be a great addition to this package then feel free to make a pull request in `develop` branch. I appreciate any contribution.
+Public toolkit maintained by Subhajit Ghosh.
 
 | Need                    | Where                                                              |
 | ----------------------- | ------------------------------------------------------------------ |
@@ -16,4 +9,4 @@ If you have anything that can be a great addition to this package then feel free
 | Vulnerability           | Private advisory, see [SECURITY.md](./SECURITY.md)                 |
 | Pull request            | [CONTRIBUTING.md](./CONTRIBUTING.md)                               |
 
-Maintained lines are `beta`, `latest`, and `previous`, as described in [SECURITY.md](./SECURITY.md).
+Supported lines are `beta`, `latest`, and `previous`. See [SECURITY.md](./SECURITY.md).

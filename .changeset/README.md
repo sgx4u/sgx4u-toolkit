@@ -1,5 +1,13 @@
 # Changesets
 
-Packages version independently. Add a changeset with `pnpm changeset` on every pull request that changes a publishable package.
+Packages version independently. On every pull request that changes a publishable package, add a changeset:
 
-`baseBranch` is `develop`, the default branch. Stable feature pull requests merge there. Experimental pull requests merge into `beta`. `production` is the stable release branch; do not aim changesets at a `main` branch. This repository does not have one. A snapshot publish from `beta` does not commit the version bump and does not delete the changeset from git. The changeset is consumed when `production` or a `release/**` branch versions the package.
+```sh
+pnpm changeset
+```
+
+`baseBranch` is `develop`. `access` is `public`. `updateInternalDependencies` is `minor`, so a minor bump of a dependency also bumps the packages that depend on it.
+
+A breaking change includes the migration steps in the changeset summary.
+
+`beta` publishes a snapshot and leaves the changeset in git. `production` and `release/**` consume the changeset when they version the package. After `production` publishes, squash-merge the `sync/consumed-changesets-*` pull request into `develop` before the next promotion, so the same changeset is released once. The steps are in [docs/repo-settings.md](../docs/repo-settings.md).
