@@ -32,11 +32,7 @@ Experimental (`0.x`).
 
 `prettier` is a peer dependency at `^3.0.0`.
 
-```sh
-pnpm add -D @sgx4u/prettier-config prettier          # pnpm
-npm install --save-dev @sgx4u/prettier-config prettier   # npm
-yarn add --dev @sgx4u/prettier-config prettier       # yarn
-```
+This preset lives in this repository and is a workspace dev dependency of the packages here. It is not published.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

@@ -20,9 +20,9 @@
 <p align="center">
     <a href="./CONTRIBUTING.md">Contributing</a>
     &middot;
-    <a href="./.github/ISSUE_TEMPLATE/bug_report.yml">Report a bug</a>
+    <a href="./.github/ISSUE_TEMPLATE/bug-report.yml">Report a bug</a>
     &middot;
-    <a href="./.github/ISSUE_TEMPLATE/feature_request.yml">Request a feature</a>
+    <a href="./.github/ISSUE_TEMPLATE/feature.yml">Request a feature</a>
 </p>
 </div>
 
@@ -41,15 +41,11 @@
 
 ## About
 
-Tooling presets live in `packages/config`. Libraries live in `packages/<name>`.
+Libraries live in `packages/<name>`. Tooling presets live in `packages/config` and support those libraries inside this repository. Presets are not published.
+
+`@sgx4u/string` is the published library. It builds with tsdown and ships ESM and CommonJS. `import` resolves `dist/*.js` with `dist/*.d.ts`. `require` resolves `dist/*.cjs` with `dist/*.d.cts`. The `@sgx4u/source` export condition points at TypeScript source (`src/index.ts`). This workspace resolves it through `customConditions`. A published install uses `dist`.
 
 Published packages declare `"node": ">=22.12"`.
-
-`@sgx4u/string`, `@sgx4u/tsdown-config`, and `@sgx4u/vitest-config` build with tsdown and ship ESM and CommonJS. `import` resolves `dist/*.js` with `dist/*.d.ts`. `require` resolves `dist/*.cjs` with `dist/*.d.cts`. The `@sgx4u/source` export condition points at TypeScript source (`src/index.ts`). This workspace resolves it through `customConditions`. A published install uses `dist`.
-
-`@sgx4u/eslint-config` and `@sgx4u/prettier-config` keep the ESM entry at `index.js` with `index.d.ts`, so ESLint can load `@sgx4u/eslint-config` and Prettier can load `@sgx4u/prettier-config` before a build. `require` resolves `dist/*.cjs` with `dist/*.d.cts`.
-
-`@sgx4u/tsconfig` publishes the JSON presets `base.json`, `library.json`, `edge.json`, and `node.json`.
 
 Inside this repo, a runtime dependency on another toolkit package uses `workspace:^`. Dev dependencies use `workspace:*`. Third-party versions live in the pnpm catalog in `pnpm-workspace.yaml`. Add a catalog entry when a package needs that dependency.
 
@@ -59,20 +55,15 @@ The root workspace package is `@sgx4u/toolkit`. Its manifest is `"private": fals
 
 ## Packages
 
-| Package                                                       | What it is                             |
-| ------------------------------------------------------------- | -------------------------------------- |
-| [`@sgx4u/tsconfig`](./packages/config/tsconfig)               | TypeScript presets                     |
-| [`@sgx4u/eslint-config`](./packages/config/eslint-config)     | ESLint flat config and import rules    |
-| [`@sgx4u/prettier-config`](./packages/config/prettier-config) | Prettier preset                        |
-| [`@sgx4u/tsdown-config`](./packages/config/tsdown-config)     | tsdown preset for ESM and CommonJS     |
-| [`@sgx4u/vitest-config`](./packages/config/vitest-config)     | Vitest preset                          |
-| [`@sgx4u/string`](./packages/string)                          | Blank checks and whitespace collapsing |
+| Package                              | What it is                             |
+| ------------------------------------ | -------------------------------------- |
+| [`@sgx4u/string`](./packages/string) | Blank checks and whitespace collapsing |
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Runtimes
 
-Each library picks one runtime. Presets in `packages/config` are Node tooling, tagged `layout:config`, and installed as dev dependencies.
+Each library picks one runtime. Presets in `packages/config` are Node tooling for this repository, tagged `layout:config`. They are not published.
 
 | Runtime     | Choose it when                                                                                                     | It may depend on                                      |
 | ----------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------- |
@@ -80,13 +71,13 @@ Each library picks one runtime. Presets in `packages/config` are Node tooling, t
 | `edge`      | The code targets an edge runtime and may use web standards plus the Workers `nodejs_compat` modules that are real. | Universal packages, other edge packages, and presets. |
 | `node`      | The code needs Node itself: processes, the full filesystem, or another API outside the edge subset.                | Universal, edge, and node packages, and presets.      |
 
-`turbo boundaries` enforces that table. `@sgx4u/eslint-config` enforces the imports. `pnpm exec turbo gen package` writes the matching TypeScript preset, tsdown config, and Vitest config. The rules are in [docs/runtimes.md](./docs/runtimes.md).
+`turbo boundaries` enforces that table. The ESLint preset enforces the imports. `pnpm exec turbo gen package` writes the matching TypeScript preset, tsdown config, and Vitest config. The rules are in [docs/runtimes.md](./docs/runtimes.md).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Installation
 
-`@sgx4u/string` is the universal string package. Each package README has its own install line. Presets in `packages/config` are dev dependencies.
+`@sgx4u/string` is the published library. Its README has the install line.
 
 ```sh
 pnpm add @sgx4u/string       # pnpm
@@ -122,7 +113,7 @@ pnpm check
 
 | Command             | What it runs                                                                                                                                                       |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `pnpm dev`          | `turbo run dev`. The task stays running. `@sgx4u/string`, `@sgx4u/tsdown-config`, and `@sgx4u/vitest-config` run `tsdown --watch`.                                 |
+| `pnpm dev`          | `turbo run dev`. The task stays running. `@sgx4u/string` runs `tsdown --watch`.                                                                                    |
 | `pnpm lint`         | Package lint tasks, then root ESLint. The root config ignores `packages/**`, so package sources are linted once.                                                   |
 | `pnpm typecheck`    | Package typecheck tasks, then `tsc --noEmit` for the generator.                                                                                                    |
 | `pnpm test`         | Package tests, then `node --test` on `scripts/*.test.mjs`.                                                                                                         |

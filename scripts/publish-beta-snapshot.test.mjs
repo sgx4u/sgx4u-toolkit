@@ -57,4 +57,6 @@ test("the repository versions can be read without publishing", () => {
         new URL("..", import.meta.url).pathname,
     );
     assert.equal(versions.get("@sgx4u/string"), "0.0.0");
+    assert.equal(versions.has("@sgx4u/eslint-config"), false);
+    assert.equal(versions.has("@sgx4u/tsconfig"), false);
 });

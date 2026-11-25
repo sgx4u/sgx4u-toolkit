@@ -34,11 +34,7 @@ Experimental (`0.x`).
 
 Peers are `eslint` at `^10.0.0` and `typescript` at `>=6`.
 
-```sh
-pnpm add -D @sgx4u/eslint-config eslint typescript          # pnpm
-npm install --save-dev @sgx4u/eslint-config eslint typescript    # npm
-yarn add --dev @sgx4u/eslint-config eslint typescript       # yarn
-```
+This preset lives in this repository and is a workspace dev dependency of the packages here. It is not published.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

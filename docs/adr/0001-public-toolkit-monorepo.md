@@ -11,7 +11,7 @@ Shared `@sgx4u` packages need one public place to version, test, and publish. Th
 ## Decision
 
 - One public pnpm workspace. Tooling presets live in `packages/config`. Every other package lives in `packages/<name>`.
-- Packages publish to the public npm registry under `@sgx4u`. Config presets are public. Other repositories install them from npm. Inside this repo they are `workspace:*` dev dependencies.
+- Libraries in `packages/<name>` publish to the public npm registry under `@sgx4u`. Presets in `packages/config` support those libraries inside this repository and are not published. Inside this repo the presets are `workspace:*` dev dependencies.
 - `layout:config` is the preset tag and denies `layout:package`. `layout:package` is the library tag and may depend on presets and on other libraries. Runtime tags restrict that further. See [Runtimes](../runtimes.md).
 - A runtime dependency between packages uses `workspace:^`.
 - Libraries are built with tsdown and publish ESM and CommonJS. Published packages declare `node >= 22.12`. Development and CI use Node 24.
@@ -27,5 +27,5 @@ Shared `@sgx4u` packages need one public place to version, test, and publish. Th
 ## Consequences
 
 - A change that crosses several packages can land in one pull request.
-- The first `0.1.0` of each package is published from a laptop, because npm attaches a trusted publisher after the package exists. Later versions come from CI with trusted publishing and provenance.
+- The first `0.1.0` of `@sgx4u/string` is published from a laptop, because npm attaches a trusted publisher after the package exists. Later versions come from CI with trusted publishing and provenance.
 - The published name stays `@sgx4u/<name>` when the folder moves.

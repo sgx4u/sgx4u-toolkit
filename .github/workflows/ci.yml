@@ -261,4 +261,6 @@ jobs:
               run: pnpm exec turbo run build
 
             - name: Publish preview packages
-              run: pnpm exec pkg-pr-new publish --pnpm --packageManager=pnpm './packages/*' './packages/config/*'
+              run: |
+                  mapfile -t package_directories < <(find packages -mindepth 1 -maxdepth 1 -type d ! -name config | sort)
+                  pnpm exec pkg-pr-new publish --pnpm --packageManager=pnpm "${package_directories[@]}"

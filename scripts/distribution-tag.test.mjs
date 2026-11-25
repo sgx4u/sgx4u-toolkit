@@ -1,9 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 import { distributionTagForBranch } from "./distribution-tag.mjs";
 import {
-    applyDistributionTagToPlan,
+    gitTagForPackage,
+    isRealPackage,
+    listRealPackages,
     publishArguments,
+    registryHasVersion,
 } from "./publish-packages.mjs";
 
 test("stable release branches map to latest and previous", () => {
@@ -29,30 +33,44 @@ test("other branches are rejected", () => {
     );
 });
 
-test("packed publishes do not pass --tag", () => {
-    assert.deepEqual(publishArguments("packed-packages"), [
-        "exec",
-        "changeset",
+test("libraries live in packages/<name> and presets do not publish", () => {
+    assert.equal(isRealPackage("packages/string"), true);
+    assert.equal(isRealPackage("packages/config"), false);
+    assert.equal(isRealPackage("packages/config/eslint-config"), false);
+    assert.equal(isRealPackage("."), false);
+});
+
+test("the repository's real packages are the libraries", () => {
+    const packageNames = listRealPackages(
+        fileURLToPath(new URL("..", import.meta.url)),
+    ).map((packageInfo) => packageInfo.name);
+    assert.deepEqual(packageNames, ["@sgx4u/string"]);
+});
+
+test("publish passes the branch dist-tag to one library", () => {
+    assert.deepEqual(publishArguments("@sgx4u/string", "previous"), [
+        "--filter",
+        "@sgx4u/string",
         "publish",
-        "--from-pack-dir",
-        "packed-packages",
+        "--tag",
+        "previous",
+        "--access",
+        "public",
+        "--no-git-checks",
     ]);
 });
 
-test("the publish plan carries the branch dist-tag", () => {
-    const planDocument = {
-        version: 1,
-        plan: [
-            [
-                {
-                    kind: "publish",
-                    name: "@sgx4u/string",
-                    version: "1.2.0",
-                    tag: "latest",
-                },
-            ],
-        ],
-    };
-    applyDistributionTagToPlan(planDocument, "previous");
-    assert.equal(planDocument.plan[0][0].tag, "previous");
+test("a git tag names the library and the version", () => {
+    assert.equal(
+        gitTagForPackage("@sgx4u/string", "0.1.0"),
+        "@sgx4u/string@0.1.0",
+    );
+});
+
+test("an npm view match means that version is already published", () => {
+    assert.equal(
+        registryHasVersion({ status: 0, stdout: "0.1.0\n" }, "0.1.0"),
+        true,
+    );
+    assert.equal(registryHasVersion({ status: 1, stdout: "" }, "0.1.0"), false);
 });

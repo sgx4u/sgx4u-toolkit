@@ -25,6 +25,6 @@ A breaking security fix ships on `develop` and `production`. `release/**` takes 
 
 Report a vulnerability through a [private security advisory](https://github.com/sgx4u/sgx4u-toolkit/security/advisories/new).
 
-Turn on private vulnerability reporting in the repository settings ([Code security and discussions](./docs/repo-settings.md#7-code-security-and-discussions)). Until that setting is on, contact [@sgx4u](https://github.com/sgx4u) directly and keep exploit details off public channels.
+Turn on private vulnerability reporting in the repository settings ([Code security](./docs/repo-settings.md#7-code-security)). Until that setting is on, contact [@sgx4u](https://github.com/sgx4u) directly and keep exploit details off public channels.
 
 Prepare the fix from the advisory's private fork and release it to every supported line. You will get credit in the advisory if you want it.

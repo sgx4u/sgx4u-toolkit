@@ -64,7 +64,7 @@ Optional checks, once the repository requires them: `ci / test-node-22`, `ci / d
 pnpm exec turbo gen package
 ```
 
-The generator asks for the name and the kind. Use lowercase kebab-case starting with a letter, and name the one job the package does. The generator reserves `config`, `toolkit`, `utils`, `common`, and `shared`. The npm name is `@sgx4u/<name>`.
+The generator asks for the name and the kind. Use lowercase kebab-case starting with a letter, and name the one job the package does. The generator reserves `config`, `toolkit`, `utils`, `common`, and `shared`. A library publishes as `@sgx4u/<name>`. A config preset stays in this repository and is not published.
 
 | Kind      | Folder                   | Runtime                                         |
 | --------- | ------------------------ | ----------------------------------------------- |
