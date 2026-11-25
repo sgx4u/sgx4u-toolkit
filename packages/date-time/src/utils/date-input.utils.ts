@@ -51,6 +51,22 @@ export function resolveDateInput(
 }
 
 /**
+ * The instant a function should treat as now.
+ *
+ * @param now - The caller's override, or `undefined` to read `Date.now()`.
+ * @param timeZone - Zone for a date-only override.
+ * @returns A new `Date`.
+ * @throws {@link TypeError} When `now` has the wrong type.
+ * @throws {@link RangeError} When `now` is not a real date.
+ */
+export function resolveNow(now: unknown, timeZone?: string): Date {
+    if (now === undefined) {
+        return new Date(Date.now());
+    }
+    return resolveDateInput(now, "now", timeZone);
+}
+
+/**
  * Whether `value` is a real date, without throwing.
  *
  * A `Date` from another realm counts when its time value is finite. A

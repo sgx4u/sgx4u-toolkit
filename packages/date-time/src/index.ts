@@ -34,6 +34,34 @@ export { sortDates } from "./sort-dates/sort-dates.js";
 export { startOfUnit } from "./start-of-unit/start-of-unit.js";
 export { subtractDuration } from "./subtract-duration/subtract-duration.js";
 export { toDate } from "./to-date/to-date.js";
+export { differenceInUnit } from "./difference-in-unit/difference-in-unit.js";
+export { differenceInCalendarUnit } from "./difference-in-calendar-unit/difference-in-calendar-unit.js";
+export { differenceAsDuration } from "./difference-as-duration/difference-as-duration.js";
+export { getAge } from "./get-age/get-age.js";
+export { getAgeAsDuration } from "./get-age-as-duration/get-age-as-duration.js";
+export { getNextAnniversary } from "./get-next-anniversary/get-next-anniversary.js";
+export { getCountdownParts } from "./get-countdown-parts/get-countdown-parts.js";
+export { isToday } from "./is-today/is-today.js";
+export { isTomorrow } from "./is-tomorrow/is-tomorrow.js";
+export { isYesterday } from "./is-yesterday/is-yesterday.js";
+export { isPast } from "./is-past/is-past.js";
+export { isFuture } from "./is-future/is-future.js";
+export { isWeekend } from "./is-weekend/is-weekend.js";
+export { isWithinNext } from "./is-within-next/is-within-next.js";
+export { isWithinLast } from "./is-within-last/is-within-last.js";
+export { getMillisecondsUntilNextUnit } from "./get-milliseconds-until-next-unit/get-milliseconds-until-next-unit.js";
+export { getDayOfYear } from "./get-day-of-year/get-day-of-year.js";
+export { getIsoWeek } from "./get-iso-week/get-iso-week.js";
+export { getIsoWeekYear } from "./get-iso-week-year/get-iso-week-year.js";
+export { getIsoWeeksInYear } from "./get-iso-weeks-in-year/get-iso-weeks-in-year.js";
+export { getWeekOfYear } from "./get-week-of-year/get-week-of-year.js";
+export { getWeekOfMonth } from "./get-week-of-month/get-week-of-month.js";
+export { getQuarter } from "./get-quarter/get-quarter.js";
+export { getFiscalYear } from "./get-fiscal-year/get-fiscal-year.js";
+export { getFiscalQuarter } from "./get-fiscal-quarter/get-fiscal-quarter.js";
+export { getFiscalYearInterval } from "./get-fiscal-year-interval/get-fiscal-year-interval.js";
+export { getLocaleWeekInfo } from "./get-locale-week-info/get-locale-week-info.js";
+export { createMonthCalendarGrid } from "./create-month-calendar-grid/create-month-calendar-grid.js";
 
 export type { AddDurationOptions } from "./add-duration/add-duration.types.js";
 export type { DateInput } from "./types/date-input.types.js";
@@ -58,3 +86,24 @@ export type {
     WeekOptions,
 } from "./types/options.types.js";
 export type { WeekdayStepOptions } from "./get-next-weekday/get-next-weekday.types.js";
+export type { DifferenceInUnitOptions } from "./difference-in-unit/difference-in-unit.types.js";
+export type { DifferenceAsDurationOptions } from "./difference-as-duration/difference-as-duration.types.js";
+export type { AgeOptions, LeapDayBirthday } from "./get-age/get-age.types.js";
+export type { NextAnniversaryOptions } from "./get-next-anniversary/get-next-anniversary.types.js";
+export type { CountdownOptions } from "./get-countdown-parts/get-countdown-parts.types.js";
+export type {
+    CountdownParts,
+    RelativeTimeParts,
+} from "./types/relative-time.types.js";
+export type { IsWeekendOptions } from "./is-weekend/is-weekend.types.js";
+export type { WeekOfYearOptions } from "./get-week-of-year/get-week-of-year.types.js";
+export type { MonthCalendarOptions } from "./create-month-calendar-grid/create-month-calendar-grid.types.js";
+export type {
+    LocaleWeekInfo,
+    MonthCalendarDay,
+    MonthCalendarGrid,
+    MonthCalendarWeek,
+} from "./types/calendar-grid.types.js";
+export type { CalendarUnit } from "./types/time.types.js";
+export type { FiscalYearOptions, NowOptions } from "./types/options.types.js";
+export type { Interval } from "./types/interval.types.js";
