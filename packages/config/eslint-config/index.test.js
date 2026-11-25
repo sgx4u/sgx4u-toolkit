@@ -122,20 +122,6 @@ test("node allows Node built-ins", async () => {
     }
 });
 
-test("every runtime rejects the private scope", async () => {
-    for (const runtime of ["universal", "edge", "node"]) {
-        const messages = await restrictedImportMessages(
-            runtime,
-            'import "@sgx4u-private/example";\n',
-        );
-        assert.equal(
-            messages.length,
-            1,
-            `${runtime} should reject the private scope`,
-        );
-    }
-});
-
 test("every runtime rejects deep imports", async () => {
     for (const specifier of [
         "@sgx4u/string/src/is-blank/is-blank.ts",

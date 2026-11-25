@@ -111,15 +111,15 @@ pnpm build
 pnpm check
 ```
 
-| Command             | What it runs                                                                                                                                                       |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `pnpm dev`          | `turbo run dev`. The task stays running. `@sgx4u/string` runs `tsdown --watch`.                                                                                    |
-| `pnpm lint`         | Package lint tasks, then root ESLint. The root config ignores `packages/**`, so package sources are linted once.                                                   |
-| `pnpm typecheck`    | Package typecheck tasks, then `tsc --noEmit` for the generator.                                                                                                    |
-| `pnpm test`         | Package tests, then `node --test` on `scripts/*.test.mjs`.                                                                                                         |
-| `pnpm build`        | `turbo run build`.                                                                                                                                                 |
-| `pnpm check`        | `turbo boundaries`, sherif, `scripts/check-visibility.mjs`, `scripts/check-links.mjs`, `turbo run check:package` (publint and attw), and `scripts/check-pack.mjs`. |
-| `pnpm format:check` | Prettier. `pnpm format` writes the same format.                                                                                                                    |
+| Command             | What it runs                                                                                                                       |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm dev`          | `turbo run dev`. The task stays running. `@sgx4u/string` runs `tsdown --watch`.                                                    |
+| `pnpm lint`         | Package lint tasks, then root ESLint. The root config ignores `packages/**`, so package sources are linted once.                   |
+| `pnpm typecheck`    | Package typecheck tasks, then `tsc --noEmit` for the generator.                                                                    |
+| `pnpm test`         | Package tests, then `node --test` on `scripts/*.test.mjs`.                                                                         |
+| `pnpm build`        | `turbo run build`.                                                                                                                 |
+| `pnpm check`        | `turbo boundaries`, sherif, `scripts/check-links.mjs`, `turbo run check:package` (publint and attw), and `scripts/check-pack.mjs`. |
+| `pnpm format:check` | Prettier. `pnpm format` writes the same format.                                                                                    |
 
 `pnpm changeset` runs the Changesets CLI.
 
@@ -152,7 +152,7 @@ Pull requests run the `pkg-pr-new` job, which publishes preview tarballs. Those 
 packages/config      tooling presets
 packages/<name>      libraries
 turbo/generators     pnpm exec turbo gen package
-scripts              visibility, link, and pack checks
+scripts              link and pack checks
 docs                 settings, runtimes, and decisions
 ```
 

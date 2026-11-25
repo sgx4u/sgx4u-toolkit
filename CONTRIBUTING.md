@@ -48,13 +48,13 @@ Pull requests into `develop`, `beta`, `production`, and `release/**` run [`.gith
 
 | Check                 | What it runs                                                                                                                                  |
 | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ci / lint`           | Affected package lint, root ESLint, `turbo boundaries`, sherif, `scripts/check-visibility.mjs`, and `scripts/check-links.mjs`.                |
+| `ci / lint`           | Affected package lint, root ESLint, `turbo boundaries`, sherif, and `scripts/check-links.mjs`.                                                |
 | `ci / typecheck`      | Affected package typecheck, then `tsc --noEmit` for the generator.                                                                            |
 | `ci / test`           | `pnpm test`.                                                                                                                                  |
 | `ci / build`          | Affected `turbo run build`.                                                                                                                   |
 | `ci / package-checks` | Affected `check:package` (publint and attw; the task depends on `build`), `scripts/check-pack.mjs`, and on a pull request `changeset status`. |
 
-`scripts/check-visibility.mjs` fails when a scanned file references `@sgx4u-private`. Keep package names and imports on the public `@sgx4u` scope. `scripts/check-links.mjs` requires every `link:` and `file:` dependency to resolve inside this repository. See [Local linking](#local-linking).
+`scripts/check-links.mjs` requires every `link:` and `file:` dependency to resolve inside this repository. See [Local linking](#local-linking). Keep package names and imports on the public `@sgx4u` scope.
 
 Optional checks, once the repository requires them: `ci / test-node-22`, `ci / dependency-review`, `ci / pkg-pr-new`, `security / analyze`, `security / secrets`. `test-node-22` runs affected package tests on Node 22. The `security` workflow is CodeQL and gitleaks, including a weekly run.
 

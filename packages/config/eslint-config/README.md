@@ -104,7 +104,7 @@ The ignore list is `dist`, `coverage`, and `node_modules`. Files under `src` use
 | `edge`      | Allows web standards and Workers `nodejs_compat` modules that have an implementation (`node:fs`, `node:http`, `node:net`, `node:dns`, `node:tls`, and the rest of that set). Rejects the non-functional stub modules listed below. | Worker globals, plus `process`, `Buffer`, `global`, `setImmediate`, and `clearImmediate`.                          |
 | `node`      | Allows Node built-ins.                                                                                                                                                                                                             | Node globals.                                                                                                      |
 
-Every runtime rejects an `@sgx4u-private` specifier and a deep import into `src/` or `dist/`. Import `@sgx4u` packages through their exports map.
+Every runtime rejects a deep import into `src/` or `dist/`. Import `@sgx4u` packages through their exports map.
 
 Edge stub modules, with or without the `node:` prefix, including subpaths:
 
