@@ -4,5 +4,7 @@ node_modules
 # Turbo
 .turbo
 
-# Build outputs
+# Build and test outputs
 dist
+coverage
+*.tgz

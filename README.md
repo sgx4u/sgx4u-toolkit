@@ -58,7 +58,7 @@ Libraries live in `packages/<name>`. A published library declares `"node": ">=22
 
 Inside this repo, a runtime dependency on another toolkit package uses `workspace:^`. Dev dependencies use `workspace:*`. Third-party versions live in the pnpm catalog in `pnpm-workspace.yaml`. Add a catalog entry when a package needs that dependency.
 
-The root workspace package is `@sgx4u/toolkit`. Its manifest is `"private": false` and it has no `version`. `scripts/check-pack.mjs` skips that name, so the workspace package stays out of the npm publish.
+The root workspace package is `@sgx4u/toolkit`. It is private and has no `version`, so it is never published.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -96,17 +96,13 @@ Each library picks one runtime.
 | `layout:package`    | `layout:package`, `layout:config`                                    |
 | `layout:config`     | Denies `layout:package`. Tooling may not depend on a library.        |
 
-| Runtime     | TypeScript preset              | tsdown `platform`                        | Vitest |
-| ----------- | ------------------------------ | ---------------------------------------- | ------ |
-| `universal` | `@sgx4u/tsconfig/library.json` | `neutral`, the preset default            | `node` |
-| `edge`      | `@sgx4u/tsconfig/edge.json`    | `neutral`, the preset default            | `node` |
-| `node`      | `@sgx4u/tsconfig/node.json`    | `node`, passed as `{ platform: "node" }` | `node` |
+| Runtime     | TypeScript presets               | tsdown `platform`                        | Vitest |
+| ----------- | -------------------------------- | ---------------------------------------- | ------ |
+| `universal` | `library.json`                   | `neutral`, the preset default            | `node` |
+| `edge`      | `library.json`, then `edge.json` | `neutral`, the preset default            | `node` |
+| `node`      | `library.json`, then `node.json` | `node`, passed as `{ platform: "node" }` | `node` |
 
-`@sgx4u/tsconfig/base.json` is the strict ESM baseline: `ES2022`, `NodeNext`, `strict`, `types` set to `[]`, and `customConditions` set to `@sgx4u/source`. `library.json` adds `declaration`, `declarationMap`, `sourceMap`, `isolatedDeclarations`, and `exactOptionalPropertyTypes`. `edge.json` sets `lib` to `ES2022` and `WebWorker`, and `types` to `[]`. `node.json` sets `types` to `["node"]` and keeps the baseline `lib`. Add `@types/node` in a Node package. An edge package that imports an allowed Node built-in, such as `node:buffer`, adds `@types/node` in that package too. A package that needs Cloudflare-only types adds `@cloudflare/workers-types` in that package and a catalog entry in the same change.
-
-`neutral` is platform-agnostic. tsdown builds CommonJS with the `node` platform for every runtime. The test process is Node for every runtime. ESLint decides which imports `src` may use.
-
-`@sgx4u/eslint-config` takes `runtime` (`universal`, `edge`, or `node`) and `rootDir`. `rootDir` must be an absolute path. Pass `import.meta.dirname` from the calling `eslint.config.js`. Any other `runtime` throws `TypeError`. A missing or relative `rootDir` throws `TypeError`. Universal source uses web standards and may not import Node built-ins, including `node:` subpaths and the bare names reported by the Node process that runs ESLint. Edge source may use web standards and the Workers `nodejs_compat` modules that have an implementation, including partial ones such as `node:fs`, `node:http`, `node:net`, `node:dns`, and `node:tls`. Node source may use Node built-ins. Static `import`, `import()`, `require()`, and `import name = require(...)` are all checked. Non-functional Workers stubs stay rejected. Add a name to that list when Workers documents a new stub, and leave a newly implemented module allowed.
+The presets are described in [`@sgx4u/tsconfig`](./packages/config/tsconfig/README.md). tsdown builds CommonJS with the `node` platform for every runtime, and tests run in Node for every runtime. [`@sgx4u/eslint-config`](./packages/config/eslint-config/README.md) decides which imports `src` may use for each runtime.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

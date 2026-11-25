@@ -13,7 +13,7 @@ interface PackagePromptAnswers {
 }
 
 interface PackageAnswers extends PackagePromptAnswers {
-    tsconfigPreset: string;
+    tsconfigExtends: string;
 }
 
 const reservedPackageNames = new Set(["utils", "common", "shared"]);
@@ -26,7 +26,7 @@ function assertPackageName(value: string): true | string {
         return "config is the tooling folder. Name the preset itself, such as eslint-config.";
     }
     if (value === "toolkit") {
-        return "toolkit is the workspace package @sgx4u/toolkit. It has no version and is not published.";
+        return "toolkit is the workspace package @sgx4u/toolkit. It is private and is not published.";
     }
     if (reservedPackageNames.has(value)) {
         return "utils, common, and shared are not package names. Name the one job the package does.";
@@ -57,15 +57,20 @@ function isPackagePromptAnswers(value: object): value is PackagePromptAnswers {
     );
 }
 
-function tsconfigPresetForRuntime(runtimeName: RuntimeName): string {
-    if (runtimeName === "node") {
-        return "@sgx4u/tsconfig/node.json";
+// Every published library extends library.json for its declaration settings.
+// Edge and Node libraries add their runtime preset on top.
+export function tsconfigExtendsFor(
+    packageKind: PackagePromptAnswers["packageKind"],
+    runtimeName: RuntimeName,
+): string {
+    if (packageKind === "config") {
+        return JSON.stringify("@sgx4u/tsconfig/node.json");
     }
-    if (runtimeName === "edge") {
-        return "@sgx4u/tsconfig/edge.json";
+    if (runtimeName === "universal") {
+        return JSON.stringify("@sgx4u/tsconfig/library.json");
     }
 
-    return "@sgx4u/tsconfig/library.json";
+    return `[${JSON.stringify("@sgx4u/tsconfig/library.json")}, ${JSON.stringify(`@sgx4u/tsconfig/${runtimeName}.json`)}]`;
 }
 
 function preparePackageAnswers(value: unknown): PackageAnswers {
@@ -94,7 +99,10 @@ function preparePackageAnswers(value: unknown): PackageAnswers {
 
     const packageAnswers: PackageAnswers = {
         ...candidate,
-        tsconfigPreset: tsconfigPresetForRuntime(candidate.runtimeName),
+        tsconfigExtends: tsconfigExtendsFor(
+            candidate.packageKind,
+            candidate.runtimeName,
+        ),
     };
     // Plop renders templates from the original answers object. Copy the
     // derived fields back onto it so the templates can see them.

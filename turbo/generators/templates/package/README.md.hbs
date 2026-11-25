@@ -1,3 +1,26 @@
+{{#if (eq packageKind 'config')}}
+# @sgx4u/{{packageName}}
+
+Replace this sentence with what `@sgx4u/{{packageName}}` sets up.
+
+This preset is a workspace dev dependency. It is not published.
+
+## Usage
+
+```ts
+import { packageIdentifier } from "@sgx4u/{{packageName}}";
+
+packageIdentifier(); // "@sgx4u/{{packageName}}"
+```
+
+## API
+
+### `packageIdentifier(): string`
+
+Returns `@sgx4u/{{packageName}}`. The stub exists so the new preset typechecks and tests. Replace it and update this section.
+
+Owner: `@{{ownerHandle}}`
+{{else}}
 <a id="readme-top"></a>
 
 <div align="center">
@@ -10,13 +33,13 @@
 <h3 align="center">Replace this sentence with what <code>@sgx4u/{{packageName}}</code> does before the first release.</h3>
 
 <p align="center">
-    <a href="{{#if (eq packageKind 'config')}}../../../.github/workflows/ci.yml{{else}}../../.github/workflows/ci.yml{{/if}}"><img src="https://img.shields.io/github/actions/workflow/status/sgx4u/sgx4u-toolkit/ci.yml?branch=develop&style=for-the-badge&label=ci&labelColor=353535" alt="ci" /></a>
-    <a href="{{#if (eq packageKind 'config')}}../../../LICENSE{{else}}../../LICENSE{{/if}}"><img src="https://img.shields.io/github/license/sgx4u/sgx4u-toolkit?style=for-the-badge&labelColor=353535&color=4f46e5" alt="License: MIT" /></a>
+    <a href="../../.github/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/sgx4u/sgx4u-toolkit/ci.yml?branch=develop&style=for-the-badge&label=ci&labelColor=353535" alt="ci" /></a>
+    <a href="../../LICENSE"><img src="https://img.shields.io/github/license/sgx4u/sgx4u-toolkit?style=for-the-badge&labelColor=353535&color=4f46e5" alt="License: MIT" /></a>
     <a href="./package.json"><img src="https://img.shields.io/badge/node-%3E%3D22.12-339933?style=for-the-badge&logo=nodedotjs&logoColor=white&labelColor=353535" alt="Node &gt;=22.12" /></a>
     <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
 </p>
 
-<p align="center">Part of <a href="{{#if (eq packageKind 'config')}}../../../README.md{{else}}../../README.md{{/if}}">@sgx4u/toolkit</a>.</p>
+<p align="center">Part of <a href="../../README.md">@sgx4u/toolkit</a>.</p>
 </div>
 
 <br />
@@ -33,19 +56,13 @@ Experimental (`0.x`). Breaking changes may land in minor versions until 1.0.0.
 
 <h2 id="installation">📥 Installation</h2>
 
-{{#if (eq packageKind 'config')}}
-This preset stays in this repository. It is a workspace dev dependency and is not published.
-
-`import` loads `dist/index.js` with `dist/index.d.ts`. The export map lists `@sgx4u/source` before `import`, pointing at `src/index.ts`. TypeScript uses that condition when `customConditions` includes `@sgx4u/source`. The TypeScript configuration in this repository sets that condition, so workspace builds load the source. Other resolvers load `dist`.
-{{else}}
 ```sh
 pnpm add @sgx4u/{{packageName}}       # pnpm
 npm install @sgx4u/{{packageName}}    # npm
 yarn add @sgx4u/{{packageName}}       # yarn
 ```
 
-Requires Node `>=22.12`. The package publishes ESM (`import`) and CommonJS (`require`). The export map lists `@sgx4u/source` before `import` and `require`, pointing at `src/index.ts`. TypeScript uses that condition when `customConditions` includes `@sgx4u/source`. The TypeScript configuration in this repository sets that condition, so workspace builds load the source. Other resolvers load `dist`.
-{{/if}}
+Requires Node `>=22.12`. The package publishes ESM (`import`) and CommonJS (`require`).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -67,7 +84,7 @@ packageIdentifier(); // "@sgx4u/{{packageName}}"
 
 ### `packageIdentifier(): string`
 
-Returns the scoped package name `@sgx4u/{{packageName}}`. The stub exists so the new package typechecks and tests{{#unless (eq packageKind 'config')}}, and packs{{/unless}}. Replace it before the first release and update this section.
+Returns the scoped package name `@sgx4u/{{packageName}}`. The stub exists so the new package typechecks, tests, and packs. Replace it before the first release and update this section.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -83,7 +100,7 @@ Runtime: `{{runtimeName}}`. Universal code uses web standards and runs in browse
 
 <h2 id="contributing">🤝 Contributing</h2>
 
-Repository rules are in [CONTRIBUTING.md]({{#if (eq packageKind 'config')}}../../../CONTRIBUTING.md{{else}}../../CONTRIBUTING.md{{/if}}).
+Repository rules are in [CONTRIBUTING.md](../../CONTRIBUTING.md).
 
 Owner: `@{{ownerHandle}}`
 
@@ -93,6 +110,7 @@ Owner: `@{{ownerHandle}}`
 
 <h2 id="license">📄 License</h2>
 
-[MIT]({{#if (eq packageKind 'config')}}../../../LICENSE{{else}}../../LICENSE{{/if}}) © 2026 Subhajit Ghosh
+[MIT](../../LICENSE) © 2026 Subhajit Ghosh
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+{{/if}}

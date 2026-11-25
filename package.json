@@ -1,6 +1,6 @@
 {
     "name": "@sgx4u/toolkit",
-    "private": false,
+    "private": true,
     "type": "module",
     "description": "Shared TypeScript libraries published from the @sgx4u toolkit.",
     "license": "MIT",
@@ -41,8 +41,7 @@
     "prettier": "@sgx4u/prettier-config",
     "sherif": {
         "ignoreRule": [
-            "non-existant-packages",
-            "root-package-private-field"
+            "non-existant-packages"
         ]
     },
     "lint-staged": {

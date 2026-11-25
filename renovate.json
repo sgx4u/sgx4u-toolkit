@@ -20,12 +20,6 @@
             "description": "Open one pull request for every non-major update. Major updates stay on their own pull requests.",
             "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
             "groupName": "non-major dependencies"
-        },
-        {
-            "description": "Update pnpm catalog entries in pnpm-workspace.yaml. The npm manager reads that file; this rule keeps those dependencies enabled.",
-            "matchManagers": ["npm"],
-            "matchDepTypes": ["/^pnpm\\.catalog\\./"],
-            "enabled": true
         }
     ]
 }

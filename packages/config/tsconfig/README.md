@@ -19,14 +19,20 @@ This preset is a workspace dev dependency. It is not published.
 
 ## API
 
-| Export                         | Use                                                                                                                               |
-| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
-| `@sgx4u/tsconfig/base.json`    | Strict ESM baseline. `ES2022`, `NodeNext`, `strict`, `types` set to `[]`, and `customConditions` set to `@sgx4u/source`.          |
-| `@sgx4u/tsconfig/library.json` | Universal libraries. Adds `declaration`, `declarationMap`, `sourceMap`, `isolatedDeclarations`, and `exactOptionalPropertyTypes`. |
-| `@sgx4u/tsconfig/edge.json`    | Edge libraries. `lib` is `ES2022` and `WebWorker`. `types` is `[]`.                                                               |
-| `@sgx4u/tsconfig/node.json`    | Node packages. `types` is `["node"]`. `lib` stays the baseline `ES2022`. Add `@types/node` in the package that extends it.        |
+| Export                         | Use                                                                                                                                   |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `@sgx4u/tsconfig/base.json`    | Strict ESM baseline. `ES2022`, `NodeNext`, `strict`, `types` set to `[]`, and `customConditions` set to `@sgx4u/source`.              |
+| `@sgx4u/tsconfig/library.json` | Every published library. Adds `declaration`, `declarationMap`, `sourceMap`, `isolatedDeclarations`, and `exactOptionalPropertyTypes`. |
+| `@sgx4u/tsconfig/edge.json`    | Edge runtime. `lib` is `ES2022` and `WebWorker`.                                                                                      |
+| `@sgx4u/tsconfig/node.json`    | Node runtime. `types` is `["node"]`. Add `@types/node` in the package that extends it.                                                |
 
-`library.json`, `edge.json`, and `node.json` each extend `base.json`.
+`library.json`, `edge.json`, and `node.json` each extend `base.json`. An edge or Node library extends both, library first:
+
+```json
+{
+    "extends": ["@sgx4u/tsconfig/library.json", "@sgx4u/tsconfig/edge.json"]
+}
+```
 
 `edge.json` types the worker web standards that ship with TypeScript (`fetch`, streams, `URL`). An edge package that imports an allowed Node built-in adds `@types/node` in that package. A package that needs Cloudflare-only types adds `@cloudflare/workers-types` in that package. In this repository, add the catalog entry in the same change.
 

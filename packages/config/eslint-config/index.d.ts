@@ -21,12 +21,9 @@ export interface PackageLintOptions {
     runtime: PackageRuntime;
 
     /**
-     * Absolute directory of the calling `eslint.config.js`.
-     *
-     * Pass `import.meta.dirname`. A relative path is rejected. The value is
-     * normalized with `path.resolve` and copied to
-     * `parserOptions.tsconfigRootDir`. It is not resolved against the process
-     * working directory before that normalization.
+     * Absolute directory of the calling `eslint.config.js`. Pass
+     * `import.meta.dirname`. A relative path is rejected. The normalized value
+     * becomes `parserOptions.tsconfigRootDir`.
      */
     rootDir: string;
 }
@@ -36,12 +33,9 @@ export interface PackageLintOptions {
  */
 export interface RootLintOptions {
     /**
-     * Absolute directory of the root `eslint.config.js`.
-     *
-     * Pass `import.meta.dirname`. A relative path is rejected. The value is
-     * normalized with `path.resolve` and copied to
-     * `parserOptions.tsconfigRootDir`. It is not resolved against the process
-     * working directory before that normalization.
+     * Absolute directory of the root `eslint.config.js`. Pass
+     * `import.meta.dirname`. A relative path is rejected. The normalized value
+     * becomes `parserOptions.tsconfigRootDir`.
      */
     rootDir: string;
 }
