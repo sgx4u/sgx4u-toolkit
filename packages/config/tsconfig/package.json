@@ -2,7 +2,6 @@
     "name": "@sgx4u/tsconfig",
     "private": true,
     "description": "Shared TypeScript presets for @sgx4u packages.",
-    "type": "module",
     "exports": {
         "./base.json": "./base.json",
         "./library.json": "./library.json",
@@ -11,13 +10,10 @@
     },
     "scripts": {
         "lint": "eslint . --max-warnings 0",
-        "test": "node --test index.test.js"
+        "test": "node --test index.test.mjs"
     },
     "devDependencies": {
         "@sgx4u/eslint-config": "workspace:*",
         "eslint": "catalog:"
-    },
-    "engines": {
-        "node": ">=22.12"
     }
 }

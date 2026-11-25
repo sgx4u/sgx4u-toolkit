@@ -2,7 +2,7 @@
     "name": "@sgx4u/toolkit",
     "private": false,
     "type": "module",
-    "description": "Modular TypeScript utilities and shared foundations for scalable web, server, and mobile apps.",
+    "description": "Shared TypeScript libraries published from the @sgx4u toolkit.",
     "license": "MIT",
     "author": "Subhajit Ghosh",
     "engines": {

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { test } from "node:test";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -368,44 +368,83 @@ test("globals follow the runtime", () => {
     assert.equal(nodeGlobals.window, undefined);
 });
 
-const filesLintedAcrossConfigs = [
-    "eslint.config.js",
-    "commitlint.config.js",
-    "scripts/check-links.mjs",
-    "turbo/generators/config.ts",
-    "packages/config/eslint-config/eslint.config.js",
-    "packages/config/eslint-config/index.js",
-    "packages/config/eslint-config/index.test.js",
-    "packages/config/prettier-config/eslint.config.js",
-    "packages/config/prettier-config/index.js",
-    "packages/config/prettier-config/index.test.js",
-    "packages/config/tsdown-config/eslint.config.js",
-    "packages/config/tsdown-config/src/index.ts",
-    "packages/config/tsdown-config/src/define-library-config/index.ts",
-    "packages/config/tsdown-config/src/define-library-config/define-library-config.ts",
-    "packages/config/tsdown-config/src/define-library-config/define-library-config.test.ts",
-    "packages/config/tsdown-config/tsdown.config.ts",
-    "packages/config/vitest-config/eslint.config.js",
-    "packages/config/vitest-config/src/index.ts",
-    "packages/config/vitest-config/src/define-package-vitest-config/index.ts",
-    "packages/config/vitest-config/src/define-package-vitest-config/define-package-vitest-config.ts",
-    "packages/config/vitest-config/src/define-package-vitest-config/define-package-vitest-config.test.ts",
-    "packages/config/vitest-config/tsdown.config.ts",
-    "packages/config/tsconfig/eslint.config.js",
-    "packages/config/tsconfig/index.test.js",
-];
+const skippedDirectories = new Set([
+    "node_modules",
+    "dist",
+    ".git",
+    "coverage",
+    ".turbo",
+]);
+
+const lintedSourceExtensions = new Set([".js", ".mjs", ".ts"]);
+
+/**
+ * @param {string} directory
+ * @returns {string[]}
+ */
+function listLintedSourceFiles(directory) {
+    /** @type {string[]} */
+    const relativeFiles = [];
+
+    /**
+     * @param {string} currentDirectory
+     */
+    function walk(currentDirectory) {
+        for (const entry of readdirSync(currentDirectory, {
+            withFileTypes: true,
+        })) {
+            if (skippedDirectories.has(entry.name)) {
+                continue;
+            }
+            const absolutePath = path.join(currentDirectory, entry.name);
+            if (entry.isDirectory()) {
+                walk(absolutePath);
+                continue;
+            }
+            if (entry.name.endsWith(".d.ts")) {
+                continue;
+            }
+            if (!lintedSourceExtensions.has(path.extname(entry.name))) {
+                continue;
+            }
+            relativeFiles.push(
+                path
+                    .relative(directory, absolutePath)
+                    .split(path.sep)
+                    .join("/"),
+            );
+        }
+    }
+
+    walk(directory);
+    return relativeFiles.sort();
+}
+
+/**
+ * @param {string} directory
+ * @returns {string | undefined}
+ */
+function eslintConfigPath(directory) {
+    for (const fileName of ["eslint.config.js", "eslint.config.mjs"]) {
+        const configPath = path.join(directory, fileName);
+        if (existsSync(configPath)) {
+            return configPath;
+        }
+    }
+    return undefined;
+}
 
 /**
  * @param {string} filePath
  */
 function configDirectoryFor(filePath) {
     let directory = path.dirname(filePath);
-    while (!existsSync(path.join(directory, "eslint.config.js"))) {
+    while (!eslintConfigPath(directory)) {
         const parentDirectory = path.dirname(directory);
         assert.notEqual(
             parentDirectory,
             directory,
-            `no eslint.config.js above ${filePath}`,
+            `no eslint config above ${filePath}`,
         );
         directory = parentDirectory;
     }
@@ -429,7 +468,9 @@ function parsingErrors(results) {
 }
 
 test("several configs in one process parse every file with that config's rootDir", async () => {
-    const absoluteFiles = filesLintedAcrossConfigs.map((relativeFile) =>
+    const relativeFiles = listLintedSourceFiles(repositoryRoot);
+    assert.ok(relativeFiles.length > 0);
+    const absoluteFiles = relativeFiles.map((relativeFile) =>
         path.join(repositoryRoot, relativeFile),
     );
 
@@ -458,7 +499,7 @@ test("several configs in one process parse every file with that config's rootDir
     for (const [directory, filesInDirectory] of filesByDirectory) {
         const directoryEslint = new ESLint({
             cwd: directory,
-            overrideConfigFile: path.join(directory, "eslint.config.js"),
+            overrideConfigFile: eslintConfigPath(directory),
         });
         const directoryResults =
             await directoryEslint.lintFiles(filesInDirectory);

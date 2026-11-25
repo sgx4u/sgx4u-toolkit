@@ -1,10 +1,4 @@
-import {
-    appendFileSync,
-    existsSync,
-    mkdirSync,
-    readFileSync,
-    writeFileSync,
-} from "node:fs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import type { PlopTypes } from "@turbo/gen";
 
@@ -213,26 +207,6 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
                     ].join("\n"),
                 );
                 return `Added ${path.relative(repositoryRoot(), changesetPath)}`;
-            },
-            (answers: unknown) => {
-                const packageAnswers = preparePackageAnswers(answers);
-                const owner = `@${packageAnswers.ownerHandle.replace(/^@/, "")}`;
-                const codeownersPath = path.join(
-                    repositoryRoot(),
-                    ".github",
-                    "CODEOWNERS",
-                );
-                const entry = `/${packageAnswers.packageDirectory}/ ${owner}`;
-                const current = existsSync(codeownersPath)
-                    ? readFileSync(codeownersPath, "utf8")
-                    : "";
-                if (!current.includes(entry)) {
-                    appendFileSync(
-                        codeownersPath,
-                        `${current.endsWith("\n") || current.length === 0 ? "" : "\n"}${entry}\n`,
-                    );
-                }
-                return `Recorded ${entry}`;
             },
         ],
     });

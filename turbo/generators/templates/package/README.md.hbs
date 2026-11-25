@@ -36,7 +36,7 @@ Experimental (`0.x`). Breaking changes may land in minor versions until 1.0.0.
 {{#if (eq packageKind 'config')}}
 This preset stays in this repository. It is a workspace dev dependency and is not published.
 
-Requires Node `>=22.12`. `import` loads `dist/index.js` with `dist/index.d.ts`. The export map lists `@sgx4u/source` before `import`, pointing at `src/index.ts`. TypeScript uses that condition when `customConditions` includes `@sgx4u/source`. The TypeScript configuration in this repository sets that condition, so workspace builds load the source. Other resolvers load `dist`.
+`import` loads `dist/index.js` with `dist/index.d.ts`. The export map lists `@sgx4u/source` before `import`, pointing at `src/index.ts`. TypeScript uses that condition when `customConditions` includes `@sgx4u/source`. The TypeScript configuration in this repository sets that condition, so workspace builds load the source. Other resolvers load `dist`.
 {{else}}
 ```sh
 pnpm add @sgx4u/{{packageName}}       # pnpm

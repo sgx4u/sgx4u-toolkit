@@ -1,7 +1,6 @@
 {
     "$schema": "https://turborepo.dev/schema.json",
     "ui": "stream",
-    "agentGuidance": true,
     "remoteCache": {
         "signature": true
     },
