@@ -11,6 +11,7 @@ import {
 test("an in-repo file specifier is allowed", () => {
     const rootDirectory = mkdtempSync(path.join(tmpdir(), "sgx4u-links-"));
     const packageDirectory = path.join(rootDirectory, "packages", "string");
+
     assert.equal(
         linkSpecifierEscapesRepository(
             "file:../core",
@@ -34,6 +35,7 @@ test("package manifests cannot link outside the repository", () => {
         path.join(tmpdir(), "sgx4u-links-manifest-"),
     );
     const packageDirectory = path.join(rootDirectory, "packages", "string");
+
     mkdirSync(packageDirectory, { recursive: true });
     writeFileSync(
         path.join(packageDirectory, "package.json"),
@@ -44,6 +46,7 @@ test("package manifests cannot link outside the repository", () => {
             },
         }),
     );
+
     const findings = findEscapingLinks(rootDirectory);
     assert.equal(findings.length, 1);
     assert.equal(findings[0]?.dependencyName, "example-library");

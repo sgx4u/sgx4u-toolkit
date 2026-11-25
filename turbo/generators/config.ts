@@ -37,6 +37,7 @@ function assertPackageName(value: string): true | string {
     if (reservedPackageNames.has(value)) {
         return "utils, common, and shared are not package names. Name the one job the package does.";
     }
+
     return true;
 }
 
@@ -69,6 +70,7 @@ function tsconfigPresetForRuntime(runtimeName: RuntimeName): string {
     if (runtimeName === "edge") {
         return "@sgx4u/tsconfig/edge.json";
     }
+
     return "@sgx4u/tsconfig/library.json";
 }
 
@@ -76,6 +78,7 @@ function preparePackageAnswers(value: unknown): PackageAnswers {
     if (typeof value !== "object" || value === null) {
         throw new Error("Package generator answers were incomplete.");
     }
+
     const candidate = value as Record<string, unknown>;
     if (typeof candidate.packageName !== "string") {
         throw new Error("Package generator answers were incomplete.");
@@ -86,6 +89,7 @@ function preparePackageAnswers(value: unknown): PackageAnswers {
     } else if (candidate.packageKind === "regular") {
         candidate.packageDirectory = `packages/${candidate.packageName}`;
     }
+
     if (!isPackagePromptAnswers(candidate)) {
         throw new Error("Package generator answers were incomplete.");
     }
@@ -95,6 +99,7 @@ function preparePackageAnswers(value: unknown): PackageAnswers {
     ) {
         throw new Error("Config packages use the node runtime.");
     }
+
     const packageAnswers: PackageAnswers = {
         ...candidate,
         tsconfigPreset: tsconfigPresetForRuntime(candidate.runtimeName),

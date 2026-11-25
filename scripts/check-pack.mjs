@@ -41,10 +41,12 @@ export function listPublishablePackages(repositoryDirectory) {
             ) {
                 continue;
             }
+
             const absolutePath = path.join(directory, entry.name);
             if (!entry.isDirectory()) {
                 continue;
             }
+
             const manifestPath = path.join(absolutePath, "package.json");
             if (statExists(manifestPath)) {
                 const packageManifest = JSON.parse(
@@ -88,6 +90,7 @@ export function readPackPreview(packageDirectory) {
         cwd: packageDirectory,
         encoding: "utf8",
     });
+
     const parsed = JSON.parse(output);
     const preview = Array.isArray(parsed) ? parsed[0] : parsed;
     const files = (preview.files ?? []).map((file) => file.path ?? file);
@@ -98,6 +101,7 @@ export function readPackPreview(packageDirectory) {
 function main() {
     const packageDirectories = listPublishablePackages(repositoryRoot);
     let failed = false;
+
     for (const packageDirectory of packageDirectories) {
         const relativeDirectory = path.relative(
             repositoryRoot,
@@ -122,6 +126,7 @@ function main() {
             }
         }
     }
+
     if (failed) {
         process.exitCode = 1;
     }
