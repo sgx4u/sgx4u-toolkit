@@ -1,42 +1,8 @@
 # Dependencies
 node_modules
-.pnp
-.pnp.js
-.pnpm-store
-
-# Local env files
-.env
-.env.*
-!.env.example
-
-# Tests and coverage
-coverage
 
 # Turbo
 .turbo
 
 # Build outputs
 dist
-out
-build
-*.tsbuildinfo
-*.tgz
-
-# Next.js leftovers from local experiments
-.next/
-.vercel
-
-# Logs
-npm-debug.log*
-pnpm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Editors and OS
-.DS_Store
-.idea
-*.swp
-*.pem
-
-# Lefthook local overrides
-lefthook-local.yml
