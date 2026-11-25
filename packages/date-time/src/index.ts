@@ -4,10 +4,12 @@
 export { addBusinessDays } from "./add-business-days/add-business-days.js";
 export { addBusinessHours } from "./add-business-hours/add-business-hours.js";
 export { addDurations } from "./add-durations/add-durations.js";
+export { addToTimeOfDay } from "./add-to-time-of-day/add-to-time-of-day.js";
 export { addDuration } from "./add-duration/add-duration.js";
 export { clampDate } from "./clamp-date/clamp-date.js";
 export { differenceInBusinessDays } from "./difference-in-business-days/difference-in-business-days.js";
 export { differenceInBusinessHours } from "./difference-in-business-hours/difference-in-business-hours.js";
+export { changeTimeZoneKeepingWallTime } from "./change-time-zone-keeping-wall-time/change-time-zone-keeping-wall-time.js";
 export { compareDates } from "./compare-dates/compare-dates.js";
 export { compareDurations } from "./compare-durations/compare-durations.js";
 export { compareTimesOfDay } from "./compare-times-of-day/compare-times-of-day.js";
@@ -46,6 +48,7 @@ export { getPreviousBusinessDay } from "./get-previous-business-day/get-previous
 export { getNextWeekday } from "./get-next-weekday/get-next-weekday.js";
 export { getNthWeekdayOfMonth } from "./get-nth-weekday-of-month/get-nth-weekday-of-month.js";
 export { getPreviousWeekday } from "./get-previous-weekday/get-previous-weekday.js";
+export { getTimeZoneDifference } from "./get-time-zone-difference/get-time-zone-difference.js";
 export { getUtcOffset } from "./get-utc-offset/get-utc-offset.js";
 export { isAfter } from "./is-after/is-after.js";
 export { isBusinessDay } from "./is-business-day/is-business-day.js";
@@ -54,6 +57,7 @@ export { listBusinessDaysInInterval } from "./list-business-days-in-interval/lis
 export { isBefore } from "./is-before/is-before.js";
 export { isBetween } from "./is-between/is-between.js";
 export { isDate } from "./is-date/is-date.js";
+export { isDaylightSavingTime } from "./is-daylight-saving-time/is-daylight-saving-time.js";
 export { isHoliday } from "./is-holiday/is-holiday.js";
 export { isLeapYear } from "./is-leap-year/is-leap-year.js";
 export { isSameInstant } from "./is-same-instant/is-same-instant.js";
@@ -123,6 +127,7 @@ export { toTemporalInstant } from "./to-temporal-instant/to-temporal-instant.js"
 export { toUnixSeconds } from "./to-unix-seconds/to-unix-seconds.js";
 export { formatDate } from "./format-date/format-date.js";
 export { formatDateRange } from "./format-date-range/format-date-range.js";
+export { formatTimeOfDay } from "./format-time-of-day/format-time-of-day.js";
 export { formatTimeZoneName } from "./format-time-zone-name/format-time-zone-name.js";
 export { formatDateWithStyle } from "./format-date-with-style/format-date-with-style.js";
 export { formatUtcOffset } from "./format-utc-offset/format-utc-offset.js";
