@@ -79,7 +79,10 @@ export function findForbiddenReferences(rootDirectory) {
       if (!scannedExtensions.has(extension)) {
         continue;
       }
-      const relativePath = path.relative(rootDirectory, absolutePath);
+      const relativePath = path
+        .relative(rootDirectory, absolutePath)
+        .split(path.sep)
+        .join("/");
       if (skippedRelativePaths.has(relativePath)) {
         continue;
       }

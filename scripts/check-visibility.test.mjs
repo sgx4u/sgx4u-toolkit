@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { findForbiddenReferences } from "./check-visibility.mjs";
 
@@ -33,6 +34,15 @@ test("flags private and UI scopes in manifests and source", () => {
   const findings = findForbiddenReferences(rootDirectory);
   const names = findings.map((finding) => finding.name).sort();
   assert.deepEqual(names, ["private-scope", "ui-scope", "ui-scope"]);
+});
+
+test("skips the guard files that name forbidden scopes", () => {
+  const repositoryRoot = path.resolve(
+    path.dirname(fileURLToPath(import.meta.url)),
+    "..",
+  );
+  const findings = findForbiddenReferences(repositoryRoot);
+  assert.equal(findings.length, 0);
 });
 
 test("allows other @sgx4u packages", () => {
