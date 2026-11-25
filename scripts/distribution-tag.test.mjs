@@ -112,8 +112,5 @@ test("an npm view match means that version is already published", () => {
         registryHasVersion({ status: 0, stdout: "0.1.0\n" }, "0.1.0"),
         true,
     );
-    assert.equal(
-        registryHasVersion({ status: 1, stdout: "" }, "0.1.0"),
-        false,
-    );
+    assert.equal(registryHasVersion({ status: 1, stdout: "" }, "0.1.0"), false);
 });
