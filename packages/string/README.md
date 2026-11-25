@@ -7,28 +7,33 @@
 
 <h1 align="center">🌟 @sgx4u/string 🌟</h1>
 
-<p align="center">String helpers for browsers, Node 22.12+, Cloudflare Workers, and React Native.</p>
+<h3 align="center">String helpers for browsers, Node 22.12+, Cloudflare Workers, and React Native.</h3>
 
 <p align="center">
     <a href="../../.github/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/sgx4u/sgx4u-toolkit/ci.yml?branch=develop&style=for-the-badge&label=ci&labelColor=353535" alt="ci" /></a>
     <a href="../../LICENSE"><img src="https://img.shields.io/github/license/sgx4u/sgx4u-toolkit?style=for-the-badge&labelColor=353535&color=4f46e5" alt="License: MIT" /></a>
     <a href="./package.json"><img src="https://img.shields.io/badge/node-%3E%3D22.12-339933?style=for-the-badge&logo=nodedotjs&logoColor=white&labelColor=353535" alt="Node &gt;=22.12" /></a>
+    <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
 </p>
 
 <p align="center">Part of <a href="../../README.md">sgx4u-toolkit</a>.</p>
 </div>
 
-## About
+<br />
+
+<h2 id="about">💫 About</h2>
 
 `isBlank` and `collapseWhitespace` are the public functions. `src/index.ts` re-exports both. Each one lives in its own folder under `src`, with the test beside the implementation.
 
-The export map lists `@sgx4u/source` before `import` and `require`, pointing at `src/index.ts`. TypeScript uses that condition when `customConditions` includes `@sgx4u/source`, which `@sgx4u/tsconfig/base.json` sets. Other resolvers load `dist`. `types` stays under `import` and `require`, after `@sgx4u/source`, so the source condition stays reachable.
+The export map lists `@sgx4u/source` before `import` and `require`, pointing at `src/index.ts`. TypeScript uses that condition when `customConditions` includes `@sgx4u/source`. The TypeScript configuration in this repository sets that condition, so workspace builds load the source. Other resolvers load `dist`. `types` stays under `import` and `require`, after `@sgx4u/source`, so the source condition stays reachable.
 
 Experimental (`0.x`). Breaking changes may land in minor versions until 1.0.0.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Installation
+<br />
+
+<h2 id="installation">📥 Installation</h2>
 
 ```sh
 pnpm add @sgx4u/string       # pnpm
@@ -40,18 +45,22 @@ Node 22.12 or newer. `import` loads the ESM build. `require()` loads the CommonJ
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Usage
+<br />
+
+<h2 id="usage">💡 Usage</h2>
 
 ```ts
 import { collapseWhitespace, isBlank } from "@sgx4u/string";
 
-isBlank("  ");
-collapseWhitespace("  a \n b  ");
+isBlank("  "); // true
+collapseWhitespace("  a \n b  "); // "a b"
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## API
+<br />
+
+<h2 id="api">📘 API</h2>
 
 | Export               | Signature                    | Behavior                                                                                                                                 |
 | -------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
@@ -60,19 +69,25 @@ collapseWhitespace("  a \n b  ");
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Runtime support
+<br />
+
+<h2 id="runtime-support">🌐 Runtime support</h2>
 
 The same source runs in browsers, Node 22.12+, Cloudflare Workers, and React Native.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Contributing
+<br />
+
+<h2 id="contributing">🤝 Contributing</h2>
 
 Repository rules are in [CONTRIBUTING.md](../../CONTRIBUTING.md).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## License
+<br />
+
+<h2 id="license">📄 License</h2>
 
 [MIT](../../LICENSE) © 2026 Subhajit Ghosh (`@sgx4u`).
 
