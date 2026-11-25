@@ -17,6 +17,22 @@ export function publishArguments(packDirectory) {
 }
 
 /**
+ * A release with no `publish` entries has nothing to send to npm.
+ * That run exits successfully.
+ *
+ * @param {{ plan?: { kind?: string }[][] }} planDocument
+ * @returns {boolean}
+ */
+export function planPublishesPackages(planDocument) {
+    const batches = Array.isArray(planDocument.plan) ? planDocument.plan : [];
+    return batches.some(
+        (batch) =>
+            Array.isArray(batch) &&
+            batch.some((release) => release.kind === "publish"),
+    );
+}
+
+/**
  * @param {{ plan: { kind?: string, tag?: string }[][] }} planDocument
  * @param {string} distributionTag
  */
@@ -50,6 +66,7 @@ function main() {
         );
         process.exit(1);
     }
+    const distributionTag = distributionTagForBranch(branchName);
     const packDirectory = process.env.CHANGESET_PACK_DIR;
     if (!packDirectory) {
         console.error(
@@ -58,7 +75,14 @@ function main() {
         process.exit(1);
     }
 
-    writeDistributionTag(packDirectory, distributionTagForBranch(branchName));
+    const planPath = path.join(packDirectory, "publish-plan.json");
+    const planDocument = JSON.parse(readFileSync(planPath, "utf8"));
+    if (!planPublishesPackages(planDocument)) {
+        console.log("No packages to publish.");
+        return;
+    }
+
+    writeDistributionTag(packDirectory, distributionTag);
     const result = spawnSync("pnpm", publishArguments(packDirectory), {
         stdio: "inherit",
         env: process.env,

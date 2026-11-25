@@ -138,8 +138,8 @@ test("every runtime rejects the private scope", async () => {
 
 test("every runtime rejects deep imports", async () => {
     for (const specifier of [
-        "@sgx4u/string/src/is-blank/is-blank.ts",
-        "@sgx4u/string/dist/index.js",
+        "@sgx4u/example/src/feature.ts",
+        "@sgx4u/example/dist/index.js",
     ]) {
         const messages = await restrictedImportMessages(
             "node",
@@ -317,7 +317,6 @@ test("the parser block parses tsdown.config.ts after several configs were loaded
     }
 
     for (const [relativeDirectory, runtime] of [
-        ["packages/string", "universal"],
         ["packages/config/eslint-config", "node"],
         ["packages/config/prettier-config", "node"],
         ["packages/config/tsdown-config", "node"],
@@ -389,15 +388,6 @@ const filesLintedAcrossConfigs = [
     "commitlint.config.js",
     "scripts/check-links.mjs",
     "turbo/generators/config.ts",
-    "packages/string/eslint.config.js",
-    "packages/string/tsdown.config.ts",
-    "packages/string/src/index.ts",
-    "packages/string/src/is-blank/index.ts",
-    "packages/string/src/is-blank/is-blank.ts",
-    "packages/string/src/is-blank/is-blank.test.ts",
-    "packages/string/src/collapse-whitespace/index.ts",
-    "packages/string/src/collapse-whitespace/collapse-whitespace.ts",
-    "packages/string/src/collapse-whitespace/collapse-whitespace.test.ts",
     "packages/config/eslint-config/eslint.config.js",
     "packages/config/eslint-config/index.js",
     "packages/config/eslint-config/index.test.js",

@@ -50,7 +50,7 @@ test("allows other @sgx4u packages", () => {
     );
     writeFileSync(
         path.join(rootDirectory, "package.json"),
-        JSON.stringify({ dependencies: { "@sgx4u/string": "workspace:^" } }),
+        JSON.stringify({ dependencies: { "@sgx4u/example": "workspace:^" } }),
     );
     const findings = findForbiddenReferences(rootDirectory);
     assert.equal(findings.length, 0);

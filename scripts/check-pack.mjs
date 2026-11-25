@@ -97,6 +97,11 @@ export function readPackPreview(packageDirectory) {
 
 function main() {
     const packageDirectories = listPublishablePackages(repositoryRoot);
+    if (packageDirectories.length === 0) {
+        console.log("No publishable packages to review.");
+        return;
+    }
+
     let failed = false;
 
     for (const packageDirectory of packageDirectories) {

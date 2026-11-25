@@ -140,7 +140,7 @@ For each package, publish `0.1.0` once from a laptop so npm can attach a trusted
 4. Cancel the GitHub `release` run that is waiting to publish that same version.
 5. Turn off token publishing when npm shows that switch. CI uses the trusted publisher. Add no `NPM_TOKEN` secret.
 
-The packages in the first changeset are `@sgx4u/tsconfig`, `@sgx4u/eslint-config`, `@sgx4u/prettier-config`, `@sgx4u/tsdown-config`, `@sgx4u/vitest-config`, and `@sgx4u/string`.
+The packages in the first changeset are `@sgx4u/tsconfig`, `@sgx4u/eslint-config`, `@sgx4u/prettier-config`, `@sgx4u/tsdown-config`, and `@sgx4u/vitest-config`.
 
 Turn on 2FA for the npm account that owns `@sgx4u`.
 

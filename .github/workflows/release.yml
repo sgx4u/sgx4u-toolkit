@@ -156,6 +156,7 @@ jobs:
             # production -> latest, release/** -> previous.
             # The dist-tag is written into publish-plan.json. Changesets rejects
             # --tag together with --from-pack-dir.
+            # An empty publish plan logs and exits 0. A release with no packages is not a failure.
             # beta does not use this job. It publishes uncommitted snapshots from the snapshot job.
             # develop is not a trigger. It does not publish.
             # No NPM_TOKEN and no registry-url: npm CLI 11.5.1+ uses OIDC for this environment.

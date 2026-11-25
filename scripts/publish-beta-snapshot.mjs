@@ -207,6 +207,12 @@ function discardUncommittedSnapshotEdits(rootDirectory) {
 function main() {
     assertBetaSnapshotBranch(process.env.GITHUB_REF_NAME);
     const versionsBefore = readPackageVersions(repositoryRoot);
+    if (versionsBefore.size === 0) {
+        console.log(
+            "No packages to publish. Nothing published to the beta tag.",
+        );
+        return;
+    }
 
     try {
         execFileSync(

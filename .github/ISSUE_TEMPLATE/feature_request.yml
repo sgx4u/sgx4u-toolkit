@@ -9,7 +9,6 @@ body:
       attributes:
           label: Package
           options:
-              - "@sgx4u/string"
               - "@sgx4u/tsconfig"
               - "@sgx4u/eslint-config"
               - "@sgx4u/prettier-config"

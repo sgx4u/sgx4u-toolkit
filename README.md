@@ -41,11 +41,11 @@
 
 ## About
 
-Tooling presets live in `packages/config`. Libraries live in `packages/<name>`.
+Tooling presets live in `packages/config`. A library lives in `packages/<name>`. The first library will be `date-time`.
 
 Published packages declare `"node": ">=22.12"`.
 
-`@sgx4u/string`, `@sgx4u/tsdown-config`, and `@sgx4u/vitest-config` build with tsdown and ship ESM and CommonJS. `import` resolves `dist/*.js` with `dist/*.d.ts`. `require` resolves `dist/*.cjs` with `dist/*.d.cts`. The `@sgx4u/source` export condition points at TypeScript source (`src/index.ts`). This workspace resolves it through `customConditions`. A published install uses `dist`.
+`@sgx4u/tsdown-config` and `@sgx4u/vitest-config` build with tsdown and ship ESM and CommonJS. `import` resolves `dist/*.js` with `dist/*.d.ts`. `require` resolves `dist/*.cjs` with `dist/*.d.cts`. The `@sgx4u/source` export condition points at TypeScript source (`src/index.ts`). This workspace resolves it through `customConditions`. A published install uses `dist`.
 
 `@sgx4u/eslint-config` and `@sgx4u/prettier-config` keep the ESM entry at `index.js` with `index.d.ts`, so ESLint can load `@sgx4u/eslint-config` and Prettier can load `@sgx4u/prettier-config` before a build. `require` resolves `dist/*.cjs` with `dist/*.d.cts`.
 
@@ -59,14 +59,13 @@ The root workspace package is `@sgx4u/toolkit`. Its manifest is `"private": fals
 
 ## Packages
 
-| Package                                                       | What it is                             |
-| ------------------------------------------------------------- | -------------------------------------- |
-| [`@sgx4u/tsconfig`](./packages/config/tsconfig)               | TypeScript presets                     |
-| [`@sgx4u/eslint-config`](./packages/config/eslint-config)     | ESLint flat config and import rules    |
-| [`@sgx4u/prettier-config`](./packages/config/prettier-config) | Prettier preset                        |
-| [`@sgx4u/tsdown-config`](./packages/config/tsdown-config)     | tsdown preset for ESM and CommonJS     |
-| [`@sgx4u/vitest-config`](./packages/config/vitest-config)     | Vitest preset                          |
-| [`@sgx4u/string`](./packages/string)                          | Blank checks and whitespace collapsing |
+| Package                                                       | What it is                          |
+| ------------------------------------------------------------- | ----------------------------------- |
+| [`@sgx4u/tsconfig`](./packages/config/tsconfig)               | TypeScript presets                  |
+| [`@sgx4u/eslint-config`](./packages/config/eslint-config)     | ESLint flat config and import rules |
+| [`@sgx4u/prettier-config`](./packages/config/prettier-config) | Prettier preset                     |
+| [`@sgx4u/tsdown-config`](./packages/config/tsdown-config)     | tsdown preset for ESM and CommonJS  |
+| [`@sgx4u/vitest-config`](./packages/config/vitest-config)     | Vitest preset                       |
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -86,24 +85,29 @@ Each library picks one runtime. Presets in `packages/config` are Node tooling, t
 
 ## Installation
 
-`@sgx4u/string` is the universal string package. Each package README has its own install line. Presets in `packages/config` are dev dependencies.
+Presets in `packages/config` are dev dependencies. Each package README has its own install line.
 
 ```sh
-pnpm add @sgx4u/string       # pnpm
-npm install @sgx4u/string    # npm
-yarn add @sgx4u/string       # yarn
+pnpm add -D @sgx4u/prettier-config              # pnpm
+npm install --save-dev @sgx4u/prettier-config   # npm
+yarn add --dev @sgx4u/prettier-config           # yarn
 ```
+
+A library is a runtime dependency: `pnpm add @sgx4u/<name>`.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Usage
 
-```ts
-import { collapseWhitespace, isBlank } from "@sgx4u/string";
+Each package README shows how that package is imported. Presets are dev dependencies.
 
-isBlank("  ");
-collapseWhitespace("  a \n b  ");
+```json
+{
+    "prettier": "@sgx4u/prettier-config"
+}
 ```
+
+A library is imported from `@sgx4u/<name>`.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -122,7 +126,7 @@ pnpm check
 
 | Command             | What it runs                                                                                                                                                       |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `pnpm dev`          | `turbo run dev`. The task stays running. `@sgx4u/string`, `@sgx4u/tsdown-config`, and `@sgx4u/vitest-config` run `tsdown --watch`.                                 |
+| `pnpm dev`          | `turbo run dev`. The task stays running. `@sgx4u/tsdown-config` and `@sgx4u/vitest-config` run `tsdown --watch`.                                                   |
 | `pnpm lint`         | Package lint tasks, then root ESLint. The root config ignores `packages/**`, so package sources are linted once.                                                   |
 | `pnpm typecheck`    | Package typecheck tasks, then `tsc --noEmit` for the generator.                                                                                                    |
 | `pnpm test`         | Package tests, then `node --test` on `scripts/*.test.mjs`.                                                                                                         |

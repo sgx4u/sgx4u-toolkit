@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, readFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 import {
     assertBetaSnapshotBranch,
@@ -9,22 +11,34 @@ import {
 
 test("snapshot publish only includes packages whose version changed", () => {
     const versionsBefore = new Map([
-        ["@sgx4u/string", "0.0.0"],
+        ["@sgx4u/example", "0.0.0"],
         ["@sgx4u/tsconfig", "0.0.0"],
     ]);
     const versionsAfter = new Map([
-        ["@sgx4u/string", "0.0.0-beta-1732521600000"],
+        ["@sgx4u/example", "0.0.0-beta-1732521600000"],
         ["@sgx4u/tsconfig", "0.0.0"],
     ]);
     assert.deepEqual(
         packagesWithChangedVersions(versionsBefore, versionsAfter),
         [
             {
-                packageName: "@sgx4u/string",
+                packageName: "@sgx4u/example",
                 version: "0.0.0-beta-1732521600000",
             },
         ],
     );
+});
+
+test("an empty version list publishes nothing", () => {
+    assert.deepEqual(packagesWithChangedVersions(new Map(), new Map()), []);
+});
+
+test("a repository with no package manifests has no versions", () => {
+    const rootDirectory = mkdtempSync(path.join(tmpdir(), "sgx4u-snapshot-"));
+    mkdirSync(path.join(rootDirectory, "packages", "config"), {
+        recursive: true,
+    });
+    assert.equal(readPackageVersions(rootDirectory).size, 0);
 });
 
 test("snapshots run on the beta branch only", () => {
@@ -56,5 +70,6 @@ test("the repository versions can be read without publishing", () => {
     const versions = readPackageVersions(
         new URL("..", import.meta.url).pathname,
     );
-    assert.equal(versions.get("@sgx4u/string"), "0.0.0");
+    assert.equal(versions.get("@sgx4u/tsconfig"), "0.0.0");
+    assert.equal(versions.get("@sgx4u/eslint-config"), "0.0.0");
 });
