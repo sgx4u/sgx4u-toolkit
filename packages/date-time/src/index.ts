@@ -71,6 +71,7 @@ export { getQuarter } from "./get-quarter/get-quarter.js";
 export { getSeason } from "./get-season/get-season.js";
 export { listTimeZones } from "./list-time-zones/list-time-zones.js";
 export { negateDuration } from "./negate-duration/negate-duration.js";
+export { parseTimeOfDay } from "./parse-time-of-day/parse-time-of-day.js";
 export { parseUtcOffset } from "./parse-utc-offset/parse-utc-offset.js";
 export { getFiscalYear } from "./get-fiscal-year/get-fiscal-year.js";
 export { getFiscalQuarter } from "./get-fiscal-quarter/get-fiscal-quarter.js";
