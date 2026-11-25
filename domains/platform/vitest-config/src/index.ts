@@ -8,11 +8,14 @@ export function definePackageVitestConfig(
     return options;
   }
 
+  const { test: callerTestOptions, ...rest } = options;
+
   return defineConfig({
+    ...rest,
     test: {
       environment: "node",
       include: ["src/**/*.test.ts"],
+      ...callerTestOptions,
     },
-    ...options,
   });
 }

@@ -92,7 +92,7 @@ The account that owns `@sgx4u` on npm should have 2FA.
 
 Settings → Code security:
 
-- Dependency graph: on (needed by dependency review)
+- Dependency graph: on. Until this is on, `dependency-review / review` returns 403 from the dependency review API.
 - Dependabot alerts: on
 - Dependabot security updates: on if you want security pull requests as well as the weekly Actions updates
 - Secret scanning: on

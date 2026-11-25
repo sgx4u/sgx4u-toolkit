@@ -124,6 +124,28 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
         ) {
           throw new Error("Adapter packages belong in domains/backend.");
         }
+        if (
+          (packageAnswers.tierName === "foundation" ||
+            packageAnswers.tierName === "capability") &&
+          packageAnswers.runtimeName !== "universal"
+        ) {
+          throw new Error(
+            "Foundation and capability packages are platform-free. Use runtime universal.",
+          );
+        }
+        if (
+          packageAnswers.tierName === "adapter" &&
+          packageAnswers.runtimeName !== "edge" &&
+          packageAnswers.runtimeName !== "node"
+        ) {
+          throw new Error("Adapter packages use runtime edge or node.");
+        }
+        if (
+          packageAnswers.tierName === "platform" &&
+          packageAnswers.runtimeName !== "node"
+        ) {
+          throw new Error("Platform presets run on Node. Use runtime node.");
+        }
         const destination = path.join(
           repositoryRoot(),
           "domains",

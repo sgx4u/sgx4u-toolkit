@@ -134,11 +134,15 @@ jobs:
         with:
           cache: "false"
 
-      - name: Build packages
-        run: pnpm exec turbo run build
+      # Publish the tarballs the pack job reviewed, not a second build of the workspace.
+      - name: Download packed packages
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          artifact-ids: ${{ needs.pack.outputs.pack-dir-artifact-id }}
+          path: packed-packages
 
-      # Custom script so main -> latest, next -> beta, and release/** -> previous.
-      # changeset publish uses pnpm, which rewrites workspace: and catalog:.
+      # main -> latest, next -> beta, release/** -> previous.
+      # changeset publish uses pnpm, which rewrote workspace: and catalog: while packing.
       # No NPM_TOKEN and no registry-url: npm CLI 11.5.1+ uses OIDC for this environment.
       - name: Publish to npm
         uses: changesets/action/publish@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
@@ -147,4 +151,5 @@ jobs:
           create-github-releases: true
           push-git-tags: true
         env:
+          CHANGESET_PACK_DIR: packed-packages
           LEFTHOOK: "0"

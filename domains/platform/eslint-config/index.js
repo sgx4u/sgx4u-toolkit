@@ -24,7 +24,7 @@ const edgeRuntimeMessage =
  * @param {import("./index.js").PackageRuntime} runtime
  * @returns {import("eslint").Linter.RuleEntry}
  */
-function restrictedImportsForRuntime(runtime) {
+function restrictedImportsForRuntime(runtime, tier) {
   const patterns = [
     {
       group: ["@sgx4u-private", "@sgx4u-private/*"],
@@ -63,7 +63,7 @@ function restrictedImportsForRuntime(runtime) {
         "url",
         "module",
       ],
-      message: universalRuntimeMessage,
+      message: `${tier} packages are ${runtime}: ${universalRuntimeMessage}`,
     });
   }
 
@@ -106,7 +106,7 @@ function restrictedImportsForRuntime(runtime) {
         "tls",
         "worker_threads",
       ],
-      message: edgeRuntimeMessage,
+      message: `${tier} packages are ${runtime}: ${edgeRuntimeMessage}`,
     });
   }
 
@@ -120,8 +120,9 @@ function restrictedImportsForRuntime(runtime) {
 
 /**
  * Flat config shared by every package.
- * Turborepo boundaries checks the package graph; this config checks the import
- * inside the editor, which still matters while boundaries is experimental.
+ * `turbo boundaries` enforces tier direction on the package graph.
+ * This config enforces the runtime import rules for the tier you pass,
+ * and rejects @sgx4u-private and @sgx4u/ui imports in the editor.
  *
  * @param {import("./index.js").PackageLintOptions} options
  * @returns {import("eslint").Linter.Config[]}
@@ -197,7 +198,10 @@ export function definePackageConfig(options) {
     {
       files: ["src/**/*.{ts,tsx,js,mjs,cjs}"],
       rules: {
-        "no-restricted-imports": restrictedImportsForRuntime(options.runtime),
+        "no-restricted-imports": restrictedImportsForRuntime(
+          options.runtime,
+          options.tier,
+        ),
       },
     },
     {
@@ -208,7 +212,10 @@ export function definePackageConfig(options) {
       ],
       ignores: ["src/**"],
       rules: {
-        "no-restricted-imports": restrictedImportsForRuntime("node"),
+        "no-restricted-imports": restrictedImportsForRuntime(
+          "node",
+          options.tier,
+        ),
       },
     },
     eslintConfigPrettier,
