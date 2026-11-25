@@ -76,6 +76,7 @@ export { getSeason } from "./get-season/get-season.js";
 export { getTimeOfDay } from "./get-time-of-day/get-time-of-day.js";
 export { listTimeZones } from "./list-time-zones/list-time-zones.js";
 export { negateDuration } from "./negate-duration/negate-duration.js";
+export { normalizeDuration } from "./normalize-duration/normalize-duration.js";
 export { parseTimeOfDay } from "./parse-time-of-day/parse-time-of-day.js";
 export { parseUtcOffset } from "./parse-utc-offset/parse-utc-offset.js";
 export { getFiscalYear } from "./get-fiscal-year/get-fiscal-year.js";
