@@ -182,34 +182,52 @@ jobs:
         with:
           app-id: ${{ vars.RELEASE_APP_ID }}
           private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
-          permission-contents: read
+          permission-contents: write
           permission-pull-requests: write
 
-      # Rebase-merging develop into production replays develop's commits.
-      # Beta snapshots leave the changeset files on develop. After production
-      # consumes them, those files must land back on develop or the next
-      # promotion adds the same changesets and releases the work again.
-      - name: Open a pull request from production into develop
+      # Do not open this pull request with production as the head.
+      # develop only squash-merges, so that merge would not record production's
+      # commits as ancestors. The next publish would open the same pairing again,
+      # GitHub would list the already applied commits, and the pull request would conflict.
+      # A new branch from develop, containing only the deletion of consumed changesets,
+      # squash-merges cleanly and can be repeated after every release.
+      - name: Open a pull request that drops consumed changesets from develop
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           git fetch origin develop:refs/remotes/origin/develop
           git fetch origin production:refs/remotes/origin/production
-          if git merge-base --is-ancestor origin/production origin/develop; then
-            echo "develop already contains production."
+          production_sha="$(git rev-parse origin/production)"
+          sync_branch="sync/consumed-changesets-${production_sha}"
+          mapfile -t changed_files < <(git diff --name-only --diff-filter=D origin/develop origin/production -- .changeset)
+          consumed_files=()
+          for file in "${changed_files[@]}"; do
+            case "${file}" in
+              .changeset/README.md) ;;
+              .changeset/*.md) consumed_files+=("${file}") ;;
+            esac
+          done
+          if [ "${#consumed_files[@]}" -eq 0 ]; then
+            echo "develop has no changeset files that production already released."
             exit 0
           fi
-          open_count="$(gh pr list --repo "${GITHUB_REPOSITORY}" --base develop --head production --state open --json number --jq 'length')"
+          open_count="$(gh pr list --repo "${GITHUB_REPOSITORY}" --base develop --head "${sync_branch}" --state open --json number --jq 'length')"
           if [ "${open_count}" != "0" ]; then
-            echo "A sync pull request is already open."
+            echo "A sync pull request for ${sync_branch} is already open."
             exit 0
           fi
+          git config user.name "sgx4u-release"
+          git config user.email "55203602+sgx4u@users.noreply.github.com"
+          git checkout -B "${sync_branch}" origin/develop
+          git rm -- "${consumed_files[@]}"
+          git commit -m "chore: drop changesets already released from production"
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/${sync_branch}"
           gh pr create \
             --repo "${GITHUB_REPOSITORY}" \
             --base develop \
-            --head production \
-            --title "chore: sync production into develop" \
-            --body "Production published a release and removed the changesets it used. Merge this into develop before the next promotion. A later rebase of develop onto production replays develop's commits, and changeset files that are still only on develop would be added again and released a second time."
+            --head "${sync_branch}" \
+            --title "chore: drop changesets already released from production" \
+            --body "Squash-merge this into develop before the next promotion. It deletes only the changeset files that production already released. The head is a new branch, not production, because develop squash-merges and does not record production as an ancestor. Reusing production as the head would reopen the same commits on the next release and conflict."
 
   snapshot-check:
     name: snapshot-check
