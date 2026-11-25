@@ -24,7 +24,7 @@ Valid when `getTime()` returns a finite number. `Invalid Date` returns `false`. 
 
 A `Date` built from an overflow string is valid when that construction produced a finite instant. `new Date("2024-02-30")` is a March instant in JavaScript, so `isValidDate` returns `true` for the object. The string `"2024-02-30"` returns `false`.
 
-A `Date` created in another realm, such as another window, returns `false`. The check uses this realm's `Date`.
+A `Date` created in another realm, such as another window, is recognized. The check uses `Object.prototype.toString`, then requires a finite time value.
 
 ### `number`
 
@@ -39,14 +39,14 @@ A calendar date uses `YYYY-MM-DD`. The year is four digits, from `0000` through 
 A date-time uses this shape:
 
 ```text
-YYYY-MM-DDTHH:mm[:ss[.sss]](Z|±HH:mm)
+YYYY-MM-DDTHH:mm[:ss[.sss]](Z|±HH:mm|±HHmm)
 ```
 
 - `T` and `Z` may be lowercase.
 - The hour is `00`–`23`. `24:00` is invalid.
 - The minute and second are `00`–`59`. A leap second is invalid.
 - Fractional seconds, when present, are one, two, or three digits.
-- The offset is required. `Z` is valid. `±HH:mm` is valid when the hours are `00`–`23` and the minutes are `00`–`59`. The colon is required.
+- The offset is required. `Z` is valid. `±HH:mm` and `±HHmm` are valid when the hours are `00`–`23` and the minutes are `00`–`59`. `±HH` without minutes is not a date-string offset.
 - A date-time with no offset is invalid, so the result does not depend on the local timezone.
 
 ## Examples
@@ -56,6 +56,7 @@ isValidDate(new Date("2024-02-29T00:00:00.000Z")); // true
 isValidDate(0); // true
 isValidDate("2024-02-29"); // true
 isValidDate("2024-02-29T00:00:00+05:30"); // true
+isValidDate("2024-02-29T00:00:00+0530"); // true
 
 isValidDate("2024-02-30"); // false
 isValidDate(new Date(Number.NaN)); // false
@@ -76,7 +77,8 @@ isValidDate(null); // false
 | `"2024-02-29T24:00:00Z"`, `"2024-02-29T23:59:60Z"`        | `false`                                   |
 | `"2024-02-29T00:00:00"` with no offset                    | `false`                                   |
 | `"2024-02-29 00:00:00Z"` with a space                     | `false`                                   |
-| `"2024-02-29T00:00:00+0530"` without a colon              | `false`                                   |
+| `"2024-02-29T00:00:00+0530"` without a colon              | `true`                                    |
+| `"2024-02-29T00:00:00+05"` with hours only                | `false`                                   |
 | `"2024-2-29"` without zero padding                        | `false`                                   |
 | `"2024-02-29T00:00:00.1234Z"` with four fractional digits | `false`                                   |
 | `"1700000000000"`                                         | `false`. Pass the number `1700000000000`. |

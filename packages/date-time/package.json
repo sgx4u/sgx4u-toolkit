@@ -36,9 +36,12 @@
         "typecheck": "tsc --noEmit",
         "test": "vitest run",
         "lint": "eslint . --max-warnings 0",
-        "check:package": "publint && attw --pack ."
+        "check:package": "publint && attw --pack . && size-limit",
+        "size": "size-limit",
+        "test:zones": "node scripts/test-time-zones.mjs"
     },
     "devDependencies": {
+        "@size-limit/preset-small-lib": "catalog:",
         "@arethetypeswrong/cli": "catalog:",
         "@sgx4u/eslint-config": "workspace:*",
         "@sgx4u/tsconfig": "workspace:*",
@@ -47,6 +50,9 @@
         "eslint": "catalog:",
         "publint": "catalog:",
         "tsdown": "catalog:",
+        "fast-check": "catalog:",
+        "size-limit": "catalog:",
+        "temporal-polyfill": "catalog:",
         "typescript": "catalog:",
         "vitest": "catalog:"
     },
