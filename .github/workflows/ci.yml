@@ -1,6 +1,7 @@
 # Pull requests into develop, beta, production, or a release branch, plus pushes
 # to those branches. pull_request keeps fork code away from secrets.
-# beta and release/** are included because the ruleset requires these checks there too.
+# beta and release/** publish, so they run the same checks. The ruleset
+# requires those checks on develop and production.
 # Dependency review and pkg.pr.new run only on pull_request. Their permissions
 # stay on those jobs. npm trusted publishing stays in release.yml.
 #

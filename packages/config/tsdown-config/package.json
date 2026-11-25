@@ -1,5 +1,6 @@
 {
     "name": "@sgx4u/tsdown-config",
+    "version": "0.0.0",
     "private": true,
     "description": "tsdown preset for dual ESM and CJS @sgx4u libraries.",
     "type": "module",
