@@ -17,6 +17,7 @@ export { getIntervalIntersection } from "./get-interval-intersection/get-interva
 export { isValidInterval } from "./is-valid-interval/is-valid-interval.js";
 export { isTimeOfDayInRange } from "./is-time-of-day-in-range/is-time-of-day-in-range.js";
 export { isWithinInterval } from "./is-within-interval/is-within-interval.js";
+export { matchesDatePattern } from "./matches-date-pattern/matches-date-pattern.js";
 export { mergeIntervals } from "./merge-intervals/merge-intervals.js";
 export { subtractIntervals } from "./subtract-intervals/subtract-intervals.js";
 export { endOfUnit } from "./end-of-unit/end-of-unit.js";
@@ -96,6 +97,7 @@ export { formatIsoDate } from "./format-iso-date/format-iso-date.js";
 export { formatIsoDateTime } from "./format-iso-date-time/format-iso-date-time.js";
 export { fromJulianDate } from "./from-julian-date/from-julian-date.js";
 export { fromUnixSeconds } from "./from-unix-seconds/from-unix-seconds.js";
+export { parseDateWithPattern } from "./parse-date-with-pattern/parse-date-with-pattern.js";
 export { parseIsoDate } from "./parse-iso-date/parse-iso-date.js";
 export { parseIsoDateTime } from "./parse-iso-date-time/parse-iso-date-time.js";
 export { reviveIsoDateTimes } from "./revive-iso-date-times/revive-iso-date-times.js";
