@@ -16,20 +16,27 @@ Public Turborepo of shared [`@sgx4u`](https://www.npmjs.com/search?q=%40sgx4u) p
 | [`@sgx4u/prettier-config`](./packages/config/prettier-config) | Prettier preset                        |
 | [`@sgx4u/tsdown-config`](./packages/config/tsdown-config)     | tsdown preset for ESM and CommonJS     |
 | [`@sgx4u/vitest-config`](./packages/config/vitest-config)     | Vitest preset                          |
-|                                                               |                                        |
 | [`@sgx4u/string`](./packages/string)                          | Blank checks and whitespace collapsing |
 
-Tooling presets live in `packages/config`. Every other package lives in `packages/<name>` and picks one runtime: `universal`, `edge`, or `node`. None of the `edge` or `node` packages are published yet.
+Tooling presets live in `packages/config`. Libraries live in `packages/<name>`.
+
+Published packages build with tsdown, ship ESM and CommonJS, and declare `"node": ">=22.12"`. `import` resolves `dist/*.js` with `dist/*.d.ts`. `require` resolves `dist/*.cjs` with `dist/*.d.cts`. The `@sgx4u/source` export condition points at TypeScript source. This workspace resolves it through `customConditions`. A published install uses `dist`.
+
+Inside this repo, a runtime dependency on another toolkit package uses `workspace:^`. Dev dependencies use `workspace:*`. Third-party versions live in the pnpm catalog in `pnpm-workspace.yaml`. Add a catalog entry when a package needs that dependency.
+
+The root workspace package is `@sgx4u/toolkit`. Its manifest is `"private": false` and it has no `version`. `scripts/check-pack.mjs` skips that name, so the workspace package stays out of the npm publish.
+
+## Runtimes
+
+Each library picks one runtime. Presets in `packages/config` are Node tooling, tagged `layout:config`, and installed as dev dependencies.
 
 | Runtime     | Choose it when                                                                                                     | It may depend on                                      |
 | ----------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------- |
-| `universal` | The code must run in browsers, workers, and Node, and it does not import a Node built-in.                          | Other universal packages, and tooling presets.        |
+| `universal` | The same source runs in browsers, workers, and Node, using web standards.                                          | Universal packages, and presets.                      |
 | `edge`      | The code targets an edge runtime and may use web standards plus the Workers `nodejs_compat` modules that are real. | Universal packages, other edge packages, and presets. |
-| `node`      | The code needs Node itself: processes, the full filesystem, or another API the edge subset does not implement.     | Universal, edge, and node packages, and presets.      |
+| `node`      | The code needs Node itself: processes, the full filesystem, or another API outside the edge subset.                | Universal, edge, and node packages, and presets.      |
 
-`turbo boundaries` enforces that table. ESLint enforces the imports. The generator writes the matching TypeScript preset, tsdown config, and Vitest config. The full rules, including why edge does not depend on `@cloudflare/workers-types`, are in [docs/runtimes.md](./docs/runtimes.md).
-
-Packages publish ESM and CommonJS, are built with tsdown, and declare `"node": ">=22.12"`. `import` resolves `dist/*.js` with `dist/*.d.ts`. `require` resolves `dist/*.cjs` with `dist/*.d.cts`. Inside this repo, runtime dependencies use `workspace:^` and dev tooling uses `workspace:*`. Third-party versions live in the pnpm catalog. Add a catalog entry only when a package needs it. The root workspace package is `@sgx4u/toolkit`. Its manifest is `"private": false` and it has no `version`. The pack review skips that name, so the workspace package is not published.
+`turbo boundaries` enforces that table. `@sgx4u/eslint-config` enforces the imports. `pnpm exec turbo gen package` writes the matching TypeScript preset, tsdown config, and Vitest config. The rules are in [docs/runtimes.md](./docs/runtimes.md).
 
 ## Usage
 
@@ -44,11 +51,9 @@ isBlank("  ");
 collapseWhitespace("  a \n b  ");
 ```
 
-The `@sgx4u/source` export condition points at TypeScript source. Packages in this workspace resolve it through `customConditions`. Published installs use `dist`.
-
 ## Development
 
-Install Node 24 (`.nvmrc`) and pnpm 11.25. The package manager is pinned in `package.json`.
+Install Node 24 (`.nvmrc`) and pnpm 11.25.0 (the `packageManager` field in `package.json`).
 
 ```sh
 pnpm install
@@ -59,51 +64,47 @@ pnpm build
 pnpm check
 ```
 
-`pnpm lint` lints packages and then the repository root. The root ESLint config ignores `packages/**`, so package sources are linted once. `pnpm typecheck` typechecks packages and then the generator. `pnpm check` runs boundaries, sherif, the visibility and link guards, package checks, and the pack review. `pnpm changeset` is the Changesets binary; there is no package script for it.
+| Command             | What it runs                                                                                                                                                       |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `pnpm lint`         | Package lint tasks, then root ESLint. The root config ignores `packages/**`, so package sources are linted once.                                                   |
+| `pnpm typecheck`    | Package typecheck tasks, then `tsc --noEmit` for the generator.                                                                                                    |
+| `pnpm test`         | Package tests, then `node --test` on `scripts/*.test.mjs`.                                                                                                         |
+| `pnpm build`        | `turbo run build`.                                                                                                                                                 |
+| `pnpm check`        | `turbo boundaries`, sherif, `scripts/check-visibility.mjs`, `scripts/check-links.mjs`, `turbo run check:package` (publint and attw), and `scripts/check-pack.mjs`. |
+| `pnpm format:check` | Prettier. `pnpm format` writes the same format.                                                                                                                    |
 
-Create a package:
-
-```sh
-pnpm exec turbo gen package
-```
-
-The generator asks for the name and whether the package is a config preset or a regular package. Config presets use the Node runtime and are written to `packages/config/<name>`. Regular packages also ask for the runtime (`universal`, `edge`, or `node`) and owner, and are written to `packages/<name>`. The generator writes the package, a changeset, and a CODEOWNERS line.
-
-Add a changeset on every pull request that changes a publishable package:
-
-```sh
-pnpm changeset
-```
-
-Versions are independent. `updateInternalDependencies` is `minor`, so a minor bump of a dependency also updates the packages that depend on it.
+`pnpm changeset` runs the Changesets CLI. Contribution rules are in [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## Releases
 
-Every change, whether patch, minor, or major, lands on `develop` through a pull request. That branch is stable integration: code there is ready for production, and pushes to `develop` do not publish. It becomes `latest` only when `develop` is promoted into `production` with a rebase merge. Do not commit directly on `production`. Experimental work may go to `beta` first. `beta` may run ahead of `develop`. There is no `main` branch.
+| Branch                       | Role                                                                 | npm dist-tag                                       |
+| ---------------------------- | -------------------------------------------------------------------- | -------------------------------------------------- |
+| `develop`                    | Default branch. Stable integration. Pull requests squash-merge here. | Integration only.                                  |
+| `beta`                       | Experimental line. It can move ahead of `develop`.                   | `beta`, snapshots `0.0.0-beta-<timestamp>`.        |
+| `production`                 | Stable releases. Promote `develop` with a rebase merge.              | `latest`, after the Version Packages pull request. |
+| `release/<package>/v<major>` | Patch and minor fixes for an older major.                            | `previous`.                                        |
 
 Pushes to `beta`, `production`, and `release/**` run [`.github/workflows/release.yml`](./.github/workflows/release.yml).
 
-- `beta` publishes Changesets snapshots to the `beta` dist-tag, for example `0.0.0-beta-<timestamp>`. The base stays `0.0.0` (`snapshot.useCalculatedVersion` is false) and the suffix is the tag plus a timestamp. Snapshot mode does not commit, the publish job cannot push (`contents: read`), and the script restores the checkout afterward. Pre mode is the wrong tool: it would commit `.changeset/pre.json` and prerelease versions on `beta`, and those commits could ride a graduation pull request or a mistaken `beta` merge into `develop`, then the rebase into `production`, which would publish prereleases as `latest`.
-- Keep `beta` current by merging `develop` into `beta` with a merge commit. Do that regularly, and after every security fix. Squash and rebase do not record `develop` as an ancestor, so the next sync would replay the same commits and conflict. See [docs/repo-settings.md](./docs/repo-settings.md).
-- A feature graduates from its own branch. Squash-merge that branch into `beta` while it is experimental. When it is ready, rebase it onto `develop` and open the pull request into `develop`. Do not merge `beta` into `develop`. `beta` holds every unfinished experiment, and merging it wholesale would put those experiments on the stable line.
-- `production` opens a **Version Packages** pull request through a GitHub App, so CI runs on it. Merging that pull request publishes `latest` from the `release` environment with npm trusted publishing (OIDC) and provenance. The workflow then opens a pull request from a new `sync/consumed-changesets-*` branch into `develop`. Squash-merge it before the next promotion. The head is not `production`: develop only squash-merges, so a pull request from the long-lived release branch would not record those commits as ancestors, and the next release would open the same pairing again and conflict. The sync commit only deletes changeset files that production removed since the branches diverged, so changesets added on develop after promotion stay, and a later rebase does not release the old ones a second time.
-- `release/**` publishes older majors on the `previous` dist-tag. Those branches receive only patch and minor fixes. Major (breaking) changes are never backported. Pull requests into `develop`, `beta`, `production`, and `release/**` run the same required checks.
+- `beta` publishes with `changeset version --snapshot beta`. The snapshot job has `contents: read`, and `scripts/publish-beta-snapshot.mjs` restores the checkout, so the prerelease version stays uncommitted.
+- `production` opens a **Version Packages** pull request through the release GitHub App. Merging it publishes `latest` from the `release` environment with npm trusted publishing and provenance, and creates GitHub releases. The workflow then opens `sync/consumed-changesets-*` into `develop`. Squash-merge that pull request before the next promotion.
+- `release/**` publishes the `previous` dist-tag.
 
-The first version of a new package is published from a laptop. npm can attach a trusted publisher only after the package exists. Later versions are published only by the workflow. See [docs/repo-settings.md](./docs/repo-settings.md).
+Branch setup, the `develop` into `beta` sync, graduation, and the first `0.1.0` of a package are in [docs/repo-settings.md](./docs/repo-settings.md). Security fixes are in [SECURITY.md](./SECURITY.md). The reasoning is in [docs/adr/0001-public-toolkit-monorepo.md](./docs/adr/0001-public-toolkit-monorepo.md).
 
-Pull requests can install preview tarballs from pkg.pr.new. Those previews are not npm releases.
+Pull requests run the `pkg-pr-new` job, which publishes preview tarballs. Those previews are separate from npm releases.
 
-## Repository map
+## Repository
 
 ```text
-packages/config      tooling presets, dev dependencies only
+packages/config      tooling presets
 packages/<name>      libraries
 turbo/generators     pnpm exec turbo gen package
-scripts              visibility, link, and pack guards
-docs                 settings checklist and decisions
+scripts              visibility, link, and pack checks
+docs                 settings, runtimes, and decisions
 ```
 
-`packages/config` does not depend on `packages/<name>`. Packages under `packages/` may depend on the presets and on each other. `turbo boundaries` enforces that split. ESLint enforces each package's runtime import rules. A separate check rejects any `@sgx4u-private` reference in manifests and source.
+`layout:config` covers the presets. `layout:package` covers the libraries and may depend on presets and on other libraries within the runtime table above.
 
 ## License
 
