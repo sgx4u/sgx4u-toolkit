@@ -97,10 +97,10 @@ importers:
         version: 21.2.4
       '@sgx4u/eslint-config':
         specifier: workspace:*
-        version: link:domains/platform/eslint-config
+        version: link:packages/config/eslint-config
       '@sgx4u/prettier-config':
         specifier: workspace:*
-        version: link:domains/platform/prettier-config
+        version: link:packages/config/prettier-config
       '@turbo/gen':
         specifier: 'catalog:'
         version: 2.11.13(@types/node@26.6.8)
@@ -132,40 +132,7 @@ importers:
         specifier: 'catalog:'
         version: 6.0.3
 
-  domains/foundation/string:
-    devDependencies:
-      '@arethetypeswrong/cli':
-        specifier: 'catalog:'
-        version: 0.18.5
-      '@sgx4u/eslint-config':
-        specifier: workspace:*
-        version: link:../../platform/eslint-config
-      '@sgx4u/tsconfig':
-        specifier: workspace:*
-        version: link:../../platform/tsconfig
-      '@sgx4u/tsdown-config':
-        specifier: workspace:*
-        version: link:../../platform/tsdown-config
-      '@sgx4u/vitest-config':
-        specifier: workspace:*
-        version: link:../../platform/vitest-config
-      eslint:
-        specifier: 'catalog:'
-        version: 10.15.0(jiti@2.7.0)(supports-color@7.2.0)
-      publint:
-        specifier: 'catalog:'
-        version: 0.3.25
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.23.7(@arethetypeswrong/core@0.18.5)(publint@0.3.25)(typescript@6.0.3)
-      typescript:
-        specifier: 'catalog:'
-        version: 6.0.3
-      vitest:
-        specifier: 'catalog:'
-        version: 5.1.1(@types/node@26.6.8)(vite@8.3.8(@types/node@26.6.8)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.1))
-
-  domains/platform/eslint-config:
+  packages/config/eslint-config:
     dependencies:
       '@eslint/js':
         specifier: 'catalog:'
@@ -195,11 +162,14 @@ importers:
       publint:
         specifier: 'catalog:'
         version: 0.3.25
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.23.7(@arethetypeswrong/core@0.18.5)(publint@0.3.25)(typescript@6.0.3)
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
 
-  domains/platform/prettier-config:
+  packages/config/prettier-config:
     devDependencies:
       '@arethetypeswrong/cli':
         specifier: 'catalog:'
@@ -216,16 +186,22 @@ importers:
       publint:
         specifier: 'catalog:'
         version: 0.3.25
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.23.7(@arethetypeswrong/core@0.18.5)(publint@0.3.25)(typescript@6.0.3)
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
 
-  domains/platform/tsconfig:
+  packages/config/tsconfig:
     dependencies:
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.8
     devDependencies:
+      '@arethetypeswrong/cli':
+        specifier: 'catalog:'
+        version: 0.18.5
       '@sgx4u/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
@@ -236,7 +212,7 @@ importers:
         specifier: 'catalog:'
         version: 0.3.25
 
-  domains/platform/tsdown-config:
+  packages/config/tsdown-config:
     devDependencies:
       '@arethetypeswrong/cli':
         specifier: 'catalog:'
@@ -263,7 +239,7 @@ importers:
         specifier: 'catalog:'
         version: 6.0.3
 
-  domains/platform/vitest-config:
+  packages/config/vitest-config:
     devDependencies:
       '@arethetypeswrong/cli':
         specifier: 'catalog:'
@@ -280,6 +256,39 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.8
+      eslint:
+        specifier: 'catalog:'
+        version: 10.15.0(jiti@2.7.0)(supports-color@7.2.0)
+      publint:
+        specifier: 'catalog:'
+        version: 0.3.25
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.23.7(@arethetypeswrong/core@0.18.5)(publint@0.3.25)(typescript@6.0.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+      vitest:
+        specifier: 'catalog:'
+        version: 5.1.1(@types/node@26.6.8)(vite@8.3.8(@types/node@26.6.8)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.1))
+
+  packages/string:
+    devDependencies:
+      '@arethetypeswrong/cli':
+        specifier: 'catalog:'
+        version: 0.18.5
+      '@sgx4u/eslint-config':
+        specifier: workspace:*
+        version: link:../config/eslint-config
+      '@sgx4u/tsconfig':
+        specifier: workspace:*
+        version: link:../config/tsconfig
+      '@sgx4u/tsdown-config':
+        specifier: workspace:*
+        version: link:../config/tsdown-config
+      '@sgx4u/vitest-config':
+        specifier: workspace:*
+        version: link:../config/vitest-config
       eslint:
         specifier: 'catalog:'
         version: 10.15.0(jiti@2.7.0)(supports-color@7.2.0)

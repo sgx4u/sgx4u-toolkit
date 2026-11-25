@@ -33,7 +33,7 @@ const skippedRelativePaths = new Set([
     "scripts/check-visibility.mjs",
     "scripts/check-visibility.test.mjs",
     "scripts/check-links.test.mjs",
-    "domains/platform/eslint-config/index.js",
+    "packages/config/eslint-config/index.js",
 ]);
 
 const forbiddenReferences = [

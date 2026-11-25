@@ -32,24 +32,24 @@ CI runs the affected lint, typecheck, test, and build tasks, then publint, attw,
 pnpm exec turbo gen package
 ```
 
-Names are lowercase kebab-case. `utils`, `common`, and `shared` are rejected. The folder is `domains/<domain>/<name>` and the npm name is `@sgx4u/<name>`.
+Names are lowercase kebab-case. `utils`, `common`, and `shared` are rejected. Config presets live in `packages/config/<name>`. Every other package lives in `packages/<name>`. The npm name is `@sgx4u/<name>`.
 
-| Domain       | Tier                         | Runtime                                         |
-| ------------ | ---------------------------- | ----------------------------------------------- |
-| `platform`   | `platform`                   | tooling, not imported by published runtime code |
-| `foundation` | `foundation` or `capability` | `universal`                                     |
-| `backend`    | `adapter`                    | `edge` or `node`                                |
+| Kind      | Folder                   | Tier                         | Runtime                                         |
+| --------- | ------------------------ | ---------------------------- | ----------------------------------------------- |
+| `config`  | `packages/config/<name>` | `platform`                   | tooling, not imported by published runtime code |
+| `regular` | `packages/<name>`        | `foundation` or `capability` | `universal`                                     |
+| `regular` | `packages/<name>`        | `adapter`                    | `edge` or `node`                                |
 
 Runtime dependencies on other toolkit packages use `workspace:^`. Presets use `workspace:*`. Third-party versions use `catalog:`.
 
-Libraries export named functions from `src/index.ts`, with explicit return types. Tests sit next to the source. tsdown writes `dist`. The `files` field publishes `dist` and `src` (so the `@sgx4u/source` condition resolves) and excludes tests.
+Libraries export named functions from `src/index.ts`, with explicit return types. Tests sit next to the source. tsdown writes ESM and CommonJS into `dist` (`index.js` / `index.d.ts` and `index.cjs` / `index.d.cts`). The `files` field publishes `dist` and `src` (so the `@sgx4u/source` condition resolves) and excludes tests. Export maps list `types` before the runtime file for both `import` and `require`, and set `main`, `module`, and `types` as fallbacks.
 
 ## Local linking
 
 While you are changing a package together with an app, from the app:
 
 ```sh
-pnpm link --hard ../sgx4u-toolkit/domains/foundation/string
+pnpm link --hard ../sgx4u-toolkit/packages/string
 ```
 
 That writes a `link:` or `file:` entry. Remove it with `pnpm unlink` before you commit. The pre-commit hook and CI reject an entry that points outside this repo.

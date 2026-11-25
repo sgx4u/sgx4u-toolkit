@@ -4,6 +4,9 @@
 #   committed .changeset/pre.json would make production publish prereleases as latest.
 # release/** publishes older majors with dist-tag previous.
 # Do not rename this file: trusted publishers are bound to release.yml.
+# This workflow stays separate from ci.yml. Pull requests must not receive
+# id-token: write or the release environment, and a publish must not be
+# cancelled when a later push starts.
 name: release
 
 on:

@@ -10,8 +10,7 @@ test("flags private and UI scopes in manifests and source", () => {
     const rootDirectory = mkdtempSync(path.join(tmpdir(), "sgx4u-visibility-"));
     const sourceDirectory = path.join(
         rootDirectory,
-        "domains",
-        "foundation",
+        "packages",
         "example",
         "src",
     );

@@ -11,18 +11,18 @@ UI packages live in [sgx4u-ui](https://github.com/sgx4u/sgx4u-ui). This reposito
 
 ## Packages
 
-| Package                                                        | Domain     | What it is                             |
-| -------------------------------------------------------------- | ---------- | -------------------------------------- |
-| [`@sgx4u/tsconfig`](./domains/platform/tsconfig)               | platform   | TypeScript presets                     |
-| [`@sgx4u/eslint-config`](./domains/platform/eslint-config)     | platform   | ESLint flat config and boundaries      |
-| [`@sgx4u/prettier-config`](./domains/platform/prettier-config) | platform   | Prettier preset                        |
-| [`@sgx4u/tsdown-config`](./domains/platform/tsdown-config)     | platform   | tsdown preset for ESM libraries        |
-| [`@sgx4u/vitest-config`](./domains/platform/vitest-config)     | platform   | Vitest preset                          |
-| [`@sgx4u/string`](./domains/foundation/string)                 | foundation | Blank checks and whitespace collapsing |
+| Package                                                       | What it is                             |
+| ------------------------------------------------------------- | -------------------------------------- |
+| [`@sgx4u/tsconfig`](./packages/config/tsconfig)               | TypeScript presets                     |
+| [`@sgx4u/eslint-config`](./packages/config/eslint-config)     | ESLint flat config and boundaries      |
+| [`@sgx4u/prettier-config`](./packages/config/prettier-config) | Prettier preset                        |
+| [`@sgx4u/tsdown-config`](./packages/config/tsdown-config)     | tsdown preset for ESM libraries        |
+| [`@sgx4u/vitest-config`](./packages/config/vitest-config)     | Vitest preset                          |
+| [`@sgx4u/string`](./packages/string)                          | Blank checks and whitespace collapsing |
 
-`domains/backend` is reserved for server adapters. None are published yet.
+Tooling presets live in `packages/config`. Every other package lives in `packages/<name>`. Server adapters are regular packages with tier `adapter`. None are published yet.
 
-Packages are ESM-only, built with tsdown, and declare `"node": ">=22.12"`. Inside this repo, runtime dependencies use `workspace:^` and dev tooling uses `workspace:*`. Third-party versions live in the pnpm catalog.
+Packages publish ESM and CommonJS, are built with tsdown, and declare `"node": ">=22.12"`. `import` resolves `dist/*.js` with `dist/*.d.ts`. `require` resolves `dist/*.cjs` with `dist/*.d.cts`. Inside this repo, runtime dependencies use `workspace:^` and dev tooling uses `workspace:*`. Third-party versions live in the pnpm catalog.
 
 ## Usage
 
@@ -57,7 +57,7 @@ Create a package:
 pnpm exec turbo gen package
 ```
 
-The generator asks for the name, domain, tier, runtime, and owner, then writes the package, a changeset, and a CODEOWNERS line. Web and native packages belong in sgx4u-ui, so this generator does not offer those runtimes.
+The generator asks for the name and whether the package is a config preset or a regular package. Config presets are tier `platform` and runtime `node`, and are written to `packages/config/<name>`. Regular packages also ask for the tier, runtime, and owner, and are written to `packages/<name>`. The generator writes the package, a changeset, and a CODEOWNERS line. Web and native packages belong in sgx4u-ui, so this generator does not offer those runtimes.
 
 Add a changeset on every pull request that changes a publishable package:
 
@@ -84,9 +84,8 @@ Pull requests can install preview tarballs from pkg.pr.new. Those previews are n
 ## Repository map
 
 ```text
-domains/platform     presets, dev dependencies only
-domains/foundation   platform-free TypeScript
-domains/backend      server adapters
+packages/config      tooling presets, dev dependencies only
+packages/<name>      libraries and server adapters
 turbo/generators     pnpm exec turbo gen package
 scripts              visibility, link, and pack guards
 docs                 settings checklist and decisions

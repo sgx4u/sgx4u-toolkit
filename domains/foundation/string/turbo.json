@@ -1,4 +1,0 @@
-{
-  "extends": ["//"],
-  "tags": ["domain:foundation", "tier:foundation", "runtime:universal"]
-}
