@@ -2,6 +2,9 @@ name: dependency-review
 
 on:
   pull_request:
+    branches:
+      - develop
+      - production
 
 permissions: {}
 

@@ -28,5 +28,5 @@ The plan pins TypeScript `~6.0.3` and treats TypeScript 7 as a later, separate u
 
 - A change that crosses foundation and backend can land in one pull request.
 - The first `0.1.0` of each package is published from a laptop. npm cannot attach a trusted publisher before the package exists. Later versions come from CI, with provenance, and no npm write token is stored.
-- `develop` still has to be renamed to `main` in the GitHub settings. Changesets and the release workflow already assume `main`.
+- `develop` stays the default branch. `production` is the stable release branch. There is no `main`. Changesets uses `develop` as `baseBranch`. `develop` publishes beta snapshots so a rebase into `production` does not carry pre-mode state.
 - Extracting a domain later does not rename packages, because the domain is a folder, not part of the package name.

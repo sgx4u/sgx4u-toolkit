@@ -47,7 +47,7 @@
     "url": "git+https://github.com/sgx4u/sgx4u-toolkit.git",
     "directory": "domains/platform/tsconfig"
   },
-  "homepage": "https://github.com/sgx4u/sgx4u-toolkit/tree/main/domains/platform/tsconfig",
+  "homepage": "https://github.com/sgx4u/sgx4u-toolkit/tree/develop/domains/platform/tsconfig",
   "bugs": "https://github.com/sgx4u/sgx4u-toolkit/issues",
   "engines": {
     "node": ">=22.12"

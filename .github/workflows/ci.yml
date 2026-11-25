@@ -1,13 +1,17 @@
-# Pull requests and release branches. pull_request keeps fork code away from secrets.
+# Pull requests into develop or production, plus pushes to those branches and
+# maintenance branches. pull_request keeps fork code away from secrets.
 # Required check names, once the ruleset exists: ci / lint, ci / typecheck, ci / test, ci / build, ci / package-checks.
 name: ci
 
 on:
   pull_request:
+    branches:
+      - develop
+      - production
   push:
     branches:
-      - main
-      - next
+      - develop
+      - production
       - "release/**"
 
 permissions: {}

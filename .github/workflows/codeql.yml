@@ -2,10 +2,13 @@ name: codeql
 
 on:
   pull_request:
+    branches:
+      - develop
+      - production
   push:
     branches:
-      - main
-      - next
+      - develop
+      - production
       - "release/**"
 
 permissions: {}

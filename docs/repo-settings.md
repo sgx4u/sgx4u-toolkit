@@ -4,17 +4,29 @@ These settings cannot be committed as files. Do them in order. Nothing here publ
 
 The GitHub owner is the personal account `sgx4u`. Where a team name would have been used, the setting is the user `@sgx4u`.
 
-## 1. Default branch
+## 1. Branches
 
-The create-turbo commit is on `develop`. Changesets `baseBranch`, release branches, and the ruleset below all assume `main`.
+There is no `main`. Two long-lived branches stay protected:
 
-Rename `develop` to `main` (Settings → General → Default branch). GitHub retargets open pull requests. Do this before the first version command that relies on `main` existing.
+| Branch       | Role                                                                                                                                       |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `develop`    | Default branch. Feature pull requests squash-merge here. Pushes publish Changesets snapshots on the npm `beta` dist-tag.                   |
+| `production` | Stable releases. Promote `develop` into `production` with a rebase merge. Pushes publish `latest` after the Version Packages pull request. |
 
-Create `next` only when a beta line starts. Create `release/<package>/v<major>` only when the first backport for that package is needed.
+Create `production` from `develop` when the first stable release is ready. Create `release/<package>/v<major>` only when the first backport for that older major is needed. Those branches publish the `previous` dist-tag.
+
+Settings → General → Pull Requests:
+
+| Setting              | Value                                                    |
+| -------------------- | -------------------------------------------------------- |
+| Allow merge commits  | Off                                                      |
+| Allow squash merging | On. This is how feature pull requests enter `develop`.   |
+| Allow rebase merging | On. This is how `develop` is promoted into `production`. |
+| Default branch       | `develop`                                                |
 
 ## 2. Ruleset
 
-Settings → Rules → New ruleset. Target `main`, `next`, and `release/**`.
+Settings → Rules → New ruleset. Target `develop`, `production`, and `release/**`.
 
 | Setting                         | Value                                                                           |
 | ------------------------------- | ------------------------------------------------------------------------------- |
@@ -27,10 +39,10 @@ Settings → Rules → New ruleset. Target `main`, `next`, and `release/**`.
 | Require conversation resolution | On                                                                              |
 | Require status checks           | `ci / lint`, `ci / typecheck`, `ci / test`, `ci / build`, `ci / package-checks` |
 | Branches up to date             | On                                                                              |
-| Require linear history          | On (squash merges)                                                              |
-| Bypass                          | Repository admin, pull requests only                                            |
+| Require linear history          | On. Squash and rebase are the only merge methods, so history stays linear.      |
+| Bypass                          | Repository admin role, mode **For pull requests only**                          |
 
-You are the only admin, so you can merge your own pull requests. GitHub will not let you approve them yourself. That is expected.
+You are the only admin, so you can merge your own pull requests. GitHub will not let you approve them yourself. That is expected. The bypass still requires a pull request.
 
 Optional extra checks once you trust them: `ci / test-node-22`, `ci / secrets`, `codeql / analyze`, `dependency-review / review`.
 
@@ -70,7 +82,7 @@ Settings → Environments → New environment → `release`.
 | Setting             | Value                                                                   |
 | ------------------- | ----------------------------------------------------------------------- |
 | Required reviewers  | Subhajit (`sgx4u`). Allow self-review, because there is one maintainer. |
-| Deployment branches | Selected: `main`, `next`, `release/*`                                   |
+| Deployment branches | Selected: `develop`, `production`, `release/*`                          |
 | Environment secrets | None                                                                    |
 
 The publish job is the only job with `id-token: write`. Approving the environment is the publish gate.
@@ -92,7 +104,7 @@ The account that owns `@sgx4u` on npm should have 2FA.
 
 Settings → Code security:
 
-- Dependency graph: on. Until this is on, `dependency-review / review` returns 403 from the dependency review API.
+- Dependency graph: on. Enable it under Settings → Code security → Dependency graph. Until it is on, `dependency-review / review` returns 403 from the dependency review API.
 - Dependabot alerts: on
 - Dependabot security updates: on if you want security pull requests as well as the weekly Actions updates
 - Secret scanning: on

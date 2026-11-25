@@ -4,20 +4,20 @@ import { distributionTagForBranch } from "./distribution-tag.mjs";
 import { publishArguments } from "./publish-packages.mjs";
 
 test("release branches map to the three supported dist-tags", () => {
-  assert.equal(distributionTagForBranch("main"), "latest");
-  assert.equal(distributionTagForBranch("next"), "beta");
+  assert.equal(distributionTagForBranch("production"), "latest");
+  assert.equal(distributionTagForBranch("develop"), "beta");
   assert.equal(distributionTagForBranch("release/string/v1"), "previous");
 });
 
 test("other branches are rejected", () => {
   assert.throws(
-    () => distributionTagForBranch("develop"),
+    () => distributionTagForBranch("main"),
     /Refusing to publish/,
   );
 });
 
 test("publish uses the packed directory and the branch dist-tag", () => {
-  assert.deepEqual(publishArguments("main", "packed-packages"), [
+  assert.deepEqual(publishArguments("production", "packed-packages"), [
     "exec",
     "changeset",
     "publish",

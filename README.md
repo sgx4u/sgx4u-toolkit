@@ -69,11 +69,13 @@ Versions are independent. `updateInternalDependencies` is `minor`, so a minor bu
 
 ## Releases
 
-Pushes to `main`, `next`, and `release/**` run [`.github/workflows/release.yml`](./.github/workflows/release.yml).
+Feature pull requests squash-merge into `develop`. `develop` is promoted into `production` with a rebase merge. There is no `main` branch.
 
-- Pending changesets open a **Version Packages** pull request through a GitHub App, so CI runs on that pull request.
-- Merging it publishes from the `release` environment with npm trusted publishing (OIDC) and provenance.
-- `main` publishes the `latest` dist-tag, `next` publishes `beta`, and `release/**` publishes `previous`.
+Pushes to `develop`, `production`, and `release/**` run [`.github/workflows/release.yml`](./.github/workflows/release.yml).
+
+- `develop` publishes Changesets snapshots to the `beta` dist-tag. Those version numbers are not committed, and the changesets stay in git until `production` releases them. Snapshot is used instead of pre mode because a committed pre-mode file would ride the rebase into `production` and publish prereleases as `latest`.
+- `production` opens a **Version Packages** pull request through a GitHub App, so CI runs on it. Merging that pull request publishes `latest` from the `release` environment with npm trusted publishing (OIDC) and provenance.
+- `release/**` publishes older majors on the `previous` dist-tag.
 
 The first version of a new package is published from a laptop. npm can attach a trusted publisher only after the package exists. Later versions are published only by the workflow. See [docs/repo-settings.md](./docs/repo-settings.md).
 

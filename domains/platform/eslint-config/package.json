@@ -49,7 +49,7 @@
     "url": "git+https://github.com/sgx4u/sgx4u-toolkit.git",
     "directory": "domains/platform/eslint-config"
   },
-  "homepage": "https://github.com/sgx4u/sgx4u-toolkit/tree/main/domains/platform/eslint-config",
+  "homepage": "https://github.com/sgx4u/sgx4u-toolkit/tree/develop/domains/platform/eslint-config",
   "bugs": "https://github.com/sgx4u/sgx4u-toolkit/issues",
   "engines": {
     "node": ">=22.12"

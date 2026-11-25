@@ -4,15 +4,15 @@
 
 Each package keeps three lines:
 
-| Line     | npm dist-tag | Branch                       | Receives                                   |
-| -------- | ------------ | ---------------------------- | ------------------------------------------ |
-| Beta     | `beta`       | `next`                       | The next major, including breaking changes |
-| Latest   | `latest`     | `main`                       | Features, fixes, and security fixes        |
-| Previous | `previous`   | `release/<package>/v<major>` | Bug fixes and security fixes               |
+| Line     | npm dist-tag | Branch                       | Receives                                       |
+| -------- | ------------ | ---------------------------- | ---------------------------------------------- |
+| Beta     | `beta`       | `develop`                    | Snapshot prereleases of the integration branch |
+| Latest   | `latest`     | `production`                 | Features, fixes, and security fixes            |
+| Previous | `previous`   | `release/<package>/v<major>` | Bug fixes and security fixes                   |
 
 Older majors are end of life. They are deprecated on npm and do not receive fixes.
 
-A security fix is applied to latest, previous, and beta. Beta receives it immediately or through the weekly merge from `main`.
+A security fix lands on `develop` first (so the beta snapshot picks it up), is promoted to `production` for `latest`, and is cherry-picked onto each supported `release/**` branch.
 
 ## Reporting a vulnerability
 

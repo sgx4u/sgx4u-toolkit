@@ -49,7 +49,7 @@
     "url": "git+https://github.com/sgx4u/sgx4u-toolkit.git",
     "directory": "domains/foundation/string"
   },
-  "homepage": "https://github.com/sgx4u/sgx4u-toolkit/tree/main/domains/foundation/string",
+  "homepage": "https://github.com/sgx4u/sgx4u-toolkit/tree/develop/domains/foundation/string",
   "bugs": "https://github.com/sgx4u/sgx4u-toolkit/issues",
   "engines": {
     "node": ">=22.12"
