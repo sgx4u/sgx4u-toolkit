@@ -1,11 +1,61 @@
-# sgx4u-toolkit
+<a id="readme-top"></a>
 
-Public Turborepo of shared [`@sgx4u`](https://www.npmjs.com/search?q=%40sgx4u) packages.
+<div align="center">
+    <a href="https://github.com/sgx4u/sgx4u-toolkit">
+        <img src="https://github.com/sgx4u/sgx4u-toolkit/blob/develop/logo.svg?raw=true" width="75" alt="SGX4U" />
+    </a>
 
-[![ci](https://github.com/sgx4u/sgx4u-toolkit/actions/workflows/ci.yml/badge.svg)](https://github.com/sgx4u/sgx4u-toolkit/actions/workflows/ci.yml)
-[![license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
-[![node](https://img.shields.io/badge/node-%3E%3D22.12-339933.svg)](./packages/string/package.json)
-[![npm @sgx4u/string](https://img.shields.io/npm/v/@sgx4u/string.svg)](https://www.npmjs.com/package/@sgx4u/string)
+<h1 align="center">🌟 sgx4u-toolkit 🌟</h1>
+
+<p align="center">
+    Public Turborepo of shared <a href="https://www.npmjs.com/search?q=%40sgx4u"><code>@sgx4u</code></a> packages.
+</p>
+
+<p align="center">
+    <a href="./.github/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/sgx4u/sgx4u-toolkit/ci.yml?branch=develop&style=for-the-badge&label=ci&labelColor=353535" alt="ci" /></a>
+    <a href="./LICENSE"><img src="https://img.shields.io/github/license/sgx4u/sgx4u-toolkit?style=for-the-badge&labelColor=353535&color=4f46e5" alt="License: MIT" /></a>
+    <a href="./package.json"><img src="https://img.shields.io/badge/node-%3E%3D24-339933?style=for-the-badge&logo=nodedotjs&logoColor=white&labelColor=353535" alt="Node &gt;=24" /></a>
+</p>
+
+<p align="center">
+    <a href="./CONTRIBUTING.md">Contributing</a>
+    &middot;
+    <a href="./.github/ISSUE_TEMPLATE/bug_report.yml">Report a bug</a>
+    &middot;
+    <a href="./.github/ISSUE_TEMPLATE/feature_request.yml">Request a feature</a>
+</p>
+</div>
+
+## Table of contents
+
+- [About](#about)
+- [Packages](#packages)
+- [Runtimes](#runtimes)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Development](#development)
+- [Releases](#releases)
+- [Repository](#repository)
+- [Contributing](#contributing)
+- [License](#license)
+
+## About
+
+Tooling presets live in `packages/config`. Libraries live in `packages/<name>`.
+
+Published packages declare `"node": ">=22.12"`.
+
+`@sgx4u/string`, `@sgx4u/tsdown-config`, and `@sgx4u/vitest-config` build with tsdown and ship ESM and CommonJS. `import` resolves `dist/*.js` with `dist/*.d.ts`. `require` resolves `dist/*.cjs` with `dist/*.d.cts`. The `@sgx4u/source` export condition points at TypeScript source (`src/index.ts`). This workspace resolves it through `customConditions`. A published install uses `dist`.
+
+`@sgx4u/eslint-config` and `@sgx4u/prettier-config` keep the ESM entry at `index.js` with `index.d.ts`, so ESLint can load `@sgx4u/eslint-config` and Prettier can load `@sgx4u/prettier-config` before a build. `require` resolves `dist/*.cjs` with `dist/*.d.cts`.
+
+`@sgx4u/tsconfig` publishes the JSON presets `base.json`, `library.json`, `edge.json`, and `node.json`.
+
+Inside this repo, a runtime dependency on another toolkit package uses `workspace:^`. Dev dependencies use `workspace:*`. Third-party versions live in the pnpm catalog in `pnpm-workspace.yaml`. Add a catalog entry when a package needs that dependency.
+
+The root workspace package is `@sgx4u/toolkit`. Its manifest is `"private": false` and it has no `version`. `scripts/check-pack.mjs` skips that name, so the workspace package stays out of the npm publish.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Packages
 
@@ -18,13 +68,7 @@ Public Turborepo of shared [`@sgx4u`](https://www.npmjs.com/search?q=%40sgx4u) p
 | [`@sgx4u/vitest-config`](./packages/config/vitest-config)     | Vitest preset                          |
 | [`@sgx4u/string`](./packages/string)                          | Blank checks and whitespace collapsing |
 
-Tooling presets live in `packages/config`. Libraries live in `packages/<name>`.
-
-Published packages build with tsdown, ship ESM and CommonJS, and declare `"node": ">=22.12"`. `import` resolves `dist/*.js` with `dist/*.d.ts`. `require` resolves `dist/*.cjs` with `dist/*.d.cts`. The `@sgx4u/source` export condition points at TypeScript source. This workspace resolves it through `customConditions`. A published install uses `dist`.
-
-Inside this repo, a runtime dependency on another toolkit package uses `workspace:^`. Dev dependencies use `workspace:*`. Third-party versions live in the pnpm catalog in `pnpm-workspace.yaml`. Add a catalog entry when a package needs that dependency.
-
-The root workspace package is `@sgx4u/toolkit`. Its manifest is `"private": false` and it has no `version`. `scripts/check-pack.mjs` skips that name, so the workspace package stays out of the npm publish.
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Runtimes
 
@@ -38,11 +82,21 @@ Each library picks one runtime. Presets in `packages/config` are Node tooling, t
 
 `turbo boundaries` enforces that table. `@sgx4u/eslint-config` enforces the imports. `pnpm exec turbo gen package` writes the matching TypeScript preset, tsdown config, and Vitest config. The rules are in [docs/runtimes.md](./docs/runtimes.md).
 
-## Usage
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Installation
+
+`@sgx4u/string` is the universal string package. Each package README has its own install line. Presets in `packages/config` are dev dependencies.
 
 ```sh
-pnpm add @sgx4u/string
+pnpm add @sgx4u/string       # pnpm
+npm install @sgx4u/string    # npm
+yarn add @sgx4u/string       # yarn
 ```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Usage
 
 ```ts
 import { collapseWhitespace, isBlank } from "@sgx4u/string";
@@ -51,9 +105,11 @@ isBlank("  ");
 collapseWhitespace("  a \n b  ");
 ```
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ## Development
 
-Install Node 24 (`.nvmrc`) and pnpm 11.25.0 (the `packageManager` field in `package.json`).
+Install Node 24 (`.nvmrc`) and pnpm 11.25.0 (the `packageManager` field in `package.json`). The workspace `engines.node` range is `>=24`.
 
 ```sh
 pnpm install
@@ -66,6 +122,7 @@ pnpm check
 
 | Command             | What it runs                                                                                                                                                       |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `pnpm dev`          | `turbo run dev`. The task stays running. `@sgx4u/string`, `@sgx4u/tsdown-config`, and `@sgx4u/vitest-config` run `tsdown --watch`.                                 |
 | `pnpm lint`         | Package lint tasks, then root ESLint. The root config ignores `packages/**`, so package sources are linted once.                                                   |
 | `pnpm typecheck`    | Package typecheck tasks, then `tsc --noEmit` for the generator.                                                                                                    |
 | `pnpm test`         | Package tests, then `node --test` on `scripts/*.test.mjs`.                                                                                                         |
@@ -73,7 +130,9 @@ pnpm check
 | `pnpm check`        | `turbo boundaries`, sherif, `scripts/check-visibility.mjs`, `scripts/check-links.mjs`, `turbo run check:package` (publint and attw), and `scripts/check-pack.mjs`. |
 | `pnpm format:check` | Prettier. `pnpm format` writes the same format.                                                                                                                    |
 
-`pnpm changeset` runs the Changesets CLI. Contribution rules are in [CONTRIBUTING.md](./CONTRIBUTING.md).
+`pnpm changeset` runs the Changesets CLI.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Releases
 
@@ -94,6 +153,8 @@ Branch setup, the `develop` into `beta` sync, graduation, and the first `0.1.0` 
 
 Pull requests run the `pkg-pr-new` job, which publishes preview tarballs. Those previews are separate from npm releases.
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ## Repository
 
 ```text
@@ -106,6 +167,16 @@ docs                 settings, runtimes, and decisions
 
 `layout:config` covers the presets. `layout:package` covers the libraries and may depend on presets and on other libraries within the runtime table above.
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Contributing
+
+Contribution rules, the pull request checklist, and the package generator are in [CONTRIBUTING.md](./CONTRIBUTING.md). Changeset behavior is in [.changeset/README.md](./.changeset/README.md). Where to ask is in [SUPPORT.md](./SUPPORT.md).
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ## License
 
 [MIT](./LICENSE) © 2026 Subhajit Ghosh
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>

@@ -1,24 +1,52 @@
-# @sgx4u/{{packageName}}
+<a id="readme-top"></a>
+
+<div align="center">
+    <a href="https://github.com/sgx4u/sgx4u-toolkit">
+        <img src="https://github.com/sgx4u/sgx4u-toolkit/blob/develop/logo.svg?raw=true" width="75" alt="SGX4U" />
+    </a>
+
+<h1 align="center">🌟 @sgx4u/{{packageName}} 🌟</h1>
+
+<p align="center">TODO: what this package is for, in one paragraph.</p>
+
+<p align="center">
+    <a href="{{#if (eq packageKind 'config')}}../../../.github/workflows/ci.yml{{else}}../../.github/workflows/ci.yml{{/if}}"><img src="https://img.shields.io/github/actions/workflow/status/sgx4u/sgx4u-toolkit/ci.yml?branch=develop&style=for-the-badge&label=ci&labelColor=353535" alt="ci" /></a>
+    <a href="{{#if (eq packageKind 'config')}}../../../LICENSE{{else}}../../LICENSE{{/if}}"><img src="https://img.shields.io/github/license/sgx4u/sgx4u-toolkit?style=for-the-badge&labelColor=353535&color=4f46e5" alt="License: MIT" /></a>
+    <a href="./package.json"><img src="https://img.shields.io/badge/node-%3E%3D22.12-339933?style=for-the-badge&logo=nodedotjs&logoColor=white&labelColor=353535" alt="Node &gt;=22.12" /></a>
+</p>
+
+<p align="center">Part of <a href="{{#if (eq packageKind 'config')}}../../../README.md{{else}}../../README.md{{/if}}">sgx4u-toolkit</a>.</p>
+</div>
+
+## About
 
 TODO: what this package is for, in one paragraph.
 
-Runtime: `{{runtimeName}}`. Universal code uses web standards and runs in browsers, workers, and Node. Edge code may use web standards and the Workers `nodejs_compat` modules that have an implementation. Node code may use Node built-ins.
+Experimental (`0.x`).
 
-## Install
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+## Installation
+
+{{#if (eq packageKind 'config')}}
 ```sh
-pnpm add @sgx4u/{{packageName}}
+pnpm add -D @sgx4u/{{packageName}}          # pnpm
+npm install --save-dev @sgx4u/{{packageName}}    # npm
+yarn add --dev @sgx4u/{{packageName}}       # yarn
 ```
+{{else}}
+```sh
+pnpm add @sgx4u/{{packageName}}       # pnpm
+npm install @sgx4u/{{packageName}}    # npm
+yarn add @sgx4u/{{packageName}}       # yarn
+```
+{{/if}}
 
 Requires Node `>=22.12`. The package publishes ESM (`import`) and CommonJS (`require`). The export map lists `@sgx4u/source` before `import` and `require`, pointing at `src/index.ts`. TypeScript uses that condition when `customConditions` includes `@sgx4u/source`.
 
-## API
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-### `packageIdentifier(): string`
-
-Stub exported so the new package typechecks, tests, and packs. The implementation, the folder `index.ts`, and the test live in `src/package-identifier/`. `src/index.ts` re-exports it. Replace the stub before the first release and update this section.
-
-## Examples
+## Usage
 
 ```ts
 import { packageIdentifier } from "@sgx4u/{{packageName}}";
@@ -26,10 +54,32 @@ import { packageIdentifier } from "@sgx4u/{{packageName}}";
 packageIdentifier();
 ```
 
-## Owner
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-`@{{ownerHandle}}`
+## API
 
-## Status
+### `packageIdentifier(): string`
 
-Experimental (`0.x`).
+Stub exported so the new package typechecks, tests, and packs. The implementation, the folder `index.ts`, and the test live in `src/package-identifier/`. `src/index.ts` re-exports it. Replace the stub before the first release and update this section.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Runtime support
+
+Runtime: `{{runtimeName}}`. Universal code uses web standards and runs in browsers, workers, and Node. Edge code may use web standards and the Workers `nodejs_compat` modules that have an implementation. Node code may use Node built-ins.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Contributing
+
+Repository rules are in [CONTRIBUTING.md]({{#if (eq packageKind 'config')}}../../../CONTRIBUTING.md{{else}}../../CONTRIBUTING.md{{/if}}).
+
+Owner: `@{{ownerHandle}}`
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## License
+
+[MIT]({{#if (eq packageKind 'config')}}../../../LICENSE{{else}}../../LICENSE{{/if}}) © 2026 Subhajit Ghosh
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
