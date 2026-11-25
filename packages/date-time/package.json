@@ -1,0 +1,66 @@
+{
+    "name": "@sgx4u/date-time",
+    "version": "0.0.0",
+    "description": "Reports whether a Date, a millisecond timestamp, or a date string is a real date.",
+    "license": "MIT",
+    "author": "Subhajit Ghosh",
+    "type": "module",
+    "sideEffects": false,
+    "main": "./dist/index.cjs",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.cts",
+    "exports": {
+        ".": {
+            "@sgx4u/source": "./src/index.ts",
+            "import": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            },
+            "require": {
+                "types": "./dist/index.d.cts",
+                "default": "./dist/index.cjs"
+            }
+        },
+        "./package.json": "./package.json"
+    },
+    "files": [
+        "dist",
+        "src",
+        "!src/**/*.test.ts",
+        "!src/**/*.md",
+        "README.md"
+    ],
+    "scripts": {
+        "build": "tsdown",
+        "dev": "tsdown --watch",
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run",
+        "lint": "eslint . --max-warnings 0",
+        "check:package": "publint && attw --pack ."
+    },
+    "devDependencies": {
+        "@arethetypeswrong/cli": "catalog:",
+        "@sgx4u/eslint-config": "workspace:*",
+        "@sgx4u/tsconfig": "workspace:*",
+        "@sgx4u/tsdown-config": "workspace:*",
+        "@sgx4u/vitest-config": "workspace:*",
+        "eslint": "catalog:",
+        "publint": "catalog:",
+        "tsdown": "catalog:",
+        "typescript": "catalog:",
+        "vitest": "catalog:"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sgx4u/sgx4u-toolkit.git",
+        "directory": "packages/date-time"
+    },
+    "homepage": "https://github.com/sgx4u/sgx4u-toolkit/tree/develop/packages/date-time",
+    "bugs": "https://github.com/sgx4u/sgx4u-toolkit/issues",
+    "engines": {
+        "node": ">=22.12"
+    }
+}

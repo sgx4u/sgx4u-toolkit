@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { listPublishablePackages } from "./check-pack.mjs";
+import { isDeniedPackPath, listPublishablePackages } from "./check-pack.mjs";
 
 const repositoryRoot = fileURLToPath(new URL("..", import.meta.url));
 
@@ -49,4 +49,27 @@ test("private presets keep version 0.0.0 so a library can pack", () => {
         assert.equal(packageManifest.private, true, entry.name);
         assert.equal(packageManifest.version, "0.0.0", entry.name);
     }
+});
+
+test("a pack preview rejects tests and function guides", () => {
+    assert.equal(
+        isDeniedPackPath("src/package-identifier/package-identifier.test.ts"),
+        true,
+    );
+    assert.equal(
+        isDeniedPackPath("src/package-identifier/package-identifier.md"),
+        true,
+    );
+    assert.equal(isDeniedPackPath("README.md"), false);
+    assert.equal(isDeniedPackPath("CHANGELOG.md"), false);
+    assert.equal(
+        isDeniedPackPath("src/package-identifier/package-identifier.ts"),
+        false,
+    );
+    assert.equal(
+        isDeniedPackPath("src/package-identifier/package-identifier.types.ts"),
+        false,
+    );
+    assert.equal(isDeniedPackPath("dist/index.d.ts"), false);
+    assert.equal(isDeniedPackPath("dist/index.d.cts"), false);
 });

@@ -16,9 +16,12 @@ const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(scriptDirectory, "..");
 
 // Repository and test files. A published tarball must leave these behind.
+// Function usage guides under `src` stay in the repository. The package
+// README at the tarball root is the published prose.
 const deniedFileExpressions = [
     /(^|\/)\.env(\.|$)/,
     /\.test\.[cm]?[jt]sx?$/,
+    /(^|\/)src\/.*\.md$/,
     /(^|\/)eslint\.config\./,
     /(^|\/)tsdown\.config\./,
     /(^|\/)vitest\.config\./,
@@ -126,6 +129,23 @@ export function listPublishablePackages(repositoryDirectory) {
 }
 
 /**
+ * Whether a path inside a pack preview must not be published.
+ *
+ * Tests and function usage guides under `src` match, along with config
+ * files and dependency folders. `README.md` at the package root does not.
+ *
+ * @param {string} filePath Path as `pnpm pack` reports it, using `/`.
+ * @returns {boolean} `true` when the pack check should fail for this path.
+ * @example
+ * isDeniedPackPath("src/package-identifier/package-identifier.md")
+ */
+export function isDeniedPackPath(filePath) {
+    return deniedFileExpressions.some((expression) =>
+        expression.test(filePath),
+    );
+}
+
+/**
  * @param {string} filePath
  */
 function statExists(filePath) {
@@ -178,10 +198,7 @@ function main() {
         }
 
         for (const filePath of preview.files) {
-            const denied = deniedFileExpressions.some((expression) =>
-                expression.test(filePath),
-            );
-            if (denied) {
+            if (isDeniedPackPath(filePath)) {
                 console.error(
                     `${relativeDirectory} pack includes ${filePath}, which is not publishable.`,
                 );

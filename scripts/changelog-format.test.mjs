@@ -17,6 +17,7 @@ import { fileURLToPath } from "node:url";
 import {
     getDependencyReleaseLine,
     getReleaseLine,
+    parseChangesetFile,
     parseChangesetNotes,
     pullRequestNumberFromCommitSubject,
     rewriteChangelog,
@@ -256,11 +257,16 @@ test("notes without a category are rejected", () => {
 });
 
 test("pending changesets use the category format", () => {
-    const directory = new URL("../.changeset/", import.meta.url);
+    const directory = fileURLToPath(new URL("../.changeset/", import.meta.url));
     const names = readdirSync(directory).filter(
         (name) => name.endsWith(".md") && name !== "README.md",
     );
-    assert.deepEqual(names, []);
+    for (const name of names) {
+        const markdown = readFileSync(path.join(directory, name), "utf8");
+        const parsed = parseChangesetFile(markdown, `.changeset/${name}`);
+        assert.ok(parsed.notes.summary);
+        assert.ok(parsed.notes.entries.length > 0);
+    }
 });
 
 test("changeset version output is rewritten into category sections", () => {
