@@ -22,7 +22,7 @@ Shared `@sgx4u` packages need one public place to version, test, and publish. Th
 - Feature pull requests are squash-merged. `develop` is merged into `beta` with a merge commit. A squash would leave `develop` off the ancestry of `beta`, and the next sync would replay the same commits. Linear history is required on `develop`, `production`, and `release/**`, and omitted on `beta`, so that merge commit can land.
 - After `production` publishes, the consumed-changeset sync is a new branch, `sync/consumed-changesets-*`, containing only the deletion of changeset files `production` removed since the branches diverged. That branch squash-merges into `develop`. A pull request whose head is `production` would list the already applied commits again, because squash merges do not record them as ancestors.
 - CODEOWNERS entries are `@sgx4u`.
-- Further libraries are added with `pnpm exec turbo gen package`. The task graph, tests, publint, and attw run against each library.
+- Further libraries are added with `pnpm exec turbo gen package`. The task graph, tests, publint, and attw run against each public library.
 
 ## Consequences
 

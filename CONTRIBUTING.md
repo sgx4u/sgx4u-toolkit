@@ -26,7 +26,7 @@ Pull requests are squash-merged. Promote `develop` into `production` with a reba
 Graduate an experiment from its feature branch:
 
 1. Squash-merge the feature branch into `beta` so the snapshot publish includes it.
-2. Rebase that branch onto `develop` and open the pull request into `develop`, with a changeset.
+2. Rebase that branch onto `develop` and open the pull request into `develop`, with a changeset when published behavior changed.
 3. After it lands, merge `develop` into `beta` with a merge commit so the experimental line picks up the stable copy. Commands are in [Keeping beta in sync](./docs/repo-settings.md#keeping-beta-in-sync).
 
 `beta` holds every experiment still in progress, so the graduation pull request comes from the feature branch. If that branch was deleted, recreate the change on a new branch from `develop`.
