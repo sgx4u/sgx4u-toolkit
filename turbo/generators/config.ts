@@ -10,10 +10,11 @@ import type { PlopTypes } from "@turbo/gen";
 
 interface PackageAnswers {
     packageName: string;
-    domainName: "platform" | "foundation" | "backend";
+    packageKind: "config" | "regular";
     tierName: "platform" | "foundation" | "capability" | "adapter";
     runtimeName: "universal" | "edge" | "node";
     ownerHandle: string;
+    packageDirectory: string;
 }
 
 const reservedPackageNames = new Set(["utils", "common", "shared"]);
@@ -22,31 +23,90 @@ function assertPackageName(value: string): true | string {
     if (!/^[a-z][a-z0-9]*(-[a-z0-9]+)*$/.test(value)) {
         return "Use lowercase kebab-case, starting with a letter.";
     }
+    if (value === "config") {
+        return "config is the tooling folder. Name the preset itself, such as eslint-config.";
+    }
     if (reservedPackageNames.has(value)) {
         return "utils, common, and shared are not package names. Name the one job the package does.";
     }
     return true;
 }
 
-function isPackageAnswers(value: unknown): value is PackageAnswers {
-    if (typeof value !== "object" || value === null) {
-        return false;
-    }
-    const candidate = value as Record<string, unknown>;
+function isRegularPackage(answers: unknown): boolean {
     return (
-        typeof candidate.packageName === "string" &&
-        typeof candidate.domainName === "string" &&
-        typeof candidate.tierName === "string" &&
-        typeof candidate.runtimeName === "string" &&
-        typeof candidate.ownerHandle === "string"
+        typeof answers === "object" &&
+        answers !== null &&
+        (answers as { packageKind?: unknown }).packageKind === "regular"
     );
 }
 
-function requirePackageAnswers(value: unknown): PackageAnswers {
-    if (!isPackageAnswers(value)) {
+function isPackageAnswers(value: object): value is PackageAnswers {
+    const candidate = value as Record<string, unknown>;
+    return (
+        typeof candidate.packageName === "string" &&
+        (candidate.packageKind === "config" ||
+            candidate.packageKind === "regular") &&
+        (candidate.tierName === "platform" ||
+            candidate.tierName === "foundation" ||
+            candidate.tierName === "capability" ||
+            candidate.tierName === "adapter") &&
+        (candidate.runtimeName === "universal" ||
+            candidate.runtimeName === "edge" ||
+            candidate.runtimeName === "node") &&
+        typeof candidate.ownerHandle === "string" &&
+        typeof candidate.packageDirectory === "string"
+    );
+}
+
+function preparePackageAnswers(value: unknown): PackageAnswers {
+    if (typeof value !== "object" || value === null) {
         throw new Error("Package generator answers were incomplete.");
     }
-    return value;
+    const candidate = value as Record<string, unknown>;
+    if (typeof candidate.packageName !== "string") {
+        throw new Error("Package generator answers were incomplete.");
+    }
+    if (candidate.packageKind === "config") {
+        candidate.tierName = "platform";
+        candidate.runtimeName = "node";
+        candidate.packageDirectory = `packages/config/${candidate.packageName}`;
+    } else if (candidate.packageKind === "regular") {
+        candidate.packageDirectory = `packages/${candidate.packageName}`;
+    }
+    if (!isPackageAnswers(candidate)) {
+        throw new Error("Package generator answers were incomplete.");
+    }
+    if (
+        candidate.packageKind === "config" &&
+        (candidate.tierName !== "platform" || candidate.runtimeName !== "node")
+    ) {
+        throw new Error("Config packages use tier platform and runtime node.");
+    }
+    if (
+        candidate.packageKind === "regular" &&
+        candidate.tierName === "platform"
+    ) {
+        throw new Error(
+            "Tier platform belongs in packages/config. Choose the config package kind.",
+        );
+    }
+    if (
+        (candidate.tierName === "foundation" ||
+            candidate.tierName === "capability") &&
+        candidate.runtimeName !== "universal"
+    ) {
+        throw new Error(
+            "Foundation and capability packages are platform-free. Use runtime universal.",
+        );
+    }
+    if (
+        candidate.tierName === "adapter" &&
+        candidate.runtimeName !== "edge" &&
+        candidate.runtimeName !== "node"
+    ) {
+        throw new Error("Adapter packages use runtime edge or node.");
+    }
+    return candidate;
 }
 
 function repositoryRoot(): string {
@@ -59,7 +119,7 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
 
     plop.setGenerator("package", {
         description:
-            "Create a public @sgx4u package in platform, foundation, or backend",
+            "Create a public @sgx4u package under packages/ or packages/config",
         prompts: [
             {
                 type: "input",
@@ -69,20 +129,31 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
             },
             {
                 type: "list",
-                name: "domainName",
-                message: "Domain folder",
-                choices: ["platform", "foundation", "backend"],
+                name: "packageKind",
+                message: "Package kind",
+                choices: [
+                    {
+                        name: "Config package (packages/config/<name>)",
+                        value: "config",
+                    },
+                    {
+                        name: "Regular package (packages/<name>)",
+                        value: "regular",
+                    },
+                ],
             },
             {
                 type: "list",
                 name: "tierName",
                 message: "Tier",
-                choices: ["platform", "foundation", "capability", "adapter"],
+                when: isRegularPackage,
+                choices: ["foundation", "capability", "adapter"],
             },
             {
                 type: "list",
                 name: "runtimeName",
                 message: "Runtime (web and native belong in sgx4u-ui)",
+                when: isRegularPackage,
                 choices: ["universal", "edge", "node"],
             },
             {
@@ -97,71 +168,10 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
         ],
         actions: [
             (answers: unknown) => {
-                const packageAnswers = requirePackageAnswers(answers);
-                if (
-                    packageAnswers.domainName === "platform" &&
-                    packageAnswers.tierName !== "platform"
-                ) {
-                    throw new Error(
-                        "Packages in domains/platform use tier platform.",
-                    );
-                }
-                if (
-                    packageAnswers.tierName === "platform" &&
-                    packageAnswers.domainName !== "platform"
-                ) {
-                    throw new Error(
-                        "Tier platform only belongs in domains/platform.",
-                    );
-                }
-                if (
-                    (packageAnswers.tierName === "foundation" ||
-                        packageAnswers.tierName === "capability") &&
-                    packageAnswers.domainName !== "foundation"
-                ) {
-                    throw new Error(
-                        "Foundation and capability packages belong in domains/foundation.",
-                    );
-                }
-                if (
-                    packageAnswers.tierName === "adapter" &&
-                    packageAnswers.domainName !== "backend"
-                ) {
-                    throw new Error(
-                        "Adapter packages belong in domains/backend.",
-                    );
-                }
-                if (
-                    (packageAnswers.tierName === "foundation" ||
-                        packageAnswers.tierName === "capability") &&
-                    packageAnswers.runtimeName !== "universal"
-                ) {
-                    throw new Error(
-                        "Foundation and capability packages are platform-free. Use runtime universal.",
-                    );
-                }
-                if (
-                    packageAnswers.tierName === "adapter" &&
-                    packageAnswers.runtimeName !== "edge" &&
-                    packageAnswers.runtimeName !== "node"
-                ) {
-                    throw new Error(
-                        "Adapter packages use runtime edge or node.",
-                    );
-                }
-                if (
-                    packageAnswers.tierName === "platform" &&
-                    packageAnswers.runtimeName !== "node"
-                ) {
-                    throw new Error(
-                        "Platform presets run on Node. Use runtime node.",
-                    );
-                }
+                const packageAnswers = preparePackageAnswers(answers);
                 const destination = path.join(
                     repositoryRoot(),
-                    "domains",
-                    packageAnswers.domainName,
-                    packageAnswers.packageName,
+                    packageAnswers.packageDirectory,
                 );
                 if (existsSync(destination)) {
                     throw new Error(
@@ -172,14 +182,13 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
             },
             {
                 type: "addMany",
-                destination:
-                    "{{ turbo.paths.root }}/domains/{{ domainName }}/{{ packageName }}",
+                destination: "{{ turbo.paths.root }}/{{ packageDirectory }}",
                 base: "templates/package",
                 templateFiles: "templates/package/**",
                 globOptions: { dot: true },
             },
             (answers: unknown) => {
-                const packageAnswers = requirePackageAnswers(answers);
+                const packageAnswers = preparePackageAnswers(answers);
                 const changesetDirectory = path.join(
                     repositoryRoot(),
                     ".changeset",
@@ -213,14 +222,14 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
                 return `Added ${path.relative(repositoryRoot(), changesetPath)}`;
             },
             (answers: unknown) => {
-                const packageAnswers = requirePackageAnswers(answers);
+                const packageAnswers = preparePackageAnswers(answers);
                 const owner = `@${packageAnswers.ownerHandle.replace(/^@/, "")}`;
                 const codeownersPath = path.join(
                     repositoryRoot(),
                     ".github",
                     "CODEOWNERS",
                 );
-                const entry = `/domains/${packageAnswers.domainName}/${packageAnswers.packageName}/ ${owner}`;
+                const entry = `/${packageAnswers.packageDirectory}/ ${owner}`;
                 const current = existsSync(codeownersPath)
                     ? readFileSync(codeownersPath, "utf8")
                     : "";

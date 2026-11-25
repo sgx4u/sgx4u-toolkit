@@ -46,7 +46,9 @@ Settings → Rules → New ruleset. Target `develop`, `production`, and `release
 
 You are the only admin, so you can merge your own pull requests. GitHub will not let you approve them yourself. That is expected. The bypass still requires a pull request.
 
-Optional extra checks once you trust them: `ci / test-node-22`, `ci / secrets`, `codeql / analyze`, `dependency-review / review`.
+Optional extra checks once you trust them: `ci / test-node-22`, `ci / dependency-review`, `ci / pkg-pr-new`, `security / analyze`, `security / secrets`.
+
+`package-checks` runs publint and `@arethetypeswrong/cli` after the build. Dependency review and the pkg.pr.new preview run only on pull requests, inside `ci.yml`. CodeQL and gitleaks live in `security.yml`, including a weekly schedule. The previous optional names `codeql / analyze`, `ci / secrets`, and `dependency-review / review` are replaced by the names above.
 
 ## 3. Actions permissions
 
@@ -106,13 +108,13 @@ The account that owns `@sgx4u` on npm should have 2FA.
 
 Settings → Code security:
 
-- Dependency graph: on. Enable it under Settings → Code security → Dependency graph. Until it is on, `dependency-review / review` returns 403 from the dependency review API.
+- Dependency graph: on. Enable it under Settings → Code security → Dependency graph. Until it is on, `ci / dependency-review` returns 403 from the dependency review API.
 - Dependabot alerts: on
 - Dependabot security updates: on if you want security pull requests as well as the weekly Actions updates
 - Secret scanning: on
 - Secret scanning push protection: on
 - Private vulnerability reporting: on
-- Code scanning: the `codeql` workflow uploads results. If GitHub's default CodeQL setup is also enabled, turn the default setup off so two analyses do not fight over the same category.
+- Code scanning: the `security` workflow uploads CodeQL results. If GitHub's default CodeQL setup is also enabled, turn the default setup off so two analyses do not fight over the same category.
 
 Settings → General → Features:
 
@@ -133,7 +135,7 @@ Vercel remote cache is optional. CI uses it only when all three values are set. 
 
 ## 9. pkg.pr.new
 
-Install the [pkg.pr.new GitHub App](https://github.com/apps/pkg-pr-new) on this repository. `preview.yml` then comments an install command on the pull request. The preview is not an npm publish.
+Install the [pkg.pr.new GitHub App](https://github.com/apps/pkg-pr-new) on this repository. The `pkg-pr-new` job in `ci.yml` then comments an install command on the pull request. The preview is not an npm publish.
 
 ## 10. Renovate
 

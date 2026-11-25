@@ -1,7 +1,8 @@
 # Public toolkit only. UI packages live in sgx4u-ui.
-# Two-level domain globs stay stable as packages are added.
+# Libraries live at packages/<name>. Tooling presets live at packages/config/<name>.
 packages:
-    - "domains/*/*"
+    - "packages/*"
+    - "packages/config/*"
     - "apps/*"
     - "tooling/*"
 

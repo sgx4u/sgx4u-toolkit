@@ -1,4 +1,4 @@
 {
   "extends": ["//"],
-  "tags": ["domain:{{domainName}}", "tier:{{tierName}}", "runtime:{{runtimeName}}"]
+  "tags": [{{#if (eq packageKind "config")}}"tier:platform"{{else}}"tier:{{tierName}}", "runtime:{{runtimeName}}"{{/if}}]
 }

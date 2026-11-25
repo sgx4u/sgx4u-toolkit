@@ -1,0 +1,70 @@
+# CodeQL and gitleaks. Separate from ci.yml because CodeQL needs
+# security-events: write, and the weekly schedule should not rerun lint,
+# tests, and package builds.
+#
+# Optional check names: security / analyze, security / secrets.
+# The previous names were codeql / analyze and ci / secrets.
+name: security
+
+on:
+    pull_request:
+        branches:
+            - develop
+            - production
+            - "release/**"
+    push:
+        branches:
+            - develop
+            - production
+            - "release/**"
+    schedule:
+        - cron: "0 6 * * 1"
+
+permissions: {}
+
+concurrency:
+    group: security-${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    analyze:
+        name: analyze
+        runs-on: ubuntu-latest
+        timeout-minutes: 20
+        permissions:
+            actions: read
+            contents: read
+            security-events: write
+        steps:
+            - name: Check out repository
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
+
+            - name: Initialize CodeQL
+              uses: github/codeql-action/init@915412ff23e8b7659517e607487dbeae018f2934 # v4.39.5
+              with:
+                  languages: javascript-typescript
+
+            - name: Analyze
+              uses: github/codeql-action/analyze@915412ff23e8b7659517e607487dbeae018f2934 # v4.39.5
+
+    secrets:
+        name: secrets
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+        permissions:
+            contents: read
+            pull-requests: read
+        steps:
+            - name: Check out repository
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  fetch-depth: 0
+                  filter: blob:none
+                  persist-credentials: false
+
+            - name: Scan Git history with gitleaks
+              uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
+              env:
+                  GITHUB_TOKEN: ${{ github.token }}

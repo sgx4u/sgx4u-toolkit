@@ -6,11 +6,20 @@
   "author": "Subhajit Ghosh",
   "type": "module",
   "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.cts",
   "exports": {
     ".": {
       "@sgx4u/source": "./src/index.ts",
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     },
     "./package.json": "./package.json"
   },
@@ -21,7 +30,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "lint": "eslint . --max-warnings 0",
-    "check:package": "publint && attw --pack . --profile esm-only"
+    "check:package": "publint && attw --pack ."
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "catalog:",
@@ -44,9 +53,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sgx4u/sgx4u-toolkit.git",
-    "directory": "domains/{{domainName}}/{{packageName}}"
+    "directory": "{{packageDirectory}}"
   },
-  "homepage": "https://github.com/sgx4u/sgx4u-toolkit/tree/develop/domains/{{domainName}}/{{packageName}}",
+  "homepage": "https://github.com/sgx4u/sgx4u-toolkit/tree/develop/{{packageDirectory}}",
   "bugs": "https://github.com/sgx4u/sgx4u-toolkit/issues",
   "engines": {
     "node": ">=22.12"

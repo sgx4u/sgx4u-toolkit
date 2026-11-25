@@ -1,0 +1,84 @@
+{
+  "name": "@sgx4u/tsconfig",
+  "version": "0.0.0",
+  "description": "Shared TypeScript presets for @sgx4u packages and the apps that consume them.",
+  "license": "MIT",
+  "author": "Subhajit Ghosh",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./base.json": {
+      "import": "./base.json",
+      "require": "./base.json",
+      "default": "./base.json"
+    },
+    "./library.json": {
+      "import": "./library.json",
+      "require": "./library.json",
+      "default": "./library.json"
+    },
+    "./node.json": {
+      "import": "./node.json",
+      "require": "./node.json",
+      "default": "./node.json"
+    },
+    "./react.json": {
+      "import": "./react.json",
+      "require": "./react.json",
+      "default": "./react.json"
+    },
+    "./nextjs.json": {
+      "import": "./nextjs.json",
+      "require": "./nextjs.json",
+      "default": "./nextjs.json"
+    },
+    "./workers.json": {
+      "import": "./workers.json",
+      "require": "./workers.json",
+      "default": "./workers.json"
+    },
+    "./react-native.json": {
+      "import": "./react-native.json",
+      "require": "./react-native.json",
+      "default": "./react-native.json"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "base.json",
+    "library.json",
+    "node.json",
+    "react.json",
+    "nextjs.json",
+    "workers.json",
+    "react-native.json",
+    "README.md"
+  ],
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "check:package": "publint && attw --pack ."
+  },
+  "dependencies": {
+    "@types/node": "catalog:"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "catalog:",
+    "@sgx4u/eslint-config": "workspace:*",
+    "eslint": "catalog:",
+    "publint": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sgx4u/sgx4u-toolkit.git",
+    "directory": "packages/config/tsconfig"
+  },
+  "homepage": "https://github.com/sgx4u/sgx4u-toolkit/tree/develop/packages/config/tsconfig",
+  "bugs": "https://github.com/sgx4u/sgx4u-toolkit/issues",
+  "engines": {
+    "node": ">=22.12"
+  }
+}
