@@ -1,3 +1,13 @@
+/**
+ * Fails when a `link:` or `file:` dependency points outside this repository.
+ *
+ * `pnpm check` and the pre-commit hook run `node scripts/check-links.mjs`.
+ * The scan reads every `package.json` and `pnpm-workspace.yaml`, skipping
+ * vendor and generated directories. A specifier that resolves inside the
+ * repository is allowed. Commit `workspace:` ranges for dependencies that
+ * should be published.
+ */
+
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -12,6 +22,7 @@ const dependencyFieldNames = [
     "optionalDependencies",
 ];
 
+// Vendor and generated directories hold no committed dependency specifiers.
 const skippedDirectoryNames = new Set([
     "node_modules",
     "dist",
@@ -21,9 +32,18 @@ const skippedDirectoryNames = new Set([
 ]);
 
 /**
- * @param {string} specifier
- * @param {string} packageDirectory
- * @param {string} rootDirectory
+ * True when a dependency specifier is a `link:` or `file:` URL outside the repository.
+ *
+ * Other specifiers, including `workspace:` and registry ranges, return false.
+ * The target is resolved from `packageDirectory`, then compared to
+ * `rootDirectory`. A target that is the repository root itself stays inside.
+ *
+ * @param {string} specifier Dependency range from a manifest or workspace file.
+ * @param {string} packageDirectory Directory the relative target is resolved from.
+ * @param {string} rootDirectory Repository root the target must stay inside.
+ * @returns {boolean}
+ * @example
+ * linkSpecifierEscapesRepository("link:../other-repo", "/repo/packages/example", "/repo")
  */
 export function linkSpecifierEscapesRepository(
     specifier,
@@ -57,8 +77,17 @@ function isInsideRepository(candidate, rootDirectory) {
 }
 
 /**
- * @param {string} rootDirectory
- * @returns {{ relativePath: string, dependencyName: string, specifier: string }[]}
+ * Every `link:` or `file:` dependency in the tree that resolves outside the repository.
+ *
+ * `package.json` dependency fields are read as JSON. `pnpm-workspace.yaml`
+ * is scanned as text because the catalog is not a dependency map. A
+ * workspace-file hit uses the dependency name `(workspace file)`.
+ *
+ * @param {string} rootDirectory Repository root to walk.
+ * @returns {{ relativePath: string, dependencyName: string, specifier: string }[]} Empty when every local link stays inside the repository.
+ * @throws {SyntaxError} When a `package.json` is not valid JSON.
+ * @example
+ * findEscapingLinks(repositoryRoot)
  */
 export function findEscapingLinks(rootDirectory) {
     /** @type {{ relativePath: string, dependencyName: string, specifier: string }[]} */

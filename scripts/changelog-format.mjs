@@ -13,6 +13,7 @@ import { spawnSync } from "node:child_process";
  * would ask the GitHub API during versioning and needs a token.
  */
 
+// Changelog section order. A category with no entries is omitted.
 const categoryOrder = [
     "Breaking",
     "Added",
@@ -39,8 +40,21 @@ const categoryTagPattern =
 const defaultRepository = "sgx4u/sgx4u-toolkit";
 
 /**
- * @param {string} summary
- * @param {{ name: string, type: string }[]} [releases]
+ * Reads one changeset body into a summary, a pull request number, and entries.
+ *
+ * Use this before writing a changelog line, or from a check that needs to
+ * reject a malformed note. The body is one `Summary:` line, an optional
+ * `Pull request:` line, and at least one category line. A category line
+ * starts with the affected export or option in backticks. Later lines belong
+ * to the tag above them, which is how a breaking change keeps its migration
+ * fence.
+ *
+ * @param {string} summary Changeset markdown after the frontmatter.
+ * @param {{ name: string, type: string }[]} [releases] Bumps from the frontmatter. Used to reject `Breaking` on a patch. Defaults to an empty list, which skips that check.
+ * @returns {{ summary: string | null, pullRequestNumber: string | null, entries: { category: string, body: string }[] }}
+ * @throws {Error} When the body is empty, a line has no tag, a tag is repeated, `Summary` or `Pull request` is empty or invalid, a category line omits the backticked name, there is no category line, or `Breaking` is paired with a patch bump.
+ * @example
+ * parseChangesetNotes("Summary: First release.\n\nAdded: `formatLabel` returns the label.")
  */
 export function parseChangesetNotes(summary, releases = []) {
     const trimmed = summary.replace(/^\n+|\n+$/g, "");
@@ -154,8 +168,17 @@ function trimEntryLines(lines) {
 }
 
 /**
- * @param {string} markdown
- * @param {string} filePath
+ * Reads a changeset file into its frontmatter releases and its notes.
+ *
+ * Use this from the changeset check. The frontmatter is the `---` block
+ * Changesets writes, one `"package": major|minor|patch` line per release.
+ *
+ * @param {string} markdown Full file contents.
+ * @param {string} filePath Path included in error messages. It is not read from disk.
+ * @returns {{ releases: { name: string, type: string }[], notes: { summary: string | null, pullRequestNumber: string | null, entries: { category: string, body: string }[] } }}
+ * @throws {Error} When the frontmatter block is missing, a line is not a release, no package is listed, or {@link parseChangesetNotes} rejects the body. The message starts with `filePath`.
+ * @example
+ * parseChangesetFile("---\n\"@sgx4u/example\": minor\n---\n\nSummary: First release.\n\nAdded: `formatLabel` returns the label.\n", ".changeset/example.md")
  */
 export function parseChangesetFile(markdown, filePath) {
     const match = /^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/.exec(markdown);
@@ -194,8 +217,17 @@ export function parseChangesetFile(markdown, filePath) {
 }
 
 /**
- * @param {string | null | undefined} subject
- * @returns {string | null}
+ * Returns the pull request number at the end of a commit subject.
+ *
+ * Use this when a changeset has no `Pull request:` line. GitHub adds
+ * `(#123)` to the squash subject, and that number becomes the changelog link.
+ * Any other subject shape returns null so the changelog can link the commit
+ * instead.
+ *
+ * @param {string | null | undefined} subject First line of the commit message.
+ * @returns {string | null} Digits from a trailing `(#123)`, or null.
+ * @example
+ * pullRequestNumberFromCommitSubject("fix: keep blank labels (#42)")
  */
 export function pullRequestNumberFromCommitSubject(subject) {
     if (!subject) {
@@ -206,9 +238,16 @@ export function pullRequestNumberFromCommitSubject(subject) {
 }
 
 /**
+ * Markdown link suffix for one changelog bullet.
+ *
+ * A pull request number wins. Otherwise a full commit hash becomes a
+ * seven-character link. Otherwise the bullet has no link, which keeps
+ * versioning from failing when the commit is unknown.
+ *
  * @param {string | null} pullRequestNumber
  * @param {string | null | undefined} commitHash
- * @param {string} repository
+ * @param {string} repository `owner/name` used in the GitHub URL.
+ * @returns {string}
  */
 function changeLink(pullRequestNumber, commitHash, repository) {
     if (pullRequestNumber) {
@@ -222,8 +261,15 @@ function changeLink(pullRequestNumber, commitHash, repository) {
 }
 
 /**
+ * Commit subject for `commitHash`, or null when it cannot be read.
+ *
+ * `options.commitSubjects` supplies the subject during tests and any run
+ * that must stay offline. A hash missing from that map is read with
+ * `git log`. A failed git read returns null so the bullet can still be written.
+ *
  * @param {string | undefined} commitHash
  * @param {Record<string, unknown> | null | undefined} options
+ * @returns {string | null}
  */
 function commitSubject(commitHash, options) {
     if (
@@ -257,7 +303,13 @@ function commitSubject(commitHash, options) {
 }
 
 /**
+ * `owner/name` for changelog links.
+ *
+ * A repository option without `/` is ignored so a bare name cannot build a
+ * broken GitHub URL. The fallback is this repository.
+ *
  * @param {Record<string, unknown> | null | undefined} options
+ * @returns {string}
  */
 function repositoryName(options) {
     if (
@@ -270,7 +322,13 @@ function repositoryName(options) {
 }
 
 /**
+ * `YYYY-MM-DD` stamped on the version heading.
+ *
+ * A date option in any other shape is ignored and the value is today in UTC,
+ * so the heading stays one date token.
+ *
  * @param {Record<string, unknown> | null | undefined} options
+ * @returns {string}
  */
 function releaseDate(options) {
     if (
@@ -304,9 +362,28 @@ function entryBodyWithLink(body, link) {
 }
 
 /**
- * @param {{ id?: string, summary: string, releases?: { name: string, type: string }[], commit?: string }} changeset
- * @param {string} _releaseType
- * @param {Record<string, unknown> | null} [options]
+ * Builds the tagged blocks Changesets stores for one changeset.
+ *
+ * Changesets calls this once per file and wraps the result in a bump
+ * heading. The tags let {@link rewriteChangelog} group every note in the
+ * version. `.changeset/config.json` points the changelog at this module.
+ * `releaseType` is unused because the notes carry their own categories.
+ *
+ * Link choice: a `Pull request:` line wins. Otherwise the commit subject is
+ * read and a trailing `(#123)` becomes the link. Otherwise the bullet links
+ * to the commit.
+ *
+ * @param {{ id?: string, summary: string, releases?: { name: string, type: string }[], commit?: string }} changeset Changeset Changesets passes. `summary` is the markdown body. `commit` is the hash that added the file, when Changesets knows it.
+ * @param {string} _releaseType Bump Changesets computed (`major`, `minor`, or `patch`).
+ * @param {Record<string, unknown> | null} [options] `repository` is `owner/name` and defaults to `sgx4u/sgx4u-toolkit`. `date` is `YYYY-MM-DD` and defaults to today in UTC. `commitSubjects` maps a hash to its subject. `workingDirectory` is the git directory for a subject lookup and defaults to the current directory.
+ * @returns {string} A date tag, an optional summary tag, and one entry tag per category.
+ * @throws {Error} When {@link parseChangesetNotes} rejects the summary. The message starts with the changeset id, or `(unknown)` when `id` is missing.
+ * @example
+ * getReleaseLine(
+ *   { summary: "Summary: First release.\n\nAdded: `formatLabel` returns the label.", releases: [] },
+ *   "minor",
+ *   { date: "2026-11-25", repository: "sgx4u/sgx4u-toolkit" },
+ * )
  */
 export function getReleaseLine(changeset, _releaseType, options) {
     let notes;
@@ -348,9 +425,19 @@ export function getReleaseLine(changeset, _releaseType, options) {
 }
 
 /**
- * @param {unknown[]} _dependencyChangesets
- * @param {{ name: string, newVersion?: string }[]} dependentReleases
- * @param {Record<string, unknown> | null} [_options]
+ * Builds `Changed` blocks for workspace dependents Changesets bumped.
+ *
+ * Changesets calls this after {@link getReleaseLine}. Packages are sorted by
+ * name so the changelog order stays stable. A dependent with no
+ * `newVersion` is skipped because there is no version to report. An empty
+ * list returns an empty string, which tells Changesets to omit the line.
+ *
+ * @param {unknown[]} _dependencyChangesets Changesets that caused the bump. The text comes from `dependentReleases`, so this argument is unused.
+ * @param {{ name: string, newVersion?: string }[]} dependentReleases Packages whose version changed because a workspace dependency changed.
+ * @param {Record<string, unknown> | null} [_options] Changelog options. This line has no link or date, so the options are unused.
+ * @returns {string} Tagged `Changed` blocks, or `""` when nothing changed.
+ * @example
+ * getDependencyReleaseLine([], [{ name: "@sgx4u/example", newVersion: "0.2.0" }])
  */
 export function getDependencyReleaseLine(
     _dependencyChangesets,
@@ -474,7 +561,20 @@ function rewriteSection(section, hasFollowingSection) {
 }
 
 /**
- * @param {string} markdown
+ * Replaces Changesets bump headings with category sections.
+ *
+ * `scripts/version-packages.mjs` calls this after `changeset version`. Each
+ * `##` section that contains changelog tags becomes a dated heading, one
+ * summary paragraph, and the categories that have entries, in
+ * Breaking, Added, Changed, Deprecated, Removed, Fixed, Security order.
+ * A section with no tags is copied through, so an already rewritten
+ * changelog stays as it is. A file with no `##` heading is returned unchanged.
+ *
+ * @param {string} markdown Library `CHANGELOG.md` contents, including the tagged blocks from {@link getReleaseLine}.
+ * @returns {string} Markdown with those sections rewritten.
+ * @throws {Error} When a tagged section has no entries, or a tag name is not one of the categories above.
+ * @example
+ * rewriteChangelog("## 0.1.0\n\n<!-- changelog-date: 2026-11-25 -->\n<!-- changelog-entry: Added -->\n`formatLabel` returns the label.\n<!-- /changelog-entry -->\n")
  */
 export function rewriteChangelog(markdown) {
     const matches = [...markdown.matchAll(/^## .+$/gm)];
@@ -501,6 +601,15 @@ export function rewriteChangelog(markdown) {
     return rewritten;
 }
 
+/**
+ * Changelog functions Changesets loads from `.changeset/config.json`.
+ *
+ * Changesets calls the default export. The named exports are the same
+ * functions, so tests and `scripts/version-packages.mjs` can call them
+ * without going through the default object.
+ *
+ * @type {{ getReleaseLine: typeof getReleaseLine, getDependencyReleaseLine: typeof getDependencyReleaseLine }}
+ */
 const changelogFunctions = {
     getReleaseLine,
     getDependencyReleaseLine,

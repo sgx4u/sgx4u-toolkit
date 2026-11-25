@@ -13,12 +13,19 @@ const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(scriptDirectory, "..");
 
 /**
- * Snapshots publish only from beta. develop and production must not rewrite
- * versions. A committed prerelease on those branches would ship as latest.
- * An empty branch name is allowed for a local dry run. GitHub Actions sets
- * GITHUB_REF_NAME on every workflow run, so a job on the wrong branch fails.
+ * Allows a beta snapshot publish only from the beta branch or a local run.
  *
- * @param {string | undefined} branchName
+ * The snapshot job calls this with `GITHUB_REF_NAME` before it rewrites
+ * versions. `develop` and `production` throw because a committed prerelease
+ * on those branches would later ship as `latest`. An empty or missing branch
+ * name is a local dry run: GitHub Actions sets `GITHUB_REF_NAME` on every
+ * workflow run, so a job on the wrong branch still fails.
+ *
+ * @param {string | undefined} branchName `GITHUB_REF_NAME`, or unset for a local run.
+ * @returns {void}
+ * @throws {Error} When `branchName` is set and is not `beta`. The message names the branch.
+ * @example
+ * assertBetaSnapshotBranch("beta")
  */
 export function assertBetaSnapshotBranch(branchName) {
     if (
@@ -46,6 +53,7 @@ function collectPackageVersions(parentDirectory, versions) {
     }
 
     for (const packageDirectoryName of readdirSync(parentDirectory)) {
+        // Presets under packages/config are private and are not snapshot-published.
         if (packageDirectoryName === "config") {
             continue;
         }
@@ -75,8 +83,15 @@ function collectPackageVersions(parentDirectory, versions) {
 }
 
 /**
- * @param {string} rootDirectory
- * @returns {Map<string, string>}
+ * Published library names and the versions committed in their manifests.
+ *
+ * Only direct children of `packages/` are read. `packages/config` is skipped.
+ * A private package, or a manifest with no string `name`, is skipped.
+ *
+ * @param {string} rootDirectory Repository root.
+ * @returns {Map<string, string>} Package name to its `version` string. Empty when `packages/` is missing.
+ * @example
+ * readPackageVersions(repositoryRoot)
  */
 export function readPackageVersions(rootDirectory) {
     /** @type {Map<string, string>} */
@@ -87,9 +102,17 @@ export function readPackageVersions(rootDirectory) {
 }
 
 /**
- * @param {Map<string, string>} versionsBefore
- * @param {Map<string, string>} versionsAfter
- * @returns {{ packageName: string, version: string }[]}
+ * Packages whose version string changed between two {@link readPackageVersions} maps.
+ *
+ * The snapshot job uses this to decide what to publish. A package that
+ * exists only in `versionsBefore` is omitted, because a removed package has
+ * nothing to publish. Order follows `versionsAfter`.
+ *
+ * @param {Map<string, string>} versionsBefore Versions before `changeset version --snapshot`.
+ * @param {Map<string, string>} versionsAfter Versions after that command.
+ * @returns {{ packageName: string, version: string }[]} The new version for each package that changed.
+ * @example
+ * packagesWithChangedVersions(versionsBefore, versionsAfter)
  */
 export function packagesWithChangedVersions(versionsBefore, versionsAfter) {
     /** @type {{ packageName: string, version: string }[]} */
@@ -123,8 +146,12 @@ function isTracked(rootDirectory, relativePath) {
 }
 
 /**
- * Changesets writes a new CHANGELOG.md when the package does not have one.
- * Those files are untracked. Leave every other untracked file alone.
+ * Deletes untracked `CHANGELOG.md` files Changesets created for the snapshot.
+ *
+ * Changesets writes that file when a library does not have one yet. The
+ * snapshot must not leave it in the worktree. Only direct children of
+ * `packages/` are libraries, so the scan stays one level deep. Tracked
+ * changelogs are left in place, and every other untracked file is left alone.
  *
  * @param {string} rootDirectory
  */

@@ -1,3 +1,12 @@
+/**
+ * Fails when a publishable package would pack a forbidden file or grow past
+ * the review cap.
+ *
+ * The release workflow and `pnpm check` run `node scripts/check-pack.mjs`
+ * after the packages are built. Private packages and `packages/config` are
+ * skipped. The preview is `pnpm pack --dry-run`, so nothing is uploaded.
+ */
+
 import { execFileSync } from "node:child_process";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
@@ -6,6 +15,7 @@ import { fileURLToPath } from "node:url";
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(scriptDirectory, "..");
 
+// Repository and test files. A published tarball must leave these behind.
 const deniedFileExpressions = [
     /(^|\/)\.env(\.|$)/,
     /\.test\.[cm]?[jt]sx?$/,
@@ -18,6 +28,7 @@ const deniedFileExpressions = [
     /(^|\/)coverage\//,
 ];
 
+// Pack review fails above this size so a library tarball stays small enough to inspect.
 const maximumTarballBytes = 1_000_000;
 
 /**
@@ -56,6 +67,8 @@ function listPackageDirectories(repositoryDirectory, includePackage) {
                 }
                 continue;
             }
+            // Descend through `packages/` and `packages/config/`, then stop.
+            // A folder inside a package is not another package.
             if (depth < 3) {
                 walk(absolutePath, depth + 1);
             }
@@ -88,11 +101,17 @@ function isPublishablePackage(
 }
 
 /**
- * Packages npm will publish. The workspace root is not one of them.
- * Private packages are workspace tooling and are not published.
+ * Absolute directories of packages npm will publish.
  *
- * @param {string} repositoryDirectory
- * @returns {string[]}
+ * Use this before a pack preview. The workspace root is not included.
+ * `"private": true` and anything under `packages/config/` are workspace
+ * tooling and are omitted. The walk stops at package depth so a nested
+ * folder inside a library is not treated as another package.
+ *
+ * @param {string} repositoryDirectory Repository root.
+ * @returns {string[]} Absolute paths, sorted.
+ * @example
+ * listPublishablePackages(repositoryRoot)
  */
 export function listPublishablePackages(repositoryDirectory) {
     return listPackageDirectories(
@@ -118,8 +137,16 @@ function statExists(filePath) {
 }
 
 /**
- * @param {string} packageDirectory
- * @returns {{ files: string[], sizeBytes: number }}
+ * Files and byte size `pnpm pack` would put in the tarball.
+ *
+ * The command is `--dry-run`, so npm receives nothing. pnpm prints either
+ * one preview object or an array whose first entry is the preview.
+ *
+ * @param {string} packageDirectory Absolute package directory. The package must already be built when the tarball includes `dist`.
+ * @returns {{ files: string[], sizeBytes: number }} Paths as pnpm reports them, and the tarball size in bytes.
+ * @throws {Error} When `pnpm pack` exits non-zero, or when the output is not JSON.
+ * @example
+ * readPackPreview(packageDirectory)
  */
 export function readPackPreview(packageDirectory) {
     const output = execFileSync("pnpm", ["pack", "--dry-run", "--json"], {

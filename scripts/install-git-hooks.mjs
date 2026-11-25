@@ -1,3 +1,13 @@
+/**
+ * Installs Lefthook from the package `prepare` script.
+ *
+ * `pnpm install` runs this file. A successful Lefthook install exits 0.
+ * When `core.hooksPath` is already set, Lefthook's install fails and this
+ * script still exits 0, so install succeeds for a checkout that already
+ * chose its hook directory. Any other Lefthook failure exits with
+ * Lefthook's status.
+ */
+
 import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -7,6 +17,7 @@ const repositoryRoot = path.resolve(
     "..",
 );
 
+// Windows runs the `.cmd` shim, and spawn needs a shell to launch it.
 const lefthookExecutable =
     process.platform === "win32"
         ? path.join(repositoryRoot, "node_modules", ".bin", "lefthook.cmd")
