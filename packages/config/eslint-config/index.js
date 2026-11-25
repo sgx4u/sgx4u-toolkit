@@ -198,12 +198,64 @@ function globalsForRuntime(runtime) {
 }
 
 /**
+ * Writes `rootDirectory` into `parserOptions.tsconfigRootDir` on every
+ * returned config object that has `languageOptions`, then appends one more
+ * object that sets only that option.
+ *
+ * typescript-eslint enables its parser on `typescript-eslint/base` and
+ * records a candidate directory each time `tseslint.configs` is read from
+ * an `eslint.config.js`. The parser requires `tsconfigRootDir` once more
+ * than one candidate is recorded. The directory sits on the base object,
+ * because that object is what enables the parser, and on every other
+ * `languageOptions` object, because an object that sets `project` or
+ * `projectService` carries its own `parserOptions`. The final object is
+ * last, so the merged options for every file, including `tsdown.config.ts`
+ * outside `src`, contain the directory. Does not mutate `configs` or the
+ * shared typescript-eslint objects.
+ *
+ * @param {import("eslint").Linter.Config[]} configs
+ * @param {string} rootDirectory Absolute directory already passed through `path.resolve`.
+ * @returns {import("eslint").Linter.Config[]}
+ */
+function applyTsconfigRootDirectory(configs, rootDirectory) {
+    const configsWithRootDirectory = configs.map((config) => {
+        if (config.languageOptions == null) {
+            return config;
+        }
+
+        return {
+            ...config,
+            languageOptions: {
+                ...config.languageOptions,
+                parserOptions: {
+                    ...config.languageOptions.parserOptions,
+                    tsconfigRootDir: rootDirectory,
+                },
+            },
+        };
+    });
+
+    return [
+        ...configsWithRootDirectory,
+        {
+            languageOptions: {
+                parserOptions: {
+                    tsconfigRootDir: rootDirectory,
+                },
+            },
+        },
+    ];
+}
+
+/**
  * Returns a flat ESLint config for one package.
  *
- * Copies `options.rootDir` to `parserOptions.tsconfigRootDir` on a config
- * object that has no `files` filter, so every file this config lints uses
- * that directory. Does not modify `options`. Ignores `dist`, `coverage`,
- * and `node_modules`. Does not ignore `packages`.
+ * Normalizes `options.rootDir` with `path.resolve` and copies it to
+ * `parserOptions.tsconfigRootDir` on every config object that has
+ * `languageOptions`, including the object that sets the TypeScript parser,
+ * and on a final object with no `files` filter. Does not modify `options`.
+ * Ignores `dist`, `coverage`, and `node_modules`. Does not ignore
+ * `packages`.
  *
  * Files under `src` use the import bans for `options.runtime`. Other
  * `js`, `mjs`, `cjs`, and `ts` files, plus `scripts` and `turbo`, use the
@@ -221,55 +273,58 @@ export function definePackageConfig(options) {
     assertPackageRuntime(runtime);
     const rootDirectory = options?.rootDir;
     assertRootDirectory(rootDirectory);
-    return tseslint.config(
-        {
-            ignores: ["dist/**", "coverage/**", "node_modules/**"],
-        },
-        eslint.configs.recommended,
-        tseslint.configs.recommended,
-        {
-            languageOptions: {
-                globals: {
-                    ...globalsForRuntime(runtime),
-                },
-                parserOptions: {
-                    tsconfigRootDir: rootDirectory,
-                },
+    const resolvedRootDirectory = path.resolve(rootDirectory);
+    return applyTsconfigRootDirectory(
+        tseslint.config(
+            {
+                ignores: ["dist/**", "coverage/**", "node_modules/**"],
             },
-            plugins: {
-                turbo: turboPlugin,
-            },
-            rules: {
-                "turbo/no-undeclared-env-vars": "error",
-                "@typescript-eslint/no-unused-vars": [
-                    "error",
-                    {
-                        argsIgnorePattern: "^_",
-                        varsIgnorePattern: "^_",
+            eslint.configs.recommended,
+            tseslint.configs.recommended,
+            {
+                languageOptions: {
+                    globals: {
+                        ...globalsForRuntime(runtime),
                     },
+                },
+                plugins: {
+                    turbo: turboPlugin,
+                },
+                rules: {
+                    "turbo/no-undeclared-env-vars": "error",
+                    "@typescript-eslint/no-unused-vars": [
+                        "error",
+                        {
+                            argsIgnorePattern: "^_",
+                            varsIgnorePattern: "^_",
+                        },
+                    ],
+                },
+            },
+            {
+                files: ["src/**/*.{ts,tsx,js,mjs,cjs}"],
+                rules: {
+                    "no-restricted-imports":
+                        restrictedImportsForRuntime(runtime),
+                    "no-restricted-syntax": restrictedSyntaxForRuntime(runtime),
+                },
+            },
+            {
+                files: [
+                    "*.{js,mjs,cjs,ts}",
+                    "scripts/**/*.{js,mjs,ts}",
+                    "turbo/**/*.{js,mjs,ts}",
                 ],
+                ignores: ["src/**"],
+                rules: {
+                    "no-restricted-imports":
+                        restrictedImportsForRuntime("node"),
+                    "no-restricted-syntax": restrictedSyntaxForRuntime("node"),
+                },
             },
-        },
-        {
-            files: ["src/**/*.{ts,tsx,js,mjs,cjs}"],
-            rules: {
-                "no-restricted-imports": restrictedImportsForRuntime(runtime),
-                "no-restricted-syntax": restrictedSyntaxForRuntime(runtime),
-            },
-        },
-        {
-            files: [
-                "*.{js,mjs,cjs,ts}",
-                "scripts/**/*.{js,mjs,ts}",
-                "turbo/**/*.{js,mjs,ts}",
-            ],
-            ignores: ["src/**"],
-            rules: {
-                "no-restricted-imports": restrictedImportsForRuntime("node"),
-                "no-restricted-syntax": restrictedSyntaxForRuntime("node"),
-            },
-        },
-        eslintConfigPrettier,
+            eslintConfigPrettier,
+        ),
+        resolvedRootDirectory,
     );
 }
 
@@ -277,8 +332,9 @@ export function definePackageConfig(options) {
  * Returns a flat ESLint config for the repository root.
  *
  * Uses the Node runtime, then adds `packages` to the ignore list so each
- * package lints itself. Copies `options.rootDir` to
- * `parserOptions.tsconfigRootDir` for every file. Does not modify `options`.
+ * package lints itself. `options.rootDir` is normalized and copied to
+ * `parserOptions.tsconfigRootDir` the same way as `definePackageConfig`.
+ * Does not modify `options`.
  *
  * @param {import("./index.js").RootLintOptions} options - `rootDir` is the absolute repository directory. Pass `import.meta.dirname`.
  * @returns {import("eslint").Linter.Config[]} A new array of config objects.

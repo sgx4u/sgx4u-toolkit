@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { test } from "node:test";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { ESLint } from "eslint";
 import { definePackageConfig, defineRootConfig } from "./index.js";
 
@@ -220,6 +220,41 @@ test("rootDir is required and must be absolute", () => {
     );
 });
 
+/**
+ * @param {import("eslint").Linter.Config[]} configs
+ * @param {string} rootDirectory
+ */
+function assertTsconfigRootDirectory(configs, rootDirectory) {
+    const parserConfig = configs.find(
+        (config) => config.languageOptions?.parser,
+    );
+    assert.ok(parserConfig);
+    assert.equal(
+        parserConfig.languageOptions.parserOptions.tsconfigRootDir,
+        rootDirectory,
+    );
+
+    const lastConfig = configs.at(-1);
+    assert.equal(lastConfig.files, undefined);
+    assert.equal(
+        lastConfig.languageOptions.parserOptions.tsconfigRootDir,
+        rootDirectory,
+    );
+
+    for (const config of configs) {
+        const parserOptions = config.languageOptions?.parserOptions;
+        if (
+            parserOptions == null ||
+            (!Object.hasOwn(parserOptions, "project") &&
+                !Object.hasOwn(parserOptions, "projectService"))
+        ) {
+            continue;
+        }
+
+        assert.equal(parserOptions.tsconfigRootDir, rootDirectory);
+    }
+}
+
 test("tsconfigRootDir applies to every file, not one glob", () => {
     const packageConfigs = configForRuntime("node");
     const unrestrictedPackageConfig = packageConfigs.find(
@@ -243,6 +278,73 @@ test("tsconfigRootDir applies to every file, not one glob", () => {
             .flatMap((config) => config.ignores ?? [])
             .includes("packages/**"),
     );
+});
+
+test("the parser block and every typed block use rootDir", () => {
+    assertTsconfigRootDirectory(
+        configForRuntime("node"),
+        path.resolve(packageDirectory),
+    );
+    assertTsconfigRootDirectory(
+        defineRootConfig({ rootDir: repositoryRoot }),
+        path.resolve(repositoryRoot),
+    );
+});
+
+test("rootDir is normalized before it is copied to tsconfigRootDir", () => {
+    const unnormalizedRootDirectory = `${packageDirectory}${path.sep}`;
+    assert.notEqual(unnormalizedRootDirectory, packageDirectory);
+    assertTsconfigRootDirectory(
+        definePackageConfig({
+            runtime: "node",
+            rootDir: unnormalizedRootDirectory,
+        }),
+        packageDirectory,
+    );
+});
+
+test("the parser block parses tsdown.config.ts after several configs were loaded", async () => {
+    // Loading these configs records one candidate directory each: the
+    // workspace root, eslint-config, and prettier-config. The base object
+    // that sets the parser carries tsconfigRootDir, so parsing
+    // tsdown.config.ts does not throw when more than one candidate exists.
+    for (const configFile of [
+        "eslint.config.js",
+        "packages/config/eslint-config/eslint.config.js",
+        "packages/config/prettier-config/eslint.config.js",
+    ]) {
+        await import(pathToFileURL(path.join(repositoryRoot, configFile)).href);
+    }
+
+    for (const [relativeDirectory, runtime] of [
+        ["packages/string", "universal"],
+        ["packages/config/eslint-config", "node"],
+        ["packages/config/prettier-config", "node"],
+        ["packages/config/tsdown-config", "node"],
+        ["packages/config/vitest-config", "node"],
+    ]) {
+        const directory = path.join(repositoryRoot, relativeDirectory);
+        const configs = definePackageConfig({
+            runtime,
+            rootDir: directory,
+        });
+        const parserConfig = configs.find(
+            (config) => config.languageOptions?.parser,
+        );
+        const filePath = path.join(directory, "tsdown.config.ts");
+        try {
+            parserConfig.languageOptions.parser.parseForESLint(
+                readFileSync(filePath, "utf8"),
+                {
+                    ...parserConfig.languageOptions.parserOptions,
+                    filePath,
+                    sourceType: "module",
+                },
+            );
+        } catch (error) {
+            assert.fail(`${filePath}\n${error.message}`);
+        }
+    }
 });
 
 test("the root config ignores package directories and package configs do not", () => {

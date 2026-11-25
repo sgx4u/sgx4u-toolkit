@@ -24,8 +24,9 @@ export interface PackageLintOptions {
      * Absolute directory of the calling `eslint.config.js`.
      *
      * Pass `import.meta.dirname`. A relative path is rejected. The value is
-     * copied to `parserOptions.tsconfigRootDir` and is not resolved against
-     * the process working directory.
+     * normalized with `path.resolve` and copied to
+     * `parserOptions.tsconfigRootDir`. It is not resolved against the process
+     * working directory before that normalization.
      */
     rootDir: string;
 }
@@ -38,8 +39,9 @@ export interface RootLintOptions {
      * Absolute directory of the root `eslint.config.js`.
      *
      * Pass `import.meta.dirname`. A relative path is rejected. The value is
-     * copied to `parserOptions.tsconfigRootDir` and is not resolved against
-     * the process working directory.
+     * normalized with `path.resolve` and copied to
+     * `parserOptions.tsconfigRootDir`. It is not resolved against the process
+     * working directory before that normalization.
      */
     rootDir: string;
 }
@@ -47,10 +49,12 @@ export interface RootLintOptions {
 /**
  * Returns a flat ESLint config for one package.
  *
- * Copies `options.rootDir` to `parserOptions.tsconfigRootDir` on a config
- * object that has no `files` filter, so every file this config lints uses
- * that directory. Does not modify `options`. Ignores `dist`, `coverage`,
- * and `node_modules`. Does not ignore `packages`.
+ * Normalizes `options.rootDir` with `path.resolve` and copies it to
+ * `parserOptions.tsconfigRootDir` on every config object that has
+ * `languageOptions`, including the object that sets the TypeScript parser,
+ * and on a final object with no `files` filter. Does not modify `options`.
+ * Ignores `dist`, `coverage`, and `node_modules`. Does not ignore
+ * `packages`.
  *
  * Files under `src` use the import bans for `options.runtime`. Other
  * `js`, `mjs`, `cjs`, and `ts` files, plus `scripts` and `turbo`, use the
@@ -71,8 +75,9 @@ export function definePackageConfig(
  * Returns a flat ESLint config for the repository root.
  *
  * Uses the Node runtime, then adds `packages` to the ignore list so each
- * package lints itself. Copies `options.rootDir` to
- * `parserOptions.tsconfigRootDir` for every file. Does not modify `options`.
+ * package lints itself. `options.rootDir` is normalized and copied to
+ * `parserOptions.tsconfigRootDir` the same way as
+ * {@link definePackageConfig}. Does not modify `options`.
  *
  * @param options - `rootDir` is the absolute repository directory. Pass `import.meta.dirname`.
  * @returns A new array of config objects.
