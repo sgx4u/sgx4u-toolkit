@@ -81,6 +81,7 @@ export { listTimeZones } from "./list-time-zones/list-time-zones.js";
 export { millisecondsToDuration } from "./milliseconds-to-duration/milliseconds-to-duration.js";
 export { negateDuration } from "./negate-duration/negate-duration.js";
 export { normalizeDuration } from "./normalize-duration/normalize-duration.js";
+export { parseLocaleDate } from "./parse-locale-date/parse-locale-date.js";
 export { parseTimeOfDay } from "./parse-time-of-day/parse-time-of-day.js";
 export { parseUtcOffset } from "./parse-utc-offset/parse-utc-offset.js";
 export { getFiscalYear } from "./get-fiscal-year/get-fiscal-year.js";
@@ -103,6 +104,7 @@ export { toTemporalInstant } from "./to-temporal-instant/to-temporal-instant.js"
 export { toUnixSeconds } from "./to-unix-seconds/to-unix-seconds.js";
 export { formatDate } from "./format-date/format-date.js";
 export { formatDateRange } from "./format-date-range/format-date-range.js";
+export { formatTimeZoneName } from "./format-time-zone-name/format-time-zone-name.js";
 export { formatDateWithStyle } from "./format-date-with-style/format-date-with-style.js";
 export { formatUtcOffset } from "./format-utc-offset/format-utc-offset.js";
 export { formatRelativeCalendarDay } from "./format-relative-calendar-day/format-relative-calendar-day.js";
