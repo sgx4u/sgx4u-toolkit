@@ -70,45 +70,6 @@ export function isValidDate(value: unknown): boolean {
 }
 
 /**
- * Whether `year` has a February 29 in the proleptic Gregorian calendar.
- *
- * Year 0 is a leap year. A year divisible by 100 is a leap year only when
- * it is also divisible by 400.
- *
- * @param year - A four-digit calendar year, from 0 through 9999.
- * @returns `true` when February has 29 days.
- */
-function isLeapYear(year: number): boolean {
-    if (year % 400 === 0) {
-        return true;
-    }
-    if (year % 100 === 0) {
-        return false;
-    }
-    return year % 4 === 0;
-}
-
-/**
- * Whether the calendar day exists.
- *
- * @param year - Full year, already parsed from four digits.
- * @param month - Month number, from 1 through 12 when the day can exist.
- * @param day - Day of the month, starting at 1.
- * @returns `true` when that month contains `day`.
- */
-function isRealYearMonthDay(year: number, month: number, day: number): boolean {
-    if (month < 1 || month > 12 || day < 1) {
-        return false;
-    }
-    const daysInMonth = daysInCommonMonth[month];
-    if (daysInMonth === undefined) {
-        return false;
-    }
-    const maximumDay = month === 2 && isLeapYear(year) ? 29 : daysInMonth;
-    return day <= maximumDay;
-}
-
-/**
  * Whether `timestamp` is a finite instant `Date` can store.
  *
  * `NaN`, infinities, and values outside ±8.64e15 milliseconds become an
@@ -199,6 +160,26 @@ function isValidDateTime(value: string): boolean {
 }
 
 /**
+ * Whether the calendar day exists.
+ *
+ * @param year - Full year, already parsed from four digits.
+ * @param month - Month number, from 1 through 12 when the day can exist.
+ * @param day - Day of the month, starting at 1.
+ * @returns `true` when that month contains `day`.
+ */
+function isRealYearMonthDay(year: number, month: number, day: number): boolean {
+    if (month < 1 || month > 12 || day < 1) {
+        return false;
+    }
+    const daysInMonth = daysInCommonMonth[month];
+    if (daysInMonth === undefined) {
+        return false;
+    }
+    const maximumDay = month === 2 && isLeapYear(year) ? 29 : daysInMonth;
+    return day <= maximumDay;
+}
+
+/**
  * @param hourText - Two digits, `00` through `23` when valid.
  * @param minuteText - Two digits, `00` through `59` when valid.
  * @param secondText - Two digits when seconds were present.
@@ -234,4 +215,23 @@ function isValidOffset(
         return false;
     }
     return Number(offsetHourText) <= 23 && Number(offsetMinuteText) <= 59;
+}
+
+/**
+ * Whether `year` has a February 29 in the proleptic Gregorian calendar.
+ *
+ * Year 0 is a leap year. A year divisible by 100 is a leap year only when
+ * it is also divisible by 400.
+ *
+ * @param year - A four-digit calendar year, from 0 through 9999.
+ * @returns `true` when February has 29 days.
+ */
+function isLeapYear(year: number): boolean {
+    if (year % 400 === 0) {
+        return true;
+    }
+    if (year % 100 === 0) {
+        return false;
+    }
+    return year % 4 === 0;
 }

@@ -79,6 +79,10 @@ Pick the runtime from [Runtimes](./README.md#runtimes).
 
 Libraries keep `src/index.ts` as a re-export list of each function and its public types. Each function is a kebab-case folder under `src` with `<name>.ts`, `<name>.types.ts` when a public type exists, `<name>.test.ts`, and `<name>.md`. The generator writes all four for the scaffold function. Shared code lives in `src/constants`, `src/data`, or `src/utils` only when a function uses it. Functions have explicit return types. tsdown writes ESM and CommonJS into `dist` (`index.js` with `index.d.ts`, and `index.cjs` with `index.d.cts`). The `files` field publishes `dist`, `src`, and `README.md`, and excludes tests and the function guides. The export map lists `@sgx4u/source`, then `import` and `require` with `types` before the runtime file, and sets `main`, `module`, and `types`.
 
+## Code conventions
+
+Order function declarations top-down: the exported function first, then the functions it calls directly in call order, then their callees, breadth-first, each helper once. Constants and types that must be initialized before use stay above the functions. Helpers stay function declarations.
+
 ## Local linking
 
 From the app you are changing alongside a package:
