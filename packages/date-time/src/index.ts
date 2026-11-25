@@ -2,6 +2,7 @@
  * Public entry for `@sgx4u/date-time`.
  */
 export { addBusinessDays } from "./add-business-days/add-business-days.js";
+export { addDurations } from "./add-durations/add-durations.js";
 export { addDuration } from "./add-duration/add-duration.js";
 export { clampDate } from "./clamp-date/clamp-date.js";
 export { compareDates } from "./compare-dates/compare-dates.js";
@@ -66,6 +67,10 @@ export { getIsoWeeksInYear } from "./get-iso-weeks-in-year/get-iso-weeks-in-year
 export { getWeekOfYear } from "./get-week-of-year/get-week-of-year.js";
 export { getWeekOfMonth } from "./get-week-of-month/get-week-of-month.js";
 export { getQuarter } from "./get-quarter/get-quarter.js";
+export { getSeason } from "./get-season/get-season.js";
+export { listTimeZones } from "./list-time-zones/list-time-zones.js";
+export { negateDuration } from "./negate-duration/negate-duration.js";
+export { parseUtcOffset } from "./parse-utc-offset/parse-utc-offset.js";
 export { getFiscalYear } from "./get-fiscal-year/get-fiscal-year.js";
 export { getFiscalQuarter } from "./get-fiscal-quarter/get-fiscal-quarter.js";
 export { getFiscalYearInterval } from "./get-fiscal-year-interval/get-fiscal-year-interval.js";
@@ -81,6 +86,7 @@ export { reviveIsoDateTimes } from "./revive-iso-date-times/revive-iso-date-time
 export { toJulianDate } from "./to-julian-date/to-julian-date.js";
 export { toUnixSeconds } from "./to-unix-seconds/to-unix-seconds.js";
 export { formatDate } from "./format-date/format-date.js";
+export { formatUtcOffset } from "./format-utc-offset/format-utc-offset.js";
 export { formatRelativeCalendarDay } from "./format-relative-calendar-day/format-relative-calendar-day.js";
 export { formatRelativeTime } from "./format-relative-time/format-relative-time.js";
 export { getRelativeTimeParts } from "./get-relative-time-parts/get-relative-time-parts.js";

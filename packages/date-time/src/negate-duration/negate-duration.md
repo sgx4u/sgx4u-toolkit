@@ -1,0 +1,21 @@
+# `negateDuration`
+
+See the TSDoc on `negateDuration` for the contract.
+
+## Import
+
+```ts
+import { negateDuration } from "@sgx4u/date-time";
+```
+
+## Examples
+
+The TSDoc `@example` is covered by the tests.
+
+## Edge cases
+
+A value of the wrong type throws `TypeError`. An invalid option throws `RangeError`. `listTimeZones` returns an empty list when the runtime cannot enumerate zones.
+
+## Related
+
+- [`getUtcOffset`](../get-utc-offset/get-utc-offset.md)
