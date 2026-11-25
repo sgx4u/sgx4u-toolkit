@@ -30,6 +30,7 @@
     ],
     "scripts": {
         "build": "tsdown",
+        "typecheck": "tsc --noEmit",
         "lint": "eslint . --max-warnings 0",
         "test": "node --test index.test.js",
         "check:package": "publint && attw --pack ."
@@ -37,6 +38,8 @@
     "devDependencies": {
         "@arethetypeswrong/cli": "catalog:",
         "@sgx4u/eslint-config": "workspace:*",
+        "@sgx4u/tsconfig": "workspace:*",
+        "@types/node": "catalog:",
         "eslint": "catalog:",
         "prettier": "catalog:",
         "publint": "catalog:",
