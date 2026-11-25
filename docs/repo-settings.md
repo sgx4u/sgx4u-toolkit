@@ -130,9 +130,15 @@ Settings → Environments → New environment → `release`.
 
 The publish job and the beta snapshot job use this environment and `id-token: write`. Approving the environment is the publish gate.
 
+On `production` and `release/**`, the publish job installs with a frozen lockfile, builds, reviews packed files, and runs `scripts/publish-packages.mjs`. `production` uses the `latest` dist-tag. `release/**` uses `previous`. The script publishes libraries under `packages/<name>` and leaves presets in `packages/config` unpublished. npm trusted publishing uses the job's OIDC token. Do not set `registry-url` on `actions/setup-node` and do not create an `NPM_TOKEN` secret: `registry-url` writes an empty `_authToken`, and npm then skips the trusted publisher. The same job creates GitHub releases and pushes git tags for the libraries it published. The workflow file stays `release.yml` and the environment stays `release`, because the trusted publisher is bound to that file and environment.
+
+The version job holds the release GitHub App token and does not have `id-token: write`. The publish job has the OIDC token and does not have the App token. Pull requests do not run this workflow.
+
+`beta` publishes only when a changeset file is present, so an empty push does not request this environment. The snapshot job has `contents: read`. `scripts/publish-beta-snapshot.mjs` versions with `changeset version --snapshot beta`, publishes libraries whose versions changed, and restores the checkout.
+
 ## 6. npm trusted publishing
 
-For each package, publish `0.1.0` once from a laptop so npm can attach a trusted publisher. Later versions are published by `release.yml`.
+For each library, publish `0.1.0` once from a laptop so npm can attach a trusted publisher. Later versions are published by `release.yml`. Presets in `packages/config` are not published. A release with no libraries exits without publishing.
 
 1. Let the Version Packages pull request bump the package to `0.1.0`, or check out that commit. `develop` leaves the changeset in git. `beta` publishes an uncommitted snapshot and also leaves the changeset in git.
 2. From the package directory, with npm CLI 11.5.1 or newer and 2FA: `npm publish --access public`.
@@ -140,11 +146,9 @@ For each package, publish `0.1.0` once from a laptop so npm can attach a trusted
 4. Cancel the GitHub `release` run that is waiting to publish that same version.
 5. Turn off token publishing when npm shows that switch. CI uses the trusted publisher. Add no `NPM_TOKEN` secret.
 
-The packages in the first changeset are `@sgx4u/tsconfig`, `@sgx4u/eslint-config`, `@sgx4u/prettier-config`, `@sgx4u/tsdown-config`, `@sgx4u/vitest-config`, and `@sgx4u/string`.
-
 Turn on 2FA for the npm account that owns `@sgx4u`.
 
-## 7. Code security and discussions
+## 7. Code security
 
 Settings → Code security:
 
@@ -158,8 +162,14 @@ Settings → Code security:
 
 Settings → General → Features:
 
-- Discussions: on
+- Discussions: off. Questions use the blank issue form. The issue config does not link to Discussions.
 - Issues: on
+
+Issue forms live in `.github/ISSUE_TEMPLATE`. `blank_issues_enabled` is false, so a new issue starts from a form: bug report, documentation, feature request, or blank. Report a vulnerability through the private advisory link in that config.
+
+Labels the forms apply: `bug`, `documentation`, `feature`, `unclassified`. `bug` and `documentation` already exist. Create `feature` and `unclassified` so a form can apply them.
+
+`.github/FUNDING.yml` is read from the default branch. It lists GitHub Sponsors for `@sgx4u` and `https://razorpay.me/@sgx4u`. The Sponsors button appears when GitHub Sponsors is enabled on the `@sgx4u` account. The Razorpay link appears from the file.
 
 ## 8. Remote cache
 

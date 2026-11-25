@@ -32,11 +32,7 @@ Experimental (`0.x`).
 
 `vitest` is a peer dependency at `^5.0.0`.
 
-```sh
-pnpm add -D @sgx4u/vitest-config vitest       # pnpm
-npm install --save-dev @sgx4u/vitest-config vitest    # npm
-yarn add --dev @sgx4u/vitest-config vitest    # yarn
-```
+This preset lives in this repository and is a workspace dev dependency of the packages here. It is not published.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

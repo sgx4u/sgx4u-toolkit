@@ -6,9 +6,6 @@ import turboPlugin from "eslint-plugin-turbo";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 
-const privateScopeMessage =
-    "Public toolkit packages never depend on @sgx4u-private. Private code stays in its own repository.";
-
 const deepImportMessage =
     "Import @sgx4u packages through their exports map. Deep imports into src/ or dist/ are not supported.";
 
@@ -68,7 +65,6 @@ const edgeStubImportPattern = `^(?:node:)?(?:${edgeStubModuleNames
     .map((moduleName) => escapeRegularExpression(moduleName))
     .join("|")})(?:/.+)?$`;
 
-const privateScopePattern = "^@sgx4u-private(?:/.+)?$";
 const deepImportPattern = "^@sgx4u/[^/]+/(?:src|dist)(?:/.+)?$";
 
 const packageRuntimes = ["universal", "edge", "node"];
@@ -109,10 +105,7 @@ function assertRootDirectory(rootDirectory) {
  * @returns {{ pattern: string, message: string }[]}
  */
 function importBansForRuntime(runtime) {
-    const bans = [
-        { pattern: privateScopePattern, message: privateScopeMessage },
-        { pattern: deepImportPattern, message: deepImportMessage },
-    ];
+    const bans = [{ pattern: deepImportPattern, message: deepImportMessage }];
 
     if (runtime === "universal") {
         bans.push({

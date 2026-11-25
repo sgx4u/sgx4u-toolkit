@@ -32,11 +32,7 @@ Experimental (`0.x`).
 
 `tsdown` is a peer dependency at `^0.23.0`.
 
-```sh
-pnpm add -D @sgx4u/tsdown-config tsdown       # pnpm
-npm install --save-dev @sgx4u/tsdown-config tsdown    # npm
-yarn add --dev @sgx4u/tsdown-config tsdown    # yarn
-```
+This preset lives in this repository and is a workspace dev dependency of the packages here. It is not published.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

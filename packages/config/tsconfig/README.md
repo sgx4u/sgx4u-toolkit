@@ -28,11 +28,7 @@ Experimental (`0.x`).
 
 ## Installation
 
-```sh
-pnpm add -D @sgx4u/tsconfig       # pnpm
-npm install --save-dev @sgx4u/tsconfig    # npm
-yarn add --dev @sgx4u/tsconfig    # yarn
-```
+This preset lives in this repository and is a workspace dev dependency of the packages here. It is not published.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

@@ -34,11 +34,7 @@ Experimental (`0.x`).
 
 Peers are `eslint` at `^10.0.0` and `typescript` at `>=6`.
 
-```sh
-pnpm add -D @sgx4u/eslint-config eslint typescript          # pnpm
-npm install --save-dev @sgx4u/eslint-config eslint typescript    # npm
-yarn add --dev @sgx4u/eslint-config eslint typescript       # yarn
-```
+This preset lives in this repository and is a workspace dev dependency of the packages here. It is not published.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -108,7 +104,7 @@ The ignore list is `dist`, `coverage`, and `node_modules`. Files under `src` use
 | `edge`      | Allows web standards and Workers `nodejs_compat` modules that have an implementation (`node:fs`, `node:http`, `node:net`, `node:dns`, `node:tls`, and the rest of that set). Rejects the non-functional stub modules listed below. | Worker globals, plus `process`, `Buffer`, `global`, `setImmediate`, and `clearImmediate`.                          |
 | `node`      | Allows Node built-ins.                                                                                                                                                                                                             | Node globals.                                                                                                      |
 
-Every runtime rejects an `@sgx4u-private` specifier and a deep import into `src/` or `dist/`. Import `@sgx4u` packages through their exports map.
+Every runtime rejects a deep import into `src/` or `dist/`. Import `@sgx4u` packages through their exports map.
 
 Edge stub modules, with or without the `node:` prefix, including subpaths:
 
