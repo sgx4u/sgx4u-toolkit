@@ -1,0 +1,7 @@
+# Personal GitHub account. There is no sgx4u organization or maintainers team.
+# When more people own a domain, add their handles on that path.
+* @sgx4u
+/.github/ @sgx4u
+/domains/platform/ @sgx4u
+/domains/foundation/ @sgx4u
+/domains/backend/ @sgx4u

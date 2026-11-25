@@ -1,159 +1,97 @@
-# Turborepo starter
+# sgx4u-toolkit
 
-This Turborepo starter is maintained by the Turborepo core team.
+Public Turborepo of shared non-UI [`@sgx4u`](https://www.npmjs.com/search?q=%40sgx4u) packages.
 
-## Using this example
+UI packages live in [sgx4u-ui](https://github.com/sgx4u/sgx4u-ui). This repository never depends on them, and it never depends on a private scope.
 
-Run the following command:
+[![ci](https://github.com/sgx4u/sgx4u-toolkit/actions/workflows/ci.yml/badge.svg)](https://github.com/sgx4u/sgx4u-toolkit/actions/workflows/ci.yml)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+[![node](https://img.shields.io/badge/node-%3E%3D22.12-339933.svg)](./package.json)
+[![npm @sgx4u/string](https://img.shields.io/npm/v/@sgx4u/string.svg)](https://www.npmjs.com/package/@sgx4u/string)
 
-```sh
-npx create-turbo@latest
-```
+## Packages
 
-## What's inside?
+| Package                                                        | Domain     | What it is                             |
+| -------------------------------------------------------------- | ---------- | -------------------------------------- |
+| [`@sgx4u/tsconfig`](./domains/platform/tsconfig)               | platform   | TypeScript presets                     |
+| [`@sgx4u/eslint-config`](./domains/platform/eslint-config)     | platform   | ESLint flat config and boundaries      |
+| [`@sgx4u/prettier-config`](./domains/platform/prettier-config) | platform   | Prettier preset                        |
+| [`@sgx4u/tsdown-config`](./domains/platform/tsdown-config)     | platform   | tsdown preset for ESM libraries        |
+| [`@sgx4u/vitest-config`](./domains/platform/vitest-config)     | platform   | Vitest preset                          |
+| [`@sgx4u/string`](./domains/foundation/string)                 | foundation | Blank checks and whitespace collapsing |
 
-This Turborepo includes the following packages/apps:
+`domains/backend` is reserved for server adapters. None are published yet.
 
-### Apps and Packages
+Packages are ESM-only, built with tsdown, and declare `"node": ">=22.12"`. Inside this repo, runtime dependencies use `workspace:^` and dev tooling uses `workspace:*`. Third-party versions live in the pnpm catalog.
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `@next/eslint-plugin-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+## Usage
 
 ```sh
-cd my-turborepo
-turbo build
+pnpm add @sgx4u/string
 ```
 
-Without global `turbo`, use your package manager:
+```ts
+import { collapseWhitespace, isBlank } from "@sgx4u/string";
+
+isBlank("  ");
+collapseWhitespace("  a \n b  ");
+```
+
+The `@sgx4u/source` export condition points at TypeScript source. Apps in this workspace resolve it through `customConditions`. Published installs use `dist`.
+
+## Development
+
+Install Node 24 (`.nvmrc`) and pnpm 11.25. The package manager is pinned in `package.json`.
 
 ```sh
-cd my-turborepo
-npx turbo build
-pnpm exec turbo build
-pnpm exec turbo build
+pnpm install
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+Create a package:
 
 ```sh
-turbo build --filter=docs
+pnpm exec turbo gen package
 ```
 
-Without global `turbo`:
+The generator asks for the name, domain, tier, runtime, and owner, then writes the package, a changeset, and a CODEOWNERS line. Web and native packages belong in sgx4u-ui, so this generator does not offer those runtimes.
+
+Add a changeset on every pull request that changes a publishable package:
 
 ```sh
-npx turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+pnpm changeset
 ```
 
-### Develop
+Versions are independent. `updateInternalDependencies` is `minor`, so a minor bump of a dependency also updates the packages that depend on it.
 
-To develop all apps and packages, run the following command:
+## Releases
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+Pushes to `main`, `next`, and `release/**` run [`.github/workflows/release.yml`](./.github/workflows/release.yml).
 
-```sh
-cd my-turborepo
-turbo dev
+- Pending changesets open a **Version Packages** pull request through a GitHub App, so CI runs on that pull request.
+- Merging it publishes from the `release` environment with npm trusted publishing (OIDC) and provenance.
+- `main` publishes the `latest` dist-tag, `next` publishes `beta`, and `release/**` publishes `previous`.
+
+The first version of a new package is published from a laptop. npm can attach a trusted publisher only after the package exists. Later versions are published only by the workflow. See [docs/repo-settings.md](./docs/repo-settings.md).
+
+Pull requests can install preview tarballs from pkg.pr.new. Those previews are not npm releases.
+
+## Repository map
+
+```text
+domains/platform     presets, dev dependencies only
+domains/foundation   platform-free TypeScript
+domains/backend      server adapters
+turbo/generators     pnpm exec turbo gen package
+scripts              visibility, link, and pack guards
+docs                 settings checklist and decisions
 ```
 
-Without global `turbo`, use your package manager:
+Dependency direction is downward only: adapters may use foundation, foundation does not use adapters, and nothing here uses UI. `turbo boundaries` and ESLint both enforce that. A separate check rejects any `@sgx4u-private` or `@sgx4u/ui*` reference in manifests and source.
 
-```sh
-cd my-turborepo
-npx turbo dev
-pnpm exec turbo dev
-pnpm exec turbo dev
-```
+## License
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo dev --filter=web
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-pnpm exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-pnpm exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+[MIT](./LICENSE) © 2026 Subhajit Ghosh
