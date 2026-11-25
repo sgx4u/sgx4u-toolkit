@@ -42,7 +42,8 @@
     "prettier": "@sgx4u/prettier-config",
     "sherif": {
         "ignoreRule": [
-            "non-existant-packages"
+            "non-existant-packages",
+            "root-package-private-field"
         ]
     },
     "lint-staged": {
