@@ -1,7 +1,13 @@
 import { defineLibraryConfig } from "@sgx4u/tsdown-config";
 import type { UserConfig } from "tsdown";
 
-// Annotate the binding so isolatedDeclarations can type the default export.
+/**
+ * tsdown config for this package.
+ *
+ * The binding is annotated so `isolatedDeclarations` can type the default
+ * export. Universal and edge libraries keep the neutral platform. A Node
+ * library sets `platform` to `"node"`.
+ */
 {{#if (eq runtimeName "node")}}
 const libraryConfig: UserConfig = defineLibraryConfig({
     platform: "node",

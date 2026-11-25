@@ -5,6 +5,13 @@ Replace this sentence with what `@sgx4u/{{packageName}}` sets up.
 
 This preset is a workspace dev dependency. It is not published.
 
+Each function lives in a kebab-case folder: `<name>.ts`, `<name>.types.ts`,
+`<name>.test.ts`, and `<name>.md`. Shared code lives in
+`constants/*.constants.ts`, `data/*.data.ts`, and `utils/*.utils.ts`.
+`src/index.ts` re-exports the public functions. This preset starts with
+`package-identifier.ts`, its test, and the folder `index.ts`. Add the types
+file and the notes file when the function needs them.
+
 ## Usage
 
 ```ts
@@ -46,7 +53,15 @@ Owner: `@{{ownerHandle}}`
 
 <h2 id="about">💫 About</h2>
 
-`packageIdentifier` returns `@sgx4u/{{packageName}}`. The implementation, the folder `index.ts`, and the test live in `src/package-identifier/`. `src/index.ts` re-exports it. Replace the stub, and the sentence in the header, before the first release.
+`packageIdentifier` returns `@sgx4u/{{packageName}}`. Replace the stub, and the sentence in the header, before the first release.
+
+Each function lives in its own kebab-case folder: `<name>.ts`,
+`<name>.types.ts`, `<name>.test.ts`, and `<name>.md`. Shared code lives in
+`constants/*.constants.ts`, `data/*.data.ts`, and `utils/*.utils.ts`.
+`src/index.ts` re-exports the public functions. This package starts with
+`src/package-identifier/package-identifier.ts`, its test, and the folder
+`index.ts`. Add the types file and the notes file when the function needs
+them.
 
 Experimental (`0.x`). Breaking changes may land in minor versions until 1.0.0.
 
