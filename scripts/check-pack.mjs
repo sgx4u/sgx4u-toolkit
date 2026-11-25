@@ -22,7 +22,7 @@ const maximumTarballBytes = 1_000_000;
 
 /**
  * @param {string} repositoryDirectory
- * @param {(absolutePath: string, packageManifest: { name?: string, private?: boolean }) => boolean} includePackage
+ * @param {(absolutePath: string, packageManifest: { private?: boolean }) => boolean} includePackage
  * @returns {string[]}
  */
 function listPackageDirectories(repositoryDirectory, includePackage) {
@@ -69,7 +69,7 @@ function listPackageDirectories(repositoryDirectory, includePackage) {
 /**
  * @param {string} repositoryDirectory
  * @param {string} absolutePath
- * @param {{ name?: string, private?: boolean }} packageManifest
+ * @param {{ private?: boolean }} packageManifest
  * @returns {boolean}
  */
 function isPublishablePackage(
@@ -77,10 +77,7 @@ function isPublishablePackage(
     absolutePath,
     packageManifest,
 ) {
-    if (
-        packageManifest.private === true ||
-        packageManifest.name === "@sgx4u/toolkit"
-    ) {
+    if (packageManifest.private === true) {
         return false;
     }
     const relativePath = path

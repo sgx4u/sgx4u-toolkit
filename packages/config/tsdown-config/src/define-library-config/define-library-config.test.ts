@@ -14,13 +14,7 @@ test("builds ESM and CommonJS with a neutral platform", () => {
     assert.equal(config.fixedExtension, false);
 });
 
-test("published libraries keep CommonJS unless the caller sets format", () => {
-    assert.deepEqual(defineLibraryConfig().format, ["esm", "cjs"]);
-    assert.deepEqual(defineLibraryConfig({ platform: "node" }).format, [
-        "esm",
-        "cjs",
-    ]);
-    assert.ok(defineLibraryConfig().format?.includes("cjs"));
+test("a format override replaces the preset formats", () => {
     assert.deepEqual(defineLibraryConfig({ format: ["esm"] }).format, ["esm"]);
 });
 

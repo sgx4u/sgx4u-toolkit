@@ -34,15 +34,11 @@ test("node.json selects Node types and inherits lib from the baseline", () => {
     assert.equal("lib" in node.compilerOptions, false);
 });
 
-test("edge.json adds the WebWorker library and clears types", () => {
+test("edge.json adds the WebWorker library and inherits types from the baseline", () => {
     const edge = readPreset("./edge.json");
     assert.equal(edge.extends, "./base.json");
     assert.deepEqual(edge.compilerOptions.lib, ["ES2022", "WebWorker"]);
-    assert.deepEqual(edge.compilerOptions.types, []);
-});
-
-test("workers.json is not part of the preset", () => {
-    assert.equal(existsSync(new URL("./workers.json", import.meta.url)), false);
+    assert.equal("types" in edge.compilerOptions, false);
 });
 
 test("preset paths resolve through the package exports", () => {

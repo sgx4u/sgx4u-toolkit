@@ -129,35 +129,26 @@ function isTracked(rootDirectory, relativePath) {
  * @param {string} rootDirectory
  */
 function removeUntrackedChangelogs(rootDirectory) {
-    const parentDirectories = [
-        path.join(rootDirectory, "packages"),
-        path.join(rootDirectory, "packages", "config"),
-    ];
+    const packagesDirectory = path.join(rootDirectory, "packages");
+    if (
+        !existsSync(packagesDirectory) ||
+        !statSync(packagesDirectory).isDirectory()
+    ) {
+        return;
+    }
 
-    for (const parentDirectory of parentDirectories) {
-        if (
-            !existsSync(parentDirectory) ||
-            !statSync(parentDirectory).isDirectory()
-        ) {
+    for (const entryName of readdirSync(packagesDirectory)) {
+        const changelogPath = path.join(
+            packagesDirectory,
+            entryName,
+            "CHANGELOG.md",
+        );
+        if (!existsSync(changelogPath) || !statSync(changelogPath).isFile()) {
             continue;
         }
-
-        for (const entryName of readdirSync(parentDirectory)) {
-            const changelogPath = path.join(
-                parentDirectory,
-                entryName,
-                "CHANGELOG.md",
-            );
-            if (
-                !existsSync(changelogPath) ||
-                !statSync(changelogPath).isFile()
-            ) {
-                continue;
-            }
-            const relativePath = path.relative(rootDirectory, changelogPath);
-            if (!isTracked(rootDirectory, relativePath)) {
-                unlinkSync(changelogPath);
-            }
+        const relativePath = path.relative(rootDirectory, changelogPath);
+        if (!isTracked(rootDirectory, relativePath)) {
+            unlinkSync(changelogPath);
         }
     }
 }

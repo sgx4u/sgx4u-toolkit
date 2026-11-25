@@ -48,9 +48,7 @@ export default defineRootConfig({
 | `runtime` | yes      | `universal`, `edge`, or `node`. Any other value throws `TypeError`. The message names `runtime` and the received value.                                                                           |
 | `rootDir` | yes      | Absolute path to the directory of the calling `eslint.config.js`. Pass `import.meta.dirname`. A missing or relative value throws `TypeError`. The message names `rootDir` and the received value. |
 
-`rootDir` is then normalized with `path.resolve`, so a Windows path that uses `/` is still a resolved absolute path, and it is not resolved against the process working directory before that.
-
-typescript-eslint enables its parser on one config object and records the directory of each `eslint.config.js` that reads its configs. The editor loads the repository root and each package config in one process, so that record holds more than one directory. Parsing then requires `parserOptions.tsconfigRootDir`. The normalized directory is written onto every returned config object that has `languageOptions` — including the object that sets the parser, and any object that sets `parserOptions.project` or `parserOptions.projectService` — and onto a final object with no `files` filter. Config files outside `src`, such as `tsdown.config.ts`, use that directory.
+`rootDir` is normalized with `path.resolve` and written to `parserOptions.tsconfigRootDir` for every linted file. typescript-eslint requires that option when the editor loads more than one `eslint.config.js` in the same process.
 
 The ignore list is `dist`, `coverage`, and `node_modules`. Files under `src` use the import bans for `runtime`. Other `js`, `mjs`, `cjs`, and `ts` files, plus `scripts` and `turbo`, use the Node bans. `options` is left unchanged.
 
