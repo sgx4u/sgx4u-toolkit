@@ -2,7 +2,7 @@
 
 Published packages version independently. `baseBranch` is `develop`. `access` is `public`. `updateInternalDependencies` is `minor`, so a minor bump of a workspace dependency also bumps published packages that depend on it.
 
-`packages/config` is private workspace tooling. Those packages are not published, not versioned, and do not get a changelog. `privatePackages.version` and `privatePackages.tag` are both false, so Changesets skips every package with `"private": true`. An `ignore` list would repeat those names and would have to be edited for each new preset. The private flag is the publish gate, and it already covers a preset added later.
+`packages/config` is private workspace tooling. Those packages are not published and do not get a changelog. Each one keeps a fixed `version` of `0.0.0`. `pnpm pack` rewrites a library's `workspace:*` devDependency by reading that version, and a missing version makes publint, attw, and pack review fail. `privatePackages.version` and `privatePackages.tag` are both false, so Changesets does not bump the fixed version. An `ignore` list would repeat those names and would have to be edited for each new preset. The private flag is the publish gate, and it already covers a preset added later.
 
 ## When a changeset is required
 

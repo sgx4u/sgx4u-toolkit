@@ -1,5 +1,6 @@
 {
     "name": "@sgx4u/eslint-config",
+    "version": "0.0.0",
     "private": true,
     "description": "ESLint flat config for @sgx4u packages, including runtime import rules.",
     "type": "module",

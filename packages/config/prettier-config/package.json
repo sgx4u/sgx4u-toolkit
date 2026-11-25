@@ -1,5 +1,6 @@
 {
     "name": "@sgx4u/prettier-config",
+    "version": "0.0.0",
     "private": true,
     "description": "Prettier preset for @sgx4u repositories.",
     "type": "module",

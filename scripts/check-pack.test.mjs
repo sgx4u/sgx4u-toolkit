@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, readdirSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readdirSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -30,5 +30,23 @@ test("workspace tooling is not on the npm publish list", () => {
         }
         const toolingPath = `packages/config/${entry.name}`;
         assert.equal(published.has(toolingPath), false, toolingPath);
+    }
+});
+
+test("private presets keep version 0.0.0 so a library can pack", () => {
+    const configDirectory = path.join(repositoryRoot, "packages", "config");
+
+    for (const entry of readdirSync(configDirectory, { withFileTypes: true })) {
+        if (!entry.isDirectory()) {
+            continue;
+        }
+        const packageManifest = JSON.parse(
+            readFileSync(
+                path.join(configDirectory, entry.name, "package.json"),
+                "utf8",
+            ),
+        );
+        assert.equal(packageManifest.private, true, entry.name);
+        assert.equal(packageManifest.version, "0.0.0", entry.name);
     }
 });
