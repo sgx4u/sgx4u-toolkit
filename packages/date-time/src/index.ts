@@ -9,6 +9,8 @@ export { compareDates } from "./compare-dates/compare-dates.js";
 export { compareTimesOfDay } from "./compare-times-of-day/compare-times-of-day.js";
 export { createDate } from "./create-date/create-date.js";
 export { createInterval } from "./create-interval/create-interval.js";
+export { divideInterval } from "./divide-interval/divide-interval.js";
+export { getIntervalGaps } from "./get-interval-gaps/get-interval-gaps.js";
 export { doIntervalsOverlap } from "./do-intervals-overlap/do-intervals-overlap.js";
 export { getIntervalIntersection } from "./get-interval-intersection/get-interval-intersection.js";
 export { isValidInterval } from "./is-valid-interval/is-valid-interval.js";
