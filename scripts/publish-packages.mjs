@@ -1,61 +1,150 @@
-import { readFileSync, writeFileSync } from "node:fs";
+import {
+    appendFileSync,
+    existsSync,
+    readdirSync,
+    readFileSync,
+    statSync,
+} from "node:fs";
 import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { distributionTagForBranch } from "./distribution-tag.mjs";
 
-/**
- * Arguments for `pnpm exec changeset publish`.
- * Artifact mode stores the dist-tag in publish-plan.json. Passing `--tag`
- * together with `--from-pack-dir` makes Changesets exit.
- *
- * @param {string} packDirectory
- * @returns {string[]}
- */
-export function publishArguments(packDirectory) {
-    return ["exec", "changeset", "publish", "--from-pack-dir", packDirectory];
-}
+const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
+const repositoryRoot = path.resolve(scriptDirectory, "..");
 
 /**
- * A release with no `publish` entries has nothing to send to npm.
- * That run exits successfully.
+ * Libraries live in packages/<name>. Presets live in packages/config and are not published.
  *
- * @param {{ plan?: { kind?: string }[][] }} planDocument
+ * @param {string} relativeDirectory
  * @returns {boolean}
  */
-export function planPublishesPackages(planDocument) {
-    const batches = Array.isArray(planDocument.plan) ? planDocument.plan : [];
-    return batches.some(
-        (batch) =>
-            Array.isArray(batch) &&
-            batch.some((release) => release.kind === "publish"),
+export function isRealPackage(relativeDirectory) {
+    const normalized = relativeDirectory.split(path.sep).join("/");
+    const parts = normalized.split("/");
+    return (
+        parts.length === 2 && parts[0] === "packages" && parts[1] !== "config"
     );
 }
 
 /**
- * @param {{ plan: { kind?: string, tag?: string }[][] }} planDocument
- * @param {string} distributionTag
+ * @param {string} packageName
+ * @param {string} version
+ * @returns {string}
  */
-export function applyDistributionTagToPlan(planDocument, distributionTag) {
-    for (const batch of planDocument.plan) {
-        for (const release of batch) {
-            if (release.kind === "publish") {
-                release.tag = distributionTag;
-            }
-        }
-    }
-    return planDocument;
+export function gitTagForPackage(packageName, version) {
+    return `${packageName}@${version}`;
 }
 
 /**
- * @param {string} packDirectory
+ * @param {string} packageName
  * @param {string} distributionTag
+ * @returns {string[]}
  */
-export function writeDistributionTag(packDirectory, distributionTag) {
-    const planPath = path.join(packDirectory, "publish-plan.json");
-    const planDocument = JSON.parse(readFileSync(planPath, "utf8"));
-    applyDistributionTagToPlan(planDocument, distributionTag);
-    writeFileSync(planPath, `${JSON.stringify(planDocument, null, 2)}\n`);
+export function publishArguments(packageName, distributionTag) {
+    return [
+        "--filter",
+        packageName,
+        "publish",
+        "--tag",
+        distributionTag,
+        "--access",
+        "public",
+        "--no-git-checks",
+    ];
+}
+
+/**
+ * @param {string} rootDirectory
+ * @returns {{ name: string, version: string, relativeDirectory: string }[]}
+ */
+export function listRealPackages(rootDirectory) {
+    const packagesDirectory = path.join(rootDirectory, "packages");
+    /** @type {{ name: string, version: string, relativeDirectory: string }[]} */
+    const packages = [];
+    if (!existsSync(packagesDirectory)) {
+        return packages;
+    }
+    for (const entry of readdirSync(packagesDirectory, {
+        withFileTypes: true,
+    })) {
+        if (!entry.isDirectory()) {
+            continue;
+        }
+        const relativeDirectory = path.posix.join("packages", entry.name);
+        if (!isRealPackage(relativeDirectory)) {
+            continue;
+        }
+        const manifestPath = path.join(
+            packagesDirectory,
+            entry.name,
+            "package.json",
+        );
+        if (!statSync(manifestPath, { throwIfNoEntry: false })?.isFile()) {
+            continue;
+        }
+        const packageManifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+        if (
+            packageManifest.private === true ||
+            typeof packageManifest.name !== "string" ||
+            typeof packageManifest.version !== "string"
+        ) {
+            continue;
+        }
+        packages.push({
+            name: packageManifest.name,
+            version: packageManifest.version,
+            relativeDirectory,
+        });
+    }
+    return packages;
+}
+
+/**
+ * @param {string} packageName
+ * @param {string} version
+ */
+export function recordPublishedPackage(packageName, version) {
+    const outputPath = process.env.CHANGESETS_OUTPUT;
+    if (!outputPath) {
+        return;
+    }
+    appendFileSync(
+        outputPath,
+        `${JSON.stringify({
+            type: "git-tag",
+            tag: gitTagForPackage(packageName, version),
+            packageName,
+        })}\n`,
+    );
+}
+
+/**
+ * npm view exits 0 when that exact version is already on the registry.
+ *
+ * @param {{ status: number | null, stdout: string }} result
+ * @param {string} version
+ * @returns {boolean}
+ */
+export function registryHasVersion(result, version) {
+    return result.status === 0 && result.stdout.trim() === version;
+}
+
+/**
+ * @param {string} packageName
+ * @param {string} version
+ * @returns {boolean}
+ */
+function packageVersionIsOnRegistry(packageName, version) {
+    const result = spawnSync(
+        "npm",
+        ["view", `${packageName}@${version}`, "version"],
+        { encoding: "utf8" },
+    );
+    return registryHasVersion(
+        { status: result.status, stdout: result.stdout ?? "" },
+        version,
+    );
 }
 
 function main() {
@@ -66,28 +155,38 @@ function main() {
         );
         process.exit(1);
     }
-    const distributionTag = distributionTagForBranch(branchName);
-    const packDirectory = process.env.CHANGESET_PACK_DIR;
-    if (!packDirectory) {
-        console.error(
-            "CHANGESET_PACK_DIR is required. Publish the tarballs produced by the pack job.",
-        );
-        process.exit(1);
-    }
 
-    const planPath = path.join(packDirectory, "publish-plan.json");
-    const planDocument = JSON.parse(readFileSync(planPath, "utf8"));
-    if (!planPublishesPackages(planDocument)) {
-        console.log("No packages to publish.");
+    const distributionTag = distributionTagForBranch(branchName);
+    const packages = listRealPackages(repositoryRoot);
+    if (packages.length === 0) {
+        console.log("No library packages to publish.");
         return;
     }
 
-    writeDistributionTag(packDirectory, distributionTag);
-    const result = spawnSync("pnpm", publishArguments(packDirectory), {
-        stdio: "inherit",
-        env: process.env,
-    });
-    process.exit(result.status ?? 1);
+    for (const packageInfo of packages) {
+        if (packageVersionIsOnRegistry(packageInfo.name, packageInfo.version)) {
+            console.log(
+                `${packageInfo.name}@${packageInfo.version} is already on npm.`,
+            );
+            continue;
+        }
+        console.log(
+            `Publishing ${packageInfo.name}@${packageInfo.version} with dist-tag ${distributionTag}.`,
+        );
+        const result = spawnSync(
+            "pnpm",
+            publishArguments(packageInfo.name, distributionTag),
+            {
+                cwd: repositoryRoot,
+                stdio: "inherit",
+                env: process.env,
+            },
+        );
+        if ((result.status ?? 1) !== 0) {
+            process.exit(result.status ?? 1);
+        }
+        recordPublishedPackage(packageInfo.name, packageInfo.version);
+    }
 }
 
 if (

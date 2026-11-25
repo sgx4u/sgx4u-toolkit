@@ -7,7 +7,7 @@
 
 Clean up the unpublished presets. Nothing here is on npm yet. The bumps record what the first release will contain.
 
-`@sgx4u/eslint-config` no longer loads `eslint-plugin-boundaries`. That plugin repeated the `@sgx4u-private` ban that the import rules already apply to `src` and to root scripts. `turbo boundaries` is unchanged. An unknown `runtime` throws. It used to fall through to the Node globals and the Node import rules. `require()` and `import()` of a banned module are rejected too. `no-restricted-imports` only sees static `import` and `export` declarations, so those calls were previously allowed.
+`@sgx4u/eslint-config` does not load `eslint-plugin-boundaries`. `turbo boundaries` is unchanged. An unknown `runtime` throws. It used to fall through to the Node globals and the Node import rules. `require()` and `import()` of a banned module are rejected too. `no-restricted-imports` only sees static `import` and `export` declarations, so those calls were previously allowed.
 
 `@sgx4u/prettier-config` sets `tabWidth` to 4. Prettier's default is 2. This repository indents with 4 spaces via `.editorconfig`, and the preset is what other checkouts load. The other options are still the Prettier 3 defaults, written down so a later default does not reformat consumers. A project that already formatted with this preset and no editorconfig indent will be rewritten to four spaces.
 

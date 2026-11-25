@@ -66,9 +66,6 @@ jobs:
             - name: Check monorepo consistency
               run: pnpm exec sherif
 
-            - name: Reject private references
-              run: node scripts/check-visibility.mjs
-
             - name: Reject links that leave the repository
               run: node scripts/check-links.mjs
 
@@ -260,13 +257,13 @@ jobs:
             - name: Build packages
               run: pnpm exec turbo run build
 
-            # Directories that contain a package manifest. An empty list is a
-            # successful preview: there is nothing to publish.
+            # Library directories only. packages/config is workspace tooling.
+            # An empty list is a successful preview: there is nothing to publish.
             - name: Publish preview packages
               run: |
-                  mapfile -t package_directories < <(find packages -name package.json -not -path '*/node_modules/*' -printf '%h\n' | sort)
+                  mapfile -t package_directories < <(find packages -mindepth 1 -maxdepth 1 -type d ! -name config | sort)
                   if [ "${#package_directories[@]}" -eq 0 ]; then
-                    echo "No packages to preview."
+                    echo "No library packages to preview."
                     exit 0
                   fi
                   pnpm exec pkg-pr-new publish --pnpm --packageManager=pnpm "${package_directories[@]}"

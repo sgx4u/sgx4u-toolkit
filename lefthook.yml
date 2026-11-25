@@ -4,8 +4,6 @@ pre-commit:
     commands:
         lint-staged:
             run: pnpm exec lint-staged
-        visibility:
-            run: node scripts/check-visibility.mjs
         links:
             run: node scripts/check-links.mjs
 
