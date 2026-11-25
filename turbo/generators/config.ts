@@ -78,7 +78,6 @@ function preparePackageAnswers(value: unknown): PackageAnswers {
     if (typeof value !== "object" || value === null) {
         throw new Error("Package generator answers were incomplete.");
     }
-
     const candidate = value as Record<string, unknown>;
     if (typeof candidate.packageName !== "string") {
         throw new Error("Package generator answers were incomplete.");
@@ -89,7 +88,6 @@ function preparePackageAnswers(value: unknown): PackageAnswers {
     } else if (candidate.packageKind === "regular") {
         candidate.packageDirectory = `packages/${candidate.packageName}`;
     }
-
     if (!isPackagePromptAnswers(candidate)) {
         throw new Error("Package generator answers were incomplete.");
     }

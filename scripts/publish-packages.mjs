@@ -50,7 +50,6 @@ function main() {
         );
         process.exit(1);
     }
-
     const packDirectory = process.env.CHANGESET_PACK_DIR;
     if (!packDirectory) {
         console.error(
@@ -64,7 +63,6 @@ function main() {
         stdio: "inherit",
         env: process.env,
     });
-
     process.exit(result.status ?? 1);
 }
 

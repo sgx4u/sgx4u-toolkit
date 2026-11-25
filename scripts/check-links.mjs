@@ -117,8 +117,8 @@ export function findEscapingLinks(rootDirectory) {
                 }
                 continue;
             }
-
             const specifierExpression = /(?:link|file):[^\s"'`,]+/g;
+
             for (const match of contents.matchAll(specifierExpression)) {
                 const specifier = match[0];
                 if (
