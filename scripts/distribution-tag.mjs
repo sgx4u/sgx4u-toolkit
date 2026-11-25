@@ -7,16 +7,16 @@
  * @returns {"latest" | "beta" | "previous"}
  */
 export function distributionTagForBranch(branchName) {
-  if (branchName === "production") {
-    return "latest";
-  }
-  if (branchName === "develop") {
-    return "beta";
-  }
-  if (branchName.startsWith("release/")) {
-    return "previous";
-  }
-  throw new Error(
-    `Refusing to publish from branch "${branchName}". Releases run on production, develop, and release/** only.`,
-  );
+    if (branchName === "production") {
+        return "latest";
+    }
+    if (branchName === "develop") {
+        return "beta";
+    }
+    if (branchName.startsWith("release/")) {
+        return "previous";
+    }
+    throw new Error(
+        `Refusing to publish from branch "${branchName}". Releases run on production, develop, and release/** only.`,
+    );
 }

@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Ask a question
-    url: https://github.com/sgx4u/sgx4u-toolkit/discussions
-    about: Questions and usage help belong in Discussions.
-  - name: Report a vulnerability
-    url: https://github.com/sgx4u/sgx4u-toolkit/security/advisories/new
-    about: Report security issues privately. Do not open a public issue.
+    - name: Ask a question
+      url: https://github.com/sgx4u/sgx4u-toolkit/discussions
+      about: Questions and usage help belong in Discussions.
+    - name: Report a vulnerability
+      url: https://github.com/sgx4u/sgx4u-toolkit/security/advisories/new
+      about: Report security issues privately. Do not open a public issue.

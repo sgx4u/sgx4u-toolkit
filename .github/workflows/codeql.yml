@@ -1,42 +1,42 @@
 name: codeql
 
 on:
-  pull_request:
-    branches:
-      - develop
-      - production
-      - "release/**"
-  push:
-    branches:
-      - develop
-      - production
-      - "release/**"
+    pull_request:
+        branches:
+            - develop
+            - production
+            - "release/**"
+    push:
+        branches:
+            - develop
+            - production
+            - "release/**"
 
 permissions: {}
 
 concurrency:
-  group: codeql-${{ github.ref }}
-  cancel-in-progress: true
+    group: codeql-${{ github.ref }}
+    cancel-in-progress: true
 
 jobs:
-  analyze:
-    name: analyze
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
+    analyze:
+        name: analyze
+        runs-on: ubuntu-latest
+        timeout-minutes: 20
+        permissions:
+            actions: read
+            contents: read
+            security-events: write
+        steps:
+            - name: Check out repository
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
 
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@915412ff23e8b7659517e607487dbeae018f2934 # v4.39.5
-        with:
-          languages: javascript-typescript
+            - name: Initialize CodeQL
+              uses: github/codeql-action/init@915412ff23e8b7659517e607487dbeae018f2934 # v4.39.5
+              with:
+                  languages: javascript-typescript
 
-      - name: Analyze
-        uses: github/codeql-action/analyze@915412ff23e8b7659517e607487dbeae018f2934 # v4.39.5
+            - name: Analyze
+              uses: github/codeql-action/analyze@915412ff23e8b7659517e607487dbeae018f2934 # v4.39.5

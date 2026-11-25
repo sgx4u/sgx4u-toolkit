@@ -1,28 +1,28 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
-  "baseBranches": ["develop"],
-  "dependencyDashboard": true,
-  "labels": ["dependencies"],
-  "packageRules": [
-    {
-      "description": "GitHub Actions updates are opened by Dependabot, not Renovate.",
-      "matchManagers": ["github-actions"],
-      "enabled": false
-    },
-    {
-      "description": "Group public @sgx4u minor and patch updates and merge them when CI passes.",
-      "matchPackageNames": ["@sgx4u/**"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "sgx4u packages",
-      "automerge": true
-    },
-    {
-      "description": "Major @sgx4u updates stay for review.",
-      "matchPackageNames": ["@sgx4u/**"],
-      "matchUpdateTypes": ["major"],
-      "groupName": "sgx4u majors",
-      "automerge": false
-    }
-  ]
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": ["config:recommended"],
+    "baseBranches": ["develop"],
+    "dependencyDashboard": true,
+    "labels": ["dependencies"],
+    "packageRules": [
+        {
+            "description": "GitHub Actions updates are opened by Dependabot, not Renovate.",
+            "matchManagers": ["github-actions"],
+            "enabled": false
+        },
+        {
+            "description": "Group public @sgx4u minor and patch updates and merge them when CI passes.",
+            "matchPackageNames": ["@sgx4u/**"],
+            "matchUpdateTypes": ["minor", "patch"],
+            "groupName": "sgx4u packages",
+            "automerge": true
+        },
+        {
+            "description": "Major @sgx4u updates stay for review.",
+            "matchPackageNames": ["@sgx4u/**"],
+            "matchUpdateTypes": ["major"],
+            "groupName": "sgx4u majors",
+            "automerge": false
+        }
+    ]
 }

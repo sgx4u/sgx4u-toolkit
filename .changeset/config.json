@@ -1,18 +1,18 @@
 {
-  "$schema": "https://unpkg.com/@changesets/config@3.0.3/schema.json",
-  "changelog": [
-    "@changesets/changelog-github",
-    { "repo": "sgx4u/sgx4u-toolkit" }
-  ],
-  "commit": false,
-  "fixed": [],
-  "linked": [],
-  "access": "public",
-  "baseBranch": "develop",
-  "updateInternalDependencies": "minor",
-  "ignore": [],
-  "privatePackages": {
-    "version": false,
-    "tag": false
-  }
+    "$schema": "https://unpkg.com/@changesets/config@3.0.3/schema.json",
+    "changelog": [
+        "@changesets/changelog-github",
+        { "repo": "sgx4u/sgx4u-toolkit" }
+    ],
+    "commit": false,
+    "fixed": [],
+    "linked": [],
+    "access": "public",
+    "baseBranch": "develop",
+    "updateInternalDependencies": "minor",
+    "ignore": [],
+    "privatePackages": {
+        "version": false,
+        "tag": false
+    }
 }
