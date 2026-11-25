@@ -1,6 +1,7 @@
 /**
  * Public entry for `@sgx4u/date-time`.
  */
+export { addBusinessDays } from "./add-business-days/add-business-days.js";
 export { addDuration } from "./add-duration/add-duration.js";
 export { clampDate } from "./clamp-date/clamp-date.js";
 export { compareDates } from "./compare-dates/compare-dates.js";
@@ -26,6 +27,7 @@ export { getNthWeekdayOfMonth } from "./get-nth-weekday-of-month/get-nth-weekday
 export { getPreviousWeekday } from "./get-previous-weekday/get-previous-weekday.js";
 export { getUtcOffset } from "./get-utc-offset/get-utc-offset.js";
 export { isAfter } from "./is-after/is-after.js";
+export { isBusinessDay } from "./is-business-day/is-business-day.js";
 export { isBefore } from "./is-before/is-before.js";
 export { isBetween } from "./is-between/is-between.js";
 export { isDate } from "./is-date/is-date.js";
@@ -137,6 +139,7 @@ export type {
 export type { CalendarUnit } from "./types/time.types.js";
 export type { FiscalYearOptions, NowOptions } from "./types/options.types.js";
 export type { Interval } from "./types/interval.types.js";
+export type { BusinessCalendar } from "./types/business.types.js";
 export type { FormatIsoDateTimeOptions } from "./format-iso-date-time/format-iso-date-time.types.js";
 export type { ParseIsoDateTimeOptions } from "./parse-iso-date-time/parse-iso-date-time.types.js";
 export type { ExcelDateOptions } from "./to-excel-serial-date/to-excel-serial-date.types.js";
