@@ -2,8 +2,6 @@
 
 Public Turborepo of shared [`@sgx4u`](https://www.npmjs.com/search?q=%40sgx4u) packages.
 
-This repository never depends on a private scope.
-
 [![ci](https://github.com/sgx4u/sgx4u-toolkit/actions/workflows/ci.yml/badge.svg)](https://github.com/sgx4u/sgx4u-toolkit/actions/workflows/ci.yml)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 [![node](https://img.shields.io/badge/node-%3E%3D22.12-339933.svg)](./package.json)
@@ -18,6 +16,7 @@ This repository never depends on a private scope.
 | [`@sgx4u/prettier-config`](./packages/config/prettier-config) | Prettier preset                        |
 | [`@sgx4u/tsdown-config`](./packages/config/tsdown-config)     | tsdown preset for ESM libraries        |
 | [`@sgx4u/vitest-config`](./packages/config/vitest-config)     | Vitest preset                          |
+|                                                               |                                        |
 | [`@sgx4u/string`](./packages/string)                          | Blank checks and whitespace collapsing |
 
 Tooling presets live in `packages/config`. Every other package lives in `packages/<name>`. A package there chooses a runtime of `universal`, `edge`, or `node`. None of the `edge` or `node` packages are published yet.

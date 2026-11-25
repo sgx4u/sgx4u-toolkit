@@ -1,8 +1,8 @@
 {
     "name": "@sgx4u/toolkit",
-    "private": true,
+    "private": false,
     "type": "module",
-    "description": "Public Turborepo of shared @sgx4u packages.",
+    "description": "Modular TypeScript utilities and shared foundations for scalable web, server, and mobile apps.",
     "license": "MIT",
     "author": "Subhajit Ghosh",
     "engines": {
