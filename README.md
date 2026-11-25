@@ -5,7 +5,7 @@
         <img src="https://github.com/sgx4u/sgx4u-toolkit/blob/develop/logo.svg?raw=true" width="75" alt="SGX4U" />
     </a>
 
-<h1 align="center">🌟 sgx4u-toolkit 🌟</h1>
+<h1 align="center">🌟 @sgx4u/toolkit 🌟</h1>
 
 <h3 align="center">Public Turborepo of shared <a href="https://www.npmjs.com/search?q=%40sgx4u"><code>@sgx4u</code></a> packages.</h3>
 
