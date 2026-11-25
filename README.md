@@ -41,7 +41,6 @@
 - [Packages](#packages)
 - [Runtimes](#runtimes)
 - [Installation](#installation)
-- [Usage](#usage)
 - [Development](#development)
 - [Releases](#releases)
 - [Repository](#repository)
@@ -52,9 +51,7 @@
 
 <h2 id="about">💫 About</h2>
 
-`@sgx4u/string` is the published library. It lives in `packages/string` and declares `"node": ">=22.12"`.
-
-It builds with tsdown and ships ESM and CommonJS. `import` resolves `dist/*.js` with `dist/*.d.ts`. `require` resolves `dist/*.cjs` with `dist/*.d.cts`. The `@sgx4u/source` export condition points at TypeScript source (`src/index.ts`). This workspace resolves it through `customConditions`. A published install uses `dist`.
+A published library declares `"node": ">=22.12"`. It builds with tsdown and ships ESM and CommonJS. `import` resolves `dist/*.js` with `dist/*.d.ts`. `require` resolves `dist/*.cjs` with `dist/*.d.cts`. The `@sgx4u/source` export condition points at TypeScript source (`src/index.ts`). This workspace resolves it through `customConditions`. A published install uses `dist`.
 
 Inside this repo, a runtime dependency on another toolkit package uses `workspace:^`. Dev dependencies use `workspace:*`. Third-party versions live in the pnpm catalog in `pnpm-workspace.yaml`. Add a catalog entry when a package needs that dependency.
 
@@ -66,9 +63,9 @@ The root workspace package is `@sgx4u/toolkit`. Its manifest is `"private": fals
 
 <h2 id="packages">📦 Packages</h2>
 
-| Package                                 | What it is                             |
-| --------------------------------------- | -------------------------------------- |
-| 💠 [`@sgx4u/string`](./packages/string) | Blank checks and whitespace collapsing |
+Libraries live in `packages/<name>`.
+
+- 💠 Run `pnpm exec turbo gen package`. The generator asks for the package name, the runtime, and the owner. It writes the package files for that runtime, including the TypeScript, build, and test config. Replace the scaffold export, and describe the library in its README, before the first release.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -80,7 +77,7 @@ Each library picks one runtime.
 
 | Runtime     | Choose it when                                                                                                                   |
 | ----------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `universal` | The same source runs in browsers, workers, and Node, using web standards. `@sgx4u/string` is universal.                          |
+| `universal` | The same source runs in browsers, workers, and Node, using web standards.                                                        |
 | `edge`      | The code targets an edge runtime and may use web standards plus the Workers `nodejs_compat` modules that have an implementation. |
 | `node`      | The code needs Node itself: processes, the full filesystem, or another API outside the edge subset.                              |
 
@@ -92,26 +89,15 @@ Each library picks one runtime.
 
 <h2 id="installation">📥 Installation</h2>
 
-`@sgx4u/string` is the universal string package.
+Install a published library from the `@sgx4u` scope. `<name>` is that library's kebab-case name.
 
 ```sh
-pnpm add @sgx4u/string       # pnpm
-npm install @sgx4u/string    # npm
-yarn add @sgx4u/string       # yarn
+pnpm add @sgx4u/<name>       # pnpm
+npm install @sgx4u/<name>    # npm
+yarn add @sgx4u/<name>       # yarn
 ```
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<br />
-
-<h2 id="usage">💡 Usage</h2>
-
-```ts
-import { collapseWhitespace, isBlank } from "@sgx4u/string";
-
-isBlank("  "); // true
-collapseWhitespace("  a \n b  "); // "a b"
-```
+Node 22.12 or newer. `import` loads the ESM build. `require()` loads the CommonJS build.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -132,7 +118,7 @@ pnpm check
 
 | Command             | What it runs                                                                                                                       |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `pnpm dev`          | `turbo run dev`. The task stays running. `@sgx4u/string` runs `tsdown --watch`.                                                    |
+| `pnpm dev`          | `turbo run dev`. The task stays running. A library that builds with tsdown runs `tsdown --watch`.                                  |
 | `pnpm lint`         | Package lint tasks, then root ESLint. The root config ignores `packages/**`, so package sources are linted once.                   |
 | `pnpm typecheck`    | Package typecheck tasks, then `tsc --noEmit` for the generator.                                                                    |
 | `pnpm test`         | Package tests, then `node --test` on `scripts/*.test.mjs`.                                                                         |
