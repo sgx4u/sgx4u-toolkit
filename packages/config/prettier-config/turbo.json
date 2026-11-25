@@ -1,4 +1,4 @@
 {
-  "extends": ["//"],
-  "tags": ["layout:config"]
+    "extends": ["//"],
+    "tags": ["layout:config"]
 }

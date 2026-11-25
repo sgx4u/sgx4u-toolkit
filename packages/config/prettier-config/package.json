@@ -1,62 +1,62 @@
 {
-  "name": "@sgx4u/prettier-config",
-  "version": "0.0.0",
-  "description": "Prettier preset for @sgx4u repositories.",
-  "license": "MIT",
-  "author": "Subhajit Ghosh",
-  "type": "module",
-  "sideEffects": false,
-  "main": "./dist/index.cjs",
-  "module": "./index.js",
-  "types": "./dist/index.d.cts",
-  "exports": {
-    ".": {
-      "import": {
-        "types": "./index.d.ts",
-        "default": "./index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
+    "name": "@sgx4u/prettier-config",
+    "version": "0.0.0",
+    "description": "Prettier preset for @sgx4u repositories.",
+    "license": "MIT",
+    "author": "Subhajit Ghosh",
+    "type": "module",
+    "sideEffects": false,
+    "main": "./dist/index.cjs",
+    "module": "./index.js",
+    "types": "./dist/index.d.cts",
+    "exports": {
+        ".": {
+            "import": {
+                "types": "./index.d.ts",
+                "default": "./index.js"
+            },
+            "require": {
+                "types": "./dist/index.d.cts",
+                "default": "./dist/index.cjs"
+            }
+        },
+        "./package.json": "./package.json"
     },
-    "./package.json": "./package.json"
-  },
-  "files": [
-    "index.js",
-    "index.d.ts",
-    "dist",
-    "README.md"
-  ],
-  "scripts": {
-    "build": "tsdown",
-    "lint": "eslint . --max-warnings 0",
-    "check:package": "publint && attw --pack ."
-  },
-  "devDependencies": {
-    "@arethetypeswrong/cli": "catalog:",
-    "@sgx4u/eslint-config": "workspace:*",
-    "eslint": "catalog:",
-    "prettier": "catalog:",
-    "publint": "catalog:",
-    "tsdown": "catalog:",
-    "typescript": "catalog:"
-  },
-  "peerDependencies": {
-    "prettier": "^3.0.0"
-  },
-  "publishConfig": {
-    "access": "public",
-    "provenance": true
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/sgx4u/sgx4u-toolkit.git",
-    "directory": "packages/config/prettier-config"
-  },
-  "homepage": "https://github.com/sgx4u/sgx4u-toolkit/tree/develop/packages/config/prettier-config",
-  "bugs": "https://github.com/sgx4u/sgx4u-toolkit/issues",
-  "engines": {
-    "node": ">=22.12"
-  }
+    "files": [
+        "index.js",
+        "index.d.ts",
+        "dist",
+        "README.md"
+    ],
+    "scripts": {
+        "build": "tsdown",
+        "lint": "eslint . --max-warnings 0",
+        "check:package": "publint && attw --pack ."
+    },
+    "devDependencies": {
+        "@arethetypeswrong/cli": "catalog:",
+        "@sgx4u/eslint-config": "workspace:*",
+        "eslint": "catalog:",
+        "prettier": "catalog:",
+        "publint": "catalog:",
+        "tsdown": "catalog:",
+        "typescript": "catalog:"
+    },
+    "peerDependencies": {
+        "prettier": "^3.0.0"
+    },
+    "publishConfig": {
+        "access": "public",
+        "provenance": true
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sgx4u/sgx4u-toolkit.git",
+        "directory": "packages/config/prettier-config"
+    },
+    "homepage": "https://github.com/sgx4u/sgx4u-toolkit/tree/develop/packages/config/prettier-config",
+    "bugs": "https://github.com/sgx4u/sgx4u-toolkit/issues",
+    "engines": {
+        "node": ">=22.12"
+    }
 }

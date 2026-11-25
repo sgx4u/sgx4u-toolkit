@@ -12,7 +12,7 @@ pnpm add -D @sgx4u/prettier-config prettier
 
 ```json
 {
-  "prettier": "@sgx4u/prettier-config"
+    "prettier": "@sgx4u/prettier-config"
 }
 ```
 
