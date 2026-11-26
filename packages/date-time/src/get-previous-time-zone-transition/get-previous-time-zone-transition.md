@@ -50,4 +50,4 @@ A transition at the exact instant is not returned. The search looks at most two 
 
 - [`getNextTimeZoneTransition`](../get-next-time-zone-transition/get-next-time-zone-transition.md)
 - [`getTimeZoneTransitions`](../get-time-zone-transitions/get-time-zone-transitions.md)
-- [`getUtcOffset`](../get-utc-offset/get-utc-offset.md)
+- [`getUTCOffset`](../get-utc-offset/get-utc-offset.md)

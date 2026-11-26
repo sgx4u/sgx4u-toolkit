@@ -1,9 +1,8 @@
 import type { DateInput } from "../types/date-input.types.js";
-import type { TimeZoneOptions } from "../types/options.types.js";
 import type { SunTimes } from "../types/astronomy.types.js";
-import { resolveDateInput } from "../utils/date-input.utils.js";
+import { readDateInput } from "../utils/date-input.utils.js";
 import { rangeError, typeError } from "../utils/error.utils.js";
-import { utcEpochMilliseconds } from "../utils/gregorian.utils.js";
+import { UTCEpochMilliseconds } from "../utils/gregorian.utils.js";
 import { readDateParts, resolveTimeZone } from "../utils/time-zone.utils.js";
 
 const officialZenith = 90.833;
@@ -27,20 +26,28 @@ export interface SunLocation {
  * March equinox that instant is near 06:04 UTC, because of the equation of
  * time and the 0.833° sunrise zenith, not 06:00.
  *
- * @param date - Any instant on the civil day to compute, in `timeZone`.
- * @param location - Latitude and longitude in degrees.
- * @param options - `timeZone` defaults to the system zone and chooses the civil day.
- * @returns The sun events for that day.
+ * @param params - `date` and `location` are required. `timeZone` defaults to the system zone.
+ * @returns The sun events for that day, or `undefined` when `date` is not usable.
  * @throws {@link TypeError} When the location is not an object of numbers.
- * @throws {@link RangeError} When a coordinate is outside its range or `date` is invalid.
+ * @throws {@link RangeError} When a coordinate is outside its range or `timeZone` is invalid.
  * @example
- * getSunTimes("2024-06-21T12:00:00Z", { latitude: 40.7, longitude: -74 }, { timeZone: "America/New_York" }).solarNoon.toISOString();
+ * getSunTimes({
+ *   date: "2024-06-21T12:00:00Z",
+ *   location: { latitude: 40.7, longitude: -74 },
+ *   timeZone: "America/New_York",
+ * })?.solarNoon.toISOString();
  */
-export function getSunTimes(
-    date: DateInput,
-    location: SunLocation,
-    options?: TimeZoneOptions,
-): SunTimes {
+export interface GetSunTimesParams {
+    date: DateInput;
+    location: SunLocation;
+    timeZone?: string;
+}
+
+export function getSunTimes({
+    date,
+    location,
+    timeZone,
+}: GetSunTimesParams): SunTimes | undefined {
     if (
         location === null ||
         typeof location !== "object" ||
@@ -67,12 +74,13 @@ export function getSunTimes(
             location.longitude,
         );
     }
-    const timeZone = resolveTimeZone(options?.timeZone);
-    const parts = readDateParts(
-        resolveDateInput(date, "date", timeZone).getTime(),
-        timeZone,
-    );
-    const noonUtc = utcEpochMilliseconds(
+    const zone = resolveTimeZone(timeZone);
+    const instant = readDateInput(date, zone);
+    if (instant === undefined) {
+        return undefined;
+    }
+    const parts = readDateParts(instant.getTime(), zone);
+    const noonUTC = UTCEpochMilliseconds(
         parts.year,
         parts.month - 1,
         parts.day,
@@ -83,13 +91,13 @@ export function getSunTimes(
     );
     const result: SunTimes = {
         solarNoon:
-            refinedEvent(noonUtc, location, 0) ??
-            dateFromMinutes(noonUtc, 720 - 4 * location.longitude),
+            refinedEvent(noonUTC, location, 0) ??
+            dateFromMinutes(noonUTC, 720 - 4 * location.longitude),
     };
-    const sunrise = refinedEvent(noonUtc, location, -1, officialZenith);
-    const sunset = refinedEvent(noonUtc, location, 1, officialZenith);
-    const civilDawn = refinedEvent(noonUtc, location, -1, civilZenith);
-    const civilDusk = refinedEvent(noonUtc, location, 1, civilZenith);
+    const sunrise = refinedEvent(noonUTC, location, -1, officialZenith);
+    const sunset = refinedEvent(noonUTC, location, 1, officialZenith);
+    const civilDawn = refinedEvent(noonUTC, location, -1, civilZenith);
+    const civilDusk = refinedEvent(noonUTC, location, 1, civilZenith);
     if (sunrise !== undefined) {
         result.sunrise = sunrise;
     }
@@ -110,14 +118,14 @@ export function getSunTimes(
  *
  * `side` is `-1` before noon, `1` after noon, and `0` for solar noon.
  *
- * @param noonUtc - UTC noon of the civil day.
+ * @param noonUTC - UTC noon of the civil day.
  * @param location - Latitude and longitude.
  * @param side - Which side of noon to solve.
  * @param zenith - The zenith angle. Omit it for solar noon.
  * @returns The event, or `undefined` when the sun does not cross `zenith`.
  */
 function refinedEvent(
-    noonUtc: number,
+    noonUTC: number,
     location: SunLocation,
     side: -1 | 0 | 1,
     zenith?: number,
@@ -125,7 +133,7 @@ function refinedEvent(
     let minutes = 720 - 4 * location.longitude;
     for (let iteration = 0; iteration < 3; iteration += 1) {
         const position = sunPosition(
-            (noonUtc - 12 * 3_600_000 + minutes * 60_000) / 86_400_000 +
+            (noonUTC - 12 * 3_600_000 + minutes * 60_000) / 86_400_000 +
                 2_440_587.5,
         );
         const solarNoonMinutes =
@@ -144,7 +152,7 @@ function refinedEvent(
         }
         minutes = solarNoonMinutes + side * angle * 4;
     }
-    return dateFromMinutes(noonUtc, minutes);
+    return dateFromMinutes(noonUTC, minutes);
 }
 
 /**
@@ -233,16 +241,16 @@ function hourAngle(
 }
 
 /**
- * @param noonUtc - UTC noon of the civil day, used as the day anchor.
- * @param minutesFromUtcMidnight - Minutes from 00:00 UTC, which may fall outside 0 through 1440.
+ * @param noonUTC - UTC noon of the civil day, used as the day anchor.
+ * @param minutesFromUTCMidnight - Minutes from 00:00 UTC, which may fall outside 0 through 1440.
  * @returns The instant.
  */
 function dateFromMinutes(
-    noonUtc: number,
-    minutesFromUtcMidnight: number,
+    noonUTC: number,
+    minutesFromUTCMidnight: number,
 ): Date {
-    const utcMidnight = noonUtc - 12 * 3_600_000;
-    return new Date(utcMidnight + minutesFromUtcMidnight * 60_000);
+    const UTCMidnight = noonUTC - 12 * 3_600_000;
+    return new Date(UTCMidnight + minutesFromUTCMidnight * 60_000);
 }
 
 /**

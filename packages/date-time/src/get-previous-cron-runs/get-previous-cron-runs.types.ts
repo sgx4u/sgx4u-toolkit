@@ -1,10 +1,15 @@
+import type { CronSchedule } from "../types/cron.types.js";
 import type { DateInput } from "../types/date-input.types.js";
 import type { NowOptions, TimeZoneOptions } from "../types/options.types.js";
 
 /**
- * How earlier cron runs are chosen.
+ * Fields for {@link getPreviousCronRuns}.
  */
-export interface PreviousCronRunsOptions extends NowOptions, TimeZoneOptions {
+export interface GetPreviousCronRunsParams extends NowOptions, TimeZoneOptions {
+    /**
+     * A cron expression or a parsed schedule.
+     */
+    schedule: string | CronSchedule;
     /**
      * How many runs to return.
      *
@@ -12,7 +17,7 @@ export interface PreviousCronRunsOptions extends NowOptions, TimeZoneOptions {
      */
     count?: number;
     /**
-     * The search stops at this instant. A run at `startDate` is excluded.
+     * Runs at or before this instant are excluded.
      */
     startDate?: DateInput;
 }

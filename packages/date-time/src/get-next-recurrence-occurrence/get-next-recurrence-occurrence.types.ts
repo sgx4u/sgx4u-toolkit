@@ -1,11 +1,17 @@
+import type { DateInput } from "../types/date-input.types.js";
 import type { NowOptions } from "../types/options.types.js";
+import type { RecurrenceRule } from "../types/recurrence.types.js";
 
 /**
- * How the next or previous occurrence is chosen.
+ * Fields for {@link getNextRecurrenceOccurrence}.
  */
-export interface AdjacentRecurrenceOptions extends NowOptions {
+export interface GetNextRecurrenceOccurrenceParams extends NowOptions {
     /**
-     * Whether an occurrence at `now` counts.
+     * The recurrence rule.
+     */
+    rule: RecurrenceRule;
+    /**
+     * Whether an occurrence exactly at `now` counts.
      *
      * @defaultValue `false`
      */

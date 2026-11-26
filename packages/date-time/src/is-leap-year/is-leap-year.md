@@ -38,7 +38,7 @@ isLeapYear(2023);
 
 ## Edge cases
 
-The rule is the proleptic Gregorian rule. A century year is a leap year only when it is also divisible by 400, so 1900 is not and 2000 is. A non-integer year throws a `RangeError`.
+The rule is the proleptic Gregorian rule. A century year is a leap year only when it is also divisible by 400, so 1900 is not and 2000 is. A value that is not a finite integer returns `false`.
 
 ## Related
 

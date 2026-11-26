@@ -8,19 +8,35 @@ import {
 } from "../utils/time-zone.utils.js";
 
 /**
+ * Fields for {@link getWallTimeStatus}.
+ */
+export interface GetWallTimeStatusParams {
+    /**
+     * The wall-clock fields. Omitted fields default to their minimum.
+     */
+    parts: DatePartsInput;
+    /**
+     * An IANA name or a fixed offset.
+     */
+    timeZone: string;
+}
+
+/**
  * Reports whether a wall time exists once, never, or twice.
  *
- * @param parts - The wall-clock fields. Omitted fields default to their minimum.
- * @param timeZone - An IANA name or a fixed offset.
+ * @param params - `parts` and `timeZone` are required.
  * @returns `"valid"`, `"skipped"`, or `"repeated"`.
  * @throws {@link RangeError} When the zone is unknown or the calendar day does not exist.
  * @example
- * getWallTimeStatus({ year: 2024, month: 3, day: 10, hour: 2, minute: 30 }, "America/New_York"); // "skipped"
+ * getWallTimeStatus({
+ *   parts: { year: 2024, month: 3, day: 10, hour: 2, minute: 30 },
+ *   timeZone: "America/New_York",
+ * }); // "skipped"
  */
-export function getWallTimeStatus(
-    parts: DatePartsInput,
-    timeZone: string,
-): WallTimeStatus {
+export function getWallTimeStatus({
+    parts,
+    timeZone,
+}: GetWallTimeStatusParams): WallTimeStatus {
     const zone = assertTimeZoneName(timeZone, "timeZone");
     const complete = completeDateParts(parts);
     try {

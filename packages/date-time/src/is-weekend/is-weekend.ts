@@ -1,39 +1,37 @@
-import type { DateInput } from "../types/date-input.types.js";
-import { assertIntegerInRange } from "../utils/assert.utils.js";
-import { resolveDateInput } from "../utils/date-input.utils.js";
-import { typeError } from "../utils/error.utils.js";
+import { assertWorkingDays } from "../utils/business-config.utils.js";
+import { readDateInput } from "../utils/date-input.utils.js";
 import { readDateParts, resolveTimeZone } from "../utils/time-zone.utils.js";
-import type { IsWeekendOptions } from "./is-weekend.types.js";
+import type { IsWeekendParams } from "./is-weekend.types.js";
+
+const defaultWorkingDays = [1, 2, 3, 4, 5] as const;
 
 /**
  * Reports whether a date falls on a weekend day.
  *
- * The default weekend is Saturday and Sunday. Pass `weekendDays` for a
- * different week, such as Friday and Saturday.
+ * A weekend day is any ISO weekday not listed in `workingDays`. The default
+ * working week is Monday through Friday.
  *
- * @param date - The date to test.
- * @param options - `weekendDays` defaults to `[6, 7]`.
- * @returns `true` when the ISO weekday is in `weekendDays`.
- * @throws {@link TypeError} When `date` has the wrong type.
- * @throws {@link RangeError} When a weekday is outside 1 through 7.
+ * @param params - `date` is required. `workingDays` defaults to Monday–Friday.
+ * @returns `true` when the ISO weekday is not a working day.
+ * @throws {@link TypeError} When `workingDays` is not an array.
+ * @throws {@link RangeError} When a working day is outside 1 through 7 or `timeZone` is not usable.
  * @example
- * isWeekend("2026-11-28T00:00:00Z", { timeZone: "UTC" }); // true
+ * isWeekend({ date: "2026-11-28T00:00:00Z", timeZone: "UTC" }); // true
  */
-export function isWeekend(
-    date: DateInput,
-    options?: IsWeekendOptions,
-): boolean {
-    const timeZone = resolveTimeZone(options?.timeZone);
-    const weekendDays = options?.weekendDays ?? [6, 7];
-    if (!Array.isArray(weekendDays)) {
-        throw typeError("weekendDays", "an array of weekdays", weekendDays);
+export function isWeekend({
+    date,
+    workingDays,
+    timeZone,
+}: IsWeekendParams): boolean {
+    const zone = resolveTimeZone(timeZone);
+    const open =
+        workingDays === undefined
+            ? defaultWorkingDays
+            : assertWorkingDays(workingDays);
+    const instant = readDateInput(date, zone);
+    if (instant === undefined) {
+        return false;
     }
-    const checked = weekendDays.map((weekday, index) =>
-        assertIntegerInRange(weekday, `weekendDays[${String(index)}]`, 1, 7),
-    );
-    const parts = readDateParts(
-        resolveDateInput(date, "date", timeZone).getTime(),
-        timeZone,
-    );
-    return checked.includes(parts.weekday);
+    const parts = readDateParts(instant.getTime(), zone);
+    return !open.includes(parts.weekday);
 }

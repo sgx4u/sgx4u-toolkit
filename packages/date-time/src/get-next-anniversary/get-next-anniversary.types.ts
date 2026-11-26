@@ -1,9 +1,14 @@
+import type { DateInput } from "../types/date-input.types.js";
 import type { AgeOptions } from "../get-age/get-age.types.js";
 
 /**
- * Options for the next anniversary.
+ * Fields for {@link getNextAnniversary}.
  */
-export interface NextAnniversaryOptions extends AgeOptions {
+export interface GetNextAnniversaryParams extends AgeOptions {
+    /**
+     * The original date.
+     */
+    date: DateInput;
     /**
      * Whether today's anniversary counts as the next one.
      *

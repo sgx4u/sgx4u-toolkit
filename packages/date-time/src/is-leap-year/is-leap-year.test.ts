@@ -12,11 +12,10 @@ describe("isLeapYear", () => {
         expect(isLeapYear(-100)).toBe(false);
     });
 
-    it("throws for a non-integer", () => {
-        expect(() => isLeapYear(2024.5)).toThrow(RangeError);
-        expect(() => isLeapYear(Number.NaN)).toThrow(RangeError);
-        expect(() => isLeapYear("2024" as unknown as number)).toThrow(
-            TypeError,
-        );
+    it("returns false for a value that is not a finite integer", () => {
+        expect(isLeapYear(2024.5)).toBe(false);
+        expect(isLeapYear(Number.NaN)).toBe(false);
+        expect(isLeapYear(Number.POSITIVE_INFINITY)).toBe(false);
+        expect(isLeapYear("2024" as unknown as number)).toBe(false);
     });
 });

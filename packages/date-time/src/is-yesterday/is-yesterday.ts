@@ -1,21 +1,58 @@
 import type { DateInput } from "../types/date-input.types.js";
-import type { NowOptions, TimeZoneOptions } from "../types/options.types.js";
-import { isOffsetDay } from "../utils/now.utils.js";
+import { readDateInput, resolveNow } from "../utils/date-input.utils.js";
+import { addGregorianDays } from "../utils/gregorian.utils.js";
+import { readDateParts, resolveTimeZone } from "../utils/time-zone.utils.js";
+
+/**
+ * Fields for {@link isYesterday}.
+ */
+export interface IsYesterdayParams {
+    /**
+     * The date to test.
+     */
+    date: DateInput;
+    /**
+     * The instant to use instead of the current time.
+     */
+    now?: DateInput;
+    /**
+     * Zone used to read calendar days.
+     */
+    timeZone?: string;
+}
 
 /**
  * Reports whether a date falls on the calendar day before today.
  *
- * @param date - The date to test.
- * @param options - `now` defaults to the current time.
+ * @param params - `date` is required. `now` and `timeZone` default to the current instant and system zone.
  * @returns `true` when `date` is yesterday in the zone.
- * @throws {@link TypeError} When `date` has the wrong type.
- * @throws {@link RangeError} When `date` is not a real date.
+ * @throws {@link RangeError} When `timeZone` is not usable.
  * @example
- * isYesterday("2026-11-25T00:00:00Z", { now: "2026-11-26T00:00:00Z", timeZone: "UTC" }); // true
+ * isYesterday({ date: "2026-11-25T00:00:00Z", now: "2026-11-26T00:00:00Z", timeZone: "UTC" }); // true
  */
-export function isYesterday(
-    date: DateInput,
-    options?: NowOptions & TimeZoneOptions,
-): boolean {
-    return isOffsetDay(date, -1, options);
+export function isYesterday({
+    date,
+    now,
+    timeZone,
+}: IsYesterdayParams): boolean {
+    const zone = resolveTimeZone(timeZone);
+    const resolved = readDateInput(date, zone);
+    if (resolved === undefined) {
+        return false;
+    }
+    const reference =
+        now === undefined
+            ? resolveNow(undefined, zone)
+            : readDateInput(now, zone);
+    if (reference === undefined) {
+        return false;
+    }
+    const today = readDateParts(reference.getTime(), zone);
+    const target = addGregorianDays(today.year, today.month, today.day, -1);
+    const actual = readDateParts(resolved.getTime(), zone);
+    return (
+        actual.year === target.year &&
+        actual.month === target.month &&
+        actual.day === target.day
+    );
 }

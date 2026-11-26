@@ -1,37 +1,42 @@
-import type { DateInput } from "../types/date-input.types.js";
-import type { IsBetweenOptions } from "./is-between.types.js";
-import { resolveDateInput } from "../utils/date-input.utils.js";
+import { readDateInput } from "../utils/date-input.utils.js";
+import type { IsBetweenParams } from "./is-between.types.js";
 
 /**
  * Reports whether `date` lies between `start` and `end`.
  *
- * Both ends are included unless the matching option is `false`. When
+ * Both ends are included unless the matching field is `false`. When
  * `start` is after `end`, no instant is inside the range.
  *
- * @param date - The date to test.
- * @param start - One end of the range.
- * @param end - The other end of the range.
- * @param options - `includeStart` and `includeEnd` both default to `true`.
+ * @param params - `date`, `start`, and `end` are required. `includeStart` and `includeEnd` default to `true`.
  * @returns `true` when `date` is inside the range.
- * @throws {@link TypeError} When a value has the wrong type.
- * @throws {@link RangeError} When a value is not a real date.
  * @example
- * isBetween("2024-01-02T00:00:00Z", "2024-01-01T00:00:00Z", "2024-01-03T00:00:00Z"); // true
+ * isBetween({ date: "2024-01-02T00:00:00Z", start: "2024-01-01T00:00:00Z", end: "2024-01-03T00:00:00Z" }); // true
  */
-export function isBetween(
-    date: DateInput,
-    start: DateInput,
-    end: DateInput,
-    options?: IsBetweenOptions,
-): boolean {
-    const instant = resolveDateInput(date, "date").getTime();
-    const startInstant = resolveDateInput(start, "start").getTime();
-    const endInstant = resolveDateInput(end, "end").getTime();
-    const includeStart = options?.includeStart ?? true;
-    const includeEnd = options?.includeEnd ?? true;
+export function isBetween({
+    date,
+    start,
+    end,
+    includeStart = true,
+    includeEnd = true,
+}: IsBetweenParams): boolean {
+    const instant = readDateInput(date);
+    const startInstant = readDateInput(start);
+    const endInstant = readDateInput(end);
+    if (
+        instant === undefined ||
+        startInstant === undefined ||
+        endInstant === undefined
+    ) {
+        return false;
+    }
+    const instantTime = instant.getTime();
+    const startTime = startInstant.getTime();
+    const endTime = endInstant.getTime();
     const afterStart = includeStart
-        ? instant >= startInstant
-        : instant > startInstant;
-    const beforeEnd = includeEnd ? instant <= endInstant : instant < endInstant;
+        ? instantTime >= startTime
+        : instantTime > startTime;
+    const beforeEnd = includeEnd
+        ? instantTime <= endTime
+        : instantTime < endTime;
     return afterStart && beforeEnd;
 }

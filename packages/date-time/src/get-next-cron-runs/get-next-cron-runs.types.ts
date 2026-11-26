@@ -1,10 +1,15 @@
+import type { CronSchedule } from "../types/cron.types.js";
 import type { DateInput } from "../types/date-input.types.js";
 import type { NowOptions, TimeZoneOptions } from "../types/options.types.js";
 
 /**
- * How upcoming cron runs are chosen.
+ * Fields for {@link getNextCronRuns}.
  */
-export interface NextCronRunsOptions extends NowOptions, TimeZoneOptions {
+export interface GetNextCronRunsParams extends NowOptions, TimeZoneOptions {
+    /**
+     * A cron expression or a parsed schedule.
+     */
+    schedule: string | CronSchedule;
     /**
      * How many runs to return.
      *

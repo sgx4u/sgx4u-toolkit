@@ -1,7 +1,6 @@
 import type { DateInput } from "../types/date-input.types.js";
-import type { TimeZoneOptions } from "../types/options.types.js";
-import { getUtcOffset } from "../get-utc-offset/get-utc-offset.js";
-import { resolveDateInput } from "../utils/date-input.utils.js";
+import { getUTCOffset } from "../get-utc-offset/get-utc-offset.js";
+import { readDateInput } from "../utils/date-input.utils.js";
 import {
     instantFromWallTime,
     readDateParts,
@@ -9,25 +8,44 @@ import {
 } from "../utils/time-zone.utils.js";
 
 /**
+ * Fields for {@link isDaylightSavingTime}.
+ */
+export interface IsDaylightSavingTimeParams {
+    /**
+     * The instant to test.
+     */
+    date: DateInput;
+    /**
+     * Zone used for the offset comparison.
+     */
+    timeZone?: string;
+}
+
+/**
  * Reports whether an instant is in daylight saving time.
  *
  * Daylight saving means the offset is greater than the smaller of the
  * offsets on 1 January and 1 July of that year in the zone.
  *
- * @param date - The instant to test.
- * @param options - `timeZone` defaults to the system zone.
+ * @param params - `date` is required. `timeZone` defaults to the system zone.
  * @returns `true` when the offset is above the year's standard offset.
- * @throws {@link RangeError} When `date` is not a real date or the zone is unknown.
+ * @throws {@link RangeError} When `timeZone` is unknown.
  * @example
- * isDaylightSavingTime("2026-01-15T00:00:00Z", { timeZone: "America/New_York" }); // false
+ * isDaylightSavingTime({
+ *   date: "2026-01-15T00:00:00Z",
+ *   timeZone: "America/New_York",
+ * }); // false
  */
-export function isDaylightSavingTime(
-    date: DateInput,
-    options?: TimeZoneOptions,
-): boolean {
-    const timeZone = resolveTimeZone(options?.timeZone);
-    const instant = resolveDateInput(date, "date", timeZone);
-    const year = readDateParts(instant.getTime(), timeZone).year;
+export function isDaylightSavingTime({
+    date,
+    timeZone,
+}: IsDaylightSavingTimeParams): boolean {
+    const zone = resolveTimeZone(timeZone);
+    const instant = readDateInput(date, zone);
+    if (instant === undefined) {
+        return false;
+    }
+    const year = readDateParts(instant.getTime(), zone).year;
     const january = new Date(
         instantFromWallTime(
             {
@@ -39,7 +57,7 @@ export function isDaylightSavingTime(
                 second: 0,
                 millisecond: 0,
             },
-            timeZone,
+            zone,
             "compatible",
         ),
     );
@@ -54,13 +72,20 @@ export function isDaylightSavingTime(
                 second: 0,
                 millisecond: 0,
             },
-            timeZone,
+            zone,
             "compatible",
         ),
     );
-    const standard = Math.min(
-        getUtcOffset(january, timeZone),
-        getUtcOffset(july, timeZone),
-    );
-    return getUtcOffset(instant, timeZone) > standard;
+    const januaryOffset = getUTCOffset({ date: january, timeZone: zone });
+    const julyOffset = getUTCOffset({ date: july, timeZone: zone });
+    const currentOffset = getUTCOffset({ date: instant, timeZone: zone });
+    if (
+        januaryOffset === undefined ||
+        julyOffset === undefined ||
+        currentOffset === undefined
+    ) {
+        return false;
+    }
+    const standard = Math.min(januaryOffset, julyOffset);
+    return currentOffset > standard;
 }

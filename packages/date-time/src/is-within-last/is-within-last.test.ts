@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { isWithinLast } from "../index.js";
 
-const utcNow = {
+const UTCNow = {
     now: "2026-03-31T00:00:00Z",
     timeZone: "UTC",
 };
@@ -33,10 +33,10 @@ describe("isWithinLast", () => {
 
     it("clamps a month and a year onto leap day and month end", () => {
         expect(
-            isWithinLast("2026-02-28T00:00:00Z", { months: 1 }, utcNow),
+            isWithinLast("2026-02-28T00:00:00Z", { months: 1 }, UTCNow),
         ).toBe(true);
         expect(
-            isWithinLast("2026-02-27T23:59:59.999Z", { months: 1 }, utcNow),
+            isWithinLast("2026-02-27T23:59:59.999Z", { months: 1 }, UTCNow),
         ).toBe(false);
         expect(
             isWithinLast(

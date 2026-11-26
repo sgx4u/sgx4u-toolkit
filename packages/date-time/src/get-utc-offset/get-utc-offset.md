@@ -1,17 +1,17 @@
-# `getUtcOffset`
+# `getUTCOffset`
 
 Returns the offset from UTC, in minutes, for an instant in a zone.
 
 ## Import
 
 ```ts
-import { getUtcOffset } from "@sgx4u/date-time";
+import { getUTCOffset } from "@sgx4u/date-time";
 ```
 
 ## Signature
 
 ```ts
-function getUtcOffset(date: DateInput, timeZone: string): number;
+function getUTCOffset(date: DateInput, timeZone: string): number;
 ```
 
 ## Options
@@ -21,18 +21,18 @@ This function has no options.
 ## Examples
 
 ```ts
-import { getUtcOffset } from "@sgx4u/date-time";
+import { getUTCOffset } from "@sgx4u/date-time";
 
-getUtcOffset("2024-06-15T12:00:00Z", "Asia/Kolkata");
+getUTCOffset("2024-06-15T12:00:00Z", "Asia/Kolkata");
 // 330
 
-getUtcOffset("2024-01-15T12:00:00Z", "America/New_York");
+getUTCOffset("2024-01-15T12:00:00Z", "America/New_York");
 // -300
 
-getUtcOffset("2024-07-15T12:00:00Z", "America/New_York");
+getUTCOffset("2024-07-15T12:00:00Z", "America/New_York");
 // -240
 
-getUtcOffset("2024-06-15T12:00:00Z", "UTC");
+getUTCOffset("2024-06-15T12:00:00Z", "UTC");
 // 0
 ```
 

@@ -43,4 +43,4 @@ getTimeOfDay("2026-11-25", { timeZone: "UTC" });
 
 - [`getDateParts`](../get-date-parts/get-date-parts.md)
 - [`isTimeOfDayInRange`](../is-time-of-day-in-range/is-time-of-day-in-range.md)
-- [`getUtcOffset`](../get-utc-offset/get-utc-offset.md)
+- [`getUTCOffset`](../get-utc-offset/get-utc-offset.md)

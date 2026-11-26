@@ -8,22 +8,38 @@ import { transitionsBetween } from "../utils/transition.utils.js";
 const maximumSpan = 50 * 365.25 * 86_400_000;
 
 /**
+ * Fields for {@link getTimeZoneTransitions}.
+ */
+export interface GetTimeZoneTransitionsParams {
+    /**
+     * The half-open interval to scan.
+     */
+    interval: Interval;
+    /**
+     * An IANA name or a fixed offset.
+     */
+    timeZone: string;
+}
+
+/**
  * Returns every offset change inside an interval.
  *
- * @param interval - The half-open interval to scan.
- * @param timeZone - An IANA name or a fixed offset.
+ * @param params - `interval` and `timeZone` are required.
  * @returns The transitions, oldest first.
- * @throws {@link RangeError} When the interval is longer than 50 years or the zone is unknown.
+ * @throws {@link RangeError} When the interval is longer than 50 years, the interval is invalid, or the zone is unknown.
  * @example
- * getTimeZoneTransitions(
- *   { start: new Date("2024-03-10T00:00:00Z"), end: new Date("2024-03-11T00:00:00Z") },
- *   "America/New_York",
- * )[0]?.instant.toISOString(); // "2024-03-10T07:00:00.000Z"
+ * getTimeZoneTransitions({
+ *   interval: {
+ *     start: new Date("2024-03-10T00:00:00Z"),
+ *     end: new Date("2024-03-11T00:00:00Z"),
+ *   },
+ *   timeZone: "America/New_York",
+ * })[0]?.instant.toISOString(); // "2024-03-10T07:00:00.000Z"
  */
-export function getTimeZoneTransitions(
-    interval: Interval,
-    timeZone: string,
-): TimeZoneTransition[] {
+export function getTimeZoneTransitions({
+    interval,
+    timeZone,
+}: GetTimeZoneTransitionsParams): TimeZoneTransition[] {
     const zone = assertTimeZoneName(timeZone, "timeZone");
     const checked = readInterval(interval);
     const start = checked.start.getTime();

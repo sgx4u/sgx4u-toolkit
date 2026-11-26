@@ -48,6 +48,6 @@ Daylight saving means the offset is greater than the smaller of the offsets on 1
 
 ## Related
 
-- [`getUtcOffset`](../get-utc-offset/get-utc-offset.md)
+- [`getUTCOffset`](../get-utc-offset/get-utc-offset.md)
 - [`getWallTimeStatus`](../get-wall-time-status/get-wall-time-status.md)
 - [`getNextTimeZoneTransition`](../get-next-time-zone-transition/get-next-time-zone-transition.md)

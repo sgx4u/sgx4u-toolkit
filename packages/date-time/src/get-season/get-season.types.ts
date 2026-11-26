@@ -1,9 +1,14 @@
+import type { DateInput } from "../types/date-input.types.js";
 import type { TimeZoneOptions } from "../types/options.types.js";
 
 /**
- * Which hemisphere and which season definition to use.
+ * Fields for {@link getSeason}.
  */
-export interface GetSeasonOptions extends TimeZoneOptions {
+export interface GetSeasonParams extends TimeZoneOptions {
+    /**
+     * The date to classify.
+     */
+    date: DateInput;
     /**
      * The southern hemisphere shifts the meteorological seasons by six months.
      *

@@ -1,110 +1,90 @@
 import { describe, expect, it } from "vitest";
-import { unitedStatesHolidayRules } from "../holidays/united-states.js";
 import { isHoliday } from "../index.js";
 
+const republicDay = { date: "2026-01-26", name: "Republic Day" };
+
 describe("isHoliday", () => {
-    it("matches Independence Day on the observed Friday and the Saturday itself", () => {
+    it("matches a named holiday and a holiday with no name", () => {
         expect(
-            isHoliday("2026-07-03T00:00:00Z", unitedStatesHolidayRules, {
-                timeZone: "UTC",
+            isHoliday({
+                date: "2026-01-26T00:00:00+05:30",
+                holidays: [republicDay],
+                timeZone: "Asia/Kolkata",
             }),
         ).toBe(true);
         expect(
-            isHoliday("2026-07-04T12:00:00Z", unitedStatesHolidayRules, {
-                timeZone: "UTC",
+            isHoliday({
+                date: "2026-01-27",
+                holidays: [republicDay],
+                timeZone: "Asia/Kolkata",
             }),
-        ).toBe(true);
+        ).toBe(false);
         expect(
-            isHoliday("2026-11-26T12:00:00Z", unitedStatesHolidayRules, {
+            isHoliday({
+                date: "2026-12-25T00:00:00Z",
+                holidays: ["2026-12-25T00:00:00Z"],
                 timeZone: "UTC",
             }),
         ).toBe(true);
     });
 
-    it("stops matching the substitute day when matchObservedDate is false", () => {
+    it("returns the name only when includeName is true", () => {
         expect(
-            isHoliday("2026-07-03T00:00:00Z", unitedStatesHolidayRules, {
-                timeZone: "UTC",
-                matchObservedDate: false,
+            isHoliday({
+                date: "2026-01-26",
+                holidays: [republicDay, { date: "2026-01-26", name: "Later" }],
+                timeZone: "Asia/Kolkata",
+                includeName: true,
             }),
-        ).toBe(false);
+        ).toEqual({ isHoliday: true, name: "Republic Day" });
         expect(
-            isHoliday("2026-07-04T00:00:00Z", unitedStatesHolidayRules, {
+            isHoliday({
+                date: "2026-12-25",
+                holidays: [{ date: "2026-12-25" }],
                 timeZone: "UTC",
-                matchObservedDate: false,
+                includeName: true,
             }),
-        ).toBe(true);
+        ).toEqual({ isHoliday: true });
         expect(
-            isHoliday("2026-07-02T00:00:00Z", unitedStatesHolidayRules, {
+            isHoliday({
+                date: "2026-01-27",
+                holidays: [republicDay],
                 timeZone: "UTC",
+                includeName: true,
             }),
-        ).toBe(false);
-        expect(
-            isHoliday("2026-07-03T23:59:59.999Z", unitedStatesHolidayRules, {
-                timeZone: "UTC",
-            }),
-        ).toBe(true);
-        expect(
-            isHoliday("2026-07-05T00:00:00.000Z", unitedStatesHolidayRules, {
-                timeZone: "UTC",
-            }),
-        ).toBe(false);
+        ).toEqual({ isHoliday: false });
     });
 
-    it("rejects rules that are not an array and a date that is not real", () => {
+    it("returns false for a date that is not real", () => {
+        expect(
+            isHoliday({
+                date: "not-a-date",
+                holidays: [republicDay],
+                timeZone: "UTC",
+            }),
+        ).toBe(false);
+        expect(
+            isHoliday({
+                date: "not-a-date",
+                holidays: [republicDay],
+                includeName: true,
+            }),
+        ).toEqual({ isHoliday: false });
+    });
+
+    it("throws when holidays is not an array or the zone is unusable", () => {
         expect(() =>
-            isHoliday("2026-07-04T00:00:00Z", null as never, {
-                timeZone: "UTC",
+            isHoliday({
+                date: "2026-01-26",
+                holidays: "2026-01-26" as unknown as [],
             }),
         ).toThrow(TypeError);
         expect(() =>
-            isHoliday("2026-07-04T00:00:00Z", null as never, {
-                timeZone: "UTC",
+            isHoliday({
+                date: "2026-01-26",
+                holidays: [],
+                timeZone: "Not/AZone",
             }),
-        ).toThrow("`rules`");
-        expect(() =>
-            isHoliday("nope", unitedStatesHolidayRules, { timeZone: "UTC" }),
         ).toThrow(RangeError);
-        expect(() =>
-            isHoliday("nope", unitedStatesHolidayRules, { timeZone: "UTC" }),
-        ).toThrow("`date`");
-        expect(isHoliday("2026-07-02T00:00:00Z", [], { timeZone: "UTC" })).toBe(
-            false,
-        );
-    });
-
-    it("matches the observed date by default", () => {
-        const date = "2026-07-03T00:00:00Z";
-        expect(
-            isHoliday(date, unitedStatesHolidayRules, { timeZone: "UTC" }),
-        ).toBe(
-            isHoliday(date, unitedStatesHolidayRules, {
-                timeZone: "UTC",
-                matchObservedDate: true,
-            }),
-        );
-    });
-
-    it("keeps 03:00 UTC on 3 July in the previous New York day", () => {
-        expect(
-            isHoliday("2026-07-03T03:00:00Z", unitedStatesHolidayRules, {
-                timeZone: "UTC",
-            }),
-        ).toBe(true);
-        expect(
-            isHoliday("2026-07-03T03:00:00Z", unitedStatesHolidayRules, {
-                timeZone: "America/New_York",
-            }),
-        ).toBe(false);
-        expect(
-            isHoliday("2026-01-15T17:00:00Z", unitedStatesHolidayRules, {
-                timeZone: "America/New_York",
-            }),
-        ).toBe(false);
-        expect(
-            isHoliday("2026-07-15T16:00:00Z", unitedStatesHolidayRules, {
-                timeZone: "America/New_York",
-            }),
-        ).toBe(false);
     });
 });

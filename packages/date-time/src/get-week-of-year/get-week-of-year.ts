@@ -1,13 +1,12 @@
-import type { DateInput } from "../types/date-input.types.js";
 import { assertIntegerInRange } from "../utils/assert.utils.js";
-import { resolveDateInput } from "../utils/date-input.utils.js";
+import { readDateInput } from "../utils/date-input.utils.js";
 import {
     readDateParts,
     resolveTimeZone,
     resolveWeekStartsOn,
 } from "../utils/time-zone.utils.js";
 import { weekOfDate } from "../utils/week.utils.js";
-import type { WeekOfYearOptions } from "./get-week-of-year.types.js";
+import type { GetWeekOfYearParams } from "./get-week-of-year.types.js";
 
 /**
  * Returns a locale-style week number.
@@ -16,33 +15,40 @@ import type { WeekOfYearOptions } from "./get-week-of-year.types.js";
  * least `minimumDaysInFirstWeek` days of the year. Monday and `4` match
  * the ISO week.
  *
- * @param date - The date to read.
- * @param options - `weekStartsOn` defaults to Monday and `minimumDaysInFirstWeek` to `1`.
- * @returns The week number.
+ * @param params - `date` is required. `weekStartsOn` defaults to Monday and `minimumDaysInFirstWeek` to `1`.
+ * @returns The week number, or `undefined` when `date` is not usable.
  * @throws {@link RangeError} When `minimumDaysInFirstWeek` is outside 1 through 7.
  * @example
- * getWeekOfYear("2026-01-01T00:00:00Z", { timeZone: "UTC", weekStartsOn: 1, minimumDaysInFirstWeek: 4 }); // 1
+ * getWeekOfYear({
+ *   date: "2026-01-01T00:00:00Z",
+ *   timeZone: "UTC",
+ *   weekStartsOn: 1,
+ *   minimumDaysInFirstWeek: 4,
+ * }); // 1
  */
-export function getWeekOfYear(
-    date: DateInput,
-    options?: WeekOfYearOptions,
-): number {
+export function getWeekOfYear({
+    date,
+    timeZone,
+    weekStartsOn,
+    minimumDaysInFirstWeek,
+}: GetWeekOfYearParams): number | undefined {
     const minimumDays = assertIntegerInRange(
-        options?.minimumDaysInFirstWeek ?? 1,
+        minimumDaysInFirstWeek ?? 1,
         "minimumDaysInFirstWeek",
         1,
         7,
     );
-    const timeZone = resolveTimeZone(options?.timeZone);
-    const parts = readDateParts(
-        resolveDateInput(date, "date", timeZone).getTime(),
-        timeZone,
-    );
+    const zone = resolveTimeZone(timeZone);
+    const instant = readDateInput(date, zone);
+    if (instant === undefined) {
+        return undefined;
+    }
+    const parts = readDateParts(instant.getTime(), zone);
     return weekOfDate(
         parts.year,
         parts.month,
         parts.day,
-        resolveWeekStartsOn(options?.weekStartsOn),
+        resolveWeekStartsOn(weekStartsOn),
         minimumDays,
     ).week;
 }

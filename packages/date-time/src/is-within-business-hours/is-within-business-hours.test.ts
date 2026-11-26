@@ -22,48 +22,48 @@ describe("isWithinBusinessHours", () => {
 
     it("closes a holiday and can treat the whole business day as open", () => {
         expect(
-            isWithinBusinessHours("2026-11-26T12:00:00Z", {
+            isWithinBusinessHours({ date: "2026-11-26T12:00:00Z", ...{
                 ...utc,
                 holidays: ["2026-11-26"],
-            }),
+            } }),
         ).toBe(false);
         expect(
-            isWithinBusinessHours("2026-11-26T03:00:00Z", {
+            isWithinBusinessHours({ date: "2026-11-26T03:00:00Z", ...{
                 ...utc,
-                workingHours: [],
-            }),
+                businessHours: [],
+            } }),
         ).toBe(true);
         expect(
-            isWithinBusinessHours("2026-11-26T17:00:00Z", {
+            isWithinBusinessHours({ date: "2026-11-26T17:00:00Z", ...{
                 ...utc,
-                workingHours: [],
-            }),
+                businessHours: [],
+            } }),
         ).toBe(true);
         expect(
-            isWithinBusinessHours("2026-11-28T12:00:00Z", {
+            isWithinBusinessHours({ date: "2026-11-28T12:00:00Z", ...{
                 ...utc,
-                workingHours: [],
-            }),
+                businessHours: [],
+            } }),
         ).toBe(false);
         expect(
-            isWithinBusinessHours("2026-11-27T12:00:00Z", {
+            isWithinBusinessHours({ date: "2026-11-27T12:00:00Z", ...{
                 ...utc,
                 holidays: (date) => date.toISOString().startsWith("2026-11-27"),
-            }),
+            } }),
         ).toBe(false);
     });
 
     it("honors a split day and an overnight window", () => {
         const split = {
             ...utc,
-            workingHours: [
+            businessHours: [
                 { start: "09:00", end: "12:00" },
                 { start: "13:00", end: "17:00" },
             ],
         };
         const overnight = {
             ...utc,
-            workingHours: [{ start: "22:00", end: "06:00" }],
+            businessHours: [{ start: "22:00", end: "06:00" }],
         };
 
         expect(isWithinBusinessHours("2026-11-26T09:00:00Z", split)).toBe(true);
@@ -129,16 +129,16 @@ describe("isWithinBusinessHours", () => {
         expect(() => isWithinBusinessHours("2024-02-30", utc)).toThrow(
             RangeError,
         );
-        expect(() => isWithinBusinessHours(new Date(Number.NaN), utc)).toThrow(
+        expect(() => isWithinBusinessHours({ date: new Date(Number.NaN }), utc)).toThrow(
             RangeError,
         );
         expect(() =>
             isWithinBusinessHours(null as unknown as string, utc),
         ).toThrow(TypeError);
         expect(() =>
-            isWithinBusinessHours("2026-11-26T12:00:00Z", {
+            isWithinBusinessHours({ date: "2026-11-26T12:00:00Z", ...{
                 timeZone: "Mars/Base",
-            }),
+            } }),
         ).toThrow(RangeError);
     });
 });

@@ -51,6 +51,6 @@ Week 1 is the first week, starting on `weekStartsOn`, that contains at least `mi
 
 ## Related
 
-- [`getIsoWeek`](../get-iso-week/get-iso-week.md)
+- [`getISOWeek`](../get-iso-week/get-iso-week.md)
 - [`getWeekOfMonth`](../get-week-of-month/get-week-of-month.md)
 - [`getLocaleWeekInfo`](../get-locale-week-info/get-locale-week-info.md)

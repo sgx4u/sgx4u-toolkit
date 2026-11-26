@@ -1,8 +1,7 @@
 import type { DateInput } from "../types/date-input.types.js";
-import type { TimeZoneOptions, WeekOptions } from "../types/options.types.js";
-import type { TimeUnit } from "../types/time.types.js";
+import type { TimeUnit, Weekday } from "../types/time.types.js";
 import { startOfInstant } from "../utils/arithmetic.utils.js";
-import { resolveDateInput } from "../utils/date-input.utils.js";
+import { readDateInput } from "../utils/date-input.utils.js";
 import {
     resolveTimeZone,
     resolveWeekStartsOn,
@@ -10,41 +9,74 @@ import {
 import { assertTimeUnit } from "../utils/unit.utils.js";
 
 /**
+ * Fields for {@link isSameUnit}.
+ */
+export interface IsSameUnitParams {
+    /**
+     * The first date.
+     */
+    first: DateInput;
+    /**
+     * The second date.
+     */
+    second: DateInput;
+    /**
+     * The unit to compare.
+     */
+    unit: TimeUnit;
+    /**
+     * Zone used to read unit boundaries.
+     */
+    timeZone?: string;
+    /**
+     * ISO weekday that starts the week.
+     */
+    weekStartsOn?: Weekday;
+}
+
+/**
  * Reports whether two dates fall in the same unit in a time zone.
  *
  * A week uses `weekStartsOn`, which defaults to Monday. The comparison is
  * the start of that unit, so a daylight-saving day still counts as one day.
  *
- * @param first - The first date.
- * @param second - The second date.
- * @param unit - The unit to compare.
- * @param options - `timeZone` defaults to the system zone. `weekStartsOn` defaults to Monday.
+ * @param params - `first`, `second`, and `unit` are required.
  * @returns `true` when both dates share that unit.
- * @throws {@link TypeError} When a date or the unit has the wrong type.
- * @throws {@link RangeError} When a date, the unit, or the zone is invalid.
+ * @throws {@link RangeError} When the unit, zone, or `weekStartsOn` is invalid.
  * @example
- * isSameUnit("2024-06-15T23:00:00Z", "2024-06-16T02:00:00Z", "day", { timeZone: "Asia/Kolkata" }); // true
+ * isSameUnit({
+ *   first: "2024-06-15T23:00:00Z",
+ *   second: "2024-06-16T02:00:00Z",
+ *   unit: "day",
+ *   timeZone: "Asia/Kolkata",
+ * }); // true
  */
-export function isSameUnit(
-    first: DateInput,
-    second: DateInput,
-    unit: TimeUnit,
-    options?: TimeZoneOptions & WeekOptions,
-): boolean {
-    const timeZone = resolveTimeZone(options?.timeZone);
-    const weekStartsOn = resolveWeekStartsOn(options?.weekStartsOn);
+export function isSameUnit({
+    first,
+    second,
+    unit,
+    timeZone,
+    weekStartsOn,
+}: IsSameUnitParams): boolean {
+    const zone = resolveTimeZone(timeZone);
+    const checkedWeekStartsOn = resolveWeekStartsOn(weekStartsOn);
     const checkedUnit = assertTimeUnit(unit);
+    const firstInstant = readDateInput(first, zone);
+    const secondInstant = readDateInput(second, zone);
+    if (firstInstant === undefined || secondInstant === undefined) {
+        return false;
+    }
     const firstStart = startOfInstant(
-        resolveDateInput(first, "first", timeZone).getTime(),
+        firstInstant.getTime(),
         checkedUnit,
-        timeZone,
-        weekStartsOn,
+        zone,
+        checkedWeekStartsOn,
     );
     const secondStart = startOfInstant(
-        resolveDateInput(second, "second", timeZone).getTime(),
+        secondInstant.getTime(),
         checkedUnit,
-        timeZone,
-        weekStartsOn,
+        zone,
+        checkedWeekStartsOn,
     );
     return firstStart === secondStart;
 }

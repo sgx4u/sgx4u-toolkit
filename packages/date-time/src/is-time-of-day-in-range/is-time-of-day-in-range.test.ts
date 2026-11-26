@@ -22,9 +22,7 @@ describe("times of day", () => {
             false,
         );
         expect(
-            getTimeOfDay("2026-11-25T22:00:00.000Z", {
-                timeZone: "Asia/Kolkata",
-            }),
+            getTimeOfDay({ date: "2026-11-25T22:00:00.000Z", timeZone: "Asia/Kolkata", }),
         ).toEqual({ hour: 3, minute: 30, second: 0, millisecond: 0 });
     });
 });

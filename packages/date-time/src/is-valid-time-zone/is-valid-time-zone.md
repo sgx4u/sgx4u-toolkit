@@ -44,4 +44,4 @@ An IANA name is accepted when the runtime accepts it. A fixed offset `±HH:mm`, 
 
 - [`getLocalTimeZone`](../get-local-time-zone/get-local-time-zone.md)
 - [`listTimeZones`](../list-time-zones/list-time-zones.md)
-- [`getUtcOffset`](../get-utc-offset/get-utc-offset.md)
+- [`getUTCOffset`](../get-utc-offset/get-utc-offset.md)

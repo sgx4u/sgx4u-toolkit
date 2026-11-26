@@ -1,6 +1,6 @@
 import type { DateInput } from "../types/date-input.types.js";
 import type { MoonPhase, MoonPhaseName } from "../types/astronomy.types.js";
-import { resolveDateInput } from "../utils/date-input.utils.js";
+import { readDateInput } from "../utils/date-input.utils.js";
 
 const knownNewMoon = Date.UTC(2000, 0, 6, 18, 14, 0);
 const synodicMonthDays = 29.530588853;
@@ -25,14 +25,17 @@ const phaseNames: readonly MoonPhaseName[] = [
  * phases.
  *
  * @param date - The instant to measure.
- * @returns The fraction and the phase name.
- * @throws {@link RangeError} When `date` is not a real date.
+ * @returns The fraction and the phase name, or `undefined` when `date` is not usable.
  * @example
- * getMoonPhase("2000-01-06T18:14:00.000Z").name; // "new-moon"
+ * getMoonPhase("2000-01-06T18:14:00.000Z")?.name; // "new-moon"
  */
-export function getMoonPhase(date: DateInput): MoonPhase {
+export function getMoonPhase(date: DateInput): MoonPhase | undefined {
+    const instant = readDateInput(date);
+    if (instant === undefined) {
+        return undefined;
+    }
     const elapsedDays =
-        (resolveDateInput(date, "date").getTime() - knownNewMoon) / 86_400_000;
+        (instant.getTime() - knownNewMoon) / 86_400_000;
     let fraction = (elapsedDays / synodicMonthDays) % 1;
     if (fraction < 0) {
         fraction += 1;

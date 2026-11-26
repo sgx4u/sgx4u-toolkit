@@ -1,20 +1,36 @@
 import type { DateInput } from "../types/date-input.types.js";
-import { compareResolvedInstants } from "../utils/compare.utils.js";
+import { readDateInput } from "../utils/date-input.utils.js";
+
+/**
+ * Fields for {@link isBefore}.
+ */
+export interface IsBeforeParams {
+    /**
+     * The date to test.
+     */
+    date: DateInput;
+    /**
+     * The date to test against.
+     */
+    reference: DateInput;
+}
 
 /**
  * Reports whether `date` is strictly earlier than `reference`.
  *
- * Equal instants return `false`. The function throws for a value that is
- * not a real date; it does not treat that value as "not before".
+ * Equal instants return `false`. A value that is not a real date returns
+ * `false`.
  *
- * @param date - The date to test.
- * @param reference - The date to test against.
+ * @param params - `date` is the instant to test and `reference` is the instant to test against.
  * @returns `true` when `date` is earlier.
- * @throws {@link TypeError} When either value has the wrong type.
- * @throws {@link RangeError} When either value is not a real date.
  * @example
- * isBefore("2024-01-01T00:00:00Z", "2024-01-02T00:00:00Z"); // true
+ * isBefore({ date: "2024-01-01T00:00:00Z", reference: "2024-01-02T00:00:00Z" }); // true
  */
-export function isBefore(date: DateInput, reference: DateInput): boolean {
-    return compareResolvedInstants(date, reference, "date", "reference") < 0;
+export function isBefore({ date, reference }: IsBeforeParams): boolean {
+    const dateInstant = readDateInput(date);
+    const referenceInstant = readDateInput(reference);
+    if (dateInstant === undefined || referenceInstant === undefined) {
+        return false;
+    }
+    return dateInstant.getTime() < referenceInstant.getTime();
 }

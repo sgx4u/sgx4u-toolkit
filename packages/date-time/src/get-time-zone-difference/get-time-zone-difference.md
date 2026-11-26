@@ -56,6 +56,6 @@ A negative result means the first zone is behind the second. The difference foll
 
 ## Related
 
-- [`getUtcOffset`](../get-utc-offset/get-utc-offset.md)
+- [`getUTCOffset`](../get-utc-offset/get-utc-offset.md)
 - [`isDaylightSavingTime`](../is-daylight-saving-time/is-daylight-saving-time.md)
 - [`getNextTimeZoneTransition`](../get-next-time-zone-transition/get-next-time-zone-transition.md)

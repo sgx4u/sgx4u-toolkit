@@ -1,29 +1,27 @@
 import { describe, expect, it } from "vitest";
 import {
     addDurations,
-    formatUtcOffset,
+    formatUTCOffset,
     getSeason,
     listTimeZones,
     negateDuration,
-    parseUtcOffset,
+    parseUTCOffset,
 } from "../index.js";
 
 describe("seasons, offsets, and duration sums", () => {
     it("names meteorological seasons and formats offsets", () => {
-        expect(getSeason("2026-07-01T00:00:00Z", { timeZone: "UTC" })).toBe(
+        expect(getSeason({ date: "2026-07-01T00:00:00Z", timeZone: "UTC" })).toBe(
             "summer",
         );
         expect(
-            getSeason("2026-07-01T00:00:00Z", {
-                timeZone: "UTC",
-                hemisphere: "southern",
-            }),
+            getSeason({ date: "2026-07-01T00:00:00Z", timeZone: "UTC",
+                hemisphere: "southern", }),
         ).toBe("winter");
-        expect(formatUtcOffset(330)).toBe("+05:30");
-        expect(formatUtcOffset(330, { style: "basic" })).toBe("+0530");
-        expect(formatUtcOffset(0, { useZForZero: true })).toBe("Z");
-        expect(parseUtcOffset("+05:30")).toBe(330);
-        expect(parseUtcOffset("Z")).toBe(0);
+        expect(formatUTCOffset(330)).toBe("+05:30");
+        expect(formatUTCOffset(330, { style: "basic" })).toBe("+0530");
+        expect(formatUTCOffset(0, { useZForZero: true })).toBe("Z");
+        expect(parseUTCOffset("+05:30")).toBe(330);
+        expect(parseUTCOffset("Z")).toBe(0);
         expect(listTimeZones().includes("Africa/Abidjan")).toBe(true);
         expect(negateDuration({ hours: 2 })).toEqual({ hours: -2 });
         expect(addDurations({ hours: 1 }, { minutes: 30 })).toEqual({

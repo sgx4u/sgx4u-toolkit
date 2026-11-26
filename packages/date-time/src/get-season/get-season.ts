@@ -1,9 +1,8 @@
-import type { DateInput } from "../types/date-input.types.js";
 import type { Season } from "../types/astronomy.types.js";
-import { resolveDateInput } from "../utils/date-input.utils.js";
+import { readDateInput } from "../utils/date-input.utils.js";
 import { rangeError } from "../utils/error.utils.js";
 import { readDateParts, resolveTimeZone } from "../utils/time-zone.utils.js";
-import type { GetSeasonOptions } from "./get-season.types.js";
+import type { GetSeasonParams } from "./get-season.types.js";
 
 const northern: readonly Season[] = [
     "winter",
@@ -28,16 +27,18 @@ const northern: readonly Season[] = [
  * November, and winter in December through February. The southern
  * hemisphere shifts those by six months.
  *
- * @param date - The date to classify.
- * @param options - `hemisphere` defaults to `"northern"` and `method` to `"meteorological"`.
- * @returns The season.
- * @throws {@link RangeError} When `date` or an option is invalid.
+ * @param params - `date` is required. `hemisphere` defaults to `"northern"` and `method` to `"meteorological"`.
+ * @returns The season, or `undefined` when `date` is not usable.
+ * @throws {@link RangeError} When `hemisphere`, `method`, or `timeZone` is invalid.
  * @example
- * getSeason("2026-07-01T00:00:00Z", { timeZone: "UTC" }); // "summer"
+ * getSeason({ date: "2026-07-01T00:00:00Z", timeZone: "UTC" }); // "summer"
  */
-export function getSeason(date: DateInput, options?: GetSeasonOptions): Season {
-    const hemisphere = options?.hemisphere ?? "northern";
-    const method = options?.method ?? "meteorological";
+export function getSeason({
+    date,
+    hemisphere = "northern",
+    method = "meteorological",
+    timeZone,
+}: GetSeasonParams): Season | undefined {
     if (hemisphere !== "northern" && hemisphere !== "southern") {
         throw rangeError("hemisphere", `"northern" or "southern"`, hemisphere);
     }
@@ -48,11 +49,12 @@ export function getSeason(date: DateInput, options?: GetSeasonOptions): Season {
             method,
         );
     }
-    const timeZone = resolveTimeZone(options?.timeZone);
-    const parts = readDateParts(
-        resolveDateInput(date, "date", timeZone).getTime(),
-        timeZone,
-    );
+    const zone = resolveTimeZone(timeZone);
+    const instant = readDateInput(date, zone);
+    if (instant === undefined) {
+        return undefined;
+    }
+    const parts = readDateParts(instant.getTime(), zone);
     const month =
         hemisphere === "southern" ? ((parts.month + 5) % 12) + 1 : parts.month;
     if (method === "astronomical") {

@@ -1,7 +1,21 @@
+import type { DateInput } from "../types/date-input.types.js";
+
 /**
- * Which ends of a range count as inside it.
+ * Fields for {@link isBetween}.
  */
-export interface IsBetweenOptions {
+export interface IsBetweenParams {
+    /**
+     * The date to test.
+     */
+    date: DateInput;
+    /**
+     * One end of the range.
+     */
+    start: DateInput;
+    /**
+     * The other end of the range.
+     */
+    end: DateInput;
     /**
      * Whether the start instant itself counts.
      *

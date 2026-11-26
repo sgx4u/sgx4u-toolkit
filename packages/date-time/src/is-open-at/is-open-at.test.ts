@@ -34,14 +34,10 @@ describe("opening hours", () => {
             isOpenAt("2026-11-27T01:00:00Z", overnight, { timeZone: "UTC" }),
         ).toBe(true);
         expect(
-            isOpenAt(
-                "2026-11-27T01:00:00Z",
-                {
-                    ...overnight,
+            isOpenAt({ date: "2026-11-27T01:00:00Z", ...overnight,
                     closures: [{ year: 2026, month: 11, day: 26 }],
                 },
                 { timeZone: "UTC" },
             ),
-        ).toBe(false);
-    });
+        ).toBe(false); });
 });

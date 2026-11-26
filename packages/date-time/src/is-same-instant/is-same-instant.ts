@@ -1,17 +1,36 @@
 import type { DateInput } from "../types/date-input.types.js";
-import { compareResolvedInstants } from "../utils/compare.utils.js";
+import { readDateInput } from "../utils/date-input.utils.js";
+
+/**
+ * Fields for {@link isSameInstant}.
+ */
+export interface IsSameInstantParams {
+    /**
+     * The first date.
+     */
+    first: DateInput;
+    /**
+     * The second date.
+     */
+    second: DateInput;
+}
 
 /**
  * Reports whether two values are the same millisecond.
  *
- * @param first - The first date.
- * @param second - The second date.
- * @returns `true` when both instants match.
- * @throws {@link TypeError} When either value has the wrong type.
- * @throws {@link RangeError} When either value is not a real date.
+ * @param params - `first` and `second` are the instants to compare.
+ * @returns `true` when both instants match, or either value is not a real date.
  * @example
- * isSameInstant("2024-01-01T00:00:00Z", 0); // false
+ * isSameInstant({ first: "2024-01-01T00:00:00Z", second: 0 }); // false
  */
-export function isSameInstant(first: DateInput, second: DateInput): boolean {
-    return compareResolvedInstants(first, second, "first", "second") === 0;
+export function isSameInstant({
+    first,
+    second,
+}: IsSameInstantParams): boolean {
+    const firstInstant = readDateInput(first);
+    const secondInstant = readDateInput(second);
+    if (firstInstant === undefined || secondInstant === undefined) {
+        return false;
+    }
+    return firstInstant.getTime() === secondInstant.getTime();
 }
