@@ -35,6 +35,36 @@ describe("natural language", () => {
             })?.toISOString(),
         ).toBe("2026-12-25T00:00:00.000Z");
         expect(
+            parseNaturalDate({
+                text: "tomorrow at 17:30",
+                ...now,
+            })?.toISOString(),
+        ).toBe("2026-11-27T17:30:00.000Z");
+        expect(
+            parseNaturalDate({
+                text: "tomorrow at 12am",
+                ...now,
+            })?.toISOString(),
+        ).toBe("2026-11-27T00:00:00.000Z");
+        expect(
+            parseNaturalDate({
+                text: "tomorrow at 12pm",
+                ...now,
+            })?.toISOString(),
+        ).toBe("2026-11-27T12:00:00.000Z");
+        expect(
+            parseNaturalDate({ text: "tomorrow at 13pm", ...now }),
+        ).toBeUndefined();
+        expect(
+            parseNaturalDate({ text: "tomorrow 100:30", ...now }),
+        ).toBeUndefined();
+        expect(
+            parseNaturalDate({ text: "tomorrow17:30", ...now }),
+        ).toBeUndefined();
+        expect(
+            parseNaturalDateRange({ text: "from Monday to", ...now }),
+        ).toBeUndefined();
+        expect(
             parseNaturalDate({ text: "not a date", ...now }),
         ).toBeUndefined();
         expect(

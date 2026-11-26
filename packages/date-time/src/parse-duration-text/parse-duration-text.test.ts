@@ -18,6 +18,11 @@ describe("duration text", () => {
             minutes: 30,
             seconds: 0,
         });
+        expect(parseDurationText(".5 seconds")).toEqual({ seconds: 0.5 });
+        expect(parseDurationText("1h  ")).toEqual({ hours: 1 });
+        expect(parseDurationText("1. hours")).toBeUndefined();
+        expect(parseDurationText("1 blob")).toBeUndefined();
+        expect(parseDurationText(". seconds")).toBeUndefined();
         expect(parseDurationText("nope")).toBeUndefined();
         expect(parseISODuration("PT1H30M")).toEqual({ hours: 1, minutes: 30 });
         expect(parseISODuration("P")).toBeUndefined();
