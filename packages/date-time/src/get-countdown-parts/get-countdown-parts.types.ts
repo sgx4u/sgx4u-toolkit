@@ -4,6 +4,11 @@ import type { NowOptions } from "../types/options.types.js";
 /**
  * Fields for {@link getCountdownParts}.
  */
+/**
+ * Options without the countdown target.
+ */
+export type CountdownOptions = Omit<GetCountdownPartsParams, "target">;
+
 export interface GetCountdownPartsParams extends NowOptions {
     /**
      * The instant being counted down to.

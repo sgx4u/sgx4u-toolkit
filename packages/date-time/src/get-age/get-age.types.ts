@@ -21,3 +21,8 @@ export interface GetAgeParams extends NowOptions, TimeZoneOptions {
      */
     leapDayBirthdayInCommonYears?: LeapDayBirthday;
 }
+
+/**
+ * Options for an age or anniversary without the birth date field.
+ */
+export type AgeOptions = Omit<GetAgeParams, "birthDate">;

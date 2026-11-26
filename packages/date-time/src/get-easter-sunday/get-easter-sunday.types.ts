@@ -1,6 +1,11 @@
 /**
  * Fields for {@link getEasterSunday}.
  */
+/**
+ * Tradition option without the year field.
+ */
+export type EasterOptions = Pick<GetEasterSundayParams, "tradition">;
+
 export interface GetEasterSundayParams {
     /**
      * The Gregorian year.
