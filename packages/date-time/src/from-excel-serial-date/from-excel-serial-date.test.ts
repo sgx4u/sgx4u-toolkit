@@ -22,14 +22,22 @@ describe("fromExcelSerialDate", () => {
             })?.toISOString(),
         ).toBe("1900-03-01T12:00:00.000Z");
         expect(
-            toExcelSerialDate({ date: "1900-02-28T00:00:00Z", timeZone: "UTC" }),
+            toExcelSerialDate({
+                date: "1900-02-28T00:00:00Z",
+                timeZone: "UTC",
+            }),
         ).toBe(59);
         expect(
-            toExcelSerialDate({ date: "1900-03-01T00:00:00Z", timeZone: "UTC" }),
+            toExcelSerialDate({
+                date: "1900-03-01T00:00:00Z",
+                timeZone: "UTC",
+            }),
         ).toBe(61);
+        const leapDay = fromExcelSerialDate({ serial: 60, timeZone: "UTC" });
+        expect(leapDay).toBeDefined();
         expect(
             toExcelSerialDate({
-                date: fromExcelSerialDate({ serial: 60, timeZone: "UTC" }),
+                date: leapDay!,
                 timeZone: "UTC",
             }),
         ).toBe(61);

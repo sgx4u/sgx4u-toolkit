@@ -16,19 +16,21 @@ function createHolidayPredicate(
 ): (date: Date) => boolean;
 ```
 
-## Options
+## Parameters
 
-| Name                | Type                       | Required | Default     | Meaning                                 |
-| ------------------- | -------------------------- | -------- | ----------- | --------------------------------------- |
-| `rules`             | `readonly HolidayRule[]`   | yes      |             | Holiday rules.                          |
-| `timeZone`          | `string`                   | no       | System zone | Zone used to read the calendar day.     |
-| `matchObservedDate` | `boolean`                  | no       | `true`      | Also match the observed substitute day. |
+| Name                | Type                     | Required | Default                                  | Meaning                                                                        |
+| ------------------- | ------------------------ | -------- | ---------------------------------------- | ------------------------------------------------------------------------------ |
+| `rules`             | `readonly HolidayRule[]` | yes      |                                          | The holiday rules.                                                             |
+| `matchObservedDate` | `boolean`                | no       | `true`                                   | Match the observed substitute day. When false, only the original date matches. |
+| `timeZone`          | `string`                 | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset                             |
 
 ## Examples
 
 ```ts
 const isIndianHoliday = createHolidayPredicate({
-    rules: [{ name: "Republic Day", date: { kind: "fixed", month: 1, day: 26 } }],
+    rules: [
+        { name: "Republic Day", date: { kind: "fixed", month: 1, day: 26 } },
+    ],
     timeZone: "Asia/Kolkata",
 });
 isIndianHoliday(new Date("2026-01-25T18:30:00Z")); // true

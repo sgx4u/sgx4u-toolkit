@@ -4,8 +4,7 @@ import type { DisambiguationOptions } from "../types/options.types.js";
 /**
  * Fields for {@link changeTimeZoneKeepingWallTime}.
  */
-export interface ChangeTimeZoneKeepingWallTimeParams
-    extends DisambiguationOptions {
+export interface ChangeTimeZoneKeepingWallTimeParams extends DisambiguationOptions {
     /**
      * The original instant.
      */

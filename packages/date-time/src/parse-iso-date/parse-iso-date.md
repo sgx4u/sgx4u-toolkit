@@ -11,31 +11,32 @@ import { parseISODate } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function parseISODate(
-    value: string,
-    options?: TimeZoneOptions,
-): Date | undefined;
+function parseISODate(params: ParseISODateParams): Date | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name       | Type     | Default     | Meaning                    |
-| ---------- | -------- | ----------- | -------------------------- |
-| `timeZone` | `string` | System zone | IANA name or fixed offset. |
+| Name       | Type     | Required | Default                                  | Meaning                                            |
+| ---------- | -------- | -------- | ---------------------------------------- | -------------------------------------------------- |
+| `value`    | `string` | yes      |                                          | The candidate text.                                |
+| `timeZone` | `string` | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset |
 
 ## Examples
 
 ```ts
-parseISODate("2026-11-26", { timeZone: "UTC" })?.toISOString();
+parseISODate({ value: "2026-11-26", timeZone: "UTC" })?.toISOString();
 // "2026-11-26T00:00:00.000Z"
 
-parseISODate("2026-11-26", { timeZone: "Asia/Kolkata" })?.toISOString();
+parseISODate({ value: "2026-11-26", timeZone: "Asia/Kolkata" })?.toISOString();
 // "2026-11-25T18:30:00.000Z"
 
-parseISODate("2024-07-15", { timeZone: "America/New_York" })?.toISOString();
+parseISODate({
+    value: "2024-07-15",
+    timeZone: "America/New_York",
+})?.toISOString();
 // "2024-07-15T04:00:00.000Z"
 
-parseISODate("2024-02-30", { timeZone: "UTC" });
+parseISODate({ value: "2024-02-30", timeZone: "UTC" });
 // undefined
 ```
 

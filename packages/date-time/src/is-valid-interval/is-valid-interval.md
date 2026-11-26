@@ -14,9 +14,11 @@ import { isValidInterval } from "@sgx4u/date-time";
 function isValidInterval(value: unknown): value is Interval;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name    | Type      | Required | Default | Meaning    |
+| ------- | --------- | -------- | ------- | ---------- |
+| `value` | `unknown` | yes      |         | Any value. |
 
 ## Examples
 

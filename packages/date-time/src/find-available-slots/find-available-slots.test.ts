@@ -10,7 +10,10 @@ describe("findAvailableSlots", () => {
             timeZone: "UTC",
         });
         expect(
-            slots.map((slot) => [slot.start.getTime(), slot.end.getTime()]),
+            (slots ?? []).map((slot) => [
+                slot.start.getTime(),
+                slot.end.getTime(),
+            ]),
         ).toEqual([
             [0, 10],
             [20, 30],
@@ -26,10 +29,11 @@ describe("findAvailableSlots", () => {
             dailyWindow: { start: "09:00", end: "17:00" },
             timeZone: "UTC",
         });
-        expect(windowed[0]?.start.toISOString()).toBe(
+        expect(windowed).toBeDefined();
+        expect(windowed![0]?.start.toISOString()).toBe(
             "2026-11-26T09:00:00.000Z",
         );
-        expect(windowed.at(-1)?.end.toISOString()).toBe(
+        expect(windowed!.at(-1)?.end.toISOString()).toBe(
             "2026-11-26T17:00:00.000Z",
         );
     });

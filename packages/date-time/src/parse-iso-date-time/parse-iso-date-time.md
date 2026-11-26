@@ -11,32 +11,31 @@ import { parseISODateTime } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function parseISODateTime(
-    value: string,
-    options?: ParseISODateTimeOptions,
-): Date | undefined;
+function parseISODateTime(params: ParseISODateTimeParams): Date | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name              | Type                                               | Default        | Meaning                                                             |
-| ----------------- | -------------------------------------------------- | -------------- | ------------------------------------------------------------------- |
-| `defaultTimeZone` | `string`                                           | none           | Zone used when the text has no offset and no bracketed zone.        |
-| `disambiguation`  | `"compatible" \| "earlier" \| "later" \| "reject"` | `"compatible"` | How a skipped or repeated wall time is chosen in `defaultTimeZone`. |
+| Name              | Type             | Required | Default        | Meaning                                                   |
+| ----------------- | ---------------- | -------- | -------------- | --------------------------------------------------------- |
+| `value`           | `string`         | yes      |                | The candidate text.                                       |
+| `defaultTimeZone` | `string`         | no       |                | Zone used when the text has no offset.                    |
+| `disambiguation`  | `Disambiguation` | no       | `"compatible"` | Which instant to use at a daylight-saving gap or overlap. |
 
 ## Examples
 
 ```ts
-parseISODateTime("2026-11-26T03:30:00+05:30")?.toISOString();
+parseISODateTime({ value: "2026-11-26T03:30:00+05:30" })?.toISOString();
 // "2026-11-25T22:00:00.000Z"
 
-parseISODateTime("2026-11-26T00:00:00.123456Z")?.toISOString();
+parseISODateTime({ value: "2026-11-26T00:00:00.123456Z" })?.toISOString();
 // "2026-11-26T00:00:00.123Z"
 
-parseISODateTime("2026-11-26T03:30:00");
+parseISODateTime({ value: "2026-11-26T03:30:00" });
 // undefined
 
-parseISODateTime("2024-03-10T02:30:00", {
+parseISODateTime({
+    value: "2024-03-10T02:30:00",
     defaultTimeZone: "America/New_York",
 })?.toISOString();
 // "2024-03-10T07:30:00.000Z"

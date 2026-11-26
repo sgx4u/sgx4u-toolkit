@@ -16,15 +16,15 @@ function createMonthCalendarGrid(
 ): MonthCalendarGrid | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name             | Type      | Required | Default     | Meaning                                           |
-| ---------------- | --------- | -------- | ----------- | ------------------------------------------------- |
-| `year`           | `number`  | yes      |             | Gregorian year.                                   |
-| `month`          | `number`  | yes      |             | Month from 1 through 12.                          |
-| `timeZone`       | `string`  | no       | System zone | Zone used for the start of each day.              |
-| `weekStartsOn`   | `Weekday` | no       | `1`         | ISO weekday that starts each week. `1` is Monday. |
-| `fixedWeekCount` | `boolean` | no       | `false`     | When `true`, the grid always has six weeks.       |
+| Name             | Type      | Required | Default                                  | Meaning                                                 |
+| ---------------- | --------- | -------- | ---------------------------------------- | ------------------------------------------------------- |
+| `year`           | `number`  | yes      |                                          | The Gregorian year.                                     |
+| `month`          | `number`  | yes      |                                          | The month, from 1 through 12.                           |
+| `fixedWeekCount` | `boolean` | no       | `false`                                  | Whether the grid always has six weeks.                  |
+| `timeZone`       | `string`  | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset      |
+| `weekStartsOn`   | `Weekday` | no       | `1`                                      | ISO weekday number that starts the week. `1` is Monday. |
 
 ## Examples
 

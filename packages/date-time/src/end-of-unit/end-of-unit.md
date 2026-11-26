@@ -11,27 +11,33 @@ import { endOfUnit } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function endOfUnit(
-    date: DateInput,
-    unit: TimeUnit | "decade",
-    options?: TimeZoneOptions & WeekOptions,
-): Date;
+function endOfUnit(params: EndOfUnitParams): Date | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name           | Type      | Default     | Meaning                                        |
-| -------------- | --------- | ----------- | ---------------------------------------------- |
-| `timeZone`     | `string`  | System zone | Zone used to find the unit boundaries.         |
-| `weekStartsOn` | `Weekday` | `1`         | ISO weekday that starts a week. `1` is Monday. |
+| Name           | Type                   | Required | Default                                  | Meaning                                                 |
+| -------------- | ---------------------- | -------- | ---------------------------------------- | ------------------------------------------------------- |
+| `date`         | `DateInput`            | yes      |                                          | The instant to align.                                   |
+| `unit`         | `TimeUnit \| "decade"` | yes      |                                          | A time unit, or `"decade"`.                             |
+| `timeZone`     | `string`               | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset      |
+| `weekStartsOn` | `Weekday`              | no       | `1`                                      | ISO weekday number that starts the week. `1` is Monday. |
 
 ## Examples
 
 ```ts
-endOfUnit("2026-11-26T15:45:00Z", "day", { timeZone: "UTC" }).toISOString();
+endOfUnit({
+    date: "2026-11-26T15:45:00Z",
+    unit: "day",
+    timeZone: "UTC",
+}).toISOString();
 // "2026-11-26T23:59:59.999Z"
 
-endOfUnit("2026-11-26T15:45:00Z", "year", { timeZone: "UTC" }).toISOString();
+endOfUnit({
+    date: "2026-11-26T15:45:00Z",
+    unit: "year",
+    timeZone: "UTC",
+}).toISOString();
 // "2026-12-31T23:59:59.999Z"
 ```
 

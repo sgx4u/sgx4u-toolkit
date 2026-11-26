@@ -25,20 +25,20 @@ This function has no options.
 import { unitedStatesHolidayRules } from "@sgx4u/date-time/holidays/united-states";
 import { getHolidaysInYear } from "@sgx4u/date-time";
 
-getHolidaysInYear(2026, unitedStatesHolidayRules).length;
+getHolidaysInYear({ year: 2026, rules: unitedStatesHolidayRules }).length;
 // 11
 
-getHolidaysInYear(2026, unitedStatesHolidayRules).find(
+getHolidaysInYear({ year: 2026, rules: unitedStatesHolidayRules }).find(
     (holiday) => holiday.name === "Independence Day",
 )?.observedDate;
 // { year: 2026, month: 7, day: 3 }
 
-getHolidaysInYear(2026, unitedStatesHolidayRules).find(
+getHolidaysInYear({ year: 2026, rules: unitedStatesHolidayRules }).find(
     (holiday) => holiday.name === "Thanksgiving Day",
 )?.date;
 // { year: 2026, month: 11, day: 26 }
 
-getHolidaysInYear(2026, unitedStatesHolidayRules).find(
+getHolidaysInYear({ year: 2026, rules: unitedStatesHolidayRules }).find(
     (holiday) => holiday.name === "Birthday of Martin Luther King, Jr.",
 )?.date;
 // { year: 2026, month: 1, day: 19 }

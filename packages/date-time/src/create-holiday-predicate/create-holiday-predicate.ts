@@ -1,4 +1,4 @@
-import type { Holiday, HolidayRule } from "../types/holiday.types.js";
+import type { Holiday } from "../types/holiday.types.js";
 import type { CalendarDate } from "../types/time.types.js";
 import { holidaysInYear } from "../utils/holiday.utils.js";
 import { readDateParts, resolveTimeZone } from "../utils/time-zone.utils.js";

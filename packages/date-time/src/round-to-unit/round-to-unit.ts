@@ -3,6 +3,7 @@ import { readDateInput } from "../utils/date-input.utils.js";
 import { rangeError } from "../utils/error.utils.js";
 import { resolveTimeZone } from "../utils/time-zone.utils.js";
 import { assertBoundaryUnit } from "../utils/unit.utils.js";
+import type { TimeUnit } from "../types/time.types.js";
 import type { RoundToUnitParams } from "./round-to-unit.types.js";
 
 /**
@@ -33,10 +34,11 @@ export function roundToUnit({
     if (resolved === undefined) {
         return undefined;
     }
+    const boundaryUnit = assertBoundaryUnit(unit);
     return new Date(
         roundInstant(
             resolved.getTime(),
-            assertBoundaryUnit(unit as TimeUnit | "decade"),
+            boundaryUnit as TimeUnit,
             zone,
             1,
             increment,

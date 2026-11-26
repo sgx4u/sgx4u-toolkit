@@ -1,12 +1,12 @@
 import { isRealGregorianDay } from "./gregorian.utils.js";
-import { utcEpochMilliseconds } from "./gregorian.utils.js";
+import { UTCEpochMilliseconds } from "./gregorian.utils.js";
 import { instantFromWallTime, readDateParts } from "./time-zone.utils.js";
 import { parseFixedOffsetMinutes } from "./time-zone.utils.js";
 
 /**
  * A lenient ISO date-time, including an optional RFC 9557 zone suffix.
  */
-export interface LenientIsoDateTime {
+export interface LenientISODateTime {
     year: number;
     month: number;
     day: number;
@@ -62,9 +62,9 @@ export function parseCalendarText(
  * @param value - The candidate text.
  * @returns The fields, or `undefined` when the text does not match.
  */
-export function parseLenientIsoDateTime(
+export function parseLenientISODateTime(
     value: string,
-): LenientIsoDateTime | undefined {
+): LenientISODateTime | undefined {
     const groups = lenientDateTimeExpression.exec(value)?.groups;
     if (groups === undefined) {
         return undefined;
@@ -83,7 +83,7 @@ export function parseLenientIsoDateTime(
     ) {
         return undefined;
     }
-    const parsed: LenientIsoDateTime = {
+    const parsed: LenientISODateTime = {
         year,
         month,
         day,
@@ -158,13 +158,13 @@ export function formatOffsetText(
  * When an offset and a bracketed zone both exist and disagree, the result
  * is `undefined`. A missing offset uses `defaultTimeZone`.
  *
- * @param parsed - Fields from `parseLenientIsoDateTime`.
+ * @param parsed - Fields from `parseLenientISODateTime`.
  * @param defaultTimeZone - Zone used when the text has no offset.
  * @param disambiguation - How a zone-only time resolves a gap or overlap.
  * @returns The instant, or `undefined` when the text cannot be placed.
  */
-export function instantFromLenientIso(
-    parsed: LenientIsoDateTime,
+export function instantFromLenientISO(
+    parsed: LenientISODateTime,
     defaultTimeZone: string | undefined,
     disambiguation: "compatible" | "earlier" | "later" | "reject",
 ): number | undefined {
@@ -178,7 +178,7 @@ export function instantFromLenientIso(
         millisecond: parsed.millisecond,
     };
     if (parsed.offsetMinutes !== undefined) {
-        const utc = utcEpochMilliseconds(
+        const utc = UTCEpochMilliseconds(
             parsed.year,
             parsed.month - 1,
             parsed.day,

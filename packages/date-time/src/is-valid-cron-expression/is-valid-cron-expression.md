@@ -11,33 +11,31 @@ import { isValidCronExpression } from "@sgx4u/date-time/cron";
 ## Signature
 
 ```ts
-function isValidCronExpression(
-    expression: string,
-    options?: ParseCronExpressionOptions,
-): boolean;
+function isValidCronExpression(params: IsValidCronExpressionParams): boolean;
 ```
 
-## Options
+## Parameters
 
-| Name      | Type                                 | Default      | Meaning                                                                                   |
-| --------- | ------------------------------------ | ------------ | ----------------------------------------------------------------------------------------- |
-| `seconds` | `"optional" \| "required" \| "none"` | `"optional"` | `"optional"` accepts five or six fields. `"required"` accepts six. `"none"` accepts five. |
+| Name         | Type                                 | Required | Default      | Meaning                                                            |
+| ------------ | ------------------------------------ | -------- | ------------ | ------------------------------------------------------------------ |
+| `expression` | `string`                             | yes      |              | The cron text.                                                     |
+| `seconds`    | `"none" \| "optional" \| "required"` | no       | `"optional"` | `"optional"` accepts five or six fields. `"required"` accepts six. |
 
 ## Examples
 
 ```ts
 import { isValidCronExpression } from "@sgx4u/date-time/cron";
 
-isValidCronExpression("@daily");
+isValidCronExpression({ expression: "@daily" });
 // true
 
-isValidCronExpression("@reboot");
+isValidCronExpression({ expression: "@reboot" });
 // false
 
-isValidCronExpression("0 9 * * *", { seconds: "required" });
+isValidCronExpression({ expression: "0 9 * * *", seconds: "required" });
 // false
 
-isValidCronExpression("0 0 9 * * *", { seconds: "required" });
+isValidCronExpression({ expression: "0 0 9 * * *", seconds: "required" });
 // true
 ```
 

@@ -11,32 +11,44 @@ import { doesCronMatch } from "@sgx4u/date-time/cron";
 ## Signature
 
 ```ts
-function doesCronMatch(
-    schedule: string | CronSchedule,
-    date: DateInput,
-    options?: TimeZoneOptions,
-): boolean;
+function doesCronMatch(params: DoesCronMatchParams): boolean;
 ```
 
-## Options
+## Parameters
 
-| Name       | Type     | Default     | Meaning                          |
-| ---------- | -------- | ----------- | -------------------------------- |
-| `timeZone` | `string` | System zone | Zone used to read the wall time. |
+| Name       | Type                     | Required | Default                                  | Meaning                                            |
+| ---------- | ------------------------ | -------- | ---------------------------------------- | -------------------------------------------------- |
+| `schedule` | `string \| CronSchedule` | yes      |                                          | A cron expression or a parsed schedule.            |
+| `date`     | `DateInput`              | yes      |                                          | The instant to test.                               |
+| `timeZone` | `string`                 | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset |
 
 ## Examples
 
 ```ts
-doesCronMatch("0 9 * * *", "2026-11-26T09:00:00Z", { timeZone: "UTC" });
+doesCronMatch({
+    schedule: "0 9 * * *",
+    date: "2026-11-26T09:00:00Z",
+    timeZone: "UTC",
+});
 // true
 
-doesCronMatch("0 9 * * *", "2026-11-26T09:01:00Z", { timeZone: "UTC" });
+doesCronMatch({
+    schedule: "0 9 * * *",
+    date: "2026-11-26T09:01:00Z",
+    timeZone: "UTC",
+});
 // false
 
-doesCronMatch("0 0 29 2 *", "2024-02-29T00:00:00Z", { timeZone: "UTC" });
+doesCronMatch({
+    schedule: "0 0 29 2 *",
+    date: "2024-02-29T00:00:00Z",
+    timeZone: "UTC",
+});
 // true
 
-doesCronMatch("30 1 * * *", "2024-11-03T05:30:00Z", {
+doesCronMatch({
+    schedule: "30 1 * * *",
+    date: "2024-11-03T05:30:00Z",
     timeZone: "America/New_York",
 });
 // true

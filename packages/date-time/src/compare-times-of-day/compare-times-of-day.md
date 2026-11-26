@@ -16,12 +16,12 @@ function compareTimesOfDay(
 ): -1 | 0 | 1 | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name     | Type        | Required | Default | Meaning           |
-| -------- | ----------- | -------- | ------- | ----------------- |
-| `first`  | `TimeOfDay` | yes      |         | The first time.   |
-| `second` | `TimeOfDay` | yes      |         | The second time.  |
+| Name     | Type        | Required | Default | Meaning                 |
+| -------- | ----------- | -------- | ------- | ----------------------- |
+| `first`  | `TimeOfDay` | yes      |         | The first time of day.  |
+| `second` | `TimeOfDay` | yes      |         | The second time of day. |
 
 ## Examples
 

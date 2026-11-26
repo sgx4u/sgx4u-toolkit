@@ -11,31 +11,37 @@ import { isSameInstant } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function isSameInstant(first: DateInput, second: DateInput): boolean;
+function isSameInstant(params: IsSameInstantParams): boolean;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name     | Type        | Required | Default | Meaning          |
+| -------- | ----------- | -------- | ------- | ---------------- |
+| `first`  | `DateInput` | yes      |         | The first date.  |
+| `second` | `DateInput` | yes      |         | The second date. |
 
 ## Examples
 
 ```ts
 import { isSameInstant } from "@sgx4u/date-time";
 
-isSameInstant("1970-01-01T00:00:00.000Z", 0);
+isSameInstant({ first: "1970-01-01T00:00:00.000Z", second: 0 });
 // true
 
-isSameInstant("2024-01-01T00:00:00Z", "2024-01-01T00:00:00.000Z");
+isSameInstant({
+    first: "2024-01-01T00:00:00Z",
+    second: "2024-01-01T00:00:00.000Z",
+});
 // true
 
-isSameInstant("2024-01-01T00:00:00Z", 0);
+isSameInstant({ first: "2024-01-01T00:00:00Z", second: 0 });
 // false
 ```
 
 ## Edge cases
 
-A number is Unix time in milliseconds. Text with a `Z` or numeric offset is an instant. A value that is not a real date throws a `RangeError`.
+A number is Unix time in milliseconds. Text with a `Z` or numeric offset is an instant. A value that is not a real date returns `undefined`.
 
 ## Related
 

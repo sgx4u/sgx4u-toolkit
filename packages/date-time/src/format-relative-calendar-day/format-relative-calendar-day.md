@@ -12,45 +12,49 @@ import { formatRelativeCalendarDay } from "@sgx4u/date-time";
 
 ```ts
 function formatRelativeCalendarDay(
-    date: DateInput,
-    options?: FormatRelativeCalendarDayOptions,
-): string;
+    params: FormatRelativeCalendarDayParams,
+): string | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name        | Type                          | Default        | Meaning                               |
-| ----------- | ----------------------------- | -------------- | ------------------------------------- |
-| `now`       | `DateInput`                   | Current time   | Instant treated as today.             |
-| `timeZone`  | `string`                      | System zone    | Zone used to count calendar days.     |
-| `locale`    | `string \| readonly string[]` | Runtime locale | Locale for the day word and the time. |
-| `timeStyle` | `"short" \| "medium"`         | `"short"`      | Length of the time.                   |
+| Name        | Type                          | Required | Default                                  | Meaning                                                       |
+| ----------- | ----------------------------- | -------- | ---------------------------------------- | ------------------------------------------------------------- |
+| `date`      | `DateInput`                   | yes      |                                          | The date to describe.                                         |
+| `timeStyle` | `"short" \| "medium"`         | no       | `"short"`                                | The length of the time.                                       |
+| `now`       | `DateInput`                   | no       | `Date.now()`, read on each call.         | The instant to use instead of the current time.               |
+| `timeZone`  | `string`                      | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset            |
+| `locale`    | `string \| readonly string[]` | no       | The runtime's default locale.            | A BCP 47 language tag, or a list of tags in preference order. |
 
 ## Examples
 
 ```ts
-formatRelativeCalendarDay("2026-01-02T17:00:00Z", {
+formatRelativeCalendarDay({
+    date: "2026-01-02T17:00:00Z",
     now: "2026-01-02T12:00:00Z",
     timeZone: "UTC",
     locale: "en",
 });
 // "Today at 5:00 PM"
 
-formatRelativeCalendarDay("2026-01-01T17:00:00Z", {
+formatRelativeCalendarDay({
+    date: "2026-01-01T17:00:00Z",
     now: "2026-01-02T12:00:00Z",
     timeZone: "UTC",
     locale: "en",
 });
 // "Yesterday at 5:00 PM"
 
-formatRelativeCalendarDay("2026-01-06T17:00:00Z", {
+formatRelativeCalendarDay({
+    date: "2026-01-06T17:00:00Z",
     now: "2026-01-02T12:00:00Z",
     timeZone: "UTC",
     locale: "en",
 });
 // "Tuesday at 5:00 PM"
 
-formatRelativeCalendarDay("2024-03-10T07:30:00Z", {
+formatRelativeCalendarDay({
+    date: "2024-03-10T07:30:00Z",
     now: "2024-03-10T16:00:00Z",
     timeZone: "America/New_York",
     locale: "en-US",

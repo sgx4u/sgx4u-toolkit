@@ -14,9 +14,11 @@ import { isLeapYear } from "@sgx4u/date-time";
 function isLeapYear(year: number): boolean;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name   | Type     | Required | Default | Meaning             |
+| ------ | -------- | -------- | ------- | ------------------- |
+| `year` | `number` | yes      |         | The Gregorian year. |
 
 ## Examples
 

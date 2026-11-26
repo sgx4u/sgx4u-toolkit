@@ -11,32 +11,38 @@ import { startOfUnit } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function startOfUnit(
-    date: DateInput,
-    unit: TimeUnit | "decade",
-    options?: TimeZoneOptions & WeekOptions,
-): Date;
+function startOfUnit(params: StartOfUnitParams): Date | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name           | Type                              | Default     | Meaning                                        |
-| -------------- | --------------------------------- | ----------- | ---------------------------------------------- |
-| `timeZone`     | `string`                          | System zone | Zone the unit boundary is measured in.         |
-| `weekStartsOn` | `1 \| 2 \| 3 \| 4 \| 5 \| 6 \| 7` | `1`         | ISO weekday that starts a week. `1` is Monday. |
+| Name           | Type                   | Required | Default                                  | Meaning                                                 |
+| -------------- | ---------------------- | -------- | ---------------------------------------- | ------------------------------------------------------- |
+| `date`         | `DateInput`            | yes      |                                          | The instant to align.                                   |
+| `unit`         | `TimeUnit \| "decade"` | yes      |                                          | A time unit, or `"decade"`.                             |
+| `timeZone`     | `string`               | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset      |
+| `weekStartsOn` | `Weekday`              | no       | `1`                                      | ISO weekday number that starts the week. `1` is Monday. |
 
 ## Examples
 
 ```ts
-startOfUnit("2026-11-26T15:45:00Z", "day", { timeZone: "UTC" }).toISOString();
+startOfUnit({
+    date: "2026-11-26T15:45:00Z",
+    unit: "day",
+    timeZone: "UTC",
+}).toISOString();
 // "2026-11-26T00:00:00.000Z"
 
-startOfUnit("2026-11-26T00:00:00Z", "decade", {
+startOfUnit({
+    date: "2026-11-26T00:00:00Z",
+    unit: "decade",
     timeZone: "UTC",
 }).toISOString();
 // "2020-01-01T00:00:00.000Z"
 
-startOfUnit("2024-09-08T12:00:00Z", "day", {
+startOfUnit({
+    date: "2024-09-08T12:00:00Z",
+    unit: "day",
     timeZone: "America/Santiago",
 }).toISOString();
 // "2024-09-08T04:00:00.000Z"

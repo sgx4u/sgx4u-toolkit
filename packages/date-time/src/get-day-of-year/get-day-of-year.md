@@ -14,32 +14,31 @@ import { getDayOfYear } from "@sgx4u/date-time";
 function getDayOfYear(params: GetDayOfYearParams): number | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name       | Type        | Required | Default                                 | Meaning                                                              |
-| ---------- | ----------- | -------- | --------------------------------------- | -------------------------------------------------------------------- |
-| `date`     | `DateInput` | Yes      | —                                       | The date to read.                                                    |
-| `timeZone` | `string`    | No       | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
+| Name       | Type        | Required | Default                                  | Meaning                                            |
+| ---------- | ----------- | -------- | ---------------------------------------- | -------------------------------------------------- |
+| `date`     | `DateInput` | yes      |                                          | The date to read.                                  |
+| `timeZone` | `string`    | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset |
 
 ## Examples
 
 ```ts
 import { getDayOfYear } from "@sgx4u/date-time";
 
-getDayOfYear("2024-01-01T00:00:00Z", { timeZone: "UTC" });
+getDayOfYear({ date: "2024-01-01T00:00:00Z", timeZone: "UTC" });
 // 1
 
-getDayOfYear("2024-03-01T00:00:00Z", { timeZone: "UTC" });
+getDayOfYear({ date: "2024-03-01T00:00:00Z", timeZone: "UTC" });
 // 61
 
-getDayOfYear("2023-03-01T00:00:00Z", { timeZone: "UTC" });
+getDayOfYear({ date: "2023-03-01T00:00:00Z", timeZone: "UTC" });
 // 60
 ```
 
 ## Edge cases
 
 Invalid `date` returns `undefined`. An invalid `timeZone` throws.
-
 
 ## Related
 

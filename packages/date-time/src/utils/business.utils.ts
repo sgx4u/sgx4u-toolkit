@@ -1,19 +1,25 @@
 import type { BusinessCalendar } from "../types/business.types.js";
+import type { ConfiguredHoliday } from "../types/configured-holiday.types.js";
 import type { DateInput } from "../types/date-input.types.js";
 import type { TimeOfDay, TimeRange, Weekday } from "../types/time.types.js";
 import { compareTimesOfDay } from "../compare-times-of-day/compare-times-of-day.js";
 import { isTimeOfDayInRange } from "../is-time-of-day-in-range/is-time-of-day-in-range.js";
 import { parseTimeOfDay } from "../parse-time-of-day/parse-time-of-day.js";
 import { addDurationToInstant, startOfInstant } from "./arithmetic.utils.js";
+import {
+    assertBusinessHours,
+    assertWorkingDays,
+} from "./business-config.utils.js";
 import { resolveDateInput } from "./date-input.utils.js";
-import { rangeError } from "./error.utils.js";
+import { isDateValue } from "./date-value.utils.js";
+import { rangeError, typeError } from "./error.utils.js";
 import {
     instantFromWallTime,
     readDateParts,
     resolveTimeZone,
 } from "./time-zone.utils.js";
 
-const defaultWeekend: readonly Weekday[] = [6, 7];
+const defaultWorkingDays: readonly Weekday[] = [1, 2, 3, 4, 5];
 const defaultWorkingHours: readonly TimeRange[] = [
     { start: "09:00", end: "17:00" },
 ];
@@ -24,7 +30,7 @@ const maximumClosedDays = 3_660;
  */
 export interface ResolvedBusinessCalendar {
     weekendDays: readonly Weekday[];
-    holidays: readonly DateInput[] | ((date: Date) => boolean);
+    holidays: readonly (ConfiguredHoliday | DateInput)[];
     workingHours: readonly TimeRange[];
     timeZone: string;
 }
@@ -36,12 +42,34 @@ export interface ResolvedBusinessCalendar {
 export function resolveBusinessCalendar(
     calendar: BusinessCalendar | undefined,
 ): ResolvedBusinessCalendar {
+    const workingDays =
+        calendar?.workingDays === undefined
+            ? defaultWorkingDays
+            : assertWorkingDays(calendar.workingDays);
     return {
-        weekendDays: calendar?.weekendDays ?? defaultWeekend,
+        weekendDays: weekendFromWorkingDays(workingDays),
         holidays: calendar?.holidays ?? [],
-        workingHours: calendar?.workingHours ?? defaultWorkingHours,
+        workingHours: assertBusinessHours(
+            calendar?.businessHours ?? defaultWorkingHours,
+        ),
         timeZone: resolveTimeZone(calendar?.timeZone),
     };
+}
+
+/**
+ * Weekend days are the ISO weekdays that are not working days.
+ *
+ * @param workingDays - Days the business is open.
+ * @returns The closed weekdays, from Monday through Sunday.
+ */
+function weekendFromWorkingDays(workingDays: readonly Weekday[]): Weekday[] {
+    const weekend: Weekday[] = [];
+    for (const day of [1, 2, 3, 4, 5, 6, 7] as const) {
+        if (!workingDays.includes(day)) {
+            weekend.push(day);
+        }
+    }
+    return weekend;
 }
 
 /**
@@ -122,12 +150,16 @@ function matchesHoliday(
     calendar: ResolvedBusinessCalendar,
 ): boolean {
     const holidays = calendar.holidays;
-    if (typeof holidays === "function") {
-        return holidays(new Date(epochMilliseconds));
+    if (!Array.isArray(holidays)) {
+        throw typeError("holidays", "an array of { date, name? }", holidays);
     }
     for (const holiday of holidays) {
         const holidayParts = readDateParts(
-            resolveDateInput(holiday, "holidays", calendar.timeZone).getTime(),
+            resolveDateInput(
+                holidayDate(holiday),
+                "holidays",
+                calendar.timeZone,
+            ).getTime(),
             calendar.timeZone,
         );
         if (
@@ -139,6 +171,21 @@ function matchesHoliday(
         }
     }
     return false;
+}
+
+/**
+ * @param holiday - A `{ date, name? }` entry or a bare date.
+ * @returns The date used to match the calendar day.
+ */
+function holidayDate(holiday: ConfiguredHoliday | DateInput): DateInput {
+    if (
+        isDateValue(holiday) ||
+        typeof holiday === "string" ||
+        typeof holiday === "number"
+    ) {
+        return holiday;
+    }
+    return holiday.date;
 }
 
 /**
@@ -583,7 +630,10 @@ function workingSegment(
                     end: timeOnDay(day, range.end, calendar),
                 };
             }
-            if (range.overnight && compareTimesOfDay(time, range.start) >= 0) {
+            if (
+                range.overnight &&
+                compareTimesOfDay({ first: time, second: range.start })! >= 0
+            ) {
                 return {
                     start: timeOnDay(day, range.start, calendar),
                     end: nextDay,
@@ -600,7 +650,10 @@ function workingSegment(
     );
     if (isBusinessInstant(previousDay, calendar)) {
         for (const range of readRanges(calendar)) {
-            if (range.overnight && compareTimesOfDay(time, range.end) < 0) {
+            if (
+                range.overnight &&
+                compareTimesOfDay({ first: time, second: range.end })! < 0
+            ) {
                 return {
                     start: day,
                     end: timeOnDay(day, range.end, calendar),
@@ -676,12 +729,12 @@ function readRanges(calendar: ResolvedBusinessCalendar): ParsedWorkingRange[] {
             typeof range.end === "string" ? range.end : formatBound(range.end),
         );
         if (start === undefined || end === undefined) {
-            throw rangeError("workingHours", "ranges of HH:mm", range);
+            throw rangeError("businessHours", "ranges of HH:mm", range);
         }
         return {
             start,
             end,
-            overnight: compareTimesOfDay(end, start) <= 0,
+            overnight: compareTimesOfDay({ first: end, second: start })! <= 0,
         };
     });
 }
@@ -753,5 +806,8 @@ function timeOnDay(
  * @returns `true` when the time is inside the range, excluding the end.
  */
 function containsDaytime(time: TimeOfDay, range: ParsedWorkingRange): boolean {
-    return isTimeOfDayInRange(time, { start: range.start, end: range.end });
+    return isTimeOfDayInRange({
+        time,
+        range: { start: range.start, end: range.end },
+    });
 }

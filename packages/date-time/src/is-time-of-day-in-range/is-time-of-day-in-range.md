@@ -11,41 +11,39 @@ import { isTimeOfDayInRange } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function isTimeOfDayInRange(
-    time: TimeOfDay,
-    range: TimeRange,
-    options?: TimeOfDayRangeOptions,
-): boolean;
+function isTimeOfDayInRange(params: IsTimeOfDayInRangeParams): boolean;
 ```
 
-## Options
+## Parameters
 
-| Name         | Type      | Default | Meaning                              |
-| ------------ | --------- | ------- | ------------------------------------ |
-| `includeEnd` | `boolean` | `false` | Whether the end of the range counts. |
+| Name         | Type        | Required | Default | Meaning                                      |
+| ------------ | ----------- | -------- | ------- | -------------------------------------------- |
+| `time`       | `TimeOfDay` | yes      |         | The time to test.                            |
+| `range`      | `TimeRange` | yes      |         | The start and end, as text or a time of day. |
+| `includeEnd` | `boolean`   | no       | `false` | Whether the end instant of the range counts. |
 
 ## Examples
 
 ```ts
 import { isTimeOfDayInRange } from "@sgx4u/date-time";
 
-isTimeOfDayInRange(
-    { hour: 23, minute: 0, second: 0, millisecond: 0 },
-    { start: "22:00", end: "06:00" },
-);
+isTimeOfDayInRange({
+    time: { hour: 23, minute: 0, second: 0, millisecond: 0 },
+    range: { start: "22:00", end: "06:00" },
+});
 // true
 
-isTimeOfDayInRange(
-    { hour: 6, minute: 0, second: 0, millisecond: 0 },
-    { start: "22:00", end: "06:00" },
-);
+isTimeOfDayInRange({
+    time: { hour: 6, minute: 0, second: 0, millisecond: 0 },
+    range: { start: "22:00", end: "06:00" },
+});
 // false
 
-isTimeOfDayInRange(
-    { hour: 6, minute: 0, second: 0, millisecond: 0 },
-    { start: "22:00", end: "06:00" },
-    { includeEnd: true },
-);
+isTimeOfDayInRange({
+    time: { hour: 6, minute: 0, second: 0, millisecond: 0 },
+    range: { start: "22:00", end: "06:00" },
+    includeEnd: true,
+});
 // true
 ```
 

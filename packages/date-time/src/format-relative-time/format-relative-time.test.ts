@@ -8,7 +8,8 @@ import {
 describe("relative time", () => {
     it("picks a unit and formats it", () => {
         expect(
-            getRelativeTimeParts("2026-01-01T03:00:00Z", {
+            getRelativeTimeParts({
+                date: "2026-01-01T03:00:00Z",
                 now: "2026-01-01T00:00:00Z",
             }),
         ).toEqual({ value: 3, unit: "hour" });
@@ -25,6 +26,6 @@ describe("relative time", () => {
             timeZone: "UTC",
             locale: "en",
         });
-        expect(yesterday.startsWith("Yesterday at ")).toBe(true);
+        expect(yesterday?.startsWith("Yesterday at ")).toBe(true);
     });
 });

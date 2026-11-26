@@ -12,50 +12,45 @@ import { listRecurrenceOccurrences } from "@sgx4u/date-time/recurrence";
 
 ```ts
 function listRecurrenceOccurrences(
-    rule: RecurrenceRule,
-    options: ListRecurrenceOccurrencesOptions,
+    params: ListRecurrenceOccurrencesParams,
 ): Date[];
 ```
 
-## Options
+## Parameters
 
-The options argument is required.
-
-| Name      | Type       | Default    | Meaning                                              |
-| --------- | ---------- | ---------- | ---------------------------------------------------- |
-| `between` | `Interval` | `required` | The half-open interval the occurrences must fall in. |
-| `limit`   | `number`   | `1000`     | The most occurrences that may be returned.           |
+| Name    | Type             | Required | Default | Meaning                                             |
+| ------- | ---------------- | -------- | ------- | --------------------------------------------------- |
+| `rule`  | `RecurrenceRule` | yes      |         | The recurrence rule.                                |
+| `start` | `DateInput`      | yes      |         | The inclusive start of the half-open search window. |
+| `end`   | `DateInput`      | yes      |         | The exclusive end of the half-open search window.   |
+| `limit` | `number`         | no       | `1000`  | The most occurrences that may be returned.          |
 
 ## Examples
 
 ```ts
 import { listRecurrenceOccurrences } from "@sgx4u/date-time/recurrence";
 
-listRecurrenceOccurrences(
-    {
+listRecurrenceOccurrences({
+    rule: {
         start: new Date("2026-11-26T09:00:00Z"),
         frequency: "daily",
         count: 2,
     },
-    {
-        between: {
-            start: new Date("2026-11-26T00:00:00Z"),
-            end: new Date("2026-11-30T00:00:00Z"),
-        },
+    between: {
+        start: new Date("2026-11-26T00:00:00Z"),
+        end: new Date("2026-11-30T00:00:00Z"),
     },
-).map((date) => date.toISOString());
+}).map((date) => date.toISOString());
 // ["2026-11-26T09:00:00.000Z", "2026-11-27T09:00:00.000Z"]
 
-listRecurrenceOccurrences(
-    { start: new Date("2026-11-26T09:00:00Z"), frequency: "daily" },
-    {
-        between: {
-            start: new Date("2026-11-27T00:00:00Z"),
-            end: new Date("2026-11-28T00:00:00Z"),
-        },
-        limit: 10,
+listRecurrenceOccurrences({
+    rule: { start: new Date("2026-11-26T09:00:00Z"), frequency: "daily" },
+    between: {
+        start: new Date("2026-11-27T00:00:00Z"),
+        end: new Date("2026-11-28T00:00:00Z"),
     },
-).length;
+    limit: 10,
+}).length;
 // 1
 ```
 

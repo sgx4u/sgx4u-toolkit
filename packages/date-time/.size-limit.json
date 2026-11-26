@@ -1,9 +1,16 @@
 [
     {
+        "name": "createDateTime",
+        "path": "dist/index.js",
+        "import": "{ createDateTime }",
+        "limit": "28 kB",
+        "brotli": true
+    },
+    {
         "name": "root entry",
         "path": "dist/index.js",
         "import": "*",
-        "limit": "25 kB",
+        "limit": "26 kB",
         "brotli": true
     },
     {
@@ -31,7 +38,7 @@
         "name": "parseDateWithPattern",
         "path": "dist/index.js",
         "import": "{ parseDateWithPattern }",
-        "limit": "4.2 kB",
+        "limit": "4.3 kB",
         "brotli": true
     },
     {
@@ -52,7 +59,7 @@
         "name": "addBusinessHours",
         "path": "dist/index.js",
         "import": "{ addBusinessHours }",
-        "limit": "4.6 kB",
+        "limit": "5 kB",
         "brotli": true
     },
     {
@@ -66,7 +73,7 @@
         "name": "cron",
         "path": "dist/cron.js",
         "import": "*",
-        "limit": "6.1 kB",
+        "limit": "7.5 kB",
         "brotli": true
     },
     {
@@ -80,7 +87,7 @@
         "name": "holidays india",
         "path": "dist/holidays/india.js",
         "import": "*",
-        "limit": "2 kB",
+        "limit": "2.2 kB",
         "brotli": true
     },
     {
@@ -101,7 +108,7 @@
         "name": "astronomy",
         "path": "dist/astronomy.js",
         "import": "*",
-        "limit": "3.6 kB",
+        "limit": "5 kB",
         "brotli": true
     }
 ]

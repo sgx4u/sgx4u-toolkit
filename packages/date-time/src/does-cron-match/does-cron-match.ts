@@ -26,7 +26,9 @@ export function doesCronMatch({
     timeZone,
 }: DoesCronMatchParams): boolean {
     const parsed =
-        typeof schedule === "string" ? parseCronExpression(schedule) : schedule;
+        typeof schedule === "string"
+            ? parseCronExpression({ expression: schedule })
+            : schedule;
     if (parsed === undefined) {
         return false;
     }

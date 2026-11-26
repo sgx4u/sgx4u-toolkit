@@ -9,24 +9,24 @@ const april = {
 
 describe("getFiscalQuarter", () => {
     it("starts quarter 1 on the fiscal start month", () => {
-        expect(getFiscalQuarter({ ...april, date: "2026-04-01T00:00:00Z" })).toBe(
-            1,
-        );
-        expect(getFiscalQuarter({ ...april, date: "2026-06-30T00:00:00Z" })).toBe(
-            1,
-        );
-        expect(getFiscalQuarter({ ...april, date: "2026-07-01T00:00:00Z" })).toBe(
-            2,
-        );
-        expect(getFiscalQuarter({ ...april, date: "2026-12-31T00:00:00Z" })).toBe(
-            3,
-        );
-        expect(getFiscalQuarter({ ...april, date: "2027-01-01T00:00:00Z" })).toBe(
-            4,
-        );
-        expect(getFiscalQuarter({ ...april, date: "2027-03-31T00:00:00Z" })).toBe(
-            4,
-        );
+        expect(
+            getFiscalQuarter({ ...april, date: "2026-04-01T00:00:00Z" }),
+        ).toBe(1);
+        expect(
+            getFiscalQuarter({ ...april, date: "2026-06-30T00:00:00Z" }),
+        ).toBe(1);
+        expect(
+            getFiscalQuarter({ ...april, date: "2026-07-01T00:00:00Z" }),
+        ).toBe(2);
+        expect(
+            getFiscalQuarter({ ...april, date: "2026-12-31T00:00:00Z" }),
+        ).toBe(3);
+        expect(
+            getFiscalQuarter({ ...april, date: "2027-01-01T00:00:00Z" }),
+        ).toBe(4);
+        expect(
+            getFiscalQuarter({ ...april, date: "2027-03-31T00:00:00Z" }),
+        ).toBe(4);
     });
 
     it("keeps the quarter of the wall-clock date at a zone boundary", () => {

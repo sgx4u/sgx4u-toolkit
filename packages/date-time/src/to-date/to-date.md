@@ -11,28 +11,33 @@ import { toDate } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function toDate(value: DateInput, options?: TimeZoneOptions): Date;
+function toDate(params: ToDateParams): Date | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name       | Type     | Default     | Meaning                                          |
-| ---------- | -------- | ----------- | ------------------------------------------------ |
-| `timeZone` | `string` | System zone | Zone used when `value` is a `YYYY-MM-DD` string. |
+| Name       | Type        | Required | Default                                  | Meaning                                                     |
+| ---------- | ----------- | -------- | ---------------------------------------- | ----------------------------------------------------------- |
+| `date`     | `DateInput` | yes      |                                          | A `Date`, a millisecond timestamp, or a strict date string. |
+| `timeZone` | `string`    | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset          |
 
 ## Examples
 
 ```ts
-toDate("2026-11-26", { timeZone: "Asia/Kolkata" }).toISOString();
+toDate({
+    date: { value: "2026-11-26", timeZone: "Asia/Kolkata" },
+}).toISOString();
 // "2026-11-25T18:30:00.000Z"
 
-toDate("2026-11-26", { timeZone: "UTC" }).toISOString();
+toDate({ date: { value: "2026-11-26", timeZone: "UTC" } }).toISOString();
 // "2026-11-26T00:00:00.000Z"
 
-toDate("2024-02-29T00:00:00+0530").toISOString();
+toDate({ date: { value: "2024-02-29T00:00:00+0530" } }).toISOString();
 // "2024-02-28T18:30:00.000Z"
 
-toDate("2024-09-08", { timeZone: "America/Santiago" }).toISOString();
+toDate({
+    date: { value: "2024-09-08", timeZone: "America/Santiago" },
+}).toISOString();
 // "2024-09-08T04:00:00.000Z"
 ```
 

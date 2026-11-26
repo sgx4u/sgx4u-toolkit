@@ -12,45 +12,47 @@ import { getTimeZoneTransitions } from "@sgx4u/date-time";
 
 ```ts
 function getTimeZoneTransitions(
-    interval: Interval,
-    timeZone: string,
+    params: GetTimeZoneTransitionsParams,
 ): TimeZoneTransition[];
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name       | Type       | Required | Default | Meaning                         |
+| ---------- | ---------- | -------- | ------- | ------------------------------- |
+| `interval` | `Interval` | yes      |         | The half-open interval to scan. |
+| `timeZone` | `string`   | yes      |         | An IANA name or a fixed offset. |
 
 ## Examples
 
 ```ts
 import { getTimeZoneTransitions } from "@sgx4u/date-time";
 
-getTimeZoneTransitions(
-    {
+getTimeZoneTransitions({
+    interval: {
         start: new Date("2024-03-10T00:00:00Z"),
         end: new Date("2024-03-11T00:00:00Z"),
     },
-    "America/New_York",
-)[0]?.instant.toISOString();
+    timeZone: "America/New_York",
+})[0]?.instant.toISOString();
 // "2024-03-10T07:00:00.000Z"
 
-getTimeZoneTransitions(
-    {
+getTimeZoneTransitions({
+    interval: {
         start: new Date("2024-01-01T00:00:00Z"),
         end: new Date("2025-01-01T00:00:00Z"),
     },
-    "America/New_York",
-).length;
+    timeZone: "America/New_York",
+}).length;
 // 2
 
-getTimeZoneTransitions(
-    {
+getTimeZoneTransitions({
+    interval: {
         start: new Date("2024-01-01T00:00:00Z"),
         end: new Date("2025-01-01T00:00:00Z"),
     },
-    "UTC",
-).length;
+    timeZone: "UTC",
+}).length;
 // 0
 ```
 

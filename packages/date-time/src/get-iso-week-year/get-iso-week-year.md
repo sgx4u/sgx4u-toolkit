@@ -14,29 +14,31 @@ import { getISOWeekYear } from "@sgx4u/date-time";
 function getISOWeekYear(params: GetISOWeekYearParams): number | undefined;
 ```
 
-## Options
+## Parameters
 
-Same fields as `getISOWeek`.
+| Name       | Type        | Required | Default                                  | Meaning                                            |
+| ---------- | ----------- | -------- | ---------------------------------------- | -------------------------------------------------- |
+| `date`     | `DateInput` | yes      |                                          | The date to read.                                  |
+| `timeZone` | `string`    | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset |
 
 ## Examples
 
 ```ts
 import { getISOWeekYear } from "@sgx4u/date-time";
 
-getISOWeekYear("2026-01-01T00:00:00Z", { timeZone: "UTC" });
+getISOWeekYear({ date: "2026-01-01T00:00:00Z", timeZone: "UTC" });
 // 2026
 
-getISOWeekYear("2025-12-31T00:00:00Z", { timeZone: "UTC" });
+getISOWeekYear({ date: "2025-12-31T00:00:00Z", timeZone: "UTC" });
 // 2026
 
-getISOWeekYear("2023-01-01T00:00:00Z", { timeZone: "UTC" });
+getISOWeekYear({ date: "2023-01-01T00:00:00Z", timeZone: "UTC" });
 // 2022
 ```
 
 ## Edge cases
 
 Invalid `date` returns `undefined`. Invalid `timeZone` throws.
-
 
 ## Related
 

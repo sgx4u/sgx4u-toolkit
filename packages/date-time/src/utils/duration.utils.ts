@@ -96,6 +96,18 @@ export function isDurationValue(value: unknown): value is Duration {
 }
 
 /**
+ * A duration object, or `undefined` when the value is not one.
+ *
+ * Unknown fields, mixed signs, and non-finite numbers are invalid data.
+ *
+ * @param value - The caller's duration.
+ * @returns The same object when it is valid.
+ */
+export function readDuration(value: unknown): Duration | undefined {
+    return isDurationValue(value) ? value : undefined;
+}
+
+/**
  * @param value - The caller's duration.
  * @param argumentName - The parameter name used in the error.
  * @returns The same object when it is a valid duration.

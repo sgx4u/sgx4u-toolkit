@@ -11,34 +11,41 @@ import { getObservedDate } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getObservedDate(
-    date: CalendarDate,
-    policy: ObservancePolicy,
-    options?: ObservedDateOptions,
-): CalendarDate;
+function getObservedDate(params: GetObservedDateParams): CalendarDate;
 ```
 
-## Options
+## Parameters
 
-| Name          | Type                 | Default  | Meaning                                 |
-| ------------- | -------------------- | -------- | --------------------------------------- |
-| `weekendDays` | `readonly Weekday[]` | `[6, 7]` | ISO weekdays that count as the weekend. |
+| Name          | Type                 | Required | Default           | Meaning                                                            |
+| ------------- | -------------------- | -------- | ----------------- | ------------------------------------------------------------------ |
+| `date`        | `CalendarDate`       | yes      |                   | The holiday's calendar date.                                       |
+| `policy`      | `ObservancePolicy`   | yes      |                   | How a weekend holiday moves.                                       |
+| `workingDays` | `readonly Weekday[]` | no       | `[1, 2, 3, 4, 5]` | ISO weekdays that are open. Non-working days count as the weekend. |
 
 ## Examples
 
 ```ts
 import { getObservedDate } from "@sgx4u/date-time";
 
-getObservedDate({ year: 2020, month: 7, day: 4 }, "nearest-weekday");
+getObservedDate({
+    date: { year: 2020, month: 7, day: 4 },
+    policy: "nearest-weekday",
+});
 // { year: 2020, month: 7, day: 3 }
 
-getObservedDate({ year: 2020, month: 7, day: 4 }, "next-monday");
+getObservedDate({
+    date: { year: 2020, month: 7, day: 4 },
+    policy: "next-monday",
+});
 // { year: 2020, month: 7, day: 6 }
 
-getObservedDate({ year: 2020, month: 7, day: 4 }, "none");
+getObservedDate({ date: { year: 2020, month: 7, day: 4 }, policy: "none" });
 // { year: 2020, month: 7, day: 4 }
 
-getObservedDate({ year: 2020, month: 7, day: 4 }, "next-weekday");
+getObservedDate({
+    date: { year: 2020, month: 7, day: 4 },
+    policy: "next-weekday",
+});
 // { year: 2020, month: 7, day: 6 }
 ```
 

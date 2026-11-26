@@ -14,9 +14,11 @@ import { isValidDuration } from "@sgx4u/date-time";
 function isValidDuration(value: unknown): value is Duration;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name    | Type      | Required | Default | Meaning    |
+| ------- | --------- | -------- | ------- | ---------- |
+| `value` | `unknown` | yes      |         | Any value. |
 
 ## Examples
 

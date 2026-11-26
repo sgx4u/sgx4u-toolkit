@@ -12,31 +12,39 @@ import { removeDuplicateDates } from "@sgx4u/date-time";
 
 ```ts
 function removeDuplicateDates(
-    dates: readonly DateInput[],
-    options?: RemoveDuplicateDatesOptions,
-): Date[];
+    params: RemoveDuplicateDatesParams,
+): Date[] | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name       | Type       | Default         | Meaning                                    |
-| ---------- | ---------- | --------------- | ------------------------------------------ |
-| `timeZone` | `string`   | System zone     | Zone the unit is measured in.              |
-| `unit`     | `TimeUnit` | `"millisecond"` | Dates that share this unit are duplicates. |
+| Name       | Type                   | Required | Default                                  | Meaning                                                                            |
+| ---------- | ---------------------- | -------- | ---------------------------------------- | ---------------------------------------------------------------------------------- |
+| `dates`    | `readonly DateInput[]` | yes      |                                          | The dates to filter.                                                               |
+| `unit`     | `TimeUnit`             | no       | `"millisecond"`                          | Dates that share this unit are duplicates. `"millisecond"` means the same instant. |
+| `timeZone` | `string`               | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset                                 |
 
 ## Examples
 
 ```ts
-removeDuplicateDates(
-    ["2024-06-15T01:00:00Z", "2024-06-15T20:00:00Z", "2024-06-16T00:00:00Z"],
-    { unit: "day", timeZone: "UTC" },
-).map((date) => date.toISOString());
+removeDuplicateDates({
+    dates: [
+        "2024-06-15T01:00:00Z",
+        "2024-06-15T20:00:00Z",
+        "2024-06-16T00:00:00Z",
+    ],
+    unit: "day",
+    timeZone: "UTC",
+}).map((date) => date.toISOString());
 // ["2024-06-15T01:00:00.000Z", "2024-06-16T00:00:00.000Z"]
 
-removeDuplicateDates(["2024-01-01T00:00:00Z", "2024-01-01T00:00:00Z"]).length;
+removeDuplicateDates({
+    dates: ["2024-01-01T00:00:00Z", "2024-01-01T00:00:00Z"],
+}).length;
 // 1
 
-removeDuplicateDates(["2024-03-10T06:30:00Z", "2024-03-10T07:30:00Z"], {
+removeDuplicateDates({
+    dates: ["2024-03-10T06:30:00Z", "2024-03-10T07:30:00Z"],
     unit: "day",
     timeZone: "America/New_York",
 }).map((date) => date.toISOString());

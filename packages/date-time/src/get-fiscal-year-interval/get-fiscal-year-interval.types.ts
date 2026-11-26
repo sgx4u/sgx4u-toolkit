@@ -7,8 +7,7 @@ import type {
  * Fields for {@link getFiscalYearInterval}.
  */
 export interface GetFiscalYearIntervalParams
-    extends FiscalYearOptions,
-        TimeZoneOptions {
+    extends FiscalYearOptions, TimeZoneOptions {
     /**
      * The fiscal year label, such as 2027 for an April-to-March year.
      */

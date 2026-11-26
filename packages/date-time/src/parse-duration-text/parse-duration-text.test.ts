@@ -23,7 +23,7 @@ describe("duration text", () => {
         expect(parseISODuration("P")).toBeUndefined();
         expect(formatISODuration({ hours: 1, minutes: 30 })).toBe("PT1H30M");
         expect(
-            parseISODuration(formatISODuration({ hours: 1, minutes: 30 })),
+            parseISODuration(formatISODuration({ hours: 1, minutes: 30 })!),
         ).toEqual({
             hours: 1,
             minutes: 30,
@@ -32,12 +32,19 @@ describe("duration text", () => {
         expect(isValidDuration({})).toBe(true);
         expect(isValidDuration({ hours: 1, days: -1 })).toBe(false);
         expect(
-            formatDurationAsClock({ hours: 1, minutes: 2, seconds: 3 }),
+            formatDurationAsClock({
+                duration: { hours: 1, minutes: 2, seconds: 3 },
+            }),
         ).toBe("01:02:03");
-        expect(formatDurationCompact({ hours: 1, minutes: 30 })).toBe("1h 30m");
-        expect(formatDurationCompact(0)).toBe("0s");
         expect(
-            formatDuration({ hours: 1, minutes: 30 }, { locale: "en" }),
+            formatDurationCompact({ duration: { hours: 1, minutes: 30 } }),
+        ).toBe("1h 30m");
+        expect(formatDurationCompact({ duration: 0 })).toBe("0s");
+        expect(
+            formatDuration({
+                duration: { hours: 1, minutes: 30 },
+                locale: "en",
+            }),
         ).toBe("1 hour, 30 minutes");
     });
 });

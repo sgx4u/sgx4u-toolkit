@@ -12,50 +12,53 @@ import { listDatesInInterval } from "@sgx4u/date-time";
 
 ```ts
 function listDatesInInterval(
-    interval: Interval,
-    options?: ListDatesInIntervalOptions,
-): Date[];
+    params: ListDatesInIntervalParams,
+): Date[] | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name           | Type       | Default                                 | Meaning                                                                                  |
-| -------------- | ---------- | --------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `timeZone`     | `string`   | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`.                     |
-| `weekStartsOn` | `Weekday`  | `1`                                     | ISO weekday that starts the week. `1` is Monday and `7` is Sunday.                       |
-| `step`         | `Duration` | `{ days: 1 }`                           | The distance between dates.                                                              |
-| `alignToUnit`  | `TimeUnit` | none                                    | When set, the first date is the first start of this unit at or after the interval start. |
+| Name           | Type        | Required | Default                                  | Meaning                                                              |
+| -------------- | ----------- | -------- | ---------------------------------------- | -------------------------------------------------------------------- |
+| `start`        | `DateInput` | yes      |                                          | The inclusive start of the half-open interval.                       |
+| `end`          | `DateInput` | yes      |                                          | The exclusive end of the half-open interval.                         |
+| `step`         | `Duration`  | no       | `{ days: 1 }`                            | The distance between dates.                                          |
+| `alignToUnit`  | `TimeUnit`  | no       |                                          | When set, the first date is the first start of this unit at or after |
+| `timeZone`     | `string`    | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset                   |
+| `weekStartsOn` | `Weekday`   | no       | `1`                                      | ISO weekday number that starts the week. `1` is Monday.              |
 
 ## Examples
 
 ```ts
 import { listDatesInInterval } from "@sgx4u/date-time";
 
-listDatesInInterval(
-    {
+listDatesInInterval({
+    interval: {
         start: new Date("2026-01-01T00:00:00Z"),
         end: new Date("2026-01-03T00:00:00Z"),
     },
-    { timeZone: "UTC" },
-).length;
+    timeZone: "UTC",
+}).length;
 // 2
 
-listDatesInInterval(
-    {
+listDatesInInterval({
+    interval: {
         start: new Date("2026-01-01T00:00:00Z"),
         end: new Date("2026-01-02T00:00:00Z"),
     },
-    { step: { hours: 12 }, timeZone: "UTC" },
-).map((date) => date.toISOString());
+    step: { hours: 12 },
+    timeZone: "UTC",
+}).map((date) => date.toISOString());
 // ["2026-01-01T00:00:00.000Z", "2026-01-01T12:00:00.000Z"]
 
-listDatesInInterval(
-    {
+listDatesInInterval({
+    interval: {
         start: new Date("2026-01-01T10:00:00Z"),
         end: new Date("2026-01-03T00:00:00Z"),
     },
-    { timeZone: "UTC", alignToUnit: "day" },
-).map((date) => date.toISOString());
+    timeZone: "UTC",
+    alignToUnit: "day",
+}).map((date) => date.toISOString());
 // ["2026-01-02T00:00:00.000Z"]
 ```
 

@@ -43,10 +43,14 @@ export function roundDuration({
     if (mode !== "nearest" && mode !== "down" && mode !== "up") {
         throw rangeError("mode", `"nearest", "down", or "up"`, mode);
     }
-    const length = durationToMilliseconds(checked, {
+    const length = durationToMilliseconds({
+        duration: checked,
         ...(timeZone !== undefined ? { timeZone } : {}),
         ...(relativeTo !== undefined ? { relativeTo } : {}),
     });
+    if (length === undefined) {
+        return undefined;
+    }
     const size = lengthOfOneUnit(unit, {
         ...(timeZone !== undefined ? { timeZone } : {}),
         ...(relativeTo !== undefined ? { relativeTo } : {}),
@@ -101,14 +105,19 @@ function lengthOfOneUnit(
             : unit === "quarter"
               ? { months: 3 }
               : { months: 1 };
-    return Math.abs(
-        durationToMilliseconds(sample, {
-            relativeTo: params.relativeTo,
-            ...(params.timeZone !== undefined
-                ? { timeZone: params.timeZone }
-                : {}),
-        }),
-    );
+    const unitLength = durationToMilliseconds({
+        duration: sample,
+        relativeTo: params.relativeTo,
+        ...(params.timeZone !== undefined ? { timeZone: params.timeZone } : {}),
+    });
+    if (unitLength === undefined) {
+        throw rangeError(
+            "smallestUnit",
+            "a clock unit, or pass `relativeTo` for a calendar unit",
+            unit,
+        );
+    }
+    return Math.abs(unitLength);
 }
 
 /**

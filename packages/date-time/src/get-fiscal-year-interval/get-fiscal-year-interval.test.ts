@@ -16,9 +16,7 @@ describe("getFiscalYearInterval", () => {
             fiscalYearLabel: "start-year",
             timeZone: "UTC",
         });
-        expect(startYear?.start.toISOString()).toBe(
-            "2026-04-01T00:00:00.000Z",
-        );
+        expect(startYear?.start.toISOString()).toBe("2026-04-01T00:00:00.000Z");
         expect(startYear?.end.toISOString()).toBe("2027-04-01T00:00:00.000Z");
         const calendar = getFiscalYearInterval({
             fiscalYear: 2026,
@@ -48,7 +46,9 @@ describe("getFiscalYearInterval", () => {
 
     it("throws when the start month is invalid", () => {
         expect(() =>
-            getFiscalYearInterval({ fiscalYear: 2027 } as never),
+            getFiscalYearInterval({
+                fiscalYear: 2027,
+            } as never),
         ).toThrow(TypeError);
         expect(() =>
             getFiscalYearInterval({

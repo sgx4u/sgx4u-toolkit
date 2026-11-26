@@ -11,36 +11,41 @@ import { getFiscalYearInterval } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getFiscalYearInterval(params: GetFiscalYearIntervalParams): Interval | undefined;
+function getFiscalYearInterval(
+    params: GetFiscalYearIntervalParams,
+): Interval | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name                   | Type     | Required | Default                                 | Meaning                                          |
-| ---------------------- | -------- | -------- | --------------------------------------- | ------------------------------------------------ |
-| `fiscalYear`           | `number` | Yes      | —                                       | Fiscal year label.                               |
-| `fiscalYearStartMonth` | `number` | Yes      | —                                       | Month the fiscal year starts, from 1 through 12. |
-| `fiscalYearLabel`      | string   | No       | `"end-year"`                            | Which calendar year labels the fiscal year.      |
-| `timeZone`             | `string` | No       | The system time zone, read on each call | Zone for interval boundaries.                    |
+| Name                   | Type                         | Required | Default                                  | Meaning                                                            |
+| ---------------------- | ---------------------------- | -------- | ---------------------------------------- | ------------------------------------------------------------------ |
+| `fiscalYear`           | `number`                     | yes      |                                          | The fiscal year label, such as 2027 for an April-to-March year.    |
+| `fiscalYearStartMonth` | `number`                     | yes      |                                          | Month the fiscal year starts, from `1` through `12`. April is `4`. |
+| `fiscalYearLabel`      | `"start-year" \| "end-year"` | no       | `"end-year"`                             | Which calendar year labels the fiscal year.                        |
+| `timeZone`             | `string`                     | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset                 |
 
 ## Examples
 
 ```ts
 import { getFiscalYearInterval } from "@sgx4u/date-time";
 
-getFiscalYearInterval(2027, {
+getFiscalYearInterval({
+    fiscalYear: 2027,
     fiscalYearStartMonth: 4,
     timeZone: "UTC",
 }).start.toISOString();
 // "2026-04-01T00:00:00.000Z"
 
-getFiscalYearInterval(2027, {
+getFiscalYearInterval({
+    fiscalYear: 2027,
     fiscalYearStartMonth: 4,
     timeZone: "UTC",
 }).end.toISOString();
 // "2027-04-01T00:00:00.000Z"
 
-getFiscalYearInterval(2026, {
+getFiscalYearInterval({
+    fiscalYear: 2026,
     fiscalYearStartMonth: 4,
     fiscalYearLabel: "start-year",
     timeZone: "UTC",
@@ -51,7 +56,6 @@ getFiscalYearInterval(2026, {
 ## Edge cases
 
 A non-integer `fiscalYear` returns `undefined`. Missing or invalid fiscal options or `timeZone` throws.
-
 
 ## Related
 

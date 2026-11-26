@@ -16,17 +16,15 @@ describe("isPast", () => {
     });
 
     it("rejects a date that is not real", () => {
-        expect(() => isPast({ date: "nope", now })).toThrow(RangeError);
-        expect(() => isPast({ date: "nope", now })).toThrow("`date`");
-        expect(() => isPast({ date: null as never, now })).toThrow(TypeError);
-        expect(() => isPast({ date: null as never, now })).toThrow("`date`");
-        expect(() => isPast({ date: "2020-01-01T00:00:00Z", now: "nope" })).toThrow(
-            "`now`",
+        expect(isPast({ date: "nope", now })).toBe(false);
+        expect(isPast({ date: null as never, now })).toBe(false);
+        expect(isPast({ date: "2020-01-01T00:00:00Z", now: "nope" })).toBe(
+            false,
         );
     });
 
     it("compares instants with the supplied now", () => {
-        expect(isPast({ date: { date: new Date(now }).getTime() - 1, now })).toBe(true);
-        expect(isPast({ date: { date: new Date(now }), now })).toBe(false);
+        expect(isPast({ date: new Date(now)?.getTime() - 1, now })).toBe(true);
+        expect(isPast({ date: new Date(now), now })).toBe(false);
     });
 });

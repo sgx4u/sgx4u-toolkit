@@ -11,37 +11,38 @@ import { isToday } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function isToday(
-    date: DateInput,
-    options?: NowOptions & TimeZoneOptions,
-): boolean;
+function isToday(params: IsTodayParams): boolean;
 ```
 
-## Options
+## Parameters
 
-| Name       | Type        | Default                                 | Meaning                                                              |
-| ---------- | ----------- | --------------------------------------- | -------------------------------------------------------------------- |
-| `now`      | `DateInput` | `Date.now()`, read on each call         | The instant to use instead of the current time.                      |
-| `timeZone` | `string`    | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
+| Name       | Type        | Required | Default | Meaning                                         |
+| ---------- | ----------- | -------- | ------- | ----------------------------------------------- |
+| `date`     | `DateInput` | yes      |         | The date to test.                               |
+| `now`      | `DateInput` | no       |         | The instant to use instead of the current time. |
+| `timeZone` | `string`    | no       |         | Zone used to read calendar days.                |
 
 ## Examples
 
 ```ts
 import { isToday } from "@sgx4u/date-time";
 
-isToday("2026-11-26T23:00:00Z", {
+isToday({
+    date: "2026-11-26T23:00:00Z",
     now: "2026-11-26T01:00:00Z",
     timeZone: "UTC",
 });
 // true
 
-isToday("2026-11-26T12:00:00Z", {
+isToday({
+    date: "2026-11-26T12:00:00Z",
     now: "2026-11-26T20:00:00Z",
     timeZone: "UTC",
 });
 // true
 
-isToday("2026-11-26T12:00:00Z", {
+isToday({
+    date: "2026-11-26T12:00:00Z",
     now: "2026-11-26T20:00:00Z",
     timeZone: "Asia/Kolkata",
 });
@@ -50,7 +51,7 @@ isToday("2026-11-26T12:00:00Z", {
 
 ## Edge cases
 
-The calendar day is the day in `timeZone`. The same two instants can be the same UTC day and different local days. `now` defaults to the current time. A value that is not a real date throws a `RangeError`.
+The calendar day is the day in `timeZone`. The same two instants can be the same UTC day and different local days. `now` defaults to the current time. A value that is not a real date returns `undefined`.
 
 ## Related
 

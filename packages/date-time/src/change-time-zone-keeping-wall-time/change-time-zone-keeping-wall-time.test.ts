@@ -17,17 +17,21 @@ describe("time zone moves and times of day", () => {
             })?.toISOString(),
         ).toBe("2026-11-26T03:30:00.000Z");
         expect(
-            getTimeZoneDifference("Asia/Kolkata", "UTC", {
+            getTimeZoneDifference({
+                firstTimeZone: "Asia/Kolkata",
+                secondTimeZone: "UTC",
                 at: "2026-01-01T00:00:00Z",
             }),
         ).toBe(330);
         expect(
-            isDaylightSavingTime("2026-01-15T17:00:00Z", {
+            isDaylightSavingTime({
+                date: "2026-01-15T17:00:00Z",
                 timeZone: "America/New_York",
             }),
         ).toBe(false);
         expect(
-            isDaylightSavingTime("2026-07-15T16:00:00Z", {
+            isDaylightSavingTime({
+                date: "2026-07-15T16:00:00Z",
                 timeZone: "America/New_York",
             }),
         ).toBe(true);
@@ -41,10 +45,11 @@ describe("time zone moves and times of day", () => {
             dayOffset: 1,
         });
         expect(
-            formatTimeOfDay(
-                { hour: 15, minute: 30, second: 0, millisecond: 0 },
-                { locale: "en-US", hourCycle: "h23" },
-            ),
+            formatTimeOfDay({
+                time: { hour: 15, minute: 30, second: 0, millisecond: 0 },
+                locale: "en-US",
+                hourCycle: "h23",
+            }),
         ).toBe("15:30");
     });
 

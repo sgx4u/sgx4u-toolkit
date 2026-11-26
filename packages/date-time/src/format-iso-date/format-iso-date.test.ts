@@ -81,11 +81,11 @@ describe("ISO interchange", () => {
     it("converts Unix seconds and Julian Dates, and revives offset strings", () => {
         expect(toUnixSeconds("1970-01-01T00:00:01.900Z")).toBe(1);
         expect(toUnixSeconds(-1500)).toBe(-2);
-        expect(fromUnixSeconds(0).toISOString()).toBe(
+        expect(fromUnixSeconds(0)?.toISOString()).toBe(
             "1970-01-01T00:00:00.000Z",
         );
         expect(toJulianDate(0)).toBe(2_440_587.5);
-        expect(fromJulianDate(2_440_587.5).getTime()).toBe(0);
+        expect(fromJulianDate(2_440_587.5)?.getTime()).toBe(0);
         const revived = JSON.parse(
             JSON.stringify({
                 at: "2026-11-26T03:30:00+05:30",

@@ -4,7 +4,7 @@ import { getWeekdayNames } from "../index.js";
 describe("getWeekdayNames", () => {
     it("starts the English long names on Monday", () => {
         expect(getWeekdayNames({ locale: "en-US" })[0]).toBe("Monday");
-        expect(getWeekdayNames({ locale: "en-US" })).toHaveLength(7);
+        expect(getWeekdayNames({ locale: "en-US" }))?.toHaveLength(7);
     });
 
     it("rotates to Sunday and shortens the names", () => {

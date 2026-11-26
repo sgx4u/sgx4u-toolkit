@@ -93,13 +93,13 @@ describe("formatRelativeCalendarDay", () => {
         expect(
             formatRelativeCalendarDay({
                 date: "2024-03-10T06:30:00Z",
-                options,
+                ...options,
             }),
         ).toBe("Today at 1:30 AM");
         expect(
             formatRelativeCalendarDay({
                 date: "2024-03-10T07:30:00Z",
-                options,
+                ...options,
             }),
         ).toBe("Today at 3:30 AM");
         expect(
@@ -135,12 +135,12 @@ describe("formatRelativeCalendarDay", () => {
                 timeStyle: "long" as "short",
             }),
         ).toThrow('`timeStyle` must be "short" or "medium"; received "long".');
-        expect(() =>
+        expect(
             formatRelativeCalendarDay({
                 date: "nope",
                 now: "2026-01-02T00:00:00Z",
                 timeZone: "UTC",
             }),
-        ).toThrow(RangeError);
+        ).toBeUndefined();
     });
 });

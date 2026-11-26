@@ -12,24 +12,24 @@ import { normalizeDuration } from "@sgx4u/date-time";
 
 ```ts
 function normalizeDuration(
-    duration: Duration,
-    options?: NormalizeDurationOptions,
-): Duration;
+    params: NormalizeDurationParams,
+): Duration | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name          | Type        | Default     | Meaning                                                         |
-| ------------- | ----------- | ----------- | --------------------------------------------------------------- |
-| `largestUnit` | `TimeUnit`  | `"day"`     | The largest unit clock fields may carry into.                   |
-| `relativeTo`  | `DateInput` | none        | Reserved for calendar balancing. Without it, a day is 24 hours. |
-| `timeZone`    | `string`    | System zone | Used when `relativeTo` is set.                                  |
+| Name          | Type        | Required | Default                                  | Meaning                                                                |
+| ------------- | ----------- | -------- | ---------------------------------------- | ---------------------------------------------------------------------- |
+| `duration`    | `Duration`  | yes      |                                          | The duration to balance.                                               |
+| `largestUnit` | `TimeUnit`  | no       | `"day"`                                  | The largest unit the clock fields may carry into. Months and years are |
+| `relativeTo`  | `DateInput` | no       |                                          | The instant used when balancing on the calendar. Without it, a day is  |
+| `timeZone`    | `string`    | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset                     |
 
 ## Examples
 
 ```ts
-normalizeDuration({ minutes: 90 }); // { hours: 1, minutes: 30 }
-normalizeDuration({ hours: 26 }); // { days: 1, hours: 2 }
+normalizeDuration({ duration: { minutes: 90 } }); // { hours: 1, minutes: 30 }
+normalizeDuration({ duration: { hours: 26 } }); // { days: 1, hours: 2 }
 ```
 
 ## Edge cases

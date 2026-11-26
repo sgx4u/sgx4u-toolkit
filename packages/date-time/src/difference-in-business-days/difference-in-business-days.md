@@ -12,36 +12,41 @@ import { differenceInBusinessDays } from "@sgx4u/date-time";
 
 ```ts
 function differenceInBusinessDays(
-    later: DateInput,
-    earlier: DateInput,
-    calendar?: BusinessCalendar,
-): number;
+    params: DifferenceInBusinessDaysParams,
+): number | undefined;
 ```
 
-## Options
+## Parameters
 
-Fields of `calendar`:
-
-| Name          | Type                                                | Default     | Meaning                                                                      |
-| ------------- | --------------------------------------------------- | ----------- | ---------------------------------------------------------------------------- |
-| `workingDays` | `readonly Weekday[]`                                | `[6, 7]`    | ISO weekdays that are closed. `6` is Saturday and `7` is Sunday.             |
-| `holidays`    | `readonly DateInput[] \| ((date: Date) => boolean)` | `[]`        | Closed dates, or a predicate. A list matches the calendar day in `timeZone`. |
-| `timeZone`    | `string`                                            | System zone | IANA name or fixed offset used for the calendar day.                         |
+| Name            | Type                                          | Required | Default                              | Meaning                                                                     |
+| --------------- | --------------------------------------------- | -------- | ------------------------------------ | --------------------------------------------------------------------------- |
+| `later`         | `DateInput`                                   | yes      |                                      | The end date.                                                               |
+| `earlier`       | `DateInput`                                   | yes      |                                      | The start date.                                                             |
+| `workingDays`   | `readonly Weekday[]`                          | no       | `[1, 2, 3, 4, 5]`                    | ISO weekdays that count as business days. Every other weekday is a weekend. |
+| `holidays`      | `readonly (ConfiguredHoliday \| DateInput)[]` | no       | `[]`                                 | Dates that are closed.                                                      |
+| `businessHours` | `readonly TimeRange[]`                        | no       | `[{ start: "09:00", end: "17:00" }]` | Working windows for a business day. An empty list means the whole day.      |
+| `timeZone`      | `string`                                      | no       | The system time zone.                | IANA time zone or fixed offset the calendar uses.                           |
 
 ## Examples
 
 ```ts
-differenceInBusinessDays("2026-11-30T00:00:00Z", "2026-11-27T00:00:00Z", {
+differenceInBusinessDays({
+    later: "2026-11-30T00:00:00Z",
+    earlier: "2026-11-27T00:00:00Z",
     timeZone: "UTC",
 });
 // 1
 
-differenceInBusinessDays("2026-11-27T00:00:00Z", "2026-11-30T00:00:00Z", {
+differenceInBusinessDays({
+    later: "2026-11-27T00:00:00Z",
+    earlier: "2026-11-30T00:00:00Z",
     timeZone: "UTC",
 });
 // -1
 
-differenceInBusinessDays("2024-03-01T00:00:00Z", "2024-02-28T00:00:00Z", {
+differenceInBusinessDays({
+    later: "2024-03-01T00:00:00Z",
+    earlier: "2024-02-28T00:00:00Z",
     timeZone: "UTC",
 });
 // 2

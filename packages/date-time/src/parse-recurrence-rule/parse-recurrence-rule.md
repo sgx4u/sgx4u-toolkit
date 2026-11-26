@@ -14,9 +14,11 @@ import { parseRecurrenceRule } from "@sgx4u/date-time/recurrence";
 function parseRecurrenceRule(value: string): RecurrenceRule | undefined;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name    | Type     | Required | Default | Meaning        |
+| ------- | -------- | -------- | ------- | -------------- |
+| `value` | `string` | yes      |         | The rule text. |
 
 ## Examples
 

@@ -47,8 +47,7 @@ export function getCountdownParts({
     if (targetInstant === undefined || reference === undefined) {
         return undefined;
     }
-    const totalMilliseconds =
-        targetInstant.getTime() - reference.getTime();
+    const totalMilliseconds = targetInstant.getTime() - reference.getTime();
     if (totalMilliseconds <= 0) {
         return {
             days: 0,

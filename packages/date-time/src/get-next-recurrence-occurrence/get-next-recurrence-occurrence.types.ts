@@ -1,4 +1,3 @@
-import type { DateInput } from "../types/date-input.types.js";
 import type { NowOptions } from "../types/options.types.js";
 import type { RecurrenceRule } from "../types/recurrence.types.js";
 

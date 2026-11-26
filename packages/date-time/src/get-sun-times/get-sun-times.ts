@@ -17,6 +17,15 @@ export interface SunLocation {
 }
 
 /**
+ * Fields for {@link getSunTimes}.
+ */
+export interface GetSunTimesParams {
+    date: DateInput;
+    location: SunLocation;
+    timeZone?: string;
+}
+
+/**
  * Returns sunrise, sunset, solar noon, and civil twilight for one day.
  *
  * The calculation is the NOAA solar-position approximation, iterated at the
@@ -37,12 +46,6 @@ export interface SunLocation {
  *   timeZone: "America/New_York",
  * })?.solarNoon.toISOString();
  */
-export interface GetSunTimesParams {
-    date: DateInput;
-    location: SunLocation;
-    timeZone?: string;
-}
-
 export function getSunTimes({
     date,
     location,

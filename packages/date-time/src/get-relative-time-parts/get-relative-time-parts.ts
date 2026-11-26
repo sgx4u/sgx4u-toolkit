@@ -33,7 +33,8 @@ export function getRelativeTimeParts({
     if (instant === undefined) {
         return undefined;
     }
-    const reference = now === undefined ? resolveNow(undefined) : readDateInput(now);
+    const reference =
+        now === undefined ? resolveNow(undefined) : readDateInput(now);
     if (reference === undefined) {
         return undefined;
     }

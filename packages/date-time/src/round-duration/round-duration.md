@@ -11,34 +11,36 @@ import { roundDuration } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function roundDuration(
-    duration: Duration,
-    options: RoundDurationOptions,
-): Duration;
+function roundDuration(params: RoundDurationParams): Duration | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name           | Type                          | Default     | Meaning                                                                                |
-| -------------- | ----------------------------- | ----------- | -------------------------------------------------------------------------------------- |
-| `smallestUnit` | `TimeUnit`                    | required    | Unit the result is rounded to.                                                         |
-| `mode`         | `"nearest" \| "down" \| "up"` | `"nearest"` | `"nearest"` rounds half away from zero. `"down"` moves toward zero. `"up"` moves away. |
-| `relativeTo`   | `DateInput`                   | none        | Instant used to measure a month, a quarter, or a year.                                 |
-| `timeZone`     | `string`                      | System zone | Zone used with `relativeTo`.                                                           |
+| Name           | Type                          | Required | Default                                  | Meaning                                                              |
+| -------------- | ----------------------------- | -------- | ---------------------------------------- | -------------------------------------------------------------------- |
+| `duration`     | `Duration`                    | yes      |                                          | The duration to round.                                               |
+| `smallestUnit` | `TimeUnit`                    | yes      |                                          | The unit the result is rounded to.                                   |
+| `mode`         | `"nearest" \| "down" \| "up"` | no       | `"nearest"`                              | `"nearest"` rounds half away from zero. `"down"` moves toward zero.  |
+| `relativeTo`   | `DateInput`                   | no       |                                          | The instant used when the duration contains months or years, or when |
+| `timeZone`     | `string`                      | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset                   |
 
 ## Examples
 
 ```ts
-roundDuration({ minutes: 90 }, { smallestUnit: "hour" });
+roundDuration({ duration: { minutes: 90 }, smallestUnit: "hour" });
 // { hours: 2 }
 
-roundDuration({ minutes: 20 }, { smallestUnit: "hour", mode: "down" });
+roundDuration({
+    duration: { minutes: 20 },
+    smallestUnit: "hour",
+    mode: "down",
+});
 // {}
 
-roundDuration({ minutes: 20 }, { smallestUnit: "hour", mode: "up" });
+roundDuration({ duration: { minutes: 20 }, smallestUnit: "hour", mode: "up" });
 // { hours: 1 }
 
-roundDuration({ minutes: -90 }, { smallestUnit: "hour" });
+roundDuration({ duration: { minutes: -90 }, smallestUnit: "hour" });
 // { hours: -2 }
 ```
 

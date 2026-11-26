@@ -10,11 +10,13 @@ describe("duration lengths", () => {
         expect(
             durationToMilliseconds({ duration: { hours: 1, minutes: 30 } }),
         ).toBe(5_400_000);
-        expect(millisecondsToDuration(5_400_000)).toEqual({
+        expect(millisecondsToDuration({ milliseconds: 5_400_000 })).toEqual({
             hours: 1,
             minutes: 30,
         });
-        expect(compareDurations({ hours: 2 }, { minutes: 90 })).toBe(1);
+        expect(
+            compareDurations({ first: { hours: 2 }, second: { minutes: 90 } }),
+        ).toBe(1);
         expect(() =>
             durationToMilliseconds({ duration: { months: 1 } }),
         ).toThrow(RangeError);

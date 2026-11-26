@@ -14,9 +14,11 @@ import { getLocaleWeekInfo } from "@sgx4u/date-time";
 function getLocaleWeekInfo(locale?: string): LocaleWeekInfo;
 ```
 
-## Options
+## Parameters
 
-Optional positional `locale`; omit for the runtime default.
+| Name     | Type     | Required | Default | Meaning                                          |
+| -------- | -------- | -------- | ------- | ------------------------------------------------ |
+| `locale` | `string` | no       |         | A BCP 47 tag. Omit it to use the runtime locale. |
 
 ## Examples
 
@@ -36,7 +38,6 @@ getLocaleWeekInfo("en-US").weekendDays;
 ## Edge cases
 
 An invalid `locale` throws.
-
 
 ## Related
 

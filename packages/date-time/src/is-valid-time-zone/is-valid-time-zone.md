@@ -14,9 +14,11 @@ import { isValidTimeZone } from "@sgx4u/date-time";
 function isValidTimeZone(timeZone: unknown): boolean;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name       | Type      | Required | Default | Meaning    |
+| ---------- | --------- | -------- | ------- | ---------- |
+| `timeZone` | `unknown` | yes      |         | Any value. |
 
 ## Examples
 

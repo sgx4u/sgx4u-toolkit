@@ -12,39 +12,42 @@ import { getPreviousCronRuns } from "@sgx4u/date-time/cron";
 
 ```ts
 function getPreviousCronRuns(
-    schedule: string | CronSchedule,
-    options?: PreviousCronRunsOptions,
-): Date[];
+    params: GetPreviousCronRunsParams,
+): Date[] | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name        | Type        | Default                                 | Meaning                                                              |
-| ----------- | ----------- | --------------------------------------- | -------------------------------------------------------------------- |
-| `now`       | `DateInput` | `Date.now()`, read on each call         | The instant to use instead of the current time.                      |
-| `timeZone`  | `string`    | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
-| `count`     | `number`    | `1`                                     | How many runs to return. Must be an integer from 1 through 1000.     |
-| `startDate` | `DateInput` | none                                    | Stop the search at this instant. A run at `startDate` is excluded.   |
+| Name        | Type                     | Required | Default                                  | Meaning                                            |
+| ----------- | ------------------------ | -------- | ---------------------------------------- | -------------------------------------------------- |
+| `schedule`  | `string \| CronSchedule` | yes      |                                          | A cron expression or a parsed schedule.            |
+| `count`     | `number`                 | no       | `1`                                      | How many runs to return.                           |
+| `startDate` | `DateInput`              | no       |                                          | Runs at or before this instant are excluded.       |
+| `now`       | `DateInput`              | no       | `Date.now()`, read on each call.         | The instant to use instead of the current time.    |
+| `timeZone`  | `string`                 | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset |
 
 ## Examples
 
 ```ts
 import { getPreviousCronRuns } from "@sgx4u/date-time/cron";
 
-getPreviousCronRuns("0 9 * * *", {
+getPreviousCronRuns({
+    schedule: "0 9 * * *",
     now: "2026-11-26T10:00:00Z",
     timeZone: "UTC",
 })[0]?.toISOString();
 // "2026-11-26T09:00:00.000Z"
 
-getPreviousCronRuns("0 9 * * *", {
+getPreviousCronRuns({
+    schedule: "0 9 * * *",
     now: "2026-11-26T10:00:00Z",
     timeZone: "UTC",
     count: 2,
 }).map((date) => date.toISOString());
 // ["2026-11-26T09:00:00.000Z", "2026-11-25T09:00:00.000Z"]
 
-getPreviousCronRuns("@reboot", {
+getPreviousCronRuns({
+    schedule: "@reboot",
     now: "2026-11-26T10:00:00Z",
     timeZone: "UTC",
 });

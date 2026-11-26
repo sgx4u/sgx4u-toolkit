@@ -11,52 +11,50 @@ import { isBetween } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function isBetween(
-    date: DateInput,
-    start: DateInput,
-    end: DateInput,
-    options?: IsBetweenOptions,
-): boolean;
+function isBetween(params: IsBetweenParams): boolean;
 ```
 
-## Options
+## Parameters
 
-| Name           | Type      | Default | Meaning                                  |
-| -------------- | --------- | ------- | ---------------------------------------- |
-| `includeStart` | `boolean` | `true`  | Whether the start instant itself counts. |
-| `includeEnd`   | `boolean` | `true`  | Whether the end instant itself counts.   |
+| Name           | Type        | Required | Default | Meaning                                  |
+| -------------- | ----------- | -------- | ------- | ---------------------------------------- |
+| `date`         | `DateInput` | yes      |         | The date to test.                        |
+| `start`        | `DateInput` | yes      |         | One end of the range.                    |
+| `end`          | `DateInput` | yes      |         | The other end of the range.              |
+| `includeStart` | `boolean`   | no       | `true`  | Whether the start instant itself counts. |
+| `includeEnd`   | `boolean`   | no       | `true`  | Whether the end instant itself counts.   |
 
 ## Examples
 
 ```ts
 import { isBetween } from "@sgx4u/date-time";
 
-isBetween(
-    "2024-01-02T00:00:00Z",
-    "2024-01-01T00:00:00Z",
-    "2024-01-03T00:00:00Z",
-);
+isBetween({
+    date: "2024-01-02T00:00:00Z",
+    start: "2024-01-01T00:00:00Z",
+    end: "2024-01-03T00:00:00Z",
+});
 // true
 
-isBetween(
-    "2024-01-01T00:00:00Z",
-    "2024-01-01T00:00:00Z",
-    "2024-01-03T00:00:00Z",
-    { includeStart: false },
-);
+isBetween({
+    date: "2024-01-01T00:00:00Z",
+    start: "2024-01-01T00:00:00Z",
+    end: "2024-01-03T00:00:00Z",
+    includeStart: false,
+});
 // false
 
-isBetween(
-    "2024-01-02T00:00:00Z",
-    "2024-01-03T00:00:00Z",
-    "2024-01-01T00:00:00Z",
-);
+isBetween({
+    date: "2024-01-02T00:00:00Z",
+    start: "2024-01-03T00:00:00Z",
+    end: "2024-01-01T00:00:00Z",
+});
 // false
 ```
 
 ## Edge cases
 
-Both ends are included unless the matching option is `false`. When `start` is after `end`, no instant is inside the range. A value that is not a real date throws a `RangeError`.
+Both ends are included unless the matching option is `false`. When `start` is after `end`, no instant is inside the range. A value that is not a real date returns `undefined`.
 
 ## Related
 

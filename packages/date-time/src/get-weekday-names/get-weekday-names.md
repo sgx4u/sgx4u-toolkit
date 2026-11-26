@@ -11,16 +11,16 @@ import { getWeekdayNames } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getWeekdayNames(options?: WeekdayNameOptions): string[];
+function getWeekdayNames(params: GetWeekdayNamesParams = {}): string[];
 ```
 
-## Options
+## Parameters
 
-| Name       | Type                            | Default                      | Meaning                                                       |
-| ---------- | ------------------------------- | ---------------------------- | ------------------------------------------------------------- |
-| `locale`   | `string \| readonly string[]`   | The runtime's default locale | A BCP 47 language tag, or a list of tags in preference order. |
-| `width`    | `"long" \| "short" \| "narrow"` | `"long"`                     | The name length.                                              |
-| `startsOn` | `Weekday`                       | `1`                          | The ISO weekday that comes first. `1` is Monday.              |
+| Name       | Type                            | Required | Default                       | Meaning                                                       |
+| ---------- | ------------------------------- | -------- | ----------------------------- | ------------------------------------------------------------- |
+| `width`    | `"long" \| "short" \| "narrow"` | no       | `"long"`                      | The name length.                                              |
+| `startsOn` | `Weekday`                       | no       | `1`                           | The ISO weekday that comes first.                             |
+| `locale`   | `string \| readonly string[]`   | no       | The runtime's default locale. | A BCP 47 language tag, or a list of tags in preference order. |
 
 ## Examples
 

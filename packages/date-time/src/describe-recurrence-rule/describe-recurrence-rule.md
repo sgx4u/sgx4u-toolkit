@@ -14,9 +14,11 @@ import { describeRecurrenceRule } from "@sgx4u/date-time/recurrence";
 function describeRecurrenceRule(rule: RecurrenceRule): string;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name   | Type             | Required | Default | Meaning               |
+| ------ | ---------------- | -------- | ------- | --------------------- |
+| `rule` | `RecurrenceRule` | yes      |         | The rule to describe. |
 
 ## Examples
 

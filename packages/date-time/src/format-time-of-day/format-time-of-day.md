@@ -11,45 +11,47 @@ import { formatTimeOfDay } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function formatTimeOfDay(
-    time: TimeOfDay,
-    options?: FormatTimeOfDayOptions,
-): string;
+function formatTimeOfDay(params: FormatTimeOfDayParams): string | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name        | Type                                    | Default        | Meaning                                                    |
-| ----------- | --------------------------------------- | -------------- | ---------------------------------------------------------- |
-| `locale`    | `string \| readonly string[]`           | Runtime locale | Locale for the clock text.                                 |
-| `precision` | `"minute" \| "second" \| "millisecond"` | `"minute"`     | Which fields are shown.                                    |
-| `hourCycle` | `"h12" \| "h23"`                        |                | 12-hour or 24-hour clock. Omitted uses the locale's cycle. |
+| Name        | Type                                    | Required | Default                       | Meaning                                                       |
+| ----------- | --------------------------------------- | -------- | ----------------------------- | ------------------------------------------------------------- |
+| `time`      | `TimeOfDay`                             | yes      |                               | The time to format.                                           |
+| `precision` | `"minute" \| "second" \| "millisecond"` | no       | `"minute"`                    | Which fields are shown.                                       |
+| `hourCycle` | `"h12" \| "h23"`                        | no       |                               | A 12-hour or 24-hour clock. Omitted uses the locale's cycle.  |
+| `locale`    | `string \| readonly string[]`           | no       | The runtime's default locale. | A BCP 47 language tag, or a list of tags in preference order. |
 
 ## Examples
 
 ```ts
-formatTimeOfDay(
-    { hour: 15, minute: 30, second: 4, millisecond: 7 },
-    { locale: "en-US", hourCycle: "h23" },
-);
+formatTimeOfDay({
+    time: { hour: 15, minute: 30, second: 4, millisecond: 7 },
+    locale: "en-US",
+    hourCycle: "h23",
+});
 // "15:30"
 
-formatTimeOfDay(
-    { hour: 15, minute: 30, second: 4, millisecond: 7 },
-    { locale: "en-US" },
-);
+formatTimeOfDay({
+    time: { hour: 15, minute: 30, second: 4, millisecond: 7 },
+    locale: "en-US",
+});
 // "3:30 PM"
 
-formatTimeOfDay(
-    { hour: 0, minute: 0, second: 0, millisecond: 0 },
-    { locale: "en-US", hourCycle: "h12" },
-);
+formatTimeOfDay({
+    time: { hour: 0, minute: 0, second: 0, millisecond: 0 },
+    locale: "en-US",
+    hourCycle: "h12",
+});
 // "12:00 AM"
 
-formatTimeOfDay(
-    { hour: 23, minute: 59, second: 59, millisecond: 7 },
-    { locale: "en-US", hourCycle: "h23", precision: "millisecond" },
-);
+formatTimeOfDay({
+    time: { hour: 23, minute: 59, second: 59, millisecond: 7 },
+    locale: "en-US",
+    hourCycle: "h23",
+    precision: "millisecond",
+});
 // "23:59:59.007"
 ```
 

@@ -11,41 +11,45 @@ import { formatDateRange } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function formatDateRange(
-    start: DateInput,
-    end: DateInput,
-    options?: FormatDateWithStyleOptions,
-): string;
+function formatDateRange(params: FormatDateRangeParams): string | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name              | Type                                      | Default        | Meaning                                        |
-| ----------------- | ----------------------------------------- | -------------- | ---------------------------------------------- |
-| `timeZone`        | `string`                                  | System zone    | IANA name or fixed offset.                     |
-| `locale`          | `string \| readonly string[]`             | Runtime locale | Locale for the range text.                     |
-| `dateStyle`       | `"full" \| "long" \| "medium" \| "short"` | `"medium"`     | Date length. Used when `timeStyle` is omitted. |
-| `timeStyle`       | `"full" \| "long" \| "medium" \| "short"` |                | Time length. Omit it to format the date only.  |
-| `calendar`        | `string`                                  |                | `Intl` calendar name, such as `"gregory"`.     |
-| `numberingSystem` | `string`                                  |                | `Intl` numbering system.                       |
-| `hourCycle`       | `"h11" \| "h12" \| "h23" \| "h24"`        |                | Hour cycle passed to `Intl`.                   |
+| Name              | Type                                      | Required | Default                                  | Meaning                                                       |
+| ----------------- | ----------------------------------------- | -------- | ---------------------------------------- | ------------------------------------------------------------- |
+| `start`           | `DateInput`                               | yes      |                                          | The first instant.                                            |
+| `end`             | `DateInput`                               | yes      |                                          | The second instant. It must not be before `start`.            |
+| `dateStyle`       | `"long" \| "short" \| "medium" \| "full"` | no       | `"medium"`                               | The date length. Used alone when `timeStyle` is omitted.      |
+| `timeStyle`       | `"long" \| "short" \| "medium" \| "full"` | no       |                                          | The time length. Omit it to format the date only.             |
+| `calendar`        | `string`                                  | no       |                                          | An `Intl` calendar name, such as `"gregory"`.                 |
+| `numberingSystem` | `string`                                  | no       |                                          | An `Intl` numbering system.                                   |
+| `hourCycle`       | `"h11" \| "h12" \| "h23" \| "h24"`        | no       |                                          | The hour cycle passed to `Intl`.                              |
+| `timeZone`        | `string`                                  | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset            |
+| `locale`          | `string \| readonly string[]`             | no       | The runtime's default locale.            | A BCP 47 language tag, or a list of tags in preference order. |
 
 ## Examples
 
 ```ts
-formatDateRange("2026-01-03T00:00:00Z", "2026-01-05T00:00:00Z", {
+formatDateRange({
+    start: "2026-01-03T00:00:00Z",
+    end: "2026-01-05T00:00:00Z",
     timeZone: "UTC",
     locale: "en-US",
 });
 // "Jan 3\u2009\u2013\u20095, 2026"
 
-formatDateRange("2024-02-29T00:00:00Z", "2024-03-01T00:00:00Z", {
+formatDateRange({
+    start: "2024-02-29T00:00:00Z",
+    end: "2024-03-01T00:00:00Z",
     timeZone: "UTC",
     locale: "en-US",
 });
 // "Feb 29\u2009\u2013\u2009Mar 1, 2024"
 
-formatDateRange("2024-12-31T00:00:00Z", "2025-01-01T00:00:00Z", {
+formatDateRange({
+    start: "2024-12-31T00:00:00Z",
+    end: "2025-01-01T00:00:00Z",
     timeZone: "UTC",
     locale: "en-US",
 });

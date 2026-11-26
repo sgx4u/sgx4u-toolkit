@@ -12,38 +12,39 @@ import { getPreviousBusinessDay } from "@sgx4u/date-time";
 
 ```ts
 function getPreviousBusinessDay(
-    date: DateInput,
-    calendar?: BusinessCalendar,
-): Date;
+    params: GetPreviousBusinessDayParams,
+): Date | undefined;
 ```
 
-## Options
+## Parameters
 
-The `calendar` argument is optional. Omitted fields use these defaults.
-
-| Name           | Type                                                | Default                              | Meaning                                                                                                   |
-| -------------- | --------------------------------------------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------------- |
-| `weekendDays`  | `readonly Weekday[]`                                | `[6, 7]`                             | ISO weekdays that are not business days.                                                                  |
-| `holidays`     | `readonly DateInput[] \| ((date: Date) => boolean)` | `[]`                                 | Closed dates, or a predicate that reports a holiday. A list is matched on the calendar day in `timeZone`. |
-| `workingHours` | `readonly TimeRange[]`                              | `[{ start: "09:00", end: "17:00" }]` | Working windows on a business day. An empty list means the whole day.                                     |
-| `timeZone`     | `string`                                            | The system time zone                 | IANA time zone or fixed offset the calendar uses.                                                         |
+| Name            | Type                                          | Required | Default                              | Meaning                                                                     |
+| --------------- | --------------------------------------------- | -------- | ------------------------------------ | --------------------------------------------------------------------------- |
+| `date`          | `DateInput`                                   | yes      |                                      | The date to move from.                                                      |
+| `workingDays`   | `readonly Weekday[]`                          | no       | `[1, 2, 3, 4, 5]`                    | ISO weekdays that count as business days. Every other weekday is a weekend. |
+| `holidays`      | `readonly (ConfiguredHoliday \| DateInput)[]` | no       | `[]`                                 | Dates that are closed.                                                      |
+| `businessHours` | `readonly TimeRange[]`                        | no       | `[{ start: "09:00", end: "17:00" }]` | Working windows for a business day. An empty list means the whole day.      |
+| `timeZone`      | `string`                                      | no       | The system time zone.                | IANA time zone or fixed offset the calendar uses.                           |
 
 ## Examples
 
 ```ts
 import { getPreviousBusinessDay } from "@sgx4u/date-time";
 
-getPreviousBusinessDay("2026-11-30T15:00:00Z", {
+getPreviousBusinessDay({
+    date: "2026-11-30T15:00:00Z",
     timeZone: "UTC",
 }).toISOString();
 // "2026-11-27T00:00:00.000Z"
 
-getPreviousBusinessDay("2026-11-27T15:00:00Z", {
+getPreviousBusinessDay({
+    date: "2026-11-27T15:00:00Z",
     timeZone: "UTC",
 }).toISOString();
 // "2026-11-26T00:00:00.000Z"
 
-getPreviousBusinessDay("2026-11-30T15:00:00Z", {
+getPreviousBusinessDay({
+    date: "2026-11-30T15:00:00Z",
     timeZone: "UTC",
     holidays: ["2026-11-27"],
 }).toISOString();

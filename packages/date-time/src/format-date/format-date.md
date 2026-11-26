@@ -11,38 +11,48 @@ import { formatDate } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function formatDate(
-    date: DateInput,
-    pattern: string,
-    options?: TimeZoneOptions & LocaleOptions,
-): string;
+function formatDate(params: FormatDateParams): string | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name       | Type                          | Default        | Meaning                    |
-| ---------- | ----------------------------- | -------------- | -------------------------- |
-| `timeZone` | `string`                      | System zone    | IANA name or fixed offset. |
-| `locale`   | `string \| readonly string[]` | Runtime locale | Locale for names.          |
+| Name       | Type                          | Required | Default                                  | Meaning                                                       |
+| ---------- | ----------------------------- | -------- | ---------------------------------------- | ------------------------------------------------------------- |
+| `date`     | `DateInput`                   | yes      |                                          | The instant to format.                                        |
+| `pattern`  | `string`                      | yes      |                                          | A pattern such as `yyyy-MM-dd HH:mm`.                         |
+| `timeZone` | `string`                      | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset            |
+| `locale`   | `string \| readonly string[]` | no       | The runtime's default locale.            | A BCP 47 language tag, or a list of tags in preference order. |
 
 ## Examples
 
 ```ts
-formatDate("2026-11-25T22:00:00.000Z", "yyyy-MM-dd HH:mm", {
+formatDate({
+    date: "2026-11-25T22:00:00.000Z",
+    pattern: "yyyy-MM-dd HH:mm",
     timeZone: "Asia/Kolkata",
 });
 // "2026-11-26 03:30"
 
-formatDate("2026-11-26T00:00:00Z", "MMMM", {
+formatDate({
+    date: "2026-11-26T00:00:00Z",
+    pattern: "MMMM",
     timeZone: "UTC",
     locale: "en-US",
 });
 // "November"
 
-formatDate("2026-11-26T03:30:00.000Z", "'Q'QQ yyyy", { timeZone: "UTC" });
+formatDate({
+    date: "2026-11-26T03:30:00.000Z",
+    pattern: "'Q'QQ yyyy",
+    timeZone: "UTC",
+});
 // "Q04 2026"
 
-formatDate("2026-11-26T00:00:00.000Z", "XXX", { timeZone: "UTC" });
+formatDate({
+    date: "2026-11-26T00:00:00.000Z",
+    pattern: "XXX",
+    timeZone: "UTC",
+});
 // "Z"
 ```
 

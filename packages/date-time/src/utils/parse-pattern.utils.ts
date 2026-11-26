@@ -1,6 +1,6 @@
 import type { DateParts, DatePartsInput } from "../types/time.types.js";
 import { readPattern } from "./format-pattern.utils.js";
-import { isRealGregorianDay, isoWeekdayNumber } from "./gregorian.utils.js";
+import { isRealGregorianDay, ISOWeekdayNumber } from "./gregorian.utils.js";
 
 /**
  * Fields collected while parsing a pattern.
@@ -99,7 +99,7 @@ export function parseNumericPattern(
     }
     if (
         found.weekday !== undefined &&
-        found.weekday !== isoWeekdayNumber(year, month, day)
+        found.weekday !== ISOWeekdayNumber(year, month, day)
     ) {
         return undefined;
     }

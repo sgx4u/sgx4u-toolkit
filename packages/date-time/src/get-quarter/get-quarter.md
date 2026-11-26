@@ -11,33 +11,34 @@ import { getQuarter } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getQuarter(date: DateInput, options?: TimeZoneOptions): 1 | 2 | 3 | 4;
+function getQuarter(params: GetQuarterParams): 1 | 2 | 3 | 4 | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name       | Type     | Default                                 | Meaning                                                              |
-| ---------- | -------- | --------------------------------------- | -------------------------------------------------------------------- |
-| `timeZone` | `string` | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
+| Name       | Type        | Required | Default | Meaning                               |
+| ---------- | ----------- | -------- | ------- | ------------------------------------- |
+| `date`     | `DateInput` | yes      |         | The date to read.                     |
+| `timeZone` | `string`    | no       |         | Zone used to read the calendar month. |
 
 ## Examples
 
 ```ts
 import { getQuarter } from "@sgx4u/date-time";
 
-getQuarter("2026-01-15T00:00:00Z", { timeZone: "UTC" });
+getQuarter({ date: "2026-01-15T00:00:00Z", timeZone: "UTC" });
 // 1
 
-getQuarter("2026-11-26T00:00:00Z", { timeZone: "UTC" });
+getQuarter({ date: "2026-11-26T00:00:00Z", timeZone: "UTC" });
 // 4
 
-getQuarter("2026-04-01T00:00:00Z", { timeZone: "UTC" });
+getQuarter({ date: "2026-04-01T00:00:00Z", timeZone: "UTC" });
 // 2
 ```
 
 ## Edge cases
 
-January through March are quarter 1, April through June are quarter 2, July through September are quarter 3, and October through December are quarter 4. The month is read in `timeZone`. A value that is not a real date throws a `RangeError`.
+January through March are quarter 1, April through June are quarter 2, July through September are quarter 3, and October through December are quarter 4. The month is read in `timeZone`. A value that is not a real date returns `undefined`.
 
 ## Related
 

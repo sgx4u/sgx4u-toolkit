@@ -1,3 +1,4 @@
+import type { ConfiguredHoliday } from "../types/configured-holiday.types.js";
 import type {
     Holiday,
     HolidayRule,
@@ -7,9 +8,10 @@ import type { CalendarDate, Weekday } from "../types/time.types.js";
 import { getEasterSunday } from "../get-easter-sunday/get-easter-sunday.js";
 import {
     addGregorianDays,
-    isoWeekdayNumber,
-    utcEpochMilliseconds,
+    ISOWeekdayNumber,
+    UTCEpochMilliseconds,
 } from "./gregorian.utils.js";
+import { formatCalendarText } from "./iso.utils.js";
 
 const defaultWeekend: readonly Weekday[] = [6, 7];
 
@@ -72,6 +74,32 @@ export function holidaysInYear(
 }
 
 /**
+ * Holiday rules expanded to `{ date, name }` for `createDateTime`.
+ *
+ * `date` is the observed calendar day, as `YYYY-MM-DD`.
+ *
+ * @param year - The Gregorian year.
+ * @param rules - The holiday rules.
+ * @returns The list, or `undefined` when `year` is not an integer.
+ */
+export function configuredHolidaysInYear(
+    year: number,
+    rules: readonly HolidayRule[],
+): ConfiguredHoliday[] | undefined {
+    if (typeof year !== "number" || !Number.isInteger(year)) {
+        return undefined;
+    }
+    return holidaysInYear(year, rules).map((holiday) => ({
+        date: formatCalendarText(
+            holiday.observedDate.year,
+            holiday.observedDate.month,
+            holiday.observedDate.day,
+        ),
+        name: holiday.name,
+    }));
+}
+
+/**
  * Moves a holiday off a weekend according to a policy.
  *
  * @param date - The holiday's calendar date.
@@ -88,12 +116,12 @@ export function observeDate(
         return date;
     }
     if (policy === "nearest-weekday") {
-        const weekday = isoWeekdayNumber(date.year, date.month, date.day);
+        const weekday = ISOWeekdayNumber(date.year, date.month, date.day);
         const direction = weekday === 7 ? 1 : -1;
         return addGregorianDays(date.year, date.month, date.day, direction);
     }
     if (policy === "next-monday") {
-        const weekday = isoWeekdayNumber(date.year, date.month, date.day);
+        const weekday = ISOWeekdayNumber(date.year, date.month, date.day);
         const daysUntilMonday = weekday === 7 ? 1 : 8 - weekday;
         return addGregorianDays(
             date.year,
@@ -144,9 +172,13 @@ function datesForRule(rule: HolidayRule, year: number): CalendarDate[] {
         return date === undefined ? [] : [date];
     }
     if (ruleDate.kind === "easter-offset") {
-        const easter = getEasterSunday(year, {
+        const easter = getEasterSunday({
+            year,
             tradition: ruleDate.tradition ?? "western",
         });
+        if (easter === undefined) {
+            return [];
+        }
         return [
             addGregorianDays(
                 easter.year,
@@ -181,7 +213,7 @@ function nthWeekday(
     weekday: Weekday,
     occurrence: number,
 ): CalendarDate | undefined {
-    const firstWeekday = isoWeekdayNumber(year, month, 1);
+    const firstWeekday = ISOWeekdayNumber(year, month, 1);
     const firstOffset = (weekday - firstWeekday + 7) % 7;
     const index = occurrence > 0 ? occurrence - 1 : undefined;
     if (index !== undefined) {
@@ -190,7 +222,7 @@ function nthWeekday(
         return probe.month === month ? probe : undefined;
     }
     const lastDay = addGregorianDays(year, month + 1, 1, -1);
-    const lastWeekday = isoWeekdayNumber(
+    const lastWeekday = ISOWeekdayNumber(
         lastDay.year,
         lastDay.month,
         lastDay.day,
@@ -230,8 +262,8 @@ function intlCalendarDates(
         day: "numeric",
     });
     const matches: CalendarDate[] = [];
-    let cursor = utcEpochMilliseconds(year, 0, 1, 0, 0, 0, 0);
-    const end = utcEpochMilliseconds(year + 1, 0, 1, 0, 0, 0, 0);
+    let cursor = UTCEpochMilliseconds(year, 0, 1, 0, 0, 0, 0);
+    const end = UTCEpochMilliseconds(year + 1, 0, 1, 0, 0, 0, 0);
     while (cursor < end) {
         const parts = formatter.formatToParts(new Date(cursor));
         const monthValue = Number(
@@ -263,7 +295,7 @@ function isWeekend(
     weekendDays: readonly Weekday[],
 ): boolean {
     return weekendDays.includes(
-        isoWeekdayNumber(date.year, date.month, date.day),
+        ISOWeekdayNumber(date.year, date.month, date.day),
     );
 }
 

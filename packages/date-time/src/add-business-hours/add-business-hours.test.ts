@@ -15,35 +15,45 @@ const utc = { timeZone: "UTC" };
 describe("business hours", () => {
     it("skips the weekend and counts only open time", () => {
         expect(
-            getNextBusinessDay("2026-11-27T15:00:00Z", utc).toISOString(),
+            getNextBusinessDay({
+                date: "2026-11-27T15:00:00Z",
+                ...utc,
+            })?.toISOString(),
         ).toBe("2026-11-30T00:00:00.000Z");
         expect(
-            getPreviousBusinessDay("2026-11-30T15:00:00Z", utc).toISOString(),
+            getPreviousBusinessDay({
+                date: "2026-11-30T15:00:00Z",
+                ...utc,
+            })?.toISOString(),
         ).toBe("2026-11-27T00:00:00.000Z");
         expect(
-            differenceInBusinessDays(
-                "2026-11-30T00:00:00Z",
-                "2026-11-27T00:00:00Z",
-                utc,
-            ),
+            differenceInBusinessDays({
+                later: "2026-11-30T00:00:00Z",
+                earlier: "2026-11-27T00:00:00Z",
+                ...utc,
+            }),
         ).toBe(1);
         expect(
-            listBusinessDaysInInterval(
-                {
-                    start: new Date("2026-11-27T00:00:00Z"),
-                    end: new Date("2026-11-30T00:00:00Z"),
-                },
-                utc,
-            ),
-        ).toHaveLength(1);
-        expect(isWithinBusinessHours("2026-11-26T12:00:00Z", utc)).toBe(true);
-        expect(isWithinBusinessHours("2026-11-26T17:00:00Z", utc)).toBe(false);
-        expect(isWithinBusinessHours("2026-11-28T12:00:00Z", utc)).toBe(false);
+            listBusinessDaysInInterval({
+                start: new Date("2026-11-27T00:00:00Z"),
+                end: new Date("2026-11-30T00:00:00Z"),
+                ...utc,
+            }),
+        )?.toHaveLength(1);
         expect(
-            getNextBusinessHoursStart(
-                "2026-11-26T08:00:00Z",
-                utc,
-            ).toISOString(),
+            isWithinBusinessHours({ date: "2026-11-26T12:00:00Z", ...utc }),
+        ).toBe(true);
+        expect(
+            isWithinBusinessHours({ date: "2026-11-26T17:00:00Z", ...utc }),
+        ).toBe(false);
+        expect(
+            isWithinBusinessHours({ date: "2026-11-28T12:00:00Z", ...utc }),
+        ).toBe(false);
+        expect(
+            getNextBusinessHoursStart({
+                date: "2026-11-26T08:00:00Z",
+                ...utc,
+            })?.toISOString(),
         ).toBe("2026-11-26T09:00:00.000Z");
         expect(
             addBusinessHours({
@@ -53,11 +63,11 @@ describe("business hours", () => {
             })?.toISOString(),
         ).toBe("2026-11-27T10:00:00.000Z");
         expect(
-            differenceInBusinessHours(
-                "2026-11-27T10:00:00Z",
-                "2026-11-26T16:00:00Z",
-                utc,
-            ),
+            differenceInBusinessHours({
+                later: "2026-11-27T10:00:00Z",
+                earlier: "2026-11-26T16:00:00Z",
+                ...utc,
+            }),
         ).toBe(2);
         expect(() =>
             addBusinessHours({

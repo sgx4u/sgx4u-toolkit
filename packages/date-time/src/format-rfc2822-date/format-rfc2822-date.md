@@ -11,28 +11,38 @@ import { formatRFC2822Date } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function formatRFC2822Date(date: DateInput, options?: TimeZoneOptions): string;
+function formatRFC2822Date(params: FormatRFC2822DateParams): string | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name       | Type     | Default     | Meaning                    |
-| ---------- | -------- | ----------- | -------------------------- |
-| `timeZone` | `string` | System zone | IANA name or fixed offset. |
+| Name       | Type        | Required | Default                                  | Meaning                                            |
+| ---------- | ----------- | -------- | ---------------------------------------- | -------------------------------------------------- |
+| `date`     | `DateInput` | yes      |                                          | The instant to format.                             |
+| `timeZone` | `string`    | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset |
 
 ## Examples
 
 ```ts
-formatRFC2822Date("2026-11-25T22:00:00.000Z", { timeZone: "Asia/Kolkata" });
+formatRFC2822Date({
+    date: "2026-11-25T22:00:00.000Z",
+    timeZone: "Asia/Kolkata",
+});
 // "Thu, 26 Nov 2026 03:30:00 +0530"
 
-formatRFC2822Date("2026-07-01T16:00:00Z", { timeZone: "America/New_York" });
+formatRFC2822Date({
+    date: "2026-07-01T16:00:00Z",
+    timeZone: "America/New_York",
+});
 // "Wed, 01 Jul 2026 12:00:00 -0400"
 
-formatRFC2822Date("2026-01-15T17:00:00Z", { timeZone: "America/New_York" });
+formatRFC2822Date({
+    date: "2026-01-15T17:00:00Z",
+    timeZone: "America/New_York",
+});
 // "Thu, 15 Jan 2026 12:00:00 -0500"
 
-formatRFC2822Date("2024-02-29T23:59:59Z", { timeZone: "UTC" });
+formatRFC2822Date({ date: "2024-02-29T23:59:59Z", timeZone: "UTC" });
 // "Thu, 29 Feb 2024 23:59:59 +0000"
 ```
 

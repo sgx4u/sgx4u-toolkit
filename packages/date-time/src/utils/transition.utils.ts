@@ -1,5 +1,5 @@
 import type { TimeZoneTransition } from "../types/time-zone.types.js";
-import { getUtcOffset } from "../get-utc-offset/get-utc-offset.js";
+import { getUTCOffset } from "../get-utc-offset/get-utc-offset.js";
 
 const stepMilliseconds = 6 * 3_600_000;
 const millisecondsPerMinute = 60_000;
@@ -66,7 +66,7 @@ function offsetMilliseconds(
     timeZone: string,
 ): number {
     return Math.round(
-        getUtcOffset(new Date(epochMilliseconds), timeZone) *
+        (getUTCOffset({ date: new Date(epochMilliseconds), timeZone }) ?? 0) *
             millisecondsPerMinute,
     );
 }

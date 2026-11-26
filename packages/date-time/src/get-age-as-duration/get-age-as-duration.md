@@ -14,28 +14,36 @@ import { getAgeAsDuration } from "@sgx4u/date-time";
 function getAgeAsDuration(params: GetAgeParams): Duration | undefined;
 ```
 
-## Options
+## Parameters
 
-Uses the same fields as `getAge`.
+| Name                           | Type              | Required | Default                                  | Meaning                                                   |
+| ------------------------------ | ----------------- | -------- | ---------------------------------------- | --------------------------------------------------------- |
+| `birthDate`                    | `DateInput`       | yes      |                                          | The start of the age.                                     |
+| `leapDayBirthdayInCommonYears` | `LeapDayBirthday` | no       | `"march-1"`                              | Where a February 29 birthday is reached in a common year. |
+| `now`                          | `DateInput`       | no       | `Date.now()`, read on each call.         | The instant to use instead of the current time.           |
+| `timeZone`                     | `string`          | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset        |
 
 ## Examples
 
 ```ts
 import { getAgeAsDuration } from "@sgx4u/date-time";
 
-getAgeAsDuration("2020-01-31", {
+getAgeAsDuration({
+    birthDate: "2020-01-31",
     now: "2021-03-01T00:00:00Z",
     timeZone: "UTC",
 });
 // { years: 1, months: 1, days: 1 }
 
-getAgeAsDuration("2020-01-31", {
+getAgeAsDuration({
+    birthDate: "2020-01-31",
     now: "2020-01-31T12:00:00Z",
     timeZone: "UTC",
 });
 // {  }
 
-getAgeAsDuration("2000-02-29", {
+getAgeAsDuration({
+    birthDate: "2000-02-29",
     now: "2021-02-28T00:00:00Z",
     timeZone: "UTC",
     leapDayBirthdayInCommonYears: "february-28",
@@ -46,7 +54,6 @@ getAgeAsDuration("2000-02-29", {
 ## Edge cases
 
 Invalid inputs return `undefined`, as for `getAge`. Unknown `leapDayBirthdayInCommonYears` or an invalid `timeZone` throws.
-
 
 ## Related
 

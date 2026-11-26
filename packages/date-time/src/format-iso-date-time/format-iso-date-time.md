@@ -11,36 +11,39 @@ import { formatISODateTime } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function formatISODateTime(
-    date: DateInput,
-    options?: FormatISODateTimeOptions,
-): string;
+function formatISODateTime(params: FormatISODateTimeParams): string | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name                  | Type                                    | Default         | Meaning                                  |
-| --------------------- | --------------------------------------- | --------------- | ---------------------------------------- |
-| `timeZone`            | `string`                                | System zone     | IANA name or fixed offset.               |
-| `precision`           | `"minute" \| "second" \| "millisecond"` | `"millisecond"` | Smallest field written after the minute. |
-| `includeTimeZoneName` | `boolean`                               | `false`         | Append `[zone]` for an IANA name.        |
+| Name                  | Type                                    | Required | Default                                  | Meaning                                            |
+| --------------------- | --------------------------------------- | -------- | ---------------------------------------- | -------------------------------------------------- |
+| `date`                | `DateInput`                             | yes      |                                          | The instant to format.                             |
+| `precision`           | `"minute" \| "second" \| "millisecond"` | no       | `"millisecond"`                          | The smallest field written after the minute.       |
+| `includeTimeZoneName` | `boolean`                               | no       | `false`                                  | Whether to append `[zone]` for an IANA time zone.  |
+| `timeZone`            | `string`                                | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset |
 
 ## Examples
 
 ```ts
-formatISODateTime("2024-02-29T00:00:00.000Z", { timeZone: "UTC" });
+formatISODateTime({ date: "2024-02-29T00:00:00.000Z", timeZone: "UTC" });
 // "2024-02-29T00:00:00.000Z"
 
-formatISODateTime("2026-11-25T22:00:00.000Z", {
+formatISODateTime({
+    date: "2026-11-25T22:00:00.000Z",
     timeZone: "Asia/Kolkata",
     precision: "minute",
 });
 // "2026-11-26T03:30+05:30"
 
-formatISODateTime("2024-02-28T18:30:00.000Z", { timeZone: "Asia/Kolkata" });
+formatISODateTime({
+    date: "2024-02-28T18:30:00.000Z",
+    timeZone: "Asia/Kolkata",
+});
 // "2024-02-29T00:00:00.000+05:30"
 
-formatISODateTime("2024-03-10T06:30:00.000Z", {
+formatISODateTime({
+    date: "2024-03-10T06:30:00.000Z",
     timeZone: "America/New_York",
     precision: "minute",
 });

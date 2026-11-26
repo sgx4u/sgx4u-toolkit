@@ -1,5 +1,5 @@
 import type { DateParts } from "../types/time.types.js";
-import { dayOfYear, isoWeekOfDate, weekOfDate } from "./week.utils.js";
+import { dayOfYear, ISOWeekOfDate, weekOfDate } from "./week.utils.js";
 import { localeWeekInfo } from "./week.utils.js";
 
 const supportedTokens = new Set([
@@ -221,7 +221,7 @@ function formatToken(
             return pad(parts.year, 4);
         case "Y":
         case "YYYY": {
-            const weekYear = isoWeekOfDate(
+            const weekYear = ISOWeekOfDate(
                 parts.year,
                 parts.month,
                 parts.day,

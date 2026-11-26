@@ -22,9 +22,10 @@ describe("createInterval", () => {
             start: "2024-02-29T00:00:00Z",
             end: "2024-03-01T00:00:00Z",
         });
-        expect(intoMarch?.end.getTime()! - intoMarch?.start.getTime()!).toBe(
-            86_400_000,
-        );
+        expect(intoMarch).toBeDefined();
+        expect(
+            (intoMarch?.end.getTime() ?? 0) - (intoMarch?.start.getTime() ?? 0),
+        ).toBe(86_400_000);
         const yearBoundary = createInterval({
             start: "2024-12-31T00:00:00Z",
             end: "2025-01-01T00:00:00Z",

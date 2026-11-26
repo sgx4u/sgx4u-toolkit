@@ -14,13 +14,13 @@ import { clampDate } from "@sgx4u/date-time";
 function clampDate(params: ClampDateParams): Date | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name    | Type        | Required | Default | Meaning                    |
-| ------- | ----------- | -------- | ------- | -------------------------- |
-| `date`  | `DateInput` | yes      |         | Date to limit.             |
-| `start` | `DateInput` | yes      |         | Inclusive start of range.  |
-| `end`   | `DateInput` | yes      |         | Inclusive end of range.    |
+| Name    | Type        | Required | Default | Meaning                       |
+| ------- | ----------- | -------- | ------- | ----------------------------- |
+| `date`  | `DateInput` | yes      |         | The date to limit.            |
+| `start` | `DateInput` | yes      |         | Inclusive start of the range. |
+| `end`   | `DateInput` | yes      |         | Inclusive end of the range.   |
 
 ## Examples
 

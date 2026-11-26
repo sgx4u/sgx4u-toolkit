@@ -12,31 +12,33 @@ import { findClosestDateIndex } from "@sgx4u/date-time";
 
 ```ts
 function findClosestDateIndex(
-    target: DateInput,
-    candidates: readonly DateInput[],
-): number;
+    params: FindClosestDateIndexParams,
+): number | undefined;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name         | Type                   | Required | Default | Meaning                  |
+| ------------ | ---------------------- | -------- | ------- | ------------------------ |
+| `target`     | `DateInput`            | yes      |         | The instant to approach. |
+| `candidates` | `readonly DateInput[]` | yes      |         | The dates to search.     |
 
 ## Examples
 
 ```ts
-findClosestDateIndex("2024-01-01T12:00:00Z", [
-    "2024-01-02T00:00:00Z",
-    "2024-01-01T00:00:00Z",
-]);
+findClosestDateIndex({
+    target: "2024-01-01T12:00:00Z",
+    candidates: ["2024-01-02T00:00:00Z", "2024-01-01T00:00:00Z"],
+});
 // 1
 
-findClosestDateIndex("2024-01-01T00:00:00Z", []);
+findClosestDateIndex({ target: "2024-01-01T00:00:00Z", candidates: [] });
 // -1
 ```
 
 ## Edge cases
 
-On a tie the earlier candidate wins. Equal candidates keep the first index. An empty list returns `-1`. A value that is not a real date throws `RangeError`. `candidates` must be an array.
+On a tie the earlier candidate wins. Equal candidates keep the first index. An empty list returns `-1`. A value that is not a real date returns `undefined`. `candidates` must be an array.
 
 ## Related
 

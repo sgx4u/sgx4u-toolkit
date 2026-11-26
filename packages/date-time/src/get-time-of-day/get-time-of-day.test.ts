@@ -4,7 +4,10 @@ import { getLocalTimeZone, getTimeOfDay } from "../index.js";
 describe("getTimeOfDay", () => {
     it("reads 03:30 in Asia/Kolkata", () => {
         expect(
-            getTimeOfDay({ date: "2026-11-25T22:00:00.000Z", timeZone: "Asia/Kolkata", }),
+            getTimeOfDay({
+                date: "2026-11-25T22:00:00.000Z",
+                timeZone: "Asia/Kolkata",
+            }),
         ).toEqual({ hour: 3, minute: 30, second: 0, millisecond: 0 });
     });
 
@@ -21,20 +24,15 @@ describe("getTimeOfDay", () => {
     });
 
     it("rejects a date or zone that is not real", () => {
-        expect(() => getTimeOfDay({ date: "nope", timeZone: "UTC" })).toThrow(
-            RangeError,
-        );
-        expect(() => getTimeOfDay({ date: "nope", timeZone: "UTC" })).toThrow(
-            "`date`",
-        );
-        expect(() => getTimeOfDay({ date: null as never, timeZone: "UTC" })).toThrow(
-            TypeError,
-        );
-        expect(() => getTimeOfDay({ date: null as never, timeZone: "UTC" })).toThrow(
-            "`date`",
-        );
+        expect(getTimeOfDay({ date: "nope", timeZone: "UTC" })).toBeUndefined();
+        expect(
+            getTimeOfDay({ date: null as never, timeZone: "UTC" }),
+        ).toBeUndefined();
         expect(() =>
-            getTimeOfDay({ date: "2026-11-26T00:00:00Z", timeZone: "Mars/Base" }),
+            getTimeOfDay({
+                date: "2026-11-26T00:00:00Z",
+                timeZone: "Mars/Base",
+            }),
         ).toThrow("`timeZone`");
     });
 
@@ -47,13 +45,22 @@ describe("getTimeOfDay", () => {
 
     it("places midnight on different UTC instants in standard and daylight time", () => {
         expect(
-            getTimeOfDay({ date: "2026-01-15T05:00:00.000Z", timeZone: "America/New_York", }),
+            getTimeOfDay({
+                date: "2026-01-15T05:00:00.000Z",
+                timeZone: "America/New_York",
+            }),
         ).toEqual({ hour: 0, minute: 0, second: 0, millisecond: 0 });
         expect(
-            getTimeOfDay({ date: "2026-07-15T04:00:00.000Z", timeZone: "America/New_York", }),
+            getTimeOfDay({
+                date: "2026-07-15T04:00:00.000Z",
+                timeZone: "America/New_York",
+            }),
         ).toEqual({ hour: 0, minute: 0, second: 0, millisecond: 0 });
         expect(
-            getTimeOfDay({ date: "2026-11-26T00:00:00.000Z", timeZone: "America/New_York", }).hour,
+            getTimeOfDay({
+                date: "2026-11-26T00:00:00.000Z",
+                timeZone: "America/New_York",
+            })?.hour,
         ).toBe(19);
     });
 });

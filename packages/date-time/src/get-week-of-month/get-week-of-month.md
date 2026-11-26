@@ -11,31 +11,30 @@ import { getWeekOfMonth } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getWeekOfMonth(
-    date: DateInput,
-    options?: TimeZoneOptions & WeekOptions,
-): number;
+function getWeekOfMonth(params: GetWeekOfMonthParams): number | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name           | Type      | Default                                 | Meaning                                                              |
-| -------------- | --------- | --------------------------------------- | -------------------------------------------------------------------- |
-| `timeZone`     | `string`  | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
-| `weekStartsOn` | `Weekday` | `1`                                     | ISO weekday that starts the week. `1` is Monday and `7` is Sunday.   |
+| Name           | Type        | Required | Default | Meaning                             |
+| -------------- | ----------- | -------- | ------- | ----------------------------------- |
+| `date`         | `DateInput` | yes      |         | The date to read.                   |
+| `timeZone`     | `string`    | no       |         | Zone used to read the calendar day. |
+| `weekStartsOn` | `Weekday`   | no       |         | ISO weekday that starts the week.   |
 
 ## Examples
 
 ```ts
 import { getWeekOfMonth } from "@sgx4u/date-time";
 
-getWeekOfMonth("2026-11-01T00:00:00Z", { timeZone: "UTC" });
+getWeekOfMonth({ date: "2026-11-01T00:00:00Z", timeZone: "UTC" });
 // 1
 
-getWeekOfMonth("2026-11-26T00:00:00Z", { timeZone: "UTC" });
+getWeekOfMonth({ date: "2026-11-26T00:00:00Z", timeZone: "UTC" });
 // 5
 
-getWeekOfMonth("2026-11-26T00:00:00Z", {
+getWeekOfMonth({
+    date: "2026-11-26T00:00:00Z",
     timeZone: "UTC",
     weekStartsOn: 7,
 });
@@ -44,7 +43,7 @@ getWeekOfMonth("2026-11-26T00:00:00Z", {
 
 ## Edge cases
 
-The first week is the week that contains day 1, using `weekStartsOn`. The default start is Monday. A value that is not a real date throws a `RangeError`.
+The first week is the week that contains day 1, using `weekStartsOn`. The default start is Monday. A value that is not a real date returns `undefined`.
 
 ## Related
 

@@ -34,8 +34,7 @@ export function getMoonPhase(date: DateInput): MoonPhase | undefined {
     if (instant === undefined) {
         return undefined;
     }
-    const elapsedDays =
-        (instant.getTime() - knownNewMoon) / 86_400_000;
+    const elapsedDays = (instant.getTime() - knownNewMoon) / 86_400_000;
     let fraction = (elapsedDays / synodicMonthDays) % 1;
     if (fraction < 0) {
         fraction += 1;

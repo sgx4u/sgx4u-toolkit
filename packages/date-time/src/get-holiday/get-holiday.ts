@@ -41,8 +41,7 @@ export function getHoliday({
     return holidaysInYear(parts.year, rules).find(
         (holiday) =>
             sameDate(holiday.date, calendarDate) ||
-            (matchObservedDate &&
-                sameDate(holiday.observedDate, calendarDate)),
+            (matchObservedDate && sameDate(holiday.observedDate, calendarDate)),
     );
 }
 

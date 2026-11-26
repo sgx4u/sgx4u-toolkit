@@ -12,43 +12,53 @@ import { parseDateWithPattern } from "@sgx4u/date-time";
 
 ```ts
 function parseDateWithPattern(
-    value: string,
-    pattern: string,
-    options?: ParseDateWithPatternOptions,
+    params: ParseDateWithPatternParams,
 ): Date | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name             | Type                                               | Default        | Meaning                                                 |
-| ---------------- | -------------------------------------------------- | -------------- | ------------------------------------------------------- |
-| `timeZone`       | `string`                                           | System zone    | Zone the wall time belongs to.                          |
-| `locale`         | `string \| readonly string[]`                      | Runtime locale | Locale for month names, weekday names, eras, and AM/PM. |
-| `disambiguation` | `"compatible" \| "earlier" \| "later" \| "reject"` | `"compatible"` | How a skipped or repeated wall time is chosen.          |
-| `referenceDate`  | `DateInput`                                        | Current time   | Source for fields the pattern leaves out.               |
+| Name             | Type                          | Required | Default                                  | Meaning                                                              |
+| ---------------- | ----------------------------- | -------- | ---------------------------------------- | -------------------------------------------------------------------- |
+| `value`          | `string`                      | yes      |                                          | The text to parse.                                                   |
+| `pattern`        | `string`                      | yes      |                                          | The CLDR-style pattern.                                              |
+| `referenceDate`  | `DateInput`                   | no       | The current time.                        | Fields missing from the pattern come from this instant. Omitted time |
+| `timeZone`       | `string`                      | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset                   |
+| `locale`         | `string \| readonly string[]` | no       | The runtime's default locale.            | A BCP 47 language tag, or a list of tags in preference order.        |
+| `disambiguation` | `Disambiguation`              | no       | `"compatible"`                           | Which instant to use at a daylight-saving gap or overlap.            |
 
 ## Examples
 
 ```ts
-parseDateWithPattern("2026-11-26 03:30", "yyyy-MM-dd HH:mm", {
+parseDateWithPattern({
+    value: "2026-11-26 03:30",
+    pattern: "yyyy-MM-dd HH:mm",
     timeZone: "Asia/Kolkata",
 })?.toISOString();
 // "2026-11-25T22:00:00.000Z"
 
-parseDateWithPattern("November 26, 2026", "MMMM d, yyyy", {
+parseDateWithPattern({
+    value: "November 26, 2026",
+    pattern: "MMMM d, yyyy",
     timeZone: "UTC",
     locale: "en-US",
 })?.toISOString();
 // "2026-11-26T00:00:00.000Z"
 
-parseDateWithPattern("3:30 PM", "h:mm a", {
+parseDateWithPattern({
+    value: "3:30 PM",
+    pattern: "h:mm a",
     timeZone: "UTC",
     locale: "en-US",
     referenceDate: "2026-11-26T00:00:00Z",
 })?.toISOString();
 // "2026-11-26T15:30:00.000Z"
 
-parseDateWithPattern("2026-02-30", "yyyy-MM-dd", { timeZone: "UTC" });
+parseDateWithPattern({
+    value: "2026-02-30",
+    pattern: "yyyy-MM-dd",
+    timeZone: "UTC",
+});
 // undefined
 ```
 

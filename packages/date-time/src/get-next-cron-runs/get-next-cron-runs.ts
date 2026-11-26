@@ -30,16 +30,13 @@ export function getNextCronRuns({
     timeZone,
 }: GetNextCronRunsParams): Date[] | undefined {
     const parsed =
-        typeof schedule === "string" ? parseCronExpression(schedule) : schedule;
+        typeof schedule === "string"
+            ? parseCronExpression({ expression: schedule })
+            : schedule;
     if (parsed === undefined) {
         return [];
     }
-    const count = assertIntegerInRange(
-        requestedCount ?? 1,
-        "count",
-        1,
-        1_000,
-    );
+    const count = assertIntegerInRange(requestedCount ?? 1, "count", 1, 1_000);
     const zone = resolveTimeZone(timeZone);
     const start =
         now === undefined

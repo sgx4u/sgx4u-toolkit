@@ -11,37 +11,39 @@ import { isWeekend } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function isWeekend(date: DateInput, options?: IsWeekendOptions): boolean;
+function isWeekend(params: IsWeekendParams): boolean;
 ```
 
-## Options
+## Parameters
 
-| Name          | Type                 | Default                                 | Meaning                                                                |
-| ------------- | -------------------- | --------------------------------------- | ---------------------------------------------------------------------- |
-| `timeZone`    | `string`             | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`.   |
-| `weekendDays` | `readonly Weekday[]` | `[6, 7]`                                | ISO weekdays that are weekend days. `6` is Saturday and `7` is Sunday. |
+| Name          | Type                 | Required | Default                                  | Meaning                                                       |
+| ------------- | -------------------- | -------- | ---------------------------------------- | ------------------------------------------------------------- |
+| `date`        | `DateInput`          | yes      |                                          | The date to test.                                             |
+| `workingDays` | `readonly Weekday[]` | no       | `[1, 2, 3, 4, 5]`                        | ISO weekdays that are open. Every other weekday is a weekend. |
+| `timeZone`    | `string`             | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset            |
 
 ## Examples
 
 ```ts
 import { isWeekend } from "@sgx4u/date-time";
 
-isWeekend("2026-11-28T00:00:00Z", { timeZone: "UTC" });
+isWeekend({ date: "2026-11-28T00:00:00Z", timeZone: "UTC" });
 // true
 
-isWeekend("2026-11-26T00:00:00Z", { timeZone: "UTC" });
+isWeekend({ date: "2026-11-26T00:00:00Z", timeZone: "UTC" });
 // false
 
-isWeekend("2026-11-27T00:00:00Z", {
+isWeekend({
+    date: "2026-11-27T00:00:00Z",
     timeZone: "UTC",
-    weekendDays: [5, 6],
+    workingDays: [1, 2, 3, 4, 7],
 });
 // true
 ```
 
 ## Edge cases
 
-The default weekend is Saturday and Sunday. Pass `weekendDays` for a different week, such as Friday and Saturday. A weekday outside 1 through 7 throws a `RangeError`. The day is read in `timeZone`.
+The default working week is Monday through Friday, so the weekend is Saturday and Sunday. Pass `workingDays` to choose different open days, such as Sunday through Thursday. A weekday outside 1 through 7 throws a `RangeError`. The day is read in `timeZone`.
 
 ## Related
 

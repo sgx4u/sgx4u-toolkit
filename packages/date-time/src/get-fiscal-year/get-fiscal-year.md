@@ -14,35 +14,44 @@ import { getFiscalYear } from "@sgx4u/date-time";
 function getFiscalYear(params: GetFiscalYearParams): number | undefined;
 ```
 
-## Options
+## Parameters
 
-Same fields as `getFiscalQuarter`.
+| Name                   | Type                         | Required | Default                                  | Meaning                                                            |
+| ---------------------- | ---------------------------- | -------- | ---------------------------------------- | ------------------------------------------------------------------ |
+| `date`                 | `DateInput`                  | yes      |                                          | The date to label.                                                 |
+| `fiscalYearStartMonth` | `number`                     | yes      |                                          | Month the fiscal year starts, from `1` through `12`. April is `4`. |
+| `fiscalYearLabel`      | `"start-year" \| "end-year"` | no       | `"end-year"`                             | Which calendar year labels the fiscal year.                        |
+| `timeZone`             | `string`                     | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset                 |
 
 ## Examples
 
 ```ts
 import { getFiscalYear } from "@sgx4u/date-time";
 
-getFiscalYear("2026-04-01T00:00:00Z", {
+getFiscalYear({
+    date: "2026-04-01T00:00:00Z",
     fiscalYearStartMonth: 4,
     timeZone: "UTC",
 });
 // 2027
 
-getFiscalYear("2026-04-01T00:00:00Z", {
+getFiscalYear({
+    date: "2026-04-01T00:00:00Z",
     fiscalYearStartMonth: 4,
     fiscalYearLabel: "start-year",
     timeZone: "UTC",
 });
 // 2026
 
-getFiscalYear("2026-03-31T00:00:00Z", {
+getFiscalYear({
+    date: "2026-03-31T00:00:00Z",
     fiscalYearStartMonth: 4,
     timeZone: "UTC",
 });
 // 2026
 
-getFiscalYear("2026-06-01T00:00:00Z", {
+getFiscalYear({
+    date: "2026-06-01T00:00:00Z",
     fiscalYearStartMonth: 1,
     timeZone: "UTC",
 });
@@ -52,7 +61,6 @@ getFiscalYear("2026-06-01T00:00:00Z", {
 ## Edge cases
 
 Invalid `date` returns `undefined`. Missing or invalid fiscal options or `timeZone` throws.
-
 
 ## Related
 

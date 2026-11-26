@@ -42,7 +42,7 @@ describe("isWeekend", () => {
             isWeekend({
                 date: "2026-11-29T00:00:00Z",
                 ...utc,
-                workingDays: [7, 7],
+                workingDays: [1, 2, 3, 4, 5, 6],
             }),
         ).toBe(true);
     });
@@ -59,16 +59,14 @@ describe("isWeekend", () => {
 
     it("uses the system zone when timeZone is omitted", () => {
         const date = "2026-11-28T12:00:00Z";
-        const weekday = getDateParts({ date }).weekday;
+        const weekday = getDateParts({ date })?.weekday;
 
         expect(isWeekend({ date })).toBe(weekday === 6 || weekday === 7);
     });
 
     it("returns false for a bad date and throws for bad workingDays or zone", () => {
         expect(isWeekend({ date: "2024-02-30", ...utc })).toBe(false);
-        expect(
-            isWeekend({ date: new Date(Number.NaN), ...utc }),
-        ).toBe(false);
+        expect(isWeekend({ date: new Date(Number.NaN), ...utc })).toBe(false);
         expect(isWeekend({ date: Number.NaN, ...utc })).toBe(false);
         expect(() =>
             isWeekend({

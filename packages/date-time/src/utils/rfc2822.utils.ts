@@ -1,4 +1,4 @@
-import { readUtcParts, utcEpochMilliseconds } from "./gregorian.utils.js";
+import { readUTCParts, UTCEpochMilliseconds } from "./gregorian.utils.js";
 import { formatCalendarText } from "./iso.utils.js";
 
 const shortMonths = [
@@ -49,7 +49,7 @@ const rfc2822Expression = new RegExp(
  * @param value - The candidate text.
  * @returns The instant, or `undefined` when the text does not match.
  */
-export function parseRfc2822Text(value: string): number | undefined {
+export function parseRFC2822Text(value: string): number | undefined {
     const groups = rfc2822Expression.exec(value.trim())?.groups;
     if (groups === undefined) {
         return undefined;
@@ -72,7 +72,7 @@ export function parseRfc2822Text(value: string): number | undefined {
     if (offsetMinutes === undefined) {
         return undefined;
     }
-    const utc = utcEpochMilliseconds(
+    const utc = UTCEpochMilliseconds(
         year,
         month - 1,
         day,
@@ -82,7 +82,7 @@ export function parseRfc2822Text(value: string): number | undefined {
         0,
     );
     const instant = utc - offsetMinutes * 60_000;
-    const check = readUtcParts(utc);
+    const check = readUTCParts(utc);
     if (check.year !== year || check.month !== month || check.day !== day) {
         return undefined;
     }
@@ -103,7 +103,7 @@ export function parseRfc2822Text(value: string): number | undefined {
  * @param second - The second.
  * @returns `Thu, 26 Nov 2026 03:30:00 +0530`.
  */
-export function formatRfc2822Text(
+export function formatRFC2822Text(
     weekday: string,
     day: number,
     month: number,

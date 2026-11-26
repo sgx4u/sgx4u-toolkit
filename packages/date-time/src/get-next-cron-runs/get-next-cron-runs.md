@@ -11,46 +11,48 @@ import { getNextCronRuns } from "@sgx4u/date-time/cron";
 ## Signature
 
 ```ts
-function getNextCronRuns(
-    schedule: string | CronSchedule,
-    options?: NextCronRunsOptions,
-): Date[];
+function getNextCronRuns(params: GetNextCronRunsParams): Date[] | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name       | Type        | Default                                 | Meaning                                                              |
-| ---------- | ----------- | --------------------------------------- | -------------------------------------------------------------------- |
-| `now`      | `DateInput` | `Date.now()`, read on each call         | The instant to use instead of the current time.                      |
-| `timeZone` | `string`    | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
-| `count`    | `number`    | `1`                                     | How many runs to return. Must be an integer from 1 through 1000.     |
-| `endDate`  | `DateInput` | none                                    | Stop the search at this instant. A run at `endDate` is excluded.     |
+| Name       | Type                     | Required | Default                                  | Meaning                                                           |
+| ---------- | ------------------------ | -------- | ---------------------------------------- | ----------------------------------------------------------------- |
+| `schedule` | `string \| CronSchedule` | yes      |                                          | A cron expression or a parsed schedule.                           |
+| `count`    | `number`                 | no       | `1`                                      | How many runs to return.                                          |
+| `endDate`  | `DateInput`              | no       |                                          | The search stops at this instant. A run at `endDate` is excluded. |
+| `now`      | `DateInput`              | no       | `Date.now()`, read on each call.         | The instant to use instead of the current time.                   |
+| `timeZone` | `string`                 | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset                |
 
 ## Examples
 
 ```ts
 import { getNextCronRuns } from "@sgx4u/date-time/cron";
 
-getNextCronRuns("0 9 * * *", {
+getNextCronRuns({
+    schedule: "0 9 * * *",
     now: "2026-11-26T08:00:00Z",
     timeZone: "UTC",
 })[0]?.toISOString();
 // "2026-11-26T09:00:00.000Z"
 
-getNextCronRuns("0 9 * * 1-5", {
+getNextCronRuns({
+    schedule: "0 9 * * 1-5",
     now: "2026-11-26T08:00:00Z",
     timeZone: "UTC",
     count: 2,
 }).map((date) => date.toISOString());
 // ["2026-11-26T09:00:00.000Z", "2026-11-27T09:00:00.000Z"]
 
-getNextCronRuns("@reboot", {
+getNextCronRuns({
+    schedule: "@reboot",
     now: "2026-11-26T08:00:00Z",
     timeZone: "UTC",
 });
 // []
 
-getNextCronRuns("0 9 * * *", {
+getNextCronRuns({
+    schedule: "0 9 * * *",
     now: "2026-11-26T08:00:00Z",
     timeZone: "UTC",
     endDate: "2026-11-26T09:00:00Z",

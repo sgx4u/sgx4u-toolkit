@@ -11,49 +11,41 @@ import { subtractDuration } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function subtractDuration(
-    date: DateInput,
-    duration: Duration,
-    options?: AddDurationOptions,
-): Date;
+function subtractDuration(params: SubtractDurationParams): Date | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name             | Type                                               | Default        | Meaning                                                       |
-| ---------------- | -------------------------------------------------- | -------------- | ------------------------------------------------------------- |
-| `timeZone`       | `string`                                           | System zone    | Zone used for calendar units and daylight-saving gaps.        |
-| `disambiguation` | `"compatible" \| "earlier" \| "later" \| "reject"` | `"compatible"` | How a skipped or repeated wall time is chosen.                |
-| `overflow`       | `"constrain" \| "reject"`                          | `"constrain"`  | Clamps a missing day, or throws when that day does not exist. |
+| Name             | Type             | Required | Default                                  | Meaning                                                     |
+| ---------------- | ---------------- | -------- | ---------------------------------------- | ----------------------------------------------------------- |
+| `date`           | `DateInput`      | yes      |                                          | The starting instant.                                       |
+| `duration`       | `Duration`       | yes      |                                          | The length to subtract.                                     |
+| `overflow`       | `Overflow`       | no       | `"constrain"`                            | What to do when the day does not exist in the target month. |
+| `timeZone`       | `string`         | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset          |
+| `disambiguation` | `Disambiguation` | no       | `"compatible"`                           | Which instant to use at a daylight-saving gap or overlap.   |
 
 ## Examples
 
 ```ts
-subtractDuration(
-    "2026-03-31T00:00:00Z",
-    { months: 1 },
-    {
-        timeZone: "UTC",
-    },
-).toISOString();
+subtractDuration({
+    date: "2026-03-31T00:00:00Z",
+    duration: { months: 1 },
+    timeZone: "UTC",
+}).toISOString();
 // "2026-02-28T00:00:00.000Z"
 
-subtractDuration(
-    "2024-03-10T13:00:00Z",
-    { days: 1 },
-    {
-        timeZone: "America/New_York",
-    },
-).toISOString();
+subtractDuration({
+    date: "2024-03-10T13:00:00Z",
+    duration: { days: 1 },
+    timeZone: "America/New_York",
+}).toISOString();
 // "2024-03-09T14:00:00.000Z"
 
-subtractDuration(
-    "2024-03-10T13:00:00Z",
-    { hours: 24 },
-    {
-        timeZone: "America/New_York",
-    },
-).toISOString();
+subtractDuration({
+    date: "2024-03-10T13:00:00Z",
+    duration: { hours: 24 },
+    timeZone: "America/New_York",
+}).toISOString();
 // "2024-03-09T13:00:00.000Z"
 ```
 

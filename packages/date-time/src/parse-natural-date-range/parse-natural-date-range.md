@@ -12,34 +12,34 @@ import { parseNaturalDateRange } from "@sgx4u/date-time/natural-language";
 
 ```ts
 function parseNaturalDateRange(
-    text: string,
-    options?: ParseNaturalDateOptions,
+    params: ParseNaturalDateRangeParams,
 ): Interval | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name           | Type        | Default      | Meaning                                                      |
-| -------------- | ----------- | ------------ | ------------------------------------------------------------ |
-| `now`          | `DateInput` | `Date.now()` | Instant treated as the current time.                         |
-| `timeZone`     | `string`    | System zone  | Zone used for the start and end midnights.                   |
-| `preferFuture` | `boolean`   | `true`       | A month and day with no year resolve to the next occurrence. |
+| Name           | Type        | Required | Default                                  | Meaning                                                      |
+| -------------- | ----------- | -------- | ---------------------------------------- | ------------------------------------------------------------ |
+| `text`         | `string`    | yes      |                                          | The English phrase.                                          |
+| `preferFuture` | `boolean`   | no       | `true`                                   | A month and day with no year resolve to the next occurrence. |
+| `now`          | `DateInput` | no       | `Date.now()`, read on each call.         | The instant to use instead of the current time.              |
+| `timeZone`     | `string`    | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset           |
 
 ## Examples
 
 ```ts
 const now = { now: "2026-11-26T12:00:00Z", timeZone: "UTC" };
 
-parseNaturalDateRange("next week", now)?.start.toISOString();
+parseNaturalDateRange({ text: "next week", ...now })?.start.toISOString();
 // "2026-11-30T00:00:00.000Z"
 
-parseNaturalDateRange("next week", now)?.end.toISOString();
+parseNaturalDateRange({ text: "next week", ...now })?.end.toISOString();
 // "2026-12-07T00:00:00.000Z"
 
-parseNaturalDateRange("Dec 24-26", now)?.end.toISOString();
+parseNaturalDateRange({ text: "Dec 24-26", ...now })?.end.toISOString();
 // "2026-12-27T00:00:00.000Z"
 
-parseNaturalDateRange("tomorrow", now);
+parseNaturalDateRange({ text: "tomorrow", ...now });
 // undefined
 ```
 

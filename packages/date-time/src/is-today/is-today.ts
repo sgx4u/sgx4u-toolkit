@@ -1,6 +1,5 @@
 import type { DateInput } from "../types/date-input.types.js";
 import { readDateInput, resolveNow } from "../utils/date-input.utils.js";
-import { addGregorianDays } from "../utils/gregorian.utils.js";
 import { readDateParts, resolveTimeZone } from "../utils/time-zone.utils.js";
 
 /**

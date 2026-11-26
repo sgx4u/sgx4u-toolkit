@@ -52,13 +52,7 @@ export function parseDateWithPattern({
         return undefined;
     }
     const reference = readDateParts(referenceInstant.getTime(), zone);
-    const fields = parseNumericPattern(
-        value,
-        pattern,
-        reference,
-        true,
-        locale,
-    );
+    const fields = parseNumericPattern(value, pattern, reference, true, locale);
     if (fields === undefined) {
         return undefined;
     }

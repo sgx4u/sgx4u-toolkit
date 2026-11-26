@@ -3,11 +3,15 @@ import { getSunTimes } from "../astronomy.js";
 
 describe("getSunTimes", () => {
     it("puts sunrise before solar noon and sunset after it on the equator", () => {
-        const times = getSunTimes(
-            "2024-03-20T12:00:00Z",
-            { latitude: 0, longitude: 0 },
-            { timeZone: "UTC" },
-        );
+        const times = getSunTimes({
+            date: "2024-03-20T12:00:00Z",
+            location: { latitude: 0, longitude: 0 },
+            timeZone: "UTC",
+        });
+        expect(times).toBeDefined();
+        if (times === undefined) {
+            throw new Error("expected sun times");
+        }
         expect(times.sunrise).toBeDefined();
         expect(times.sunset).toBeDefined();
         expect(times.civilDawn).toBeDefined();
@@ -28,11 +32,15 @@ describe("getSunTimes", () => {
     });
 
     it("omits sunrise during polar night", () => {
-        const times = getSunTimes(
-            "2024-12-21T12:00:00Z",
-            { latitude: 80, longitude: 0 },
-            { timeZone: "UTC" },
-        );
+        const times = getSunTimes({
+            date: "2024-12-21T12:00:00Z",
+            location: { latitude: 80, longitude: 0 },
+            timeZone: "UTC",
+        });
+        expect(times).toBeDefined();
+        if (times === undefined) {
+            throw new Error("expected sun times");
+        }
         expect(times.sunrise).toBeUndefined();
         expect(times.sunset).toBeUndefined();
         expect(times.solarNoon).toBeInstanceOf(Date);

@@ -12,36 +12,39 @@ import { formatTimeZoneName } from "@sgx4u/date-time";
 
 ```ts
 function formatTimeZoneName(
-    timeZone: string,
-    options?: FormatTimeZoneNameOptions,
-): string;
+    params: FormatTimeZoneNameParams,
+): string | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name     | Type                                                                                    | Default        | Meaning                            |
-| -------- | --------------------------------------------------------------------------------------- | -------------- | ---------------------------------- |
-| `locale` | `string \| readonly string[]`                                                           | Runtime locale | Locale for the name.               |
-| `style`  | `"long" \| "short" \| "shortOffset" \| "longOffset" \| "shortGeneric" \| "longGeneric"` | `"long"`       | `Intl` time zone name style.       |
-| `at`     | `DateInput`                                                                             | Current time   | Instant at which the name is read. |
+| Name       | Type                                                                                    | Required | Default                       | Meaning                                                                       |
+| ---------- | --------------------------------------------------------------------------------------- | -------- | ----------------------------- | ----------------------------------------------------------------------------- |
+| `timeZone` | `string`                                                                                | yes      |                               | An IANA name or a fixed offset.                                               |
+| `style`    | `"long" \| "short" \| "shortOffset" \| "longOffset" \| "shortGeneric" \| "longGeneric"` | no       | `"long"`                      | The `Intl` time zone name style.                                              |
+| `at`       | `DateInput`                                                                             | no       | The current time.             | The instant at which the name is read. Names can change with daylight saving. |
+| `locale`   | `string \| readonly string[]`                                                           | no       | The runtime's default locale. | A BCP 47 language tag, or a list of tags in preference order.                 |
 
 ## Examples
 
 ```ts
-formatTimeZoneName("Asia/Kolkata", {
+formatTimeZoneName({
+    timeZone: "Asia/Kolkata",
     locale: "en-US",
     at: "2026-01-01T00:00:00Z",
 });
 // "India Standard Time"
 
-formatTimeZoneName("Asia/Kolkata", {
+formatTimeZoneName({
+    timeZone: "Asia/Kolkata",
     locale: "en-US",
     style: "longOffset",
     at: "2026-01-01T00:00:00Z",
 });
 // "GMT+05:30"
 
-formatTimeZoneName("America/New_York", {
+formatTimeZoneName({
+    timeZone: "America/New_York",
     locale: "en-US",
     at: "2026-01-15T17:00:00Z",
 });

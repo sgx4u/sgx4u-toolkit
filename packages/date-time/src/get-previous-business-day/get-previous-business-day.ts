@@ -42,7 +42,5 @@ export function getPreviousBusinessDay({
     if (instant === undefined) {
         return undefined;
     }
-    return new Date(
-        adjacentBusinessDayStart(instant.getTime(), -1, resolved),
-    );
+    return new Date(adjacentBusinessDayStart(instant.getTime(), -1, resolved));
 }

@@ -14,37 +14,48 @@ import { differenceInUnit } from "@sgx4u/date-time";
 function differenceInUnit(params: DifferenceInUnitParams): number | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name       | Type                                         | Required | Default      | Meaning                                   |
-| ---------- | -------------------------------------------- | -------- | ------------ | ----------------------------------------- |
-| `later`    | `DateInput`                                  | yes      |              | End instant.                              |
-| `earlier`  | `DateInput`                                  | yes      |              | Start instant.                            |
-| `unit`     | `TimeUnit`                                   | yes      |              | Unit to count.                            |
-| `timeZone` | `string`                                     | no       | System zone  | Zone used for calendar units.             |
-| `rounding` | `"truncate" \| "floor" \| "ceil" \| "round"` | no       | `"truncate"` | How a fractional unit becomes an integer. |
-
+| Name       | Type           | Required | Default                                  | Meaning                                            |
+| ---------- | -------------- | -------- | ---------------------------------------- | -------------------------------------------------- |
+| `later`    | `DateInput`    | yes      |                                          | The end instant.                                   |
+| `earlier`  | `DateInput`    | yes      |                                          | The start instant.                                 |
+| `unit`     | `TimeUnit`     | yes      |                                          | The unit to count.                                 |
+| `rounding` | `RoundingMode` | no       | `"truncate"`                             | How to treat a fractional unit count.              |
+| `timeZone` | `string`       | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset |
 
 ## Examples
 
 ```ts
-differenceInUnit("2026-03-01T00:00:00Z", "2026-01-31T00:00:00Z", "month", {
+differenceInUnit({
+    later: "2026-03-01T00:00:00Z",
+    earlier: "2026-01-31T00:00:00Z",
+    unit: "month",
     timeZone: "UTC",
 });
 // 1
 
-differenceInUnit("2026-01-01T01:30:00Z", "2026-01-01T00:00:00Z", "hour", {
+differenceInUnit({
+    later: "2026-01-01T01:30:00Z",
+    earlier: "2026-01-01T00:00:00Z",
+    unit: "hour",
     timeZone: "UTC",
     rounding: "round",
 });
 // 2
 
-differenceInUnit("2024-03-01T00:00:00Z", "2024-02-28T00:00:00Z", "day", {
+differenceInUnit({
+    later: "2024-03-01T00:00:00Z",
+    earlier: "2024-02-28T00:00:00Z",
+    unit: "day",
     timeZone: "UTC",
 });
 // 2
 
-differenceInUnit("2025-02-28T00:00:00Z", "2024-02-29T00:00:00Z", "year", {
+differenceInUnit({
+    later: "2025-02-28T00:00:00Z",
+    earlier: "2024-02-29T00:00:00Z",
+    unit: "year",
     timeZone: "UTC",
 });
 // 1

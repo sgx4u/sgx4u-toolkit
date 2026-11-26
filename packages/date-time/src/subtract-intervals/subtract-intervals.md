@@ -11,33 +11,39 @@ import { subtractIntervals } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function subtractIntervals(
-    source: Interval,
-    removed: readonly Interval[],
-): Interval[];
+function subtractIntervals(params: SubtractIntervalsParams): Interval[];
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name      | Type                  | Required | Default | Meaning                                            |
+| --------- | --------------------- | -------- | ------- | -------------------------------------------------- |
+| `start`   | `DateInput`           | yes      |         | The inclusive start of the interval to cut.        |
+| `end`     | `DateInput`           | yes      |         | The exclusive end of the interval to cut.          |
+| `removed` | `readonly Interval[]` | yes      |         | Intervals to take away from `start` through `end`. |
 
 ## Examples
 
 ```ts
-subtractIntervals({ start: new Date(0), end: new Date(10) }, [
-    { start: new Date(2), end: new Date(4) },
-]);
+subtractIntervals({
+    source: { start: new Date(0), end: new Date(10) },
+    removed: [{ start: new Date(2), end: new Date(4) }],
+});
 // [
 //   { start: new Date(0), end: new Date(2) },
 //   { start: new Date(4), end: new Date(10) },
 // ]
 
-subtractIntervals({ start: new Date(0), end: new Date(10) }, [
-    { start: new Date(0), end: new Date(10) },
-]);
+subtractIntervals({
+    source: { start: new Date(0), end: new Date(10) },
+    removed: [{ start: new Date(0), end: new Date(10) }],
+});
 // []
 
-subtractIntervals({ start: new Date(0), end: new Date(10) }, []);
+subtractIntervals({
+    source: { start: new Date(0), end: new Date(10) },
+    removed: [],
+});
 // [{ start: new Date(0), end: new Date(10) }]
 ```
 

@@ -16,14 +16,14 @@ function changeTimeZoneKeepingWallTime(
 ): Date | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name             | Type                                               | Required | Default        | Meaning                                      |
-| ---------------- | -------------------------------------------------- | -------- | -------------- | -------------------------------------------- |
-| `date`           | `DateInput`                                        | yes      |                | Original instant.                            |
-| `fromTimeZone`   | `string`                                           | yes      |                | Zone the clock reading is taken from.        |
-| `toTimeZone`     | `string`                                           | yes      |                | Zone that should show the same clock reading. |
-| `disambiguation` | `"compatible" \| "earlier" \| "later" \| "reject"` | no       | `"compatible"` | Gap and overlap handling in the destination. |
+| Name             | Type             | Required | Default        | Meaning                                                   |
+| ---------------- | ---------------- | -------- | -------------- | --------------------------------------------------------- |
+| `date`           | `DateInput`      | yes      |                | The original instant.                                     |
+| `fromTimeZone`   | `string`         | yes      |                | The zone the clock reading is taken from.                 |
+| `toTimeZone`     | `string`         | yes      |                | The zone that should show the same clock reading.         |
+| `disambiguation` | `Disambiguation` | no       | `"compatible"` | Which instant to use at a daylight-saving gap or overlap. |
 
 ## Examples
 

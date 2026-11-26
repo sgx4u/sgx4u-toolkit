@@ -14,11 +14,11 @@ import { getLatestDate } from "@sgx4u/date-time";
 function getLatestDate(params: GetLatestDateParams): Date | undefined;
 ```
 
-## Options
+## Parameters
 
 | Name    | Type                   | Required | Default | Meaning              |
 | ------- | ---------------------- | -------- | ------- | -------------------- |
-| `dates` | `readonly DateInput[]` | Yes      | —       | Dates to search.     |
+| `dates` | `readonly DateInput[]` | yes      |         | The dates to search. |
 
 ## Examples
 
@@ -38,7 +38,6 @@ getLatestDate([]);
 ## Edge cases
 
 An empty list returns `undefined`. A non-array throws. A bad entry throws.
-
 
 ## Related
 

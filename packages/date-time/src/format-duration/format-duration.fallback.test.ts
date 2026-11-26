@@ -16,17 +16,23 @@ describe("formatDuration without Intl.DurationFormat", () => {
     it("joins unit names and uses the clock form for digital style", () => {
         delete intlWithDuration.DurationFormat;
         expect(
-            formatDuration({ hours: 1, minutes: 30 }, { locale: "en" }),
+            formatDuration({
+                duration: { hours: 1, minutes: 30 },
+                locale: "en",
+            }),
         ).toMatch(/1 hour/);
         expect(
-            formatDuration({ hours: 1, minutes: 30 }, { locale: "en" }),
+            formatDuration({
+                duration: { hours: 1, minutes: 30 },
+                locale: "en",
+            }),
         ).toMatch(/30 minutes/);
         expect(
-            formatDuration(
-                { hours: 1, minutes: 2, seconds: 3 },
-                { style: "digital" },
-            ),
+            formatDuration({
+                duration: { hours: 1, minutes: 2, seconds: 3 },
+                style: "digital",
+            }),
         ).toBe("01:02:03");
-        expect(formatDuration({}, { locale: "en" })).toMatch(/0/);
+        expect(formatDuration({ duration: {}, locale: "en" })).toMatch(/0/);
     });
 });

@@ -8,8 +8,7 @@ import type {
  * Fields for {@link getFiscalQuarter}.
  */
 export interface GetFiscalQuarterParams
-    extends FiscalYearOptions,
-        TimeZoneOptions {
+    extends FiscalYearOptions, TimeZoneOptions {
     /**
      * The date to read.
      */

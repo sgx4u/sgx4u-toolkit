@@ -5,6 +5,8 @@
  * separate from the root entry so a program that never parses prose does
  * not load it.
  */
+export { createNaturalLanguage } from "./create-natural-language.js";
+export type { NaturalLanguageInstance } from "./create-natural-language.js";
 export { findDatesInText } from "./find-dates-in-text/find-dates-in-text.js";
 export { parseNaturalDate } from "./parse-natural-date/parse-natural-date.js";
 export { parseNaturalDateRange } from "./parse-natural-date-range/parse-natural-date-range.js";

@@ -84,9 +84,7 @@ describe("property tests", () => {
                         const first = dates[0];
                         const second = dates[1];
                         if (first !== undefined && second !== undefined) {
-                            expect(
-                                compareDates({ first, second }),
-                            ).toBe(
+                            expect(compareDates({ first, second })).toBe(
                                 -(
                                     compareDates({
                                         first: second,
@@ -116,7 +114,7 @@ describe("property tests", () => {
                     seconds: Math.abs(duration.seconds),
                     milliseconds: Math.abs(duration.milliseconds),
                 };
-                expect(parseISODuration(formatISODuration(positive))).toEqual(
+                expect(parseISODuration(formatISODuration(positive)!)).toEqual(
                     omitZero(positive),
                 );
             }),

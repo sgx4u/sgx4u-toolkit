@@ -1,6 +1,6 @@
 import { differenceInInstantUnit } from "../utils/arithmetic.utils.js";
 import { readDateInput } from "../utils/date-input.utils.js";
-import { rangeError, typeError } from "../utils/error.utils.js";
+import { rangeError } from "../utils/error.utils.js";
 import { resolveTimeZone } from "../utils/time-zone.utils.js";
 import { assertTimeUnit } from "../utils/unit.utils.js";
 import type { DifferenceInUnitParams } from "./difference-in-unit.types.js";

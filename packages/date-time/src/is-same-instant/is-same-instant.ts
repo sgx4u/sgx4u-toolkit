@@ -23,10 +23,7 @@ export interface IsSameInstantParams {
  * @example
  * isSameInstant({ first: "2024-01-01T00:00:00Z", second: 0 }); // false
  */
-export function isSameInstant({
-    first,
-    second,
-}: IsSameInstantParams): boolean {
+export function isSameInstant({ first, second }: IsSameInstantParams): boolean {
     const firstInstant = readDateInput(first);
     const secondInstant = readDateInput(second);
     if (firstInstant === undefined || secondInstant === undefined) {

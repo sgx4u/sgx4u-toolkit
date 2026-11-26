@@ -11,43 +11,41 @@ import { setDateParts } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function setDateParts(
-    date: DateInput,
-    parts: Partial<DatePartsInput>,
-    options?: AddDurationOptions,
-): Date;
+function setDateParts(params: SetDatePartsParams): Date | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name             | Type                                               | Default        | Meaning                                                       |
-| ---------------- | -------------------------------------------------- | -------------- | ------------------------------------------------------------- |
-| `timeZone`       | `string`                                           | System zone    | Zone the wall-clock fields are read and written in.           |
-| `disambiguation` | `"compatible" \| "earlier" \| "later" \| "reject"` | `"compatible"` | How a skipped or repeated wall time is chosen.                |
-| `overflow`       | `"constrain" \| "reject"`                          | `"constrain"`  | Clamps a missing day, or throws when that day does not exist. |
+| Name             | Type                      | Required | Default                                  | Meaning                                                        |
+| ---------------- | ------------------------- | -------- | ---------------------------------------- | -------------------------------------------------------------- |
+| `date`           | `DateInput`               | yes      |                                          | The starting instant.                                          |
+| `parts`          | `Partial<DatePartsInput>` | yes      |                                          | The fields to replace.                                         |
+| `overflow`       | `Overflow`                | no       | `"constrain"`                            | What to do when the day does not exist in the resulting month. |
+| `timeZone`       | `string`                  | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset             |
+| `disambiguation` | `Disambiguation`          | no       | `"compatible"`                           | Which instant to use at a daylight-saving gap or overlap.      |
 
 ## Examples
 
 ```ts
-setDateParts(
-    "2026-01-15T00:00:00Z",
-    { day: 31 },
-    { timeZone: "UTC" },
-).toISOString();
+setDateParts({
+    date: "2026-01-15T00:00:00Z",
+    parts: { day: 31 },
+    timeZone: "UTC",
+}).toISOString();
 // "2026-01-31T00:00:00.000Z"
 
-setDateParts(
-    "2026-01-31T00:00:00Z",
-    { month: 2 },
-    { timeZone: "UTC" },
-).toISOString();
+setDateParts({
+    date: "2026-01-31T00:00:00Z",
+    parts: { month: 2 },
+    timeZone: "UTC",
+}).toISOString();
 // "2026-02-28T00:00:00.000Z"
 
-setDateParts(
-    "2024-03-10T06:30:00Z",
-    { hour: 2, minute: 30 },
-    { timeZone: "America/New_York" },
-).toISOString();
+setDateParts({
+    date: "2024-03-10T06:30:00Z",
+    parts: { hour: 2, minute: 30 },
+    timeZone: "America/New_York",
+}).toISOString();
 // "2024-03-10T07:30:00.000Z"
 ```
 

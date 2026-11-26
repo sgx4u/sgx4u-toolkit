@@ -13,6 +13,8 @@ import type { GetLatestDateParams } from "./get-latest-date.types.js";
  * @example
  * getLatestDate({ dates: ["2024-01-01T00:00:00Z", "2024-01-02T00:00:00Z"] })?.toISOString(); // "2024-01-02T00:00:00.000Z"
  */
-export function getLatestDate({ dates }: GetLatestDateParams): Date | undefined {
+export function getLatestDate({
+    dates,
+}: GetLatestDateParams): Date | undefined {
     return extremeDate(dates, "latest");
 }

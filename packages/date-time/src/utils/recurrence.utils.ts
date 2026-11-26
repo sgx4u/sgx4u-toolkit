@@ -8,7 +8,7 @@ import { addDurationToInstant } from "./arithmetic.utils.js";
 import {
     addGregorianDays,
     daysInGregorianMonth,
-    isoWeekdayNumber,
+    ISOWeekdayNumber,
 } from "./gregorian.utils.js";
 import { weekOfDate } from "./week.utils.js";
 import {
@@ -484,7 +484,7 @@ function daysInWeekNumbers(
                 weekStart.day,
                 offset,
             );
-            const weekday = isoWeekdayNumber(date.year, date.month, date.day);
+            const weekday = ISOWeekdayNumber(date.year, date.month, date.day);
             if (weekdays.includes(weekday)) {
                 days.push(date);
             }
@@ -506,7 +506,7 @@ function startOfWeekContaining(
     day: number,
     weekStartsOn: Weekday,
 ): { year: number; month: number; day: number } {
-    const weekday = isoWeekdayNumber(year, month, day);
+    const weekday = ISOWeekdayNumber(year, month, day);
     const daysBack = (weekday - weekStartsOn + 7) % 7;
     return addGregorianDays(year, month, day, -daysBack);
 }
@@ -589,7 +589,7 @@ function weekdayDaysInMonth(
     const length = daysInGregorianMonth(year, month);
     const matches: number[] = [];
     for (let day = 1; day <= length; day += 1) {
-        if (isoWeekdayNumber(year, month, day) === weekday.weekday) {
+        if (ISOWeekdayNumber(year, month, day) === weekday.weekday) {
             matches.push(day);
         }
     }

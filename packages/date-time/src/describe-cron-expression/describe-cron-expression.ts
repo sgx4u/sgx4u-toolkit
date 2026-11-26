@@ -20,7 +20,9 @@ export function describeCronExpression({
         throw rangeError("hourCycle", `"h12" or "h23"`, hourCycle);
     }
     const parsed =
-        typeof schedule === "string" ? parseCronExpression(schedule) : schedule;
+        typeof schedule === "string"
+            ? parseCronExpression({ expression: schedule })
+            : schedule;
     if (parsed === undefined) {
         return "";
     }

@@ -9,7 +9,7 @@ describe("createMonthCalendarGrid", () => {
             timeZone: "UTC",
         });
         expect(grid).toMatchObject({ year: 2021, month: 2 });
-        expect(grid?.weeks).toHaveLength(4);
+        expect(grid?.weeks)?.toHaveLength(4);
         expect(grid?.weeks[0]?.days[0]?.isInMonth).toBe(true);
         expect(grid?.weeks[0]?.days[0]?.date.toISOString()).toBe(
             "2021-02-01T00:00:00.000Z",
@@ -21,7 +21,7 @@ describe("createMonthCalendarGrid", () => {
                 timeZone: "UTC",
                 weekStartsOn: 1,
             })?.weeks,
-        ).toHaveLength(4);
+        )?.toHaveLength(4);
     });
 
     it("includes 29 February 2024 and pads the grid to six weeks when asked", () => {
@@ -30,7 +30,7 @@ describe("createMonthCalendarGrid", () => {
             month: 2,
             timeZone: "UTC",
         });
-        expect(grid?.weeks).toHaveLength(5);
+        expect(grid?.weeks)?.toHaveLength(5);
         const days = grid?.weeks.flatMap((week) => week.days) ?? [];
         expect(days[0]?.date.toISOString()).toBe("2024-01-29T00:00:00.000Z");
         expect(days[0]?.isInMonth).toBe(false);
@@ -46,7 +46,7 @@ describe("createMonthCalendarGrid", () => {
                 timeZone: "UTC",
                 fixedWeekCount: true,
             })?.weeks,
-        ).toHaveLength(6);
+        )?.toHaveLength(6);
         const kolkata = createMonthCalendarGrid({
             year: 2024,
             month: 2,
@@ -86,7 +86,9 @@ describe("createMonthCalendarGrid", () => {
     });
 
     it("returns undefined for a month outside 1 through 12 or a non-integer year", () => {
-        expect(createMonthCalendarGrid({ year: 2024, month: 0 })).toBeUndefined();
+        expect(
+            createMonthCalendarGrid({ year: 2024, month: 0 }),
+        ).toBeUndefined();
         expect(
             createMonthCalendarGrid({ year: 2024.5, month: 2 }),
         ).toBeUndefined();

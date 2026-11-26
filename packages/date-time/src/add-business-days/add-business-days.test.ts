@@ -3,12 +3,12 @@ import { addBusinessDays, isBusinessDay } from "../index.js";
 
 describe("business days", () => {
     it("skips the weekend and keeps the time of day", () => {
-        expect(isBusinessDay("2026-11-28T00:00:00Z", { timeZone: "UTC" })).toBe(
-            false,
-        );
-        expect(isBusinessDay("2026-11-27T00:00:00Z", { timeZone: "UTC" })).toBe(
-            true,
-        );
+        expect(
+            isBusinessDay({ date: "2026-11-28T00:00:00Z", timeZone: "UTC" }),
+        ).toBe(false);
+        expect(
+            isBusinessDay({ date: "2026-11-27T00:00:00Z", timeZone: "UTC" }),
+        ).toBe(true);
         expect(
             addBusinessDays({
                 date: "2026-11-27T15:00:00Z",
@@ -31,7 +31,8 @@ describe("business days", () => {
             })?.toISOString(),
         ).toBe("2026-11-27T15:00:00.000Z");
         expect(
-            isBusinessDay("2026-11-26T00:00:00Z", {
+            isBusinessDay({
+                date: "2026-11-26T00:00:00Z",
                 timeZone: "UTC",
                 holidays: ["2026-11-26"],
             }),

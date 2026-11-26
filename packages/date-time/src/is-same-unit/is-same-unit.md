@@ -11,37 +11,44 @@ import { isSameUnit } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function isSameUnit(
-    first: DateInput,
-    second: DateInput,
-    unit: TimeUnit,
-    options?: TimeZoneOptions & WeekOptions,
-): boolean;
+function isSameUnit(params: IsSameUnitParams): boolean;
 ```
 
-## Options
+## Parameters
 
-| Name           | Type      | Default                                 | Meaning                                                              |
-| -------------- | --------- | --------------------------------------- | -------------------------------------------------------------------- |
-| `timeZone`     | `string`  | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
-| `weekStartsOn` | `Weekday` | `1`                                     | ISO weekday that starts the week. `1` is Monday and `7` is Sunday.   |
+| Name           | Type        | Required | Default | Meaning                            |
+| -------------- | ----------- | -------- | ------- | ---------------------------------- |
+| `first`        | `DateInput` | yes      |         | The first date.                    |
+| `second`       | `DateInput` | yes      |         | The second date.                   |
+| `unit`         | `TimeUnit`  | yes      |         | The unit to compare.               |
+| `timeZone`     | `string`    | no       |         | Zone used to read unit boundaries. |
+| `weekStartsOn` | `Weekday`   | no       |         | ISO weekday that starts the week.  |
 
 ## Examples
 
 ```ts
 import { isSameUnit } from "@sgx4u/date-time";
 
-isSameUnit("2024-06-15T23:00:00Z", "2024-06-16T02:00:00Z", "day", {
+isSameUnit({
+    first: "2024-06-15T23:00:00Z",
+    second: "2024-06-16T02:00:00Z",
+    unit: "day",
     timeZone: "Asia/Kolkata",
 });
 // true
 
-isSameUnit("2024-06-15T23:00:00Z", "2024-06-16T02:00:00Z", "day", {
+isSameUnit({
+    first: "2024-06-15T23:00:00Z",
+    second: "2024-06-16T02:00:00Z",
+    unit: "day",
     timeZone: "UTC",
 });
 // false
 
-isSameUnit("2026-11-23T00:00:00Z", "2026-11-29T00:00:00Z", "week", {
+isSameUnit({
+    first: "2026-11-23T00:00:00Z",
+    second: "2026-11-29T00:00:00Z",
+    unit: "week",
     timeZone: "UTC",
 });
 // true

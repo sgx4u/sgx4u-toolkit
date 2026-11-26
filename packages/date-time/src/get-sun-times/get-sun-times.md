@@ -11,43 +11,41 @@ import { getSunTimes } from "@sgx4u/date-time/astronomy";
 ## Signature
 
 ```ts
-function getSunTimes(
-    date: DateInput,
-    location: SunLocation,
-    options?: TimeZoneOptions,
-): SunTimes;
+function getSunTimes(params: GetSunTimesParams): SunTimes | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name       | Type     | Default                                 | Meaning                                                              |
-| ---------- | -------- | --------------------------------------- | -------------------------------------------------------------------- |
-| `timeZone` | `string` | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
+| Name       | Type          | Required | Default | Meaning |
+| ---------- | ------------- | -------- | ------- | ------- |
+| `date`     | `DateInput`   | yes      |         |         |
+| `location` | `SunLocation` | yes      |         |         |
+| `timeZone` | `string`      | no       |         |         |
 
 ## Examples
 
 ```ts
 import { getSunTimes } from "@sgx4u/date-time/astronomy";
 
-getSunTimes(
-    "2024-03-20T12:00:00Z",
-    { latitude: 0, longitude: 0 },
-    { timeZone: "UTC" },
-).sunrise?.toISOString();
+getSunTimes({
+    date: "2024-03-20T12:00:00Z",
+    location: { latitude: 0, longitude: 0 },
+    timeZone: "UTC",
+}).sunrise?.toISOString();
 // "2024-03-20T06:04:01.924Z"
 
-getSunTimes(
-    "2024-06-21T12:00:00Z",
-    { latitude: 40.7, longitude: -74 },
-    { timeZone: "America/New_York" },
-).solarNoon.toISOString();
+getSunTimes({
+    date: "2024-06-21T12:00:00Z",
+    location: { latitude: 40.7, longitude: -74 },
+    timeZone: "America/New_York",
+}).solarNoon.toISOString();
 // "2024-06-21T16:57:58.186Z"
 
-getSunTimes(
-    "2024-06-21T12:00:00Z",
-    { latitude: 90, longitude: 0 },
-    { timeZone: "UTC" },
-).sunrise;
+getSunTimes({
+    date: "2024-06-21T12:00:00Z",
+    location: { latitude: 90, longitude: 0 },
+    timeZone: "UTC",
+}).sunrise;
 // undefined
 ```
 

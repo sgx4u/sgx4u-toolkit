@@ -12,33 +12,35 @@ import { getNextTimeZoneTransition } from "@sgx4u/date-time";
 
 ```ts
 function getNextTimeZoneTransition(
-    date: DateInput,
-    timeZone: string,
+    params: GetNextTimeZoneTransitionParams,
 ): TimeZoneTransition | undefined;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name       | Type        | Required | Default | Meaning                                                                         |
+| ---------- | ----------- | -------- | ------- | ------------------------------------------------------------------------------- |
+| `date`     | `DateInput` | yes      |         | The instant to search from. A transition at this exact instant is not returned. |
+| `timeZone` | `string`    | yes      |         | An IANA name or a fixed offset.                                                 |
 
 ## Examples
 
 ```ts
 import { getNextTimeZoneTransition } from "@sgx4u/date-time";
 
-getNextTimeZoneTransition(
-    "2024-03-10T00:00:00Z",
-    "America/New_York",
-)?.instant.toISOString();
+getNextTimeZoneTransition({
+    date: "2024-03-10T00:00:00Z",
+    timeZone: "America/New_York",
+})?.instant.toISOString();
 // "2024-03-10T07:00:00.000Z"
 
-getNextTimeZoneTransition(
-    "2024-03-10T07:00:00Z",
-    "America/New_York",
-)?.instant.toISOString();
+getNextTimeZoneTransition({
+    date: "2024-03-10T07:00:00Z",
+    timeZone: "America/New_York",
+})?.instant.toISOString();
 // "2024-11-03T06:00:00.000Z"
 
-getNextTimeZoneTransition("2024-03-10T00:00:00Z", "UTC");
+getNextTimeZoneTransition({ date: "2024-03-10T00:00:00Z", timeZone: "UTC" });
 // undefined
 ```
 

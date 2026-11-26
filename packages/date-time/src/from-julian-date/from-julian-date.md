@@ -14,21 +14,22 @@ import { fromJulianDate } from "@sgx4u/date-time";
 function fromJulianDate(julianDate: number): Date | undefined;
 ```
 
-## Options
+## Parameters
 
-This function has no options. Pass `julianDate` as the only argument.
+| Name         | Type     | Required | Default | Meaning          |
+| ------------ | -------- | -------- | ------- | ---------------- |
+| `julianDate` | `number` | yes      |         | The Julian Date. |
 
 ## Examples
 
 ```ts
 fromJulianDate(2440587.5)?.toISOString();
-// "1970-01-01T00:00:00.000Z" 
+// "1970-01-01T00:00:00.000Z"
 ```
 
 ## Edge cases
 
 A non-finite `julianDate`, or a value outside the range `Date` can store, returns `undefined`.
-
 
 ## Related
 

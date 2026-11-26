@@ -14,9 +14,11 @@ import { parseTimeOfDay } from "@sgx4u/date-time";
 function parseTimeOfDay(value: string): TimeOfDay | undefined;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name    | Type     | Required | Default | Meaning             |
+| ------- | -------- | -------- | ------- | ------------------- |
+| `value` | `string` | yes      |         | The candidate text. |
 
 ## Examples
 

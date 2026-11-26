@@ -11,12 +11,14 @@ import { formatISODuration } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function formatISODuration(duration: Duration): string;
+function formatISODuration(duration: Duration): string | undefined;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name       | Type       | Required | Default | Meaning                 |
+| ---------- | ---------- | -------- | ------- | ----------------------- |
+| `duration` | `Duration` | yes      |         | The duration to format. |
 
 ## Examples
 

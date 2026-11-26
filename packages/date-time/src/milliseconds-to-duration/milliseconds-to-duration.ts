@@ -49,11 +49,7 @@ export function millisecondsToDuration({
     const largestIndex = order.indexOf(largest);
     const smallestIndex = order.indexOf(smallest);
     if (largestIndex < 0) {
-        throw rangeError(
-            "largestUnit",
-            "week, day, or a clock unit",
-            largest,
-        );
+        throw rangeError("largestUnit", "week, day, or a clock unit", largest);
     }
     if (smallestIndex < 0) {
         throw rangeError("smallestUnit", "a clock unit", smallest);

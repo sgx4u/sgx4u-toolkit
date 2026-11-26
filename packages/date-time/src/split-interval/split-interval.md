@@ -11,40 +11,45 @@ import { splitInterval } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function splitInterval(
-    interval: Interval,
-    step: Duration,
-    options?: TimeZoneOptions,
-): Interval[];
+function splitInterval(params: SplitIntervalParams): Interval[] | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name       | Type     | Default     | Meaning                                         |
-| ---------- | -------- | ----------- | ----------------------------------------------- |
-| `timeZone` | `string` | System zone | Zone used when `step` contains a calendar unit. |
+| Name       | Type        | Required | Default                                  | Meaning                                                 |
+| ---------- | ----------- | -------- | ---------------------------------------- | ------------------------------------------------------- |
+| `start`    | `DateInput` | yes      |                                          | The inclusive start of the half-open interval to split. |
+| `end`      | `DateInput` | yes      |                                          | The exclusive end of the half-open interval to split.   |
+| `step`     | `Duration`  | yes      |                                          | A positive duration for each piece except the last.     |
+| `timeZone` | `string`    | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset      |
 
 ## Examples
 
 ```ts
-splitInterval({ start: new Date(0), end: new Date(10) }, { milliseconds: 4 });
+splitInterval({
+    interval: { start: new Date(0), end: new Date(10) },
+    step: { milliseconds: 4 },
+});
 // [
 //   { start: new Date(0), end: new Date(4) },
 //   { start: new Date(4), end: new Date(8) },
 //   { start: new Date(8), end: new Date(10) },
 // ]
 
-splitInterval({ start: new Date(0), end: new Date(0) }, { milliseconds: 4 });
+splitInterval({
+    interval: { start: new Date(0), end: new Date(0) },
+    step: { milliseconds: 4 },
+});
 // []
 
-splitInterval(
-    {
+splitInterval({
+    interval: {
         start: new Date("2026-01-31T00:00:00Z"),
         end: new Date("2026-03-15T00:00:00Z"),
     },
-    { months: 1 },
-    { timeZone: "UTC" },
-).map((piece) => [piece.start.toISOString(), piece.end.toISOString()]);
+    step: { months: 1 },
+    timeZone: "UTC",
+}).map((piece) => [piece.start.toISOString(), piece.end.toISOString()]);
 // [
 //   ["2026-01-31T00:00:00.000Z", "2026-02-28T00:00:00.000Z"],
 //   ["2026-02-28T00:00:00.000Z", "2026-03-15T00:00:00.000Z"],

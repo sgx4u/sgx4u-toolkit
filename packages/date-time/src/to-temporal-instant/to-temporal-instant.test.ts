@@ -26,16 +26,17 @@ describe("toTemporalInstant", () => {
             },
         };
         try {
-            expect(toTemporalInstant(0).epochMilliseconds).toBe(0);
-            expect(toTemporalInstant(-1_500).epochMilliseconds).toBe(-1_500);
+            expect(toTemporalInstant(0)?.epochMilliseconds).toBe(0);
+            expect(toTemporalInstant(-1_500)?.epochMilliseconds).toBe(-1_500);
             expect(
-                toTemporalInstant("1970-01-01T00:00:01.900Z").epochMilliseconds,
+                toTemporalInstant("1970-01-01T00:00:01.900Z")
+                    ?.epochMilliseconds,
             ).toBe(1_900);
             expect(
-                toTemporalInstant("2024-02-29T00:00:00Z").epochMilliseconds,
+                toTemporalInstant("2024-02-29T00:00:00Z")?.epochMilliseconds,
             ).toBe(Date.parse("2024-02-29T00:00:00Z"));
-            expect(() => toTemporalInstant(Number.NaN)).toThrow(RangeError);
-            expect(() => toTemporalInstant("2024-02-30")).toThrow(RangeError);
+            expect(toTemporalInstant(Number.NaN)).toBeUndefined();
+            expect(toTemporalInstant("2024-02-30")).toBeUndefined();
         } finally {
             host.Temporal = original;
         }
@@ -49,8 +50,8 @@ describe("toTemporalInstant", () => {
             return;
         }
 
-        expect(toTemporalInstant(1_500).epochMilliseconds).toBe(1_500);
-        expect(toTemporalInstant(-1_500).epochMilliseconds).toBe(-1_500);
+        expect(toTemporalInstant(1_500)?.epochMilliseconds).toBe(1_500);
+        expect(toTemporalInstant(-1_500)?.epochMilliseconds).toBe(-1_500);
     });
 
     it("throws TypeError when Temporal is missing", () => {

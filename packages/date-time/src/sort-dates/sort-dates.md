@@ -11,32 +11,31 @@ import { sortDates } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function sortDates(
-    dates: readonly DateInput[],
-    options?: SortDatesOptions,
-): Date[];
+function sortDates(params: SortDatesParams): Date[] | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name    | Type                          | Default       | Meaning                        |
-| ------- | ----------------------------- | ------------- | ------------------------------ |
-| `order` | `"ascending" \| "descending"` | `"ascending"` | Oldest first, or newest first. |
+| Name    | Type                          | Required | Default       | Meaning                        |
+| ------- | ----------------------------- | -------- | ------------- | ------------------------------ |
+| `dates` | `readonly DateInput[]`        | yes      |               | The dates to sort.             |
+| `order` | `"ascending" \| "descending"` | no       | `"ascending"` | Oldest first, or newest first. |
 
 ## Examples
 
 ```ts
-sortDates(["2024-01-02T00:00:00Z", "2024-01-01T00:00:00Z"]).map((date) =>
-    date.toISOString(),
+sortDates({ dates: ["2024-01-02T00:00:00Z", "2024-01-01T00:00:00Z"] }).map(
+    (date) => date.toISOString(),
 );
 // ["2024-01-01T00:00:00.000Z", "2024-01-02T00:00:00.000Z"]
 
-sortDates(["2024-01-02T00:00:00Z", "2024-01-01T00:00:00Z"], {
+sortDates({
+    dates: ["2024-01-02T00:00:00Z", "2024-01-01T00:00:00Z"],
     order: "descending",
 })[0]?.toISOString();
 // "2024-01-02T00:00:00.000Z"
 
-sortDates([]).length;
+sortDates({ dates: [] }).length;
 // 0
 ```
 

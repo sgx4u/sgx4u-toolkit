@@ -11,41 +11,42 @@ import { parseLocaleDate } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function parseLocaleDate(
-    value: string,
-    options?: TimeZoneOptions & LocaleOptions,
-): Date | undefined;
+function parseLocaleDate(params: ParseLocaleDateParams): Date | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name       | Type                          | Default        | Meaning                                       |
-| ---------- | ----------------------------- | -------------- | --------------------------------------------- |
-| `timeZone` | `string`                      | System zone    | Zone whose midnight the calendar day uses.    |
-| `locale`   | `string \| readonly string[]` | Runtime locale | Locale that supplies the numeric field order. |
+| Name       | Type                          | Required | Default                                  | Meaning                                                       |
+| ---------- | ----------------------------- | -------- | ---------------------------------------- | ------------------------------------------------------------- |
+| `value`    | `string`                      | yes      |                                          | The candidate text.                                           |
+| `timeZone` | `string`                      | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset            |
+| `locale`   | `string \| readonly string[]` | no       | The runtime's default locale.            | A BCP 47 language tag, or a list of tags in preference order. |
 
 ## Examples
 
 ```ts
-parseLocaleDate("11/26/2026", {
+parseLocaleDate({
+    value: "11/26/2026",
     locale: "en-US",
     timeZone: "UTC",
 })?.toISOString();
 // "2026-11-26T00:00:00.000Z"
 
-parseLocaleDate("26/11/2026", {
+parseLocaleDate({
+    value: "26/11/2026",
     locale: "en-GB",
     timeZone: "UTC",
 })?.toISOString();
 // "2026-11-26T00:00:00.000Z"
 
-parseLocaleDate("11/26/2026", {
+parseLocaleDate({
+    value: "11/26/2026",
     locale: "en-US",
     timeZone: "Asia/Kolkata",
 })?.toISOString();
 // "2026-11-25T18:30:00.000Z"
 
-parseLocaleDate("02/30/2026", { locale: "en-US", timeZone: "UTC" });
+parseLocaleDate({ value: "02/30/2026", locale: "en-US", timeZone: "UTC" });
 // undefined
 ```
 

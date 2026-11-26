@@ -14,9 +14,10 @@ import { getLocalTimeZone } from "@sgx4u/date-time";
 function getLocalTimeZone(): string;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name | Type | Required | Default | Meaning |
+| ---- | ---- | -------- | ------- | ------- |
 
 ## Examples
 
@@ -33,7 +34,6 @@ isValidTimeZone(getLocalTimeZone());
 ## Edge cases
 
 None.
-
 
 ## Related
 

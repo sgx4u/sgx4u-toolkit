@@ -25,22 +25,22 @@ This function has no options.
 import { indiaHolidayRules } from "@sgx4u/date-time/holidays/india";
 import { getHolidaysInYear } from "@sgx4u/date-time";
 
-getHolidaysInYear(2026, indiaHolidayRules).find(
+getHolidaysInYear({ year: 2026, rules: indiaHolidayRules }).find(
     (holiday) => holiday.name === "Holi",
 )?.date;
 // { year: 2026, month: 3, day: 4 }
 
-getHolidaysInYear(2026, indiaHolidayRules).find(
+getHolidaysInYear({ year: 2026, rules: indiaHolidayRules }).find(
     (holiday) => holiday.name === "Diwali",
 )?.date;
 // { year: 2026, month: 11, day: 8 }
 
-getHolidaysInYear(2026, indiaHolidayRules).find(
+getHolidaysInYear({ year: 2026, rules: indiaHolidayRules }).find(
     (holiday) => holiday.name === "Republic Day",
 )?.date;
 // { year: 2026, month: 1, day: 26 }
 
-getHolidaysInYear(2024, indiaHolidayRules).some(
+getHolidaysInYear({ year: 2024, rules: indiaHolidayRules }).some(
     (holiday) => holiday.name === "Holi",
 );
 // false

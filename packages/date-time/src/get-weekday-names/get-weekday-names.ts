@@ -5,7 +5,7 @@ import type { WeekdayNameOptions } from "./get-weekday-names.types.js";
 /**
  * Fields for {@link getWeekdayNames}.
  */
-export interface GetWeekdayNamesParams extends WeekdayNameOptions {}
+export type GetWeekdayNamesParams = WeekdayNameOptions;
 
 /**
  * Returns the 7 weekday names, starting on `startsOn`.

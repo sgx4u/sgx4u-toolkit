@@ -1,7 +1,7 @@
 import { isDateValue } from "./date-value.utils.js";
 import { parseStrictDateString } from "./date-string.utils.js";
 import { rangeError, typeError } from "./error.utils.js";
-import { utcEpochMilliseconds } from "./gregorian.utils.js";
+import { UTCEpochMilliseconds } from "./gregorian.utils.js";
 import { instantFromWallTime, resolveTimeZone } from "./time-zone.utils.js";
 
 const maximumTimeValue = 8_640_000_000_000_000;
@@ -67,6 +67,34 @@ export function resolveNow(now: unknown, timeZone?: string): Date {
 }
 
 /**
+ * A new `Date` for a `DateInput`, or `undefined` when the value is not a real date.
+ *
+ * A date-only string is midnight in `timeZone`. An unusable time zone still
+ * throws, because a bad zone is a caller mistake rather than bad data.
+ *
+ * @param value - The caller's date.
+ * @param timeZone - Zone for a date-only string. Omit it to use the system zone.
+ * @returns A new `Date`, or `undefined` when `value` is not a real date.
+ * @throws {@link RangeError} When `timeZone` is not a usable zone.
+ * @throws {@link TypeError} When `timeZone` is not a string.
+ */
+export function readDateInput(
+    value: unknown,
+    timeZone?: string,
+): Date | undefined {
+    if (isDateValue(value)) {
+        return storedDate(readTimeValue(value));
+    }
+    if (typeof value === "number") {
+        return storedDate(value);
+    }
+    if (typeof value === "string") {
+        return dateFromStrictStringOrUndefined(value, timeZone);
+    }
+    return undefined;
+}
+
+/**
  * Whether `value` is a real date, without throwing.
  *
  * A `Date` from another realm counts when its time value is finite. A
@@ -113,6 +141,65 @@ function readTimeValue(date: Date): number {
  * @returns A new `Date`.
  * @throws {@link RangeError} When `timeValue` is not a finite instant `Date` can store.
  */
+/**
+ * @param timeValue - Unix time in milliseconds.
+ * @returns A new `Date`, or `undefined` when the instant cannot be stored.
+ */
+function storedDate(timeValue: number): Date | undefined {
+    if (!Number.isFinite(timeValue) || Math.abs(timeValue) > maximumTimeValue) {
+        return undefined;
+    }
+    const date = new Date(timeValue);
+    if (!Number.isFinite(date.getTime())) {
+        return undefined;
+    }
+    return date;
+}
+
+/**
+ * @param value - A strict date string.
+ * @param timeZone - Zone for a calendar date.
+ * @returns The instant the string names, or `undefined` when it is not a real date.
+ * @throws {@link RangeError} When `timeZone` is not usable.
+ */
+function dateFromStrictStringOrUndefined(
+    value: string,
+    timeZone: string | undefined,
+): Date | undefined {
+    const parsed = parseStrictDateString(value);
+    if (parsed === undefined) {
+        return undefined;
+    }
+    if (parsed.offsetMinutes !== undefined) {
+        const epochMilliseconds = UTCEpochMilliseconds(
+            parsed.year,
+            parsed.month - 1,
+            parsed.day,
+            parsed.hour,
+            parsed.minute,
+            parsed.second,
+            parsed.millisecond,
+        );
+        return storedDate(epochMilliseconds - parsed.offsetMinutes * 60_000);
+    }
+    const zone = resolveTimeZone(timeZone);
+    return new Date(
+        instantFromWallTime(
+            {
+                year: parsed.year,
+                month: parsed.month,
+                day: parsed.day,
+                hour: 0,
+                minute: 0,
+                second: 0,
+                millisecond: 0,
+            },
+            zone,
+            "compatible",
+        ),
+    );
+}
+
 function dateFromTimeValue(timeValue: number, argumentName: string): Date {
     if (!Number.isFinite(timeValue) || Math.abs(timeValue) > maximumTimeValue) {
         throw rangeError(argumentName, "a valid date", timeValue);
@@ -141,7 +228,7 @@ function dateFromStrictString(
         throw rangeError(argumentName, "a valid date", value);
     }
     if (parsed.offsetMinutes !== undefined) {
-        const utcEpoch = utcEpochMilliseconds(
+        const UTCEpoch = UTCEpochMilliseconds(
             parsed.year,
             parsed.month - 1,
             parsed.day,
@@ -151,7 +238,7 @@ function dateFromStrictString(
             parsed.millisecond,
         );
         return dateFromTimeValue(
-            utcEpoch - parsed.offsetMinutes * 60_000,
+            UTCEpoch - parsed.offsetMinutes * 60_000,
             argumentName,
         );
     }

@@ -14,9 +14,11 @@ import { formatRecurrenceRule } from "@sgx4u/date-time/recurrence";
 function formatRecurrenceRule(rule: RecurrenceRule): string;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name   | Type             | Required | Default | Meaning            |
+| ------ | ---------------- | -------- | ------- | ------------------ |
+| `rule` | `RecurrenceRule` | yes      |         | The rule to write. |
 
 ## Examples
 

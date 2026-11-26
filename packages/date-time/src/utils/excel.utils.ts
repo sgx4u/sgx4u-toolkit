@@ -1,5 +1,5 @@
 import type { CalendarDate, TimeOfDay } from "../types/time.types.js";
-import { addGregorianDays, utcEpochMilliseconds } from "./gregorian.utils.js";
+import { addGregorianDays, UTCEpochMilliseconds } from "./gregorian.utils.js";
 
 const millisecondsPerDay = 86_400_000;
 
@@ -79,8 +79,8 @@ function daysBetween(
     day: number,
     parts: CalendarDate,
 ): number {
-    const start = utcEpochMilliseconds(year, month - 1, day, 0, 0, 0, 0);
-    const current = utcEpochMilliseconds(
+    const start = UTCEpochMilliseconds(year, month - 1, day, 0, 0, 0, 0);
+    const current = UTCEpochMilliseconds(
         parts.year,
         parts.month - 1,
         parts.day,

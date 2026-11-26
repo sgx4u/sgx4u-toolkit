@@ -7,7 +7,8 @@ import type {
 /**
  * Fields for {@link getFiscalYear}.
  */
-export interface GetFiscalYearParams extends FiscalYearOptions, TimeZoneOptions {
+export interface GetFiscalYearParams
+    extends FiscalYearOptions, TimeZoneOptions {
     /**
      * The date to label.
      */

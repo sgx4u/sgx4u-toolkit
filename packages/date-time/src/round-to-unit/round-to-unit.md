@@ -11,38 +11,42 @@ import { roundToUnit } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function roundToUnit(
-    date: DateInput,
-    unit: TimeUnit,
-    options?: RoundToUnitOptions,
-): Date;
+function roundToUnit(params: RoundToUnitParams): Date | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name        | Type                          | Default     | Meaning                                                            |
-| ----------- | ----------------------------- | ----------- | ------------------------------------------------------------------ |
-| `timeZone`  | `string`                      | System zone | Zone the unit boundaries are measured in.                          |
-| `increment` | `number`                      | `1`         | How many units form one step. For minutes, `15` is a quarter hour. |
-| `mode`      | `"nearest" \| "down" \| "up"` | `"nearest"` | `"nearest"` at the halfway point moves later.                      |
+| Name        | Type                          | Required | Default                                  | Meaning                                                                     |
+| ----------- | ----------------------------- | -------- | ---------------------------------------- | --------------------------------------------------------------------------- |
+| `date`      | `DateInput`                   | yes      |                                          | The instant to round.                                                       |
+| `unit`      | `TimeUnit \| "decade"`        | yes      |                                          | The unit to round to.                                                       |
+| `increment` | `number`                      | no       | `1`                                      | How many units form one step. For minutes, `15` rounds to the quarter hour. |
+| `mode`      | `"nearest" \| "down" \| "up"` | no       | `"nearest"`                              | Which boundary to choose. `"nearest"` at the halfway point moves later.     |
+| `timeZone`  | `string`                      | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset                          |
 
 ## Examples
 
 ```ts
-roundToUnit("2024-06-15T10:07:30Z", "minute", {
+roundToUnit({
+    date: "2024-06-15T10:07:30Z",
+    unit: "minute",
     timeZone: "UTC",
     increment: 15,
 }).toISOString();
 // "2024-06-15T10:15:00.000Z"
 
-roundToUnit("2024-06-15T10:07:00Z", "minute", {
+roundToUnit({
+    date: "2024-06-15T10:07:00Z",
+    unit: "minute",
     timeZone: "UTC",
     increment: 15,
     mode: "down",
 }).toISOString();
 // "2024-06-15T10:00:00.000Z"
 
-roundToUnit("2024-06-15T10:07:00Z", "minute", {
+roundToUnit({
+    date: "2024-06-15T10:07:00Z",
+    unit: "minute",
     timeZone: "UTC",
     increment: 15,
     mode: "up",

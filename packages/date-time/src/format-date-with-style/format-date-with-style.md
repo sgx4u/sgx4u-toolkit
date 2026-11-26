@@ -12,39 +12,42 @@ import { formatDateWithStyle } from "@sgx4u/date-time";
 
 ```ts
 function formatDateWithStyle(
-    date: DateInput,
-    options?: FormatDateWithStyleOptions,
-): string;
+    params: FormatDateWithStyleParams,
+): string | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name              | Type                                      | Default        | Meaning                                        |
-| ----------------- | ----------------------------------------- | -------------- | ---------------------------------------------- |
-| `timeZone`        | `string`                                  | System zone    | IANA name or fixed offset.                     |
-| `locale`          | `string \| readonly string[]`             | Runtime locale | Locale for the text.                           |
-| `dateStyle`       | `"full" \| "long" \| "medium" \| "short"` | `"medium"`     | Date length. Used when `timeStyle` is omitted. |
-| `timeStyle`       | `"full" \| "long" \| "medium" \| "short"` |                | Time length. Omit it to format the date only.  |
-| `calendar`        | `string`                                  |                | `Intl` calendar name, such as `"gregory"`.     |
-| `numberingSystem` | `string`                                  |                | `Intl` numbering system.                       |
-| `hourCycle`       | `"h11" \| "h12" \| "h23" \| "h24"`        |                | Hour cycle passed to `Intl`.                   |
+| Name              | Type                                      | Required | Default                                  | Meaning                                                       |
+| ----------------- | ----------------------------------------- | -------- | ---------------------------------------- | ------------------------------------------------------------- |
+| `date`            | `DateInput`                               | yes      |                                          | The instant to format.                                        |
+| `dateStyle`       | `"long" \| "short" \| "medium" \| "full"` | no       | `"medium"`                               | The date length. Used alone when `timeStyle` is omitted.      |
+| `timeStyle`       | `"long" \| "short" \| "medium" \| "full"` | no       |                                          | The time length. Omit it to format the date only.             |
+| `calendar`        | `string`                                  | no       |                                          | An `Intl` calendar name, such as `"gregory"`.                 |
+| `numberingSystem` | `string`                                  | no       |                                          | An `Intl` numbering system.                                   |
+| `hourCycle`       | `"h11" \| "h12" \| "h23" \| "h24"`        | no       |                                          | The hour cycle passed to `Intl`.                              |
+| `timeZone`        | `string`                                  | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset            |
+| `locale`          | `string \| readonly string[]`             | no       | The runtime's default locale.            | A BCP 47 language tag, or a list of tags in preference order. |
 
 ## Examples
 
 ```ts
-formatDateWithStyle("2026-11-26T00:00:00Z", {
+formatDateWithStyle({
+    date: "2026-11-26T00:00:00Z",
     timeZone: "UTC",
     locale: "en-US",
 });
 // "Nov 26, 2026"
 
-formatDateWithStyle("2024-12-31T22:00:00Z", {
+formatDateWithStyle({
+    date: "2024-12-31T22:00:00Z",
     timeZone: "Asia/Kolkata",
     locale: "en-US",
 });
 // "Jan 1, 2025"
 
-formatDateWithStyle("2024-03-10T06:30:00Z", {
+formatDateWithStyle({
+    date: "2024-03-10T06:30:00Z",
     timeZone: "America/New_York",
     locale: "en-US",
     timeStyle: "short",

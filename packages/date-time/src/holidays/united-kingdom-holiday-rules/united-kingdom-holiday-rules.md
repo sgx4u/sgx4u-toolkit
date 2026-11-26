@@ -25,22 +25,22 @@ This function has no options.
 import { unitedKingdomHolidayRules } from "@sgx4u/date-time/holidays/united-kingdom";
 import { getHolidaysInYear } from "@sgx4u/date-time";
 
-getHolidaysInYear(2026, unitedKingdomHolidayRules).find(
+getHolidaysInYear({ year: 2026, rules: unitedKingdomHolidayRules }).find(
     (holiday) => holiday.name === "Good Friday",
 )?.date;
 // { year: 2026, month: 4, day: 3 }
 
-getHolidaysInYear(2021, unitedKingdomHolidayRules).find(
+getHolidaysInYear({ year: 2021, rules: unitedKingdomHolidayRules }).find(
     (holiday) => holiday.name === "Christmas Day",
 )?.observedDate;
 // { year: 2021, month: 12, day: 27 }
 
-getHolidaysInYear(2021, unitedKingdomHolidayRules).find(
+getHolidaysInYear({ year: 2021, rules: unitedKingdomHolidayRules }).find(
     (holiday) => holiday.name === "Boxing Day",
 )?.observedDate;
 // { year: 2021, month: 12, day: 28 }
 
-getHolidaysInYear(2026, unitedKingdomHolidayRules).find(
+getHolidaysInYear({ year: 2026, rules: unitedKingdomHolidayRules }).find(
     (holiday) => holiday.name === "Early May bank holiday",
 )?.date;
 // { year: 2026, month: 5, day: 4 }

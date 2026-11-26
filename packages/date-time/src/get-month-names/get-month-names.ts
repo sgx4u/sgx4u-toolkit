@@ -4,7 +4,7 @@ import type { MonthNameOptions } from "./get-month-names.types.js";
 /**
  * Fields for {@link getMonthNames}.
  */
-export interface GetMonthNamesParams extends MonthNameOptions {}
+export type GetMonthNamesParams = MonthNameOptions;
 
 /**
  * Returns the 12 month names, January first.

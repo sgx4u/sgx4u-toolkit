@@ -54,8 +54,15 @@ describe("comparison and arithmetic", () => {
                 reference: "2024-06-15T11:00:00Z",
             }),
         ).toBe(true);
-        expect(isSameInstant(0, "1970-01-01T00:00:00.000Z")).toBe(true);
-        expect(isSameInstant(original, "2024-06-15T12:00:01.000Z")).toBe(false);
+        expect(
+            isSameInstant({ first: 0, second: "1970-01-01T00:00:00.000Z" }),
+        ).toBe(true);
+        expect(
+            isSameInstant({
+                first: original,
+                second: "2024-06-15T12:00:01.000Z",
+            }),
+        ).toBe(false);
         expect(original.getTime()).toBe(timeValue);
         expect(
             compareDates({ first: "nope", second: original }),
@@ -67,17 +74,26 @@ describe("comparison and arithmetic", () => {
 
     it("compares units in a zone, including a daylight-saving day", () => {
         expect(
-            isSameUnit("2024-06-15T23:00:00Z", "2024-06-16T02:00:00Z", "day", {
+            isSameUnit({
+                first: "2024-06-15T23:00:00Z",
+                second: "2024-06-16T02:00:00Z",
+                unit: "day",
                 timeZone: "Asia/Kolkata",
             }),
         ).toBe(true);
         expect(
-            isSameUnit("2024-03-10T05:30:00Z", "2024-03-10T06:30:00Z", "day", {
+            isSameUnit({
+                first: "2024-03-10T05:30:00Z",
+                second: "2024-03-10T06:30:00Z",
+                unit: "day",
                 timeZone: "America/New_York",
             }),
         ).toBe(true);
         expect(
-            isSameUnit("2024-01-01T00:00:00Z", "2024-01-08T00:00:00Z", "week", {
+            isSameUnit({
+                first: "2024-01-01T00:00:00Z",
+                second: "2024-01-08T00:00:00Z",
+                unit: "week",
                 timeZone: "UTC",
             }),
         ).toBe(false);
@@ -101,11 +117,11 @@ describe("comparison and arithmetic", () => {
                 includeStart: false,
             }),
         ).toBe(false);
-        expect(getEarliestDate([])).toBeUndefined();
-        expect(getEarliestDate(dates)?.toISOString()).toBe(
+        expect(getEarliestDate({ dates: [] })).toBeUndefined();
+        expect(getEarliestDate({ dates })?.toISOString()).toBe(
             "2024-01-01T00:00:00.000Z",
         );
-        expect(getLatestDate(dates)?.toISOString()).toBe(
+        expect(getLatestDate({ dates })?.toISOString()).toBe(
             "2024-01-02T00:00:00.000Z",
         );
         expect(dates[0]).toBe("2024-01-02T00:00:00Z");
@@ -124,7 +140,7 @@ describe("comparison and arithmetic", () => {
             }),
         ).toThrow(RangeError);
         expect(
-            sortDates(dates, { order: "descending" }).map((date) =>
+            sortDates({ dates, order: "descending" })?.map((date) =>
                 date.toISOString(),
             ),
         ).toEqual(["2024-01-02T00:00:00.000Z", "2024-01-01T00:00:00.000Z"]);
@@ -134,18 +150,30 @@ describe("comparison and arithmetic", () => {
         const candidates = ["2024-01-01T00:00:00Z", "2024-01-02T00:00:00Z"];
 
         expect(
-            findClosestDate("2024-01-01T12:00:00Z", candidates)?.toISOString(),
+            findClosestDate({
+                target: "2024-01-01T12:00:00Z",
+                candidates,
+            })?.toISOString(),
         ).toBe("2024-01-01T00:00:00.000Z");
-        expect(findClosestDateIndex("2024-01-01T12:00:00Z", [])).toBe(-1);
-        expect(findClosestDateIndex("2024-01-01T12:00:00Z", candidates)).toBe(
-            0,
-        );
         expect(
-            removeDuplicateDates(
-                ["2024-06-15T01:00:00Z", "2024-06-15T20:00:00Z"],
-                { unit: "day", timeZone: "UTC" },
-            ),
-        ).toHaveLength(1);
+            findClosestDateIndex({
+                target: "2024-01-01T12:00:00Z",
+                candidates: [],
+            }),
+        ).toBe(-1);
+        expect(
+            findClosestDateIndex({
+                target: "2024-01-01T12:00:00Z",
+                candidates,
+            }),
+        ).toBe(0);
+        expect(
+            removeDuplicateDates({
+                dates: ["2024-06-15T01:00:00Z", "2024-06-15T20:00:00Z"],
+                unit: "day",
+                timeZone: "UTC",
+            }),
+        )?.toHaveLength(1);
     });
 
     it("adds calendar units, keeps elapsed hours, and rounds", () => {
@@ -171,11 +199,11 @@ describe("comparison and arithmetic", () => {
             })?.toISOString(),
         ).toBe("2024-03-10T14:00:00.000Z");
         expect(
-            subtractDuration(
-                "2026-03-31T00:00:00Z",
-                { months: 1 },
-                { timeZone: "UTC" },
-            ).toISOString(),
+            subtractDuration({
+                date: "2026-03-31T00:00:00Z",
+                duration: { months: 1 },
+                timeZone: "UTC",
+            })?.toISOString(),
         ).toBe("2026-02-28T00:00:00.000Z");
         expect(() =>
             addDuration({
@@ -186,35 +214,45 @@ describe("comparison and arithmetic", () => {
             }),
         ).toThrow(RangeError);
         expect(
-            setDateParts(
-                "2026-01-15T00:00:00Z",
-                { day: 31 },
-                { timeZone: "UTC" },
-            ).toISOString(),
+            setDateParts({
+                date: "2026-01-15T00:00:00Z",
+                parts: { day: 31 },
+                timeZone: "UTC",
+            })?.toISOString(),
         ).toBe("2026-01-31T00:00:00.000Z");
         expect(
-            startOfUnit("2026-11-26T15:45:00Z", "day", {
+            startOfUnit({
+                date: "2026-11-26T15:45:00Z",
+                unit: "day",
                 timeZone: "UTC",
-            }).toISOString(),
+            })?.toISOString(),
         ).toBe("2026-11-26T00:00:00.000Z");
         expect(
-            endOfUnit("2026-11-26T15:45:00Z", "day", {
+            endOfUnit({
+                date: "2026-11-26T15:45:00Z",
+                unit: "day",
                 timeZone: "UTC",
-            }).toISOString(),
+            })?.toISOString(),
         ).toBe("2026-11-26T23:59:59.999Z");
         expect(
-            startOfUnit("2024-09-08T12:00:00Z", "day", {
+            startOfUnit({
+                date: "2024-09-08T12:00:00Z",
+                unit: "day",
                 timeZone: "America/Santiago",
-            }).toISOString(),
+            })?.toISOString(),
         ).toBe("2024-09-08T04:00:00.000Z");
         expect(
-            roundToUnit("2024-06-15T10:07:30Z", "minute", {
+            roundToUnit({
+                date: "2024-06-15T10:07:30Z",
+                unit: "minute",
                 timeZone: "UTC",
                 increment: 15,
-            }).toISOString(),
+            })?.toISOString(),
         ).toBe("2024-06-15T10:15:00.000Z");
         expect(() =>
-            roundToUnit("2024-06-15T10:00:00Z", "minute", {
+            roundToUnit({
+                date: "2024-06-15T10:00:00Z",
+                unit: "minute",
                 timeZone: "UTC",
                 increment: 7,
             }),
@@ -223,23 +261,44 @@ describe("comparison and arithmetic", () => {
 
     it("steps to weekdays and finds the nth weekday of a month", () => {
         expect(
-            getNextWeekday("2026-11-26T15:00:00Z", 1, {
+            getNextWeekday({
+                date: "2026-11-26T15:00:00Z",
+                weekday: 1,
                 timeZone: "UTC",
-            }).toISOString(),
+            })?.toISOString(),
         ).toBe("2026-11-30T00:00:00.000Z");
         expect(
-            getPreviousWeekday("2026-11-26T15:00:00Z", 1, {
+            getPreviousWeekday({
+                date: "2026-11-26T15:00:00Z",
+                weekday: 1,
                 timeZone: "UTC",
-            }).toISOString(),
+            })?.toISOString(),
         ).toBe("2026-11-23T00:00:00.000Z");
         expect(
-            getNthWeekdayOfMonth(2026, 11, 4, 4, {
+            getNthWeekdayOfMonth({
+                year: 2026,
+                month: 11,
+                weekday: 4,
+                occurrence: 4,
                 timeZone: "UTC",
             })?.toISOString(),
         ).toBe("2026-11-26T00:00:00.000Z");
         expect(
-            getNthWeekdayOfMonth(2026, 2, 1, 5, { timeZone: "UTC" }),
+            getNthWeekdayOfMonth({
+                year: 2026,
+                month: 2,
+                weekday: 1,
+                occurrence: 5,
+                timeZone: "UTC",
+            }),
         ).toBeUndefined();
-        expect(() => getNthWeekdayOfMonth(2026, 11, 1, 0)).toThrow(RangeError);
+        expect(() =>
+            getNthWeekdayOfMonth({
+                year: 2026,
+                month: 11,
+                weekday: 1,
+                occurrence: 0,
+            }),
+        ).toThrow(RangeError);
     });
 });

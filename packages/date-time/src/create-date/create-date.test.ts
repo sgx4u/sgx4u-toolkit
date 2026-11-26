@@ -12,9 +12,9 @@ describe("createDate", () => {
                 timeZone: "Asia/Kolkata",
             })?.toISOString(),
         ).toBe("2026-11-26T03:30:00.000Z");
-        expect(
-            createDate({ year: 2026, timeZone: "UTC" })?.toISOString(),
-        ).toBe("2026-01-01T00:00:00.000Z");
+        expect(createDate({ year: 2026, timeZone: "UTC" })?.toISOString()).toBe(
+            "2026-01-01T00:00:00.000Z",
+        );
     });
 
     it("resolves a New York gap and overlap", () => {
@@ -98,15 +98,15 @@ describe("createDate", () => {
         expect(
             createDate({ year: 2026, month: 2, day: 30, timeZone: "UTC" }),
         ).toBeUndefined();
-        expect(createDate({} as { year: number })).toBeUndefined();
+        expect(createDate({ ...({} as { year: number }) })).toBeUndefined();
         expect(
             createDate({ year: 2026, month: 13, timeZone: "UTC" }),
         ).toBeUndefined();
     });
 
     it("throws when the time zone is unusable", () => {
-        expect(() =>
-            createDate({ year: 2026, timeZone: "Mars/Base" }),
-        ).toThrow(RangeError);
+        expect(() => createDate({ year: 2026, timeZone: "Mars/Base" })).toThrow(
+            RangeError,
+        );
     });
 });

@@ -11,22 +11,20 @@ import { isHoliday } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function isHoliday(params: IsHolidayParams & { includeName?: false }): boolean;
 function isHoliday(
     params: IsHolidayParams & { includeName: true },
 ): HolidayCheck;
+function isHoliday(params: IsHolidayParams & { includeName?: false }): boolean;
 ```
 
-## Options
+## Parameters
 
-| Name          | Type                                          | Required | Default     | Meaning                                             |
-| ------------- | --------------------------------------------- | -------- | ----------- | --------------------------------------------------- |
-| `date`        | `DateInput`                                   | yes      |             | The instant to test.                                |
-| `holidays`    | `readonly (ConfiguredHoliday \| DateInput)[]` | no       | `[]`        | Holidays to match.                                  |
-| `timeZone`    | `string`                                      | no       | System zone | Zone for the calendar day.                          |
-| `includeName` | `boolean`                                     | no       | `false`     | Return `{ isHoliday, name? }` instead of a boolean. |
-
-`ConfiguredHoliday` is `{ date: DateInput; name?: string }`. A date-only string is that calendar day in `timeZone`.
+| Name          | Type                                          | Required | Default               | Meaning                                                                 |
+| ------------- | --------------------------------------------- | -------- | --------------------- | ----------------------------------------------------------------------- |
+| `date`        | `DateInput`                                   | yes      |                       | The date to test.                                                       |
+| `holidays`    | `readonly (ConfiguredHoliday \| DateInput)[]` | no       | `[]`                  | Holidays to match. A bare date has no name. Omit it for none.           |
+| `timeZone`    | `string`                                      | no       | The system time zone. | Zone used to read the calendar day.                                     |
+| `includeName` | `boolean`                                     | no       | `false`               | When `true`, the result is `{ isHoliday, name? }` instead of a boolean. |
 
 ## Examples
 

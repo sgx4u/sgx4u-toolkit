@@ -11,29 +11,31 @@ import { toExcelSerialDate } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function toExcelSerialDate(date: DateInput, options?: ExcelDateOptions): number;
+function toExcelSerialDate(params: ToExcelSerialDateParams): number | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name         | Type           | Default     | Meaning                                                              |
-| ------------ | -------------- | ----------- | -------------------------------------------------------------------- |
-| `timeZone`   | `string`       | System zone | Zone whose calendar day and time of day are counted.                 |
-| `dateSystem` | `1900 \| 1904` | `1900`      | `1900` includes the fictional leap day. `1904` starts at 1904-01-01. |
+| Name         | Type           | Required | Default                                  | Meaning                                                              |
+| ------------ | -------------- | -------- | ---------------------------------------- | -------------------------------------------------------------------- |
+| `date`       | `DateInput`    | yes      |                                          | The instant to convert.                                              |
+| `dateSystem` | `1900 \| 1904` | no       | `1900`                                   | `1900` includes the fictional leap day. `1904` starts at 1904-01-01. |
+| `timeZone`   | `string`       | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset                   |
 
 ## Examples
 
 ```ts
-toExcelSerialDate("1900-01-01T00:00:00Z", { timeZone: "UTC" });
+toExcelSerialDate({ date: "1900-01-01T00:00:00Z", timeZone: "UTC" });
 // 1
 
-toExcelSerialDate("1900-01-01T12:00:00Z", { timeZone: "UTC" });
+toExcelSerialDate({ date: "1900-01-01T12:00:00Z", timeZone: "UTC" });
 // 1.5
 
-toExcelSerialDate("1900-03-01T00:00:00Z", { timeZone: "UTC" });
+toExcelSerialDate({ date: "1900-03-01T00:00:00Z", timeZone: "UTC" });
 // 61
 
-toExcelSerialDate("1904-01-01T00:00:00Z", {
+toExcelSerialDate({
+    date: "1904-01-01T00:00:00Z",
     timeZone: "UTC",
     dateSystem: 1904,
 });

@@ -2,8 +2,8 @@ import type { Weekday } from "../types/time.types.js";
 import type { LocaleWeekInfo } from "../types/calendar-grid.types.js";
 import {
     addGregorianDays,
-    isoWeekdayNumber,
-    utcEpochMilliseconds,
+    ISOWeekdayNumber,
+    UTCEpochMilliseconds,
 } from "./gregorian.utils.js";
 
 /**
@@ -17,7 +17,7 @@ import {
  * @param day - Day of the month.
  * @returns The ISO week, from 1 through 53, and the week-year.
  */
-export function isoWeekOfDate(
+export function ISOWeekOfDate(
     year: number,
     month: number,
     day: number,
@@ -76,8 +76,8 @@ export function weekOfDate(
  * @param year - Full year.
  * @returns `53` when the year has a week 53, otherwise `52`.
  */
-export function isoWeeksInYear(year: number): 52 | 53 {
-    const december28 = isoWeekOfDate(year, 12, 28);
+export function ISOWeeksInYear(year: number): 52 | 53 {
+    const december28 = ISOWeekOfDate(year, 12, 28);
     return december28.week === 53 ? 53 : 52;
 }
 
@@ -96,7 +96,7 @@ export function weekOfMonth(
     day: number,
     weekStartsOn: Weekday,
 ): number {
-    const firstWeekday = isoWeekdayNumber(year, month, 1);
+    const firstWeekday = ISOWeekdayNumber(year, month, 1);
     const leadingDays = (firstWeekday - weekStartsOn + 7) % 7;
     return Math.floor((day + leadingDays - 1) / 7) + 1;
 }
@@ -110,8 +110,8 @@ export function weekOfMonth(
  * @returns The day number.
  */
 export function dayOfYear(year: number, month: number, day: number): number {
-    const start = utcEpochMilliseconds(year, 0, 1, 0, 0, 0, 0);
-    const current = utcEpochMilliseconds(year, month - 1, day, 0, 0, 0, 0);
+    const start = UTCEpochMilliseconds(year, 0, 1, 0, 0, 0, 0);
+    const current = UTCEpochMilliseconds(year, month - 1, day, 0, 0, 0, 0);
     return Math.round((current - start) / 86_400_000) + 1;
 }
 
@@ -153,7 +153,7 @@ function startOfWeek(
     day: number,
     weekStartsOn: Weekday,
 ): { year: number; month: number; day: number } {
-    const weekday = isoWeekdayNumber(year, month, day);
+    const weekday = ISOWeekdayNumber(year, month, day);
     const distance = (weekday - weekStartsOn + 7) % 7;
     return addGregorianDays(year, month, day, -distance);
 }
@@ -169,7 +169,7 @@ function startOfWeekOne(
     weekStartsOn: Weekday,
     minimumDaysInFirstWeek: number,
 ): { year: number; month: number; day: number } {
-    const januaryWeekday = isoWeekdayNumber(year, 1, 1);
+    const januaryWeekday = ISOWeekdayNumber(year, 1, 1);
     const daysBefore = (januaryWeekday - weekStartsOn + 7) % 7;
     const daysInYear = 7 - daysBefore;
     if (daysInYear >= minimumDaysInFirstWeek) {
@@ -187,7 +187,7 @@ function weekNumber(
     weekOne: { year: number; month: number; day: number },
     weekStart: { year: number; month: number; day: number },
 ): number {
-    const origin = utcEpochMilliseconds(
+    const origin = UTCEpochMilliseconds(
         weekOne.year,
         weekOne.month - 1,
         weekOne.day,
@@ -196,7 +196,7 @@ function weekNumber(
         0,
         0,
     );
-    const current = utcEpochMilliseconds(
+    const current = UTCEpochMilliseconds(
         weekStart.year,
         weekStart.month - 1,
         weekStart.day,

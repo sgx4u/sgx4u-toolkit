@@ -12,33 +12,38 @@ import { getPreviousTimeZoneTransition } from "@sgx4u/date-time";
 
 ```ts
 function getPreviousTimeZoneTransition(
-    date: DateInput,
-    timeZone: string,
+    params: GetPreviousTimeZoneTransitionParams,
 ): TimeZoneTransition | undefined;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name       | Type        | Required | Default | Meaning                                                                         |
+| ---------- | ----------- | -------- | ------- | ------------------------------------------------------------------------------- |
+| `date`     | `DateInput` | yes      |         | The instant to search from. A transition at this exact instant is not returned. |
+| `timeZone` | `string`    | yes      |         | An IANA name or a fixed offset.                                                 |
 
 ## Examples
 
 ```ts
 import { getPreviousTimeZoneTransition } from "@sgx4u/date-time";
 
-getPreviousTimeZoneTransition(
-    "2024-03-11T00:00:00Z",
-    "America/New_York",
-)?.instant.toISOString();
+getPreviousTimeZoneTransition({
+    date: "2024-03-11T00:00:00Z",
+    timeZone: "America/New_York",
+})?.instant.toISOString();
 // "2024-03-10T07:00:00.000Z"
 
-getPreviousTimeZoneTransition(
-    "2024-11-04T00:00:00Z",
-    "America/New_York",
-)?.instant.toISOString();
+getPreviousTimeZoneTransition({
+    date: "2024-11-04T00:00:00Z",
+    timeZone: "America/New_York",
+})?.instant.toISOString();
 // "2024-11-03T06:00:00.000Z"
 
-getPreviousTimeZoneTransition("2024-06-01T00:00:00Z", "+05:30");
+getPreviousTimeZoneTransition({
+    date: "2024-06-01T00:00:00Z",
+    timeZone: "+05:30",
+});
 // undefined
 ```
 

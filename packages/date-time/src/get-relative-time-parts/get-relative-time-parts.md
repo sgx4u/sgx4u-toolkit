@@ -12,34 +12,37 @@ import { getRelativeTimeParts } from "@sgx4u/date-time";
 
 ```ts
 function getRelativeTimeParts(
-    date: DateInput,
-    options?: RelativeTimeOptions,
-): RelativeTimeParts;
+    params: GetRelativeTimePartsParams,
+): RelativeTimeParts | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name   | Type                 | Default                         | Meaning                                                                        |
-| ------ | -------------------- | ------------------------------- | ------------------------------------------------------------------------------ |
-| `now`  | `DateInput`          | `Date.now()`, read on each call | The instant to use instead of the current time.                                |
-| `unit` | `TimeUnit \| "auto"` | `"auto"`                        | Unit to use. `"auto"` picks one from the elapsed time and never chooses weeks. |
+| Name   | Type                 | Required | Default                          | Meaning                                                                              |
+| ------ | -------------------- | -------- | -------------------------------- | ------------------------------------------------------------------------------------ |
+| `date` | `DateInput`          | yes      |                                  | The date to describe.                                                                |
+| `unit` | `"auto" \| TimeUnit` | no       | `"auto"`                         | `"auto"` picks the unit from the elapsed time. Weeks are never chosen automatically. |
+| `now`  | `DateInput`          | no       | `Date.now()`, read on each call. | The instant to use instead of the current time.                                      |
 
 ## Examples
 
 ```ts
 import { getRelativeTimeParts } from "@sgx4u/date-time";
 
-getRelativeTimeParts("2026-01-01T03:00:00Z", {
+getRelativeTimeParts({
+    date: "2026-01-01T03:00:00Z",
     now: "2026-01-01T00:00:00Z",
 });
 // { value: 3, unit: "hour" }
 
-getRelativeTimeParts("2026-01-01T00:00:00Z", {
+getRelativeTimeParts({
+    date: "2026-01-01T00:00:00Z",
     now: "2026-01-01T03:00:00Z",
 });
 // { value: -3, unit: "hour" }
 
-getRelativeTimeParts("2026-01-08T00:00:00Z", {
+getRelativeTimeParts({
+    date: "2026-01-08T00:00:00Z",
     now: "2026-01-01T00:00:00Z",
     unit: "week",
 });

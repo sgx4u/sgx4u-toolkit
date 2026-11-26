@@ -1,4 +1,3 @@
-import type { Duration } from "../types/duration.types.js";
 import type { TimeOfDay } from "../types/time.types.js";
 import { clockMilliseconds, readDuration } from "../utils/duration.utils.js";
 import { rangeError } from "../utils/error.utils.js";
@@ -24,9 +23,7 @@ const millisecondsPerDay = 86_400_000;
 export function addToTimeOfDay({
     time,
     duration,
-}: AddToTimeOfDayParams):
-    | { time: TimeOfDay; dayOffset: number }
-    | undefined {
+}: AddToTimeOfDayParams): { time: TimeOfDay; dayOffset: number } | undefined {
     if (!isTimeOfDayValue(time)) {
         return undefined;
     }

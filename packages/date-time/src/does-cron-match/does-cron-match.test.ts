@@ -31,7 +31,7 @@ describe("doesCronMatch", () => {
                 timeZone: "UTC",
             }),
         ).toBe(false);
-        const parsed = parseCronExpression("0 9 * * *");
+        const parsed = parseCronExpression({ expression: "0 9 * * *" });
         expect(parsed).toBeDefined();
         if (parsed !== undefined) {
             expect(
@@ -81,28 +81,28 @@ describe("doesCronMatch", () => {
             doesCronMatch({
                 schedule: "30 1 * * *",
                 date: "2024-11-03T05:30:00Z",
-                zone,
+                ...zone,
             }),
         ).toBe(true);
         expect(
             doesCronMatch({
                 schedule: "30 1 * * *",
                 date: "2024-11-03T06:30:00Z",
-                zone,
+                ...zone,
             }),
         ).toBe(true);
         expect(
             doesCronMatch({
                 schedule: "30 2 * * *",
                 date: "2024-03-10T07:30:00Z",
-                zone,
+                ...zone,
             }),
         ).toBe(false);
         expect(
             doesCronMatch({
                 schedule: "30 3 * * *",
                 date: "2024-03-10T07:30:00Z",
-                zone,
+                ...zone,
             }),
         ).toBe(true);
     });
@@ -115,19 +115,12 @@ describe("doesCronMatch", () => {
                 timeZone: "UTC",
             }),
         ).toBe(false);
-        expect(() =>
+        expect(
             doesCronMatch({
                 schedule: "0 9 * * *",
                 date: "nope",
                 timeZone: "UTC",
             }),
-        ).toThrow(RangeError);
-        expect(() =>
-            doesCronMatch({
-                schedule: "0 9 * * *",
-                date: "nope",
-                timeZone: "UTC",
-            }),
-        ).toThrow('`date` must be a valid date; received "nope".');
+        ).toBe(false);
     });
 });

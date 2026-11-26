@@ -11,34 +11,32 @@ import { matchesDatePattern } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function matchesDatePattern(
-    value: string,
-    pattern: string,
-    options?: LocaleOptions,
-): boolean;
+function matchesDatePattern(params: MatchesDatePatternParams): boolean;
 ```
 
-## Options
+## Parameters
 
-| Name     | Type                          | Default                      | Meaning                                                       |
-| -------- | ----------------------------- | ---------------------------- | ------------------------------------------------------------- |
-| `locale` | `string \| readonly string[]` | The runtime's default locale | A BCP 47 language tag, or a list of tags in preference order. |
+| Name      | Type                          | Required | Default                       | Meaning                                                       |
+| --------- | ----------------------------- | -------- | ----------------------------- | ------------------------------------------------------------- |
+| `value`   | `string`                      | yes      |                               | The text to test.                                             |
+| `pattern` | `string`                      | yes      |                               | The CLDR-style pattern.                                       |
+| `locale`  | `string \| readonly string[]` | no       | The runtime's default locale. | A BCP 47 language tag, or a list of tags in preference order. |
 
 ## Examples
 
 ```ts
 import { matchesDatePattern } from "@sgx4u/date-time";
 
-matchesDatePattern("2026-11-26", "yyyy-MM-dd");
+matchesDatePattern({ value: "2026-11-26", pattern: "yyyy-MM-dd" });
 // true
 
-matchesDatePattern("26/11/2026", "dd/MM/yyyy");
+matchesDatePattern({ value: "26/11/2026", pattern: "dd/MM/yyyy" });
 // true
 
-matchesDatePattern("2026-02-30", "yyyy-MM-dd");
+matchesDatePattern({ value: "2026-02-30", pattern: "yyyy-MM-dd" });
 // false
 
-matchesDatePattern("11/26/2026", "yyyy-MM-dd");
+matchesDatePattern({ value: "11/26/2026", pattern: "yyyy-MM-dd" });
 // false
 ```
 

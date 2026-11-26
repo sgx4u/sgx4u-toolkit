@@ -34,31 +34,32 @@ import { addDuration } from "../index.js";
 describe("ages, now, and calendars", () => {
     it("counts units, calendar boundaries, and a duration that adds back", () => {
         expect(
-            differenceInUnit(
-                "2026-03-01T00:00:00Z",
-                "2026-01-31T00:00:00Z",
-                "month",
-                { timeZone: "UTC" },
-            ),
+            differenceInUnit({
+                later: "2026-03-01T00:00:00Z",
+                earlier: "2026-01-31T00:00:00Z",
+                unit: "month",
+                timeZone: "UTC",
+            }),
         ).toBe(1);
         expect(
-            differenceInCalendarUnit(
-                "2027-01-01T00:00:00Z",
-                "2026-12-31T00:00:00Z",
-                "year",
-                { timeZone: "UTC" },
-            ),
+            differenceInCalendarUnit({
+                later: "2027-01-01T00:00:00Z",
+                earlier: "2026-12-31T00:00:00Z",
+                unit: "year",
+                timeZone: "UTC",
+            }),
         ).toBe(1);
-        const duration = differenceAsDuration(
-            "2026-01-01T01:00:00Z",
-            "2026-01-01T00:00:00Z",
-            { timeZone: "UTC" },
-        );
+        const duration = differenceAsDuration({
+            later: "2026-01-01T01:00:00Z",
+            earlier: "2026-01-01T00:00:00Z",
+            timeZone: "UTC",
+        });
         expect(duration).toEqual({ hours: 1 });
+        expect(duration).toBeDefined();
         expect(
             addDuration({
                 date: "2026-01-01T00:00:00Z",
-                duration,
+                duration: duration!,
                 timeZone: "UTC",
             })?.toISOString(),
         ).toBe("2026-01-01T01:00:00.000Z");
@@ -94,10 +95,11 @@ describe("ages, now, and calendars", () => {
             }),
         ).toEqual({ years: 1, months: 1, days: 1 });
         expect(
-            getNextAnniversary("2000-02-29", {
+            getNextAnniversary({
+                date: "2000-02-29",
                 now: "2021-03-01T12:00:00Z",
                 timeZone: "UTC",
-            }).toISOString(),
+            })?.toISOString(),
         ).toBe("2021-03-01T00:00:00.000Z");
         expect(
             getCountdownParts({
@@ -117,22 +119,37 @@ describe("ages, now, and calendars", () => {
     it("answers questions about a supplied now", () => {
         const now = "2026-11-26T12:00:00Z";
         const zone = { timeZone: "UTC" as const, now };
-        expect(isToday("2026-11-26T01:00:00Z", zone)).toBe(true);
-        expect(isTomorrow("2026-11-27T00:00:00Z", zone)).toBe(true);
-        expect(isYesterday("2026-11-25T00:00:00Z", zone)).toBe(true);
-        expect(isPast("2020-01-01T00:00:00Z", { now })).toBe(true);
-        expect(isFuture("2027-01-01T00:00:00Z", { now })).toBe(true);
-        expect(isPast(now, { now })).toBe(false);
-        expect(isWeekend("2026-11-28T00:00:00Z", zone)).toBe(true);
-        expect(isWeekend("2026-11-26T00:00:00Z", zone)).toBe(false);
-        expect(isWithinNext("2026-11-26T18:00:00Z", { hours: 12 }, zone)).toBe(
+        expect(isToday({ date: "2026-11-26T01:00:00Z", ...zone })).toBe(true);
+        expect(isTomorrow({ date: "2026-11-27T00:00:00Z", ...zone })).toBe(
             true,
         );
-        expect(isWithinLast("2026-11-26T06:00:00Z", { hours: 12 }, zone)).toBe(
+        expect(isYesterday({ date: "2026-11-25T00:00:00Z", ...zone })).toBe(
             true,
+        );
+        expect(isPast({ date: "2020-01-01T00:00:00Z", now })).toBe(true);
+        expect(isFuture({ date: "2027-01-01T00:00:00Z", now })).toBe(true);
+        expect(isPast({ date: now, now })).toBe(false);
+        expect(isWeekend({ date: "2026-11-28T00:00:00Z", ...zone })).toBe(true);
+        expect(isWeekend({ date: "2026-11-26T00:00:00Z", ...zone })).toBe(
+            false,
         );
         expect(
-            getMillisecondsUntilNextUnit("hour", {
+            isWithinNext({
+                date: "2026-11-26T18:00:00Z",
+                duration: { hours: 12 },
+                ...zone,
+            }),
+        ).toBe(true);
+        expect(
+            isWithinLast({
+                date: "2026-11-26T06:00:00Z",
+                duration: { hours: 12 },
+                ...zone,
+            }),
+        ).toBe(true);
+        expect(
+            getMillisecondsUntilNextUnit({
+                unit: "hour",
                 now: "2026-01-01T00:00:00Z",
                 timeZone: "UTC",
             }),
@@ -155,16 +172,19 @@ describe("ages, now, and calendars", () => {
         expect(getISOWeeksInYear(2020)).toBe(53);
         expect(getISOWeeksInYear(2021)).toBe(52);
         expect(
-            getWeekOfYear("2026-01-01T00:00:00Z", {
+            getWeekOfYear({
+                date: "2026-01-01T00:00:00Z",
                 timeZone: "UTC",
                 weekStartsOn: 1,
                 minimumDaysInFirstWeek: 4,
             }),
         ).toBe(1);
         expect(
-            getWeekOfMonth("2026-11-26T00:00:00Z", { timeZone: "UTC" }),
+            getWeekOfMonth({ date: "2026-11-26T00:00:00Z", timeZone: "UTC" }),
         ).toBe(5);
-        expect(getQuarter("2026-11-26T00:00:00Z", { timeZone: "UTC" })).toBe(4);
+        expect(
+            getQuarter({ date: "2026-11-26T00:00:00Z", timeZone: "UTC" }),
+        ).toBe(4);
         expect(
             getFiscalYear({
                 date: "2026-04-01T00:00:00Z",
@@ -202,17 +222,22 @@ describe("ages, now, and calendars", () => {
             }),
         ).toThrow(RangeError);
         expect(getLocaleWeekInfo("en-US").firstDay).toBe(7);
-        const grid = createMonthCalendarGrid(2021, 2, {
+        const grid = createMonthCalendarGrid({
+            year: 2021,
+            month: 2,
             timeZone: "UTC",
             weekStartsOn: 1,
         });
-        expect(grid.weeks).toHaveLength(4);
-        expect(grid.weeks[0]?.days[0]?.isInMonth).toBe(true);
+        expect(grid).toBeDefined();
+        expect(grid!.weeks)?.toHaveLength(4);
+        expect(grid!.weeks[0]?.days[0]?.isInMonth).toBe(true);
         expect(
-            createMonthCalendarGrid(2026, 11, {
+            createMonthCalendarGrid({
+                year: 2026,
+                month: 11,
                 timeZone: "America/New_York",
                 fixedWeekCount: true,
-            }).weeks,
-        ).toHaveLength(6);
+            })?.weeks,
+        )?.toHaveLength(6);
     });
 });

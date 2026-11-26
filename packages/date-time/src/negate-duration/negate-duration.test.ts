@@ -28,21 +28,21 @@ describe("negateDuration", () => {
         expect(negateDuration({ milliseconds: 0 })).toEqual({
             milliseconds: 0,
         });
-        expect(negateDuration(negated)).toEqual(duration);
+        expect(negateDuration(negated!)).toEqual(duration);
     });
 
     it("throws when the value is not a single-sign duration", () => {
         expect(negateDuration({ days: 1, hours: -1 })).toBeUndefined();
         expect(negateDuration({ days: 1.5 })).toBeUndefined();
         expect(negateDuration({ hours: Number.NaN })).toBeUndefined();
-        expect(() =>
+        expect(
             negateDuration(null as unknown as { hours: number }),
-        ).toThrow(TypeError);
-        expect(() =>
+        ).toBeUndefined();
+        expect(
             negateDuration([] as unknown as { hours: number }),
-        ).toThrow(TypeError);
-        expect(() =>
+        ).toBeUndefined();
+        expect(
             negateDuration({ fortnights: 1 } as unknown as { hours: number }),
-        ).toThrow(RangeError);
+        ).toBeUndefined();
     });
 });

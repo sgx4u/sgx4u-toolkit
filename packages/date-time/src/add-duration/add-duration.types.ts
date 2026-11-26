@@ -1,3 +1,5 @@
+import type { DateInput } from "../types/date-input.types.js";
+import type { Duration } from "../types/duration.types.js";
 import type {
     DisambiguationOptions,
     Overflow,
@@ -15,4 +17,18 @@ export interface AddDurationOptions
      * @defaultValue `"constrain"`
      */
     overflow?: Overflow;
+}
+
+/**
+ * Fields for {@link addDuration}.
+ */
+export interface AddDurationParams extends AddDurationOptions {
+    /**
+     * The starting instant.
+     */
+    date: DateInput;
+    /**
+     * The length to add. Every field must share one sign.
+     */
+    duration: Duration;
 }

@@ -38,9 +38,9 @@ describe("compareTimesOfDay", () => {
                 },
             }),
         ).toBe(-1);
-        expect(
-            compareTimesOfDay({ first: endOfDay, second: midnight }),
-        ).toBe(1);
+        expect(compareTimesOfDay({ first: endOfDay, second: midnight })).toBe(
+            1,
+        );
         expect(
             compareTimesOfDay({ first: endOfDay, second: { ...endOfDay } }),
         ).toBe(0);

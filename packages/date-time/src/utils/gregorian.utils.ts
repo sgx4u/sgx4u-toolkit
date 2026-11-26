@@ -89,7 +89,7 @@ export function isRealGregorianDay(
  * @param millisecond - Millisecond from 0 through 999.
  * @returns The matching Unix time in milliseconds.
  */
-export function utcEpochMilliseconds(
+export function UTCEpochMilliseconds(
     year: number,
     monthIndex: number,
     day: number,
@@ -114,7 +114,7 @@ export function utcEpochMilliseconds(
  * @param epochMilliseconds - Unix time in milliseconds.
  * @returns The proleptic Gregorian fields in UTC.
  */
-export function readUtcParts(epochMilliseconds: number): GregorianParts {
+export function readUTCParts(epochMilliseconds: number): GregorianParts {
     const date = new Date(epochMilliseconds);
     return {
         year: date.getUTCFullYear(),
@@ -135,12 +135,12 @@ export function readUtcParts(epochMilliseconds: number): GregorianParts {
  * @param day - Day of the month.
  * @returns `1` for Monday through `7` for Sunday.
  */
-export function isoWeekdayNumber(
+export function ISOWeekdayNumber(
     year: number,
     month: number,
     day: number,
 ): Weekday {
-    const epochMilliseconds = utcEpochMilliseconds(
+    const epochMilliseconds = UTCEpochMilliseconds(
         year,
         month - 1,
         day,
@@ -172,9 +172,9 @@ export function addGregorianDays(
     dayCount: number,
 ): { year: number; month: number; day: number } {
     const epochMilliseconds =
-        utcEpochMilliseconds(year, month - 1, day, 0, 0, 0, 0) +
+        UTCEpochMilliseconds(year, month - 1, day, 0, 0, 0, 0) +
         dayCount * millisecondsPerDay;
-    const parts = readUtcParts(epochMilliseconds);
+    const parts = readUTCParts(epochMilliseconds);
     return { year: parts.year, month: parts.month, day: parts.day };
 }
 

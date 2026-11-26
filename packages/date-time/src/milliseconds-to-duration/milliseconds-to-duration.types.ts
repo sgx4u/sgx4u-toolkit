@@ -21,8 +21,7 @@ export interface MillisecondsToDurationOptions {
 /**
  * Fields for {@link millisecondsToDuration}.
  */
-export interface MillisecondsToDurationParams
-    extends MillisecondsToDurationOptions {
+export interface MillisecondsToDurationParams extends MillisecondsToDurationOptions {
     /**
      * The signed length in milliseconds.
      */

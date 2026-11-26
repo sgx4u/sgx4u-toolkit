@@ -7,9 +7,9 @@ import type {
 import { rangeError, typeError } from "./error.utils.js";
 import {
     addGregorianDays,
-    isoWeekdayNumber,
-    readUtcParts,
-    utcEpochMilliseconds,
+    ISOWeekdayNumber,
+    readUTCParts,
+    UTCEpochMilliseconds,
     type GregorianParts,
 } from "./gregorian.utils.js";
 
@@ -105,7 +105,7 @@ export function readDateParts(
         minute: wallClock.minute,
         second: wallClock.second,
         millisecond: wallClock.millisecond,
-        weekday: isoWeekdayNumber(
+        weekday: ISOWeekdayNumber(
             wallClock.year,
             wallClock.month,
             wallClock.day,
@@ -134,11 +134,11 @@ export function instantFromWallTime(
     disambiguation: Disambiguation,
 ): number {
     const fixedOffsetMinutes = parseFixedOffsetMinutes(timeZone);
-    const desiredEpochMilliseconds = utcEpochMilliseconds(
+    const desiredEpochMilliseconds = UTCEpochMilliseconds(
         parts.year,
-        parts.month - 1,
-        parts.day,
-        parts.hour,
+        (parts.month ?? 1) - 1,
+        parts.day ?? 1,
+        parts.hour ?? 0,
         parts.minute ?? 0,
         parts.second ?? 0,
         parts.millisecond ?? 0,
@@ -314,7 +314,7 @@ function offsetMillisecondsAt(
         return fixedOffsetMinutes * millisecondsPerMinute;
     }
     const wallClock = readWallClock(epochMilliseconds, timeZone);
-    const wallAsUtc = utcEpochMilliseconds(
+    const wallAsUTC = UTCEpochMilliseconds(
         wallClock.year,
         wallClock.month - 1,
         wallClock.day,
@@ -323,7 +323,7 @@ function offsetMillisecondsAt(
         wallClock.second,
         wallClock.millisecond,
     );
-    return wallAsUtc - epochMilliseconds;
+    return wallAsUTC - epochMilliseconds;
 }
 
 /**
@@ -337,7 +337,7 @@ function readWallClock(
 ): GregorianParts {
     const fixedOffsetMinutes = parseFixedOffsetMinutes(timeZone);
     if (fixedOffsetMinutes !== undefined) {
-        return readUtcParts(
+        return readUTCParts(
             epochMilliseconds + fixedOffsetMinutes * millisecondsPerMinute,
         );
     }

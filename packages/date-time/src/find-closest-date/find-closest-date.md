@@ -11,32 +11,32 @@ import { findClosestDate } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function findClosestDate(
-    target: DateInput,
-    candidates: readonly DateInput[],
-): Date | undefined;
+function findClosestDate(params: FindClosestDateParams): Date | undefined;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name         | Type                   | Required | Default | Meaning                                          |
+| ------------ | ---------------------- | -------- | ------- | ------------------------------------------------ |
+| `target`     | `DateInput`            | yes      |         | The instant to approach.                         |
+| `candidates` | `readonly DateInput[]` | yes      |         | The dates to search. The array is not reordered. |
 
 ## Examples
 
 ```ts
-findClosestDate("2024-01-01T12:00:00Z", [
-    "2024-01-01T00:00:00Z",
-    "2024-01-02T00:00:00Z",
-])?.toISOString();
+findClosestDate({
+    target: "2024-01-01T12:00:00Z",
+    candidates: ["2024-01-01T00:00:00Z", "2024-01-02T00:00:00Z"],
+})?.toISOString();
 // "2024-01-01T00:00:00.000Z"
 
-findClosestDate("2024-01-01T00:00:00Z", []);
+findClosestDate({ target: "2024-01-01T00:00:00Z", candidates: [] });
 // undefined
 ```
 
 ## Edge cases
 
-On a tie the earlier candidate wins. When two candidates are the same instant, the first one in the list wins. An empty list returns `undefined`. The array is not reordered. A value that is not a real date throws `RangeError`. `candidates` must be an array.
+On a tie the earlier candidate wins. When two candidates are the same instant, the first one in the list wins. An empty list returns `undefined`. The array is not reordered. A value that is not a real date returns `undefined`. `candidates` must be an array.
 
 ## Related
 

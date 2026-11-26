@@ -11,15 +11,15 @@ import { getLocaleDatePattern } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getLocaleDatePattern(params?: GetLocaleDatePatternParams): string;
+function getLocaleDatePattern(params: GetLocaleDatePatternParams): string;
 ```
 
-## Options
+## Parameters
 
-| Name     | Type                  | Required | Default     | Meaning              |
-| -------- | --------------------- | -------- | ----------- | -------------------- |
-| `locale` | `string \| string[]` | No       | Runtime     | BCP 47 tag or list.  |
-| `style`  | `"short" \| "medium"`| No       | `"short"`   | Date style to read.  |
+| Name     | Type                          | Required | Default                       | Meaning                                                       |
+| -------- | ----------------------------- | -------- | ----------------------------- | ------------------------------------------------------------- |
+| `style`  | `"short" \| "medium"`         | no       | `"short"`                     | The `Intl` date style used to discover the pattern.           |
+| `locale` | `string \| readonly string[]` | no       | The runtime's default locale. | A BCP 47 language tag, or a list of tags in preference order. |
 
 ## Examples
 
@@ -39,7 +39,6 @@ getLocaleDatePattern({ locale: "en-US", style: "medium" });
 ## Edge cases
 
 Invalid `locale` or `style` throws.
-
 
 ## Related
 

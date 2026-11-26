@@ -35,8 +35,7 @@ describe("duration rounding and interval stepping", () => {
         ]);
         expect(
             getIntervalDuration({
-                start: new Date(0),
-                end: new Date(90 * 60 * 1000),
+                interval: { start: new Date(0), end: new Date(90 * 60 * 1000) },
             }),
         ).toEqual({ hours: 1, minutes: 30 });
         expect(

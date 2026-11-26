@@ -11,37 +11,38 @@ import { isTomorrow } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function isTomorrow(
-    date: DateInput,
-    options?: NowOptions & TimeZoneOptions,
-): boolean;
+function isTomorrow(params: IsTomorrowParams): boolean;
 ```
 
-## Options
+## Parameters
 
-| Name       | Type        | Default                                 | Meaning                                                              |
-| ---------- | ----------- | --------------------------------------- | -------------------------------------------------------------------- |
-| `now`      | `DateInput` | `Date.now()`, read on each call         | The instant to use instead of the current time.                      |
-| `timeZone` | `string`    | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
+| Name       | Type        | Required | Default | Meaning                                         |
+| ---------- | ----------- | -------- | ------- | ----------------------------------------------- |
+| `date`     | `DateInput` | yes      |         | The date to test.                               |
+| `now`      | `DateInput` | no       |         | The instant to use instead of the current time. |
+| `timeZone` | `string`    | no       |         | Zone used to read calendar days.                |
 
 ## Examples
 
 ```ts
 import { isTomorrow } from "@sgx4u/date-time";
 
-isTomorrow("2026-11-27T00:00:00Z", {
+isTomorrow({
+    date: "2026-11-27T00:00:00Z",
     now: "2026-11-26T00:00:00Z",
     timeZone: "UTC",
 });
 // true
 
-isTomorrow("2026-11-27T20:00:00Z", {
+isTomorrow({
+    date: "2026-11-27T20:00:00Z",
     now: "2026-11-26T20:00:00Z",
     timeZone: "Asia/Kolkata",
 });
 // true
 
-isTomorrow("2026-11-26T20:00:00Z", {
+isTomorrow({
+    date: "2026-11-26T20:00:00Z",
     now: "2026-11-26T20:00:00Z",
     timeZone: "Asia/Kolkata",
 });
@@ -50,7 +51,7 @@ isTomorrow("2026-11-26T20:00:00Z", {
 
 ## Edge cases
 
-Tomorrow is the next calendar day in `timeZone`, not a 24-hour offset. An instant equal to `now` is today, not tomorrow. A value that is not a real date throws a `RangeError`.
+Tomorrow is the next calendar day in `timeZone`, not a 24-hour offset. An instant equal to `now` is today, not tomorrow. A value that is not a real date returns `undefined`.
 
 ## Related
 

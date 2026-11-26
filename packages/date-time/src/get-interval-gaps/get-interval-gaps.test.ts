@@ -12,18 +12,22 @@ describe("interval gaps and division", () => {
         expect(gaps?.[0]?.start.getTime()).toBe(5);
         expect(gaps?.[0]?.end.getTime()).toBe(10);
         expect(
-            divideInterval({ start: new Date(0), end: new Date(10) }, 2).map(
-                (part) => part.end.getTime(),
-            ),
+            divideInterval({
+                interval: { start: new Date(0), end: new Date(10) },
+                partCount: 2,
+            })?.map((part) => part.end.getTime()),
         ).toEqual([5, 10]);
         expect(() =>
-            divideInterval({ start: new Date(0), end: new Date(10) }, 0),
+            divideInterval({
+                interval: { start: new Date(0), end: new Date(10) },
+                partCount: 0,
+            }),
         ).toThrow(RangeError);
     });
 
     it("throws when intervals is not an array", () => {
-        expect(() =>
-            getIntervalGaps({ intervals: null as never }),
-        ).toThrow(TypeError);
+        expect(() => getIntervalGaps({ intervals: null as never })).toThrow(
+            TypeError,
+        );
     });
 });

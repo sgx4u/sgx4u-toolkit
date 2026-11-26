@@ -14,29 +14,31 @@ import { createDate } from "@sgx4u/date-time";
 function createDate(params: CreateDateParams): Date | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name             | Type                                               | Required | Default        | Meaning                                  |
-| ---------------- | -------------------------------------------------- | -------- | -------------- | ---------------------------------------- |
-| `year`           | `number`                                           | yes      |                | Gregorian year.                          |
-| `month`          | `number`                                           | no       | `1`            | Month from 1 through 12.                 |
-| `day`            | `number`                                           | no       | `1`            | Day of month.                            |
-| `hour`           | `number`                                           | no       | `0`            | Hour from 0 through 23.                  |
-| `minute`         | `number`                                           | no       | `0`            | Minute from 0 through 59.              |
-| `second`         | `number`                                           | no       | `0`            | Second from 0 through 59.              |
-| `millisecond`    | `number`                                           | no       | `0`            | Millisecond from 0 through 999.          |
-| `timeZone`       | `string`                                           | no       | System zone    | IANA name or fixed offset.               |
-| `disambiguation` | `"compatible" \| "earlier" \| "later" \| "reject"` | no       | `"compatible"` | How to treat a skipped or repeated time. |
+| Name             | Type             | Required | Default                                  | Meaning                                                   |
+| ---------------- | ---------------- | -------- | ---------------------------------------- | --------------------------------------------------------- |
+| `year`           | `number`         | yes      |                                          |                                                           |
+| `month`          | `number`         | no       |                                          |                                                           |
+| `day`            | `number`         | no       |                                          |                                                           |
+| `hour`           | `number`         | no       |                                          |                                                           |
+| `minute`         | `number`         | no       |                                          |                                                           |
+| `second`         | `number`         | no       |                                          |                                                           |
+| `millisecond`    | `number`         | no       |                                          |                                                           |
+| `timeZone`       | `string`         | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset        |
+| `disambiguation` | `Disambiguation` | no       | `"compatible"`                           | Which instant to use at a daylight-saving gap or overlap. |
 
 ## Examples
 
 ```ts
 createDate({
-    year: 2026,
-    month: 11,
-    day: 26,
-    hour: 9,
-    timeZone: "Asia/Kolkata",
+    parts: {
+        year: 2026,
+        month: 11,
+        day: 26,
+        hour: 9,
+        timeZone: "Asia/Kolkata",
+    },
 })?.toISOString();
 // "2026-11-26T03:30:00.000Z"
 ```

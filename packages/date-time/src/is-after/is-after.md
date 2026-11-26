@@ -11,12 +11,15 @@ import { isAfter } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function isAfter(params: { date: DateInput; reference: DateInput }): boolean;
+function isAfter(params: IsAfterParams): boolean;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name        | Type        | Required | Default | Meaning                   |
+| ----------- | ----------- | -------- | ------- | ------------------------- |
+| `date`      | `DateInput` | yes      |         | The date to test.         |
+| `reference` | `DateInput` | yes      |         | The date to test against. |
 
 ## Examples
 

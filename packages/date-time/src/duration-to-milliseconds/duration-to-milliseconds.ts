@@ -1,4 +1,3 @@
-import type { DateInput } from "../types/date-input.types.js";
 import { addDuration } from "../add-duration/add-duration.js";
 import { readDateInput } from "../utils/date-input.utils.js";
 import { readDuration } from "../utils/duration.utils.js";

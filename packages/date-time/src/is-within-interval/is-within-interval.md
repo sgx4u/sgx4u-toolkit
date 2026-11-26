@@ -11,33 +11,45 @@ import { isWithinInterval } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function isWithinInterval(date: DateInput, interval: Interval): boolean;
+function isWithinInterval(params: IsWithinIntervalParams): boolean;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name       | Type        | Required | Default | Meaning                 |
+| ---------- | ----------- | -------- | ------- | ----------------------- |
+| `date`     | `DateInput` | yes      |         | The date to test.       |
+| `interval` | `Interval`  | yes      |         | The half-open interval. |
 
 ## Examples
 
 ```ts
 import { isWithinInterval } from "@sgx4u/date-time";
 
-isWithinInterval("2026-01-01T12:00:00Z", {
-    start: new Date("2026-01-01T00:00:00Z"),
-    end: new Date("2026-01-02T00:00:00Z"),
+isWithinInterval({
+    date: "2026-01-01T12:00:00Z",
+    interval: {
+        start: new Date("2026-01-01T00:00:00Z"),
+        end: new Date("2026-01-02T00:00:00Z"),
+    },
 });
 // true
 
-isWithinInterval("2026-01-01T00:00:00Z", {
-    start: new Date("2026-01-01T00:00:00Z"),
-    end: new Date("2026-01-02T00:00:00Z"),
+isWithinInterval({
+    date: "2026-01-01T00:00:00Z",
+    interval: {
+        start: new Date("2026-01-01T00:00:00Z"),
+        end: new Date("2026-01-02T00:00:00Z"),
+    },
 });
 // true
 
-isWithinInterval("2026-01-02T00:00:00Z", {
-    start: new Date("2026-01-01T00:00:00Z"),
-    end: new Date("2026-01-02T00:00:00Z"),
+isWithinInterval({
+    date: "2026-01-02T00:00:00Z",
+    interval: {
+        start: new Date("2026-01-01T00:00:00Z"),
+        end: new Date("2026-01-02T00:00:00Z"),
+    },
 });
 // false
 ```

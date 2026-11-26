@@ -12,37 +12,40 @@ import { getMillisecondsUntilNextUnit } from "@sgx4u/date-time";
 
 ```ts
 function getMillisecondsUntilNextUnit(
-    unit: TimeUnit,
-    options?: NowOptions & TimeZoneOptions & WeekOptions,
-): number;
+    params: GetMillisecondsUntilNextUnitParams,
+): number | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name           | Type        | Default                                 | Meaning                                                              |
-| -------------- | ----------- | --------------------------------------- | -------------------------------------------------------------------- |
-| `now`          | `DateInput` | `Date.now()`, read on each call         | The instant to use instead of the current time.                      |
-| `timeZone`     | `string`    | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
-| `weekStartsOn` | `Weekday`   | `1`                                     | ISO weekday that starts the week. `1` is Monday and `7` is Sunday.   |
+| Name           | Type        | Required | Default                                  | Meaning                                                 |
+| -------------- | ----------- | -------- | ---------------------------------------- | ------------------------------------------------------- |
+| `unit`         | `TimeUnit`  | yes      |                                          | The boundary to wait for.                               |
+| `now`          | `DateInput` | no       | `Date.now()`, read on each call.         | The instant to use instead of the current time.         |
+| `timeZone`     | `string`    | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset      |
+| `weekStartsOn` | `Weekday`   | no       | `1`                                      | ISO weekday number that starts the week. `1` is Monday. |
 
 ## Examples
 
 ```ts
 import { getMillisecondsUntilNextUnit } from "@sgx4u/date-time";
 
-getMillisecondsUntilNextUnit("hour", {
+getMillisecondsUntilNextUnit({
+    unit: "hour",
     now: "2026-01-01T00:00:00Z",
     timeZone: "UTC",
 });
 // 3600000
 
-getMillisecondsUntilNextUnit("hour", {
+getMillisecondsUntilNextUnit({
+    unit: "hour",
     now: "2026-01-01T00:30:00Z",
     timeZone: "UTC",
 });
 // 1800000
 
-getMillisecondsUntilNextUnit("week", {
+getMillisecondsUntilNextUnit({
+    unit: "week",
     now: "2026-01-01T00:00:00Z",
     timeZone: "UTC",
     weekStartsOn: 1,

@@ -120,7 +120,9 @@ describe("getIntervalDuration", () => {
                 interval: { start: new Date(10), end: new Date(0) },
             }),
         ).toBeUndefined();
-        expect(getIntervalDuration({ interval: null as never })).toBeUndefined();
+        expect(
+            getIntervalDuration({ interval: null as never }),
+        ).toBeUndefined();
     });
 
     it("throws when the largest unit is invalid", () => {

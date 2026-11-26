@@ -12,7 +12,7 @@ describe("describeCronExpression", () => {
                 hourCycle: "h12",
             }),
         ).toBe("At 09:00 AM, Monday through Friday");
-        const parsed = parseCronExpression("0 9 * * 1-5");
+        const parsed = parseCronExpression({ expression: "0 9 * * 1-5" });
         expect(parsed).toBeDefined();
         if (parsed !== undefined) {
             expect(describeCronExpression({ schedule: parsed })).toBe(

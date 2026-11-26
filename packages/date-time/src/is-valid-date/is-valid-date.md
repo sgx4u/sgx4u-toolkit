@@ -14,9 +14,11 @@ import { isValidDate } from "@sgx4u/date-time";
 function isValidDate(value: unknown): boolean;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name    | Type      | Required | Default | Meaning                                                               |
+| ------- | --------- | -------- | ------- | --------------------------------------------------------------------- |
+| `value` | `unknown` | yes      |         | A `Date`, a millisecond timestamp, a date string, or any other value. |
 
 ## Examples
 

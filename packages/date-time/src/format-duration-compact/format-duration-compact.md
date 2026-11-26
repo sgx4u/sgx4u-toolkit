@@ -12,31 +12,31 @@ import { formatDurationCompact } from "@sgx4u/date-time";
 
 ```ts
 function formatDurationCompact(
-    duration: Duration | number,
-    options?: FormatDurationCompactOptions,
-): string;
+    params: FormatDurationCompactParams,
+): string | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name               | Type     | Default | Meaning                           |
-| ------------------ | -------- | ------- | --------------------------------- |
-| `maximumUnitCount` | `number` | `2`     | Maximum number of non-zero units. |
-| `separator`        | `string` | `" "`   | Text between units.               |
+| Name               | Type                 | Required | Default | Meaning                               |
+| ------------------ | -------------------- | -------- | ------- | ------------------------------------- |
+| `duration`         | `number \| Duration` | yes      |         | A duration or a millisecond count.    |
+| `maximumUnitCount` | `number`             | no       | `2`     | The maximum number of non-zero units. |
+| `separator`        | `string`             | no       | `" "`   | The text between units.               |
 
 ## Examples
 
 ```ts
-formatDurationCompact({ hours: 1, minutes: 30 });
+formatDurationCompact({ duration: { hours: 1, minutes: 30 } });
 // "1h 30m"
 
-formatDurationCompact(5_400_000);
+formatDurationCompact({ duration: 5_400_000 });
 // "1h 30m"
 
-formatDurationCompact({ days: 1, hours: 2, minutes: 3 });
+formatDurationCompact({ duration: { days: 1, hours: 2, minutes: 3 } });
 // "1d 2h"
 
-formatDurationCompact({ days: 366, hours: 1 }, { separator: ", " });
+formatDurationCompact({ duration: { days: 366, hours: 1 }, separator: ", " });
 // "366d, 1h"
 ```
 

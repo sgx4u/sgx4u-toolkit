@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { listRecurrenceOccurrences } from "../recurrence.js";
 
-function iso(dates: readonly Date[]): string[] {
-    return dates.map((date) => date.toISOString());
+function iso(dates: readonly Date[] | undefined): string[] {
+    return (dates ?? []).map((date) => date.toISOString());
 }
 
 const january = {
@@ -20,39 +20,52 @@ describe("listRecurrenceOccurrences", () => {
 
         expect(
             iso(
-                listRecurrenceOccurrences({ rule: rule, start: new Date("2026-11-26T00:00:00Z"), end: new Date("2026-11-30T00:00:00Z"), }),
+                listRecurrenceOccurrences({
+                    rule: rule,
+                    start: new Date("2026-11-26T00:00:00Z"),
+                    end: new Date("2026-11-30T00:00:00Z"),
+                }),
             ),
         ).toEqual(["2026-11-26T09:00:00.000Z", "2026-11-27T09:00:00.000Z"]);
         expect(
-            listRecurrenceOccurrences({ rule: rule, start: new Date("2026-11-26T09:00:00Z"), end: new Date("2026-11-26T09:00:00Z"), }),
+            listRecurrenceOccurrences({
+                rule: rule,
+                start: new Date("2026-11-26T09:00:00Z"),
+                end: new Date("2026-11-26T09:00:00Z"),
+            }),
         ).toEqual([]);
         expect(
             iso(
-                listRecurrenceOccurrences({ rule: rule, start: new Date("2026-11-27T09:00:00Z"), end: new Date("2026-11-27T09:00:00.001Z"), }),
+                listRecurrenceOccurrences({
+                    rule: rule,
+                    start: new Date("2026-11-27T09:00:00Z"),
+                    end: new Date("2026-11-27T09:00:00.001Z"),
+                }),
             ),
         ).toEqual(["2026-11-27T09:00:00.000Z"]);
         expect(
-            listRecurrenceOccurrences({ rule: rule, start: new Date("2026-11-26T09:00:00Z"), end: new Date("2026-11-26T09:00:00Z"),, limit: 5, }),
+            listRecurrenceOccurrences({
+                rule: rule,
+                start: new Date("2026-11-26T09:00:00Z"),
+                end: new Date("2026-11-26T09:00:00Z"),
+                limit: 5,
+            }),
         ).toEqual([]);
     });
 
     it("lands on leap day and the last day of a short month", () => {
         expect(
             iso(
-                listRecurrenceOccurrences(
-                    {
+                listRecurrenceOccurrences({
+                    rule: {
                         start: new Date("2024-01-31T00:00:00Z"),
                         frequency: "monthly",
                         byMonthDay: [-1],
                         count: 3,
                     },
-                    {
-                        between: {
-                            start: new Date("2024-01-01T00:00:00Z"),
-                            end: new Date("2024-04-01T00:00:00Z"),
-                        },
-                    },
-                ),
+                    start: new Date("2024-01-01T00:00:00Z"),
+                    end: new Date("2024-04-01T00:00:00Z"),
+                }),
             ),
         ).toEqual([
             "2024-01-31T00:00:00.000Z",
@@ -61,20 +74,16 @@ describe("listRecurrenceOccurrences", () => {
         ]);
         expect(
             iso(
-                listRecurrenceOccurrences(
-                    {
+                listRecurrenceOccurrences({
+                    rule: {
                         start: new Date("2023-01-31T00:00:00Z"),
                         frequency: "monthly",
                         byMonthDay: [-1],
                         count: 3,
                     },
-                    {
-                        between: {
-                            start: new Date("2023-01-01T00:00:00Z"),
-                            end: new Date("2023-04-01T00:00:00Z"),
-                        },
-                    },
-                ),
+                    start: new Date("2023-01-01T00:00:00Z"),
+                    end: new Date("2023-04-01T00:00:00Z"),
+                }),
             ),
         ).toEqual([
             "2023-01-31T00:00:00.000Z",
@@ -83,15 +92,16 @@ describe("listRecurrenceOccurrences", () => {
         ]);
         expect(
             iso(
-                listRecurrenceOccurrences(
-                    {
+                listRecurrenceOccurrences({
+                    rule: {
                         start: new Date("2024-01-30T00:00:00Z"),
                         frequency: "monthly",
                         byMonthDay: [30],
                         count: 4,
                     },
-                    { between: january },
-                ),
+                    start: january.start,
+                    end: january.end,
+                }),
             ),
         ).toEqual([
             "2024-01-30T00:00:00.000Z",
@@ -101,19 +111,15 @@ describe("listRecurrenceOccurrences", () => {
         ]);
         expect(
             iso(
-                listRecurrenceOccurrences(
-                    {
+                listRecurrenceOccurrences({
+                    rule: {
                         start: new Date("2024-02-29T00:00:00Z"),
                         frequency: "yearly",
                         count: 5,
                     },
-                    {
-                        between: {
-                            start: new Date("2024-01-01T00:00:00Z"),
-                            end: new Date("2029-01-01T00:00:00Z"),
-                        },
-                    },
-                ),
+                    start: new Date("2024-01-01T00:00:00Z"),
+                    end: new Date("2029-01-01T00:00:00Z"),
+                }),
             ),
         ).toEqual([
             "2024-02-29T00:00:00.000Z",
@@ -127,20 +133,16 @@ describe("listRecurrenceOccurrences", () => {
     it("keeps 09:00 local time across the New York spring-forward", () => {
         expect(
             iso(
-                listRecurrenceOccurrences(
-                    {
+                listRecurrenceOccurrences({
+                    rule: {
                         start: new Date("2024-03-09T14:00:00Z"),
                         timeZone: "America/New_York",
                         frequency: "daily",
                         count: 3,
                     },
-                    {
-                        between: {
-                            start: new Date("2024-03-09T00:00:00Z"),
-                            end: new Date("2024-03-12T00:00:00Z"),
-                        },
-                    },
-                ),
+                    start: new Date("2024-03-09T00:00:00Z"),
+                    end: new Date("2024-03-12T00:00:00Z"),
+                }),
             ),
         ).toEqual([
             "2024-03-09T14:00:00.000Z",
@@ -159,7 +161,11 @@ describe("listRecurrenceOccurrences", () => {
 
         expect(
             iso(
-                listRecurrenceOccurrences({ rule: rule, start: new Date("2026-11-26T00:00:00Z"), end: new Date("2026-11-30T00:00:00Z"), }),
+                listRecurrenceOccurrences({
+                    rule: rule,
+                    start: new Date("2026-11-26T00:00:00Z"),
+                    end: new Date("2026-11-30T00:00:00Z"),
+                }),
             ),
         ).toEqual([
             "2026-11-26T09:00:00.000Z",
@@ -179,22 +185,42 @@ describe("listRecurrenceOccurrences", () => {
         };
 
         expect(() =>
-            listRecurrenceOccurrences(rule, { between, limit: 3 }),
+            listRecurrenceOccurrences({
+                rule,
+                start: between.start,
+                end: between.end,
+                limit: 3,
+            }),
         ).toThrow(RangeError);
         expect(() =>
-            listRecurrenceOccurrences(rule, { between, limit: 0 }),
+            listRecurrenceOccurrences({
+                rule,
+                start: between.start,
+                end: between.end,
+                limit: 0,
+            }),
         ).toThrow(RangeError);
         expect(() =>
-            listRecurrenceOccurrences(rule, { between, limit: 1.5 }),
+            listRecurrenceOccurrences({
+                rule,
+                start: between.start,
+                end: between.end,
+                limit: 1.5,
+            }),
         ).toThrow(RangeError);
         expect(() =>
-            listRecurrenceOccurrences({ rule: rule, start: new Date("2026-12-01T00:00:00Z"), end: new Date("2026-11-01T00:00:00Z"), }),
+            listRecurrenceOccurrences({
+                rule: rule,
+                start: new Date("2026-12-01T00:00:00Z"),
+                end: new Date("2026-11-01T00:00:00Z"),
+            }),
         ).toThrow(RangeError);
         expect(() =>
-            listRecurrenceOccurrences(
-                { ...rule, timeZone: "Mars/Base" },
-                { between },
-            ),
+            listRecurrenceOccurrences({
+                rule: { ...rule, timeZone: "Mars/Base" },
+                start: between.start,
+                end: between.end,
+            }),
         ).toThrow(RangeError);
     });
 });

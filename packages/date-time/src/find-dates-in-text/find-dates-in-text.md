@@ -11,24 +11,23 @@ import { findDatesInText } from "@sgx4u/date-time/natural-language";
 ## Signature
 
 ```ts
-function findDatesInText(
-    text: string,
-    options?: ParseNaturalDateOptions,
-): FoundDate[];
+function findDatesInText(params: FindDatesInTextParams): FoundDate[];
 ```
 
-## Options
+## Parameters
 
-| Name           | Type        | Default      | Meaning                                                |
-| -------------- | ----------- | ------------ | ------------------------------------------------------ |
-| `now`          | `DateInput` | Current time | Instant used to resolve relative phrases.              |
-| `timeZone`     | `string`    | System zone  | Zone used for calendar dates in the text.              |
-| `preferFuture` | `boolean`   | `true`       | A month and day with no year uses the next occurrence. |
+| Name           | Type        | Required | Default                                  | Meaning                                                             |
+| -------------- | ----------- | -------- | ---------------------------------------- | ------------------------------------------------------------------- |
+| `text`         | `string`    | yes      |                                          | The text to scan.                                                   |
+| `preferFuture` | `boolean`   | no       | `true`                                   | When `true`, month-day phrases without a year choose the next date. |
+| `now`          | `DateInput` | no       | `Date.now()`, read on each call.         | The instant to use instead of the current time.                     |
+| `timeZone`     | `string`    | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset                  |
 
 ## Examples
 
 ```ts
-const tomorrow = findDatesInText("See you tomorrow", {
+const tomorrow = findDatesInText({
+    text: "See you tomorrow",
     now: "2026-11-26T12:00:00Z",
     timeZone: "UTC",
 });
@@ -36,13 +35,15 @@ tomorrow[0]?.text; // "tomorrow"
 tomorrow[0]?.index; // 8
 tomorrow[0]?.start.toISOString(); // "2026-11-27T00:00:00.000Z"
 
-findDatesInText("Dec 25", {
+findDatesInText({
+    text: "Dec 25",
     now: "2026-12-26T00:00:00Z",
     timeZone: "UTC",
 })[0]?.start.toISOString();
 // "2027-12-25T00:00:00.000Z"
 
-findDatesInText("Dec 25", {
+findDatesInText({
+    text: "Dec 25",
     now: "2026-12-26T00:00:00Z",
     timeZone: "UTC",
     preferFuture: false,

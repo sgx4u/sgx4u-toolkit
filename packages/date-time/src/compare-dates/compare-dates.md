@@ -11,17 +11,15 @@ import { compareDates } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function compareDates(
-    params: CompareDatesParams,
-): -1 | 0 | 1 | undefined;
+function compareDates(params: CompareDatesParams): -1 | 0 | 1 | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name     | Type        | Required | Default | Meaning           |
-| -------- | ----------- | -------- | ------- | ----------------- |
-| `first`  | `DateInput` | yes      |         | The first date.   |
-| `second` | `DateInput` | yes      |         | The second date.  |
+| Name     | Type        | Required | Default | Meaning          |
+| -------- | ----------- | -------- | ------- | ---------------- |
+| `first`  | `DateInput` | yes      |         | The first date.  |
+| `second` | `DateInput` | yes      |         | The second date. |
 
 ## Examples
 

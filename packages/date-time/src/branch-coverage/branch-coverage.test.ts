@@ -24,11 +24,13 @@ const now = "2026-06-15T12:00:00Z";
 
 describe("branch coverage", () => {
     it("formats the CLDR tokens and both season methods", () => {
-        const text = formatDate(
-            now,
-            "G GGGG y yy yyyy M MM MMM MMMM E EEE EEEE Q QQ QQQ QQQQ d dd H HH m mm s ss S SS SSS",
-            { ...utc, locale: "en-US" },
-        );
+        const text = formatDate({
+            date: now,
+            pattern:
+                "G GGGG y yy yyyy M MM MMM MMMM E EEE EEEE Q QQ QQQ QQQQ d dd H HH m mm s ss S SS SSS",
+            ...utc,
+            locale: "en-US",
+        });
         expect(text).toContain("2026");
         expect(text).toContain("June");
         const patterns = [
@@ -66,151 +68,172 @@ describe("branch coverage", () => {
         ];
         for (const pattern of patterns) {
             expect(
-                formatDate(now, pattern, {
+                formatDate({
+                    date: now,
+                    pattern,
                     timeZone: "Asia/Kolkata",
                     locale: "en-US",
-                }).length,
+                })!.length,
             ).toBeGreaterThan(0);
         }
-        expect(formatDate(now, "XXX", utc)).toBe("Z");
+        expect(formatDate({ date: now, pattern: "XXX", ...utc })).toBe("Z");
         expect(
-            formatDate("2026-01-15T17:00:00Z", "xxx", {
+            formatDate({
+                date: "2026-01-15T17:00:00Z",
+                pattern: "xxx",
                 timeZone: "America/New_York",
             }),
         ).toContain("-");
-        expect(() => formatDate(now, "ZZ", utc)).toThrow(RangeError);
-        expect(getSeason(now, { ...utc, method: "astronomical" })).toBe(
+        expect(() => formatDate({ date: now, pattern: "ZZ", ...utc })).toThrow(
+            RangeError,
+        );
+        expect(getSeason({ date: now, ...utc, method: "astronomical" })).toBe(
             "spring",
         );
         expect(
-            getSeason("2026-01-15T00:00:00Z", {
+            getSeason({
+                date: "2026-01-15T00:00:00Z",
                 ...utc,
                 method: "astronomical",
                 hemisphere: "southern",
             }),
         ).toBe("summer");
         expect(
-            getSeason("2026-08-01T00:00:00Z", {
+            getSeason({
+                date: "2026-08-01T00:00:00Z",
                 ...utc,
                 method: "astronomical",
             }),
         ).toBe("summer");
         expect(
-            getSeason("2026-10-01T00:00:00Z", {
+            getSeason({
+                date: "2026-10-01T00:00:00Z",
                 ...utc,
                 method: "astronomical",
             }),
         ).toBe("autumn");
         expect(
-            getSeason("2026-12-25T00:00:00Z", {
+            getSeason({
+                date: "2026-12-25T00:00:00Z",
                 ...utc,
                 method: "astronomical",
             }),
         ).toBe("winter");
         expect(() =>
-            getSeason(now, { hemisphere: "east" as "northern" }),
+            getSeason({ date: now, hemisphere: "east" as "northern" }),
         ).toThrow(RangeError);
     });
 
     it("rounds durations up, down, and by calendar unit", () => {
         expect(
-            roundDuration(
-                { minutes: 20 },
-                { smallestUnit: "hour", mode: "up" },
-            ),
+            roundDuration({
+                duration: { minutes: 20 },
+                smallestUnit: "hour",
+                mode: "up",
+            }),
         ).toEqual({
             hours: 1,
         });
         expect(
-            roundDuration(
-                { minutes: -90 },
-                { smallestUnit: "hour", mode: "down" },
-            ),
+            roundDuration({
+                duration: { minutes: -90 },
+                smallestUnit: "hour",
+                mode: "down",
+            }),
         ).toEqual({ hours: -1 });
         expect(
-            roundDuration(
-                { days: 40 },
-                {
-                    smallestUnit: "month",
-                    relativeTo: "2026-01-15T00:00:00Z",
-                    timeZone: "UTC",
-                },
-            ).months,
+            roundDuration({
+                duration: { days: 40 },
+                smallestUnit: "month",
+                relativeTo: "2026-01-15T00:00:00Z",
+                timeZone: "UTC",
+            })?.months,
         ).toBeGreaterThan(0);
         expect(
-            roundDuration(
-                { days: 400 },
-                {
-                    smallestUnit: "year",
-                    relativeTo: "2026-01-01T00:00:00Z",
-                    timeZone: "UTC",
-                },
-            ).years,
+            roundDuration({
+                duration: { days: 400 },
+                smallestUnit: "year",
+                relativeTo: "2026-01-01T00:00:00Z",
+                timeZone: "UTC",
+            })?.years,
         ).toBe(1);
         expect(
-            roundDuration(
-                { days: 100 },
-                {
-                    smallestUnit: "quarter",
-                    relativeTo: "2026-01-01T00:00:00Z",
-                    timeZone: "UTC",
-                },
-            ).months,
+            roundDuration({
+                duration: { days: 100 },
+                smallestUnit: "quarter",
+                relativeTo: "2026-01-01T00:00:00Z",
+                timeZone: "UTC",
+            })?.months,
         ).toBeGreaterThan(0);
         expect(() =>
-            roundDuration({ days: 1 }, { smallestUnit: "month" }),
+            roundDuration({ duration: { days: 1 }, smallestUnit: "month" }),
         ).toThrow(RangeError);
     });
 
     it("parses cron marks and recurrence exclusions", () => {
-        expect(parseCronExpression("0 0 L * *")?.lastDayOfMonth).toBe(true);
-        expect(parseCronExpression("0 0 15W * *")?.nearestWeekdayToDay).toBe(
-            15,
-        );
         expect(
-            parseCronExpression("0 0 * * 5L")?.lastWeekdayOfWeekInMonth,
+            parseCronExpression({ expression: "0 0 L * *" })?.lastDayOfMonth,
+        ).toBe(true);
+        expect(
+            parseCronExpression({ expression: "0 0 15W * *" })
+                ?.nearestWeekdayToDay,
+        ).toBe(15);
+        expect(
+            parseCronExpression({ expression: "0 0 * * 5L" })
+                ?.lastWeekdayOfWeekInMonth,
         ).toEqual([5]);
-        expect(parseCronExpression("0 0 * * 1#2")?.nthWeekdayOfMonth).toEqual([
-            { dayOfWeek: 1, occurrence: 2 },
-        ]);
-        expect(parseCronExpression("@hourly")?.minutes).toEqual([0]);
-        expect(parseCronExpression("*/15 9 * JAN MON")?.minutes.length).toBe(4);
-        expect(parseCronExpression("@reboot")).toBeUndefined();
-        expect(parseCronExpression("60 * * * *")).toBeUndefined();
-        expect(parseCronExpression("0 0 1-5/2 * *")?.daysOfMonth).toEqual([
-            1, 3, 5,
-        ]);
-        expect(parseCronExpression("0 0 LW * *")?.lastWeekdayOfMonth).toBe(
-            true,
-        );
-        expect(parseCronExpression("0 0 L-3 * *")?.lastDayOfMonthOffset).toBe(
-            3,
+        expect(
+            parseCronExpression({ expression: "0 0 * * 1#2" })
+                ?.nthWeekdayOfMonth,
+        ).toEqual([{ dayOfWeek: 1, occurrence: 2 }]);
+        expect(parseCronExpression({ expression: "@hourly" })?.minutes).toEqual(
+            [0],
         );
         expect(
-            parseCronExpression("0 0 * * ?", { seconds: "none" })?.daysOfWeek,
+            parseCronExpression({ expression: "*/15 9 * JAN MON" })?.minutes
+                .length,
+        ).toBe(4);
+        expect(parseCronExpression({ expression: "@reboot" })).toBeUndefined();
+        expect(
+            parseCronExpression({ expression: "60 * * * *" }),
+        ).toBeUndefined();
+        expect(
+            parseCronExpression({ expression: "0 0 1-5/2 * *" })?.daysOfMonth,
+        ).toEqual([1, 3, 5]);
+        expect(
+            parseCronExpression({ expression: "0 0 LW * *" })
+                ?.lastWeekdayOfMonth,
+        ).toBe(true);
+        expect(
+            parseCronExpression({ expression: "0 0 L-3 * *" })
+                ?.lastDayOfMonthOffset,
+        ).toBe(3);
+        expect(
+            parseCronExpression({ expression: "0 0 * * ?", seconds: "none" })
+                ?.daysOfWeek,
         ).toBe("any");
         expect(
-            describeCronExpression("0 0 * * *", { hourCycle: "h23" }),
+            describeCronExpression({ schedule: "0 0 * * *", hourCycle: "h23" }),
         ).toContain("00:00");
         expect(
-            getNextCronRuns("0 0 L * *", {
+            (getNextCronRuns({
+                schedule: "0 0 L * *",
                 now,
                 timeZone: "UTC",
                 count: 1,
-            })[0]?.getUTCDate(),
+            }) ?? [])[0]?.getUTCDate(),
         ).toBe(30);
         const rule = parseRecurrenceRule(
             "DTSTART:20260131T000000Z\nRRULE:FREQ=MONTHLY;BYMONTHDAY=-1;COUNT=3\nEXDATE:20260131T000000Z",
         );
         expect(rule).toBeDefined();
         if (rule !== undefined) {
-            const dates = listRecurrenceOccurrences(rule, {
-                between: {
-                    start: new Date("2026-01-01T00:00:00Z"),
-                    end: new Date("2026-06-01T00:00:00Z"),
-                },
+            const dates = listRecurrenceOccurrences({
+                rule,
+                start: new Date("2026-01-01T00:00:00Z"),
+                end: new Date("2026-06-01T00:00:00Z"),
             });
-            expect(dates.length).toBeGreaterThan(0);
+            expect(dates?.length).toBeGreaterThan(0);
             expect(dates[0]?.toISOString()).not.toBe(
                 "2026-01-31T00:00:00.000Z",
             );
@@ -219,40 +242,41 @@ describe("branch coverage", () => {
 
     it("covers overnight hours, sort order, and setDateParts overflow", () => {
         expect(
-            isOpenAt(
-                "2026-11-27T01:00:00Z",
-                { hours: { 4: [{ start: "22:00", end: "02:00" }] } },
-                utc,
-            ),
+            isOpenAt({
+                date: "2026-11-27T01:00:00Z",
+                schedule: { hours: { 4: [{ start: "22:00", end: "02:00" }] } },
+                ...utc,
+            }),
         ).toBe(true);
         expect(
-            addBusinessHours(
-                "2026-11-26T11:00:00Z",
-                { hours: -1 },
-                utc,
-            ).toISOString(),
+            addBusinessHours({
+                date: "2026-11-26T11:00:00Z",
+                duration: { hours: -1 },
+                ...utc,
+            })?.toISOString(),
         ).toBe("2026-11-26T10:00:00.000Z");
-        const sorted = sortDates(
-            ["2026-01-02T00:00:00Z", "2026-01-01T00:00:00Z"],
-            { order: "descending" },
-        );
-        expect(sorted[0]?.toISOString()).toBe("2026-01-02T00:00:00.000Z");
+        const sorted = sortDates({
+            dates: ["2026-01-02T00:00:00Z", "2026-01-01T00:00:00Z"],
+            order: "descending",
+        });
+        expect(sorted?.[0]?.toISOString()).toBe("2026-01-02T00:00:00.000Z");
         expect(() =>
-            setDateParts(
-                "2026-01-31T00:00:00Z",
-                { month: 2, day: 31 },
-                { ...utc, overflow: "reject" },
-            ),
+            setDateParts({
+                date: "2026-01-31T00:00:00Z",
+                parts: { month: 2, day: 31 },
+                ...utc,
+                overflow: "reject",
+            }),
         ).toThrow(RangeError);
         expect(
-            parseNaturalDate("last Monday", { now, ...utc })?.getUTCDay(),
+            parseNaturalDate({ text: "last Monday", now, ...utc })?.getUTCDay(),
         ).toBe(1);
-        expect(parseNaturalDate("3 weeks ago", { now, ...utc })).toBeInstanceOf(
-            Date,
-        );
-        expect(parseNaturalDate("noon", { now, ...utc })?.toISOString()).toBe(
-            "2026-06-15T12:00:00.000Z",
-        );
+        expect(
+            parseNaturalDate({ text: "3 weeks ago", now, ...utc }),
+        ).toBeInstanceOf(Date);
+        expect(
+            parseNaturalDate({ text: "noon", now, ...utc })?.toISOString(),
+        ).toBe("2026-06-15T12:00:00.000Z");
         for (const expression of [
             "",
             "1",
@@ -269,7 +293,7 @@ describe("branch coverage", () => {
             "0 0 1W * *",
             "0 0 * FEB-APR MON-WED",
         ]) {
-            parseCronExpression(expression);
+            parseCronExpression({ expression });
         }
         for (const text of [
             "not a rule",
@@ -285,11 +309,10 @@ describe("branch coverage", () => {
         ]) {
             const parsed = parseRecurrenceRule(text);
             if (parsed !== undefined) {
-                listRecurrenceOccurrences(parsed, {
-                    between: {
-                        start: new Date("2026-01-01T00:00:00Z"),
-                        end: new Date("2026-04-01T00:00:00Z"),
-                    },
+                listRecurrenceOccurrences({
+                    rule: parsed,
+                    start: new Date("2026-01-01T00:00:00Z"),
+                    end: new Date("2026-04-01T00:00:00Z"),
                     limit: 5,
                 });
             }

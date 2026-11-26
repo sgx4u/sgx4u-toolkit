@@ -16,17 +16,17 @@ describe("isFuture", () => {
     });
 
     it("rejects a date that is not real", () => {
-        expect(() => isFuture({ date: "nope", now })).toThrow(RangeError);
-        expect(() => isFuture({ date: "nope", now })).toThrow("`date`");
-        expect(() => isFuture({ date: null as never, now })).toThrow(TypeError);
-        expect(() => isFuture({ date: null as never, now })).toThrow("`date`");
-        expect(() => isFuture({ date: "2027-01-01T00:00:00Z", now: "nope" })).toThrow(
-            "`now`",
+        expect(isFuture({ date: "nope", now })).toBe(false);
+        expect(isFuture({ date: null as never, now })).toBe(false);
+        expect(isFuture({ date: "2027-01-01T00:00:00Z", now: "nope" })).toBe(
+            false,
         );
     });
 
     it("compares instants with the supplied now", () => {
-        expect(isFuture({ date: { date: new Date(now }).getTime() + 1, now })).toBe(true);
-        expect(isFuture({ date: { date: new Date(now }), now })).toBe(false);
+        expect(isFuture({ date: new Date(now)?.getTime() + 1, now })).toBe(
+            true,
+        );
+        expect(isFuture({ date: new Date(now), now })).toBe(false);
     });
 });

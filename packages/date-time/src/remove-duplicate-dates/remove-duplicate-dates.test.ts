@@ -17,6 +17,6 @@ describe("removeDuplicateDates", () => {
             "2024-06-15T01:00:00.000Z",
             "2024-06-16T00:00:00.000Z",
         ]);
-        expect(dates).toHaveLength(3);
+        expect(dates)?.toHaveLength(3);
     });
 });

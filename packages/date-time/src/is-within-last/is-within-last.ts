@@ -68,7 +68,9 @@ export function isWithinLast({
         return false;
     }
     const current =
-        now === undefined ? resolveNow(undefined, zone) : readDateInput(now, zone);
+        now === undefined
+            ? resolveNow(undefined, zone)
+            : readDateInput(now, zone);
     if (current === undefined) {
         return false;
     }

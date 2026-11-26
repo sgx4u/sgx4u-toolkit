@@ -37,7 +37,9 @@ export function getNextAnniversary({
         return undefined;
     }
     const reference =
-        now === undefined ? resolveNow(undefined, zone) : readDateInput(now, zone);
+        now === undefined
+            ? resolveNow(undefined, zone)
+            : readDateInput(now, zone);
     if (reference === undefined) {
         return undefined;
     }

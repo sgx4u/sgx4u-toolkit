@@ -11,35 +11,33 @@ import { parseNaturalDate } from "@sgx4u/date-time/natural-language";
 ## Signature
 
 ```ts
-function parseNaturalDate(
-    text: string,
-    options?: ParseNaturalDateOptions,
-): Date | undefined;
+function parseNaturalDate(params: ParseNaturalDateParams): Date | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name           | Type        | Default      | Meaning                                                      |
-| -------------- | ----------- | ------------ | ------------------------------------------------------------ |
-| `now`          | `DateInput` | `Date.now()` | Instant treated as the current time.                         |
-| `timeZone`     | `string`    | System zone  | Zone used for calendar phrases and clock times.              |
-| `preferFuture` | `boolean`   | `true`       | A month and day with no year resolve to the next occurrence. |
+| Name           | Type        | Required | Default                                  | Meaning                                                      |
+| -------------- | ----------- | -------- | ---------------------------------------- | ------------------------------------------------------------ |
+| `text`         | `string`    | yes      |                                          | The English phrase.                                          |
+| `preferFuture` | `boolean`   | no       | `true`                                   | A month and day with no year resolve to the next occurrence. |
+| `now`          | `DateInput` | no       | `Date.now()`, read on each call.         | The instant to use instead of the current time.              |
+| `timeZone`     | `string`    | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset           |
 
 ## Examples
 
 ```ts
 const now = { now: "2026-11-26T12:00:00Z", timeZone: "UTC" };
 
-parseNaturalDate("tomorrow", now)?.toISOString();
+parseNaturalDate({ text: "tomorrow", ...now })?.toISOString();
 // "2026-11-27T00:00:00.000Z"
 
-parseNaturalDate("in 3 days", now)?.toISOString();
+parseNaturalDate({ text: "in 3 days", ...now })?.toISOString();
 // "2026-11-29T12:00:00.000Z"
 
-parseNaturalDate("next Friday at 4pm", now)?.toISOString();
+parseNaturalDate({ text: "next Friday at 4pm", ...now })?.toISOString();
 // "2026-12-04T16:00:00.000Z"
 
-parseNaturalDate("not a date", now);
+parseNaturalDate({ text: "not a date", ...now });
 // undefined
 ```
 

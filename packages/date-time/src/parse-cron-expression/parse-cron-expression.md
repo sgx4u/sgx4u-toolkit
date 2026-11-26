@@ -12,30 +12,30 @@ import { parseCronExpression } from "@sgx4u/date-time/cron";
 
 ```ts
 function parseCronExpression(
-    expression: string,
-    options?: ParseCronExpressionOptions,
+    params: ParseCronExpressionParams,
 ): CronSchedule | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name      | Type                                 | Default      | Meaning                                                             |
-| --------- | ------------------------------------ | ------------ | ------------------------------------------------------------------- |
-| `seconds` | `"optional" \| "required" \| "none"` | `"optional"` | Whether a leading seconds field is allowed, required, or forbidden. |
+| Name         | Type                                 | Required | Default      | Meaning                                                            |
+| ------------ | ------------------------------------ | -------- | ------------ | ------------------------------------------------------------------ |
+| `expression` | `string`                             | yes      |              | The cron text.                                                     |
+| `seconds`    | `"none" \| "optional" \| "required"` | no       | `"optional"` | `"optional"` accepts five or six fields. `"required"` accepts six. |
 
 ## Examples
 
 ```ts
-parseCronExpression("0 9 * * 1-5")?.hours;
+parseCronExpression({ expression: "0 9 * * 1-5" })?.hours;
 // [9]
 
-parseCronExpression("@daily")?.hours;
+parseCronExpression({ expression: "@daily" })?.hours;
 // [0]
 
-parseCronExpression("0 9 * * 1-5", { seconds: "required" });
+parseCronExpression({ expression: "0 9 * * 1-5", seconds: "required" });
 // undefined
 
-parseCronExpression("@reboot");
+parseCronExpression({ expression: "@reboot" });
 // undefined
 ```
 

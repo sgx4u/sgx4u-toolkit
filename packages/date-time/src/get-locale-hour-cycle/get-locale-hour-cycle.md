@@ -14,9 +14,11 @@ import { getLocaleHourCycle } from "@sgx4u/date-time";
 function getLocaleHourCycle(locale?: string): "h11" | "h12" | "h23" | "h24";
 ```
 
-## Options
+## Parameters
 
-Optional positional `locale`; omit for the runtime default.
+| Name     | Type     | Required | Default | Meaning                                          |
+| -------- | -------- | -------- | ------- | ------------------------------------------------ |
+| `locale` | `string` | no       |         | A BCP 47 tag. Omit it to use the runtime locale. |
 
 ## Examples
 
@@ -36,7 +38,6 @@ getLocaleHourCycle("de");
 ## Edge cases
 
 An invalid `locale` throws.
-
 
 ## Related
 

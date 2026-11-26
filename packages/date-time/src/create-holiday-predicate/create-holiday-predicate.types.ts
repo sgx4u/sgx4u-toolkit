@@ -16,8 +16,7 @@ export interface CreateHolidayPredicateOptions extends TimeZoneOptions {
 /**
  * Fields for {@link createHolidayPredicate}.
  */
-export interface CreateHolidayPredicateParams
-    extends CreateHolidayPredicateOptions {
+export interface CreateHolidayPredicateParams extends CreateHolidayPredicateOptions {
     /**
      * The holiday rules.
      */

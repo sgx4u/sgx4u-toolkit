@@ -77,8 +77,8 @@ describe("findDatesInText", () => {
         expect(() => findDatesInText({ text: 1 as unknown as string })).toThrow(
             "`text` must be a string; received 1.",
         );
-        expect(() =>
+        expect(
             findDatesInText({ text: "tomorrow", now: "nope", timeZone: "UTC" }),
-        ).toThrow(RangeError);
+        ).toEqual([]);
     });
 });

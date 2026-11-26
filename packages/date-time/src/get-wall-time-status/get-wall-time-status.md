@@ -11,37 +11,37 @@ import { getWallTimeStatus } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getWallTimeStatus(
-    parts: DatePartsInput,
-    timeZone: string,
-): WallTimeStatus;
+function getWallTimeStatus(params: GetWallTimeStatusParams): WallTimeStatus;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name       | Type             | Required | Default | Meaning                                                         |
+| ---------- | ---------------- | -------- | ------- | --------------------------------------------------------------- |
+| `parts`    | `DatePartsInput` | yes      |         | The wall-clock fields. Omitted fields default to their minimum. |
+| `timeZone` | `string`         | yes      |         | An IANA name or a fixed offset.                                 |
 
 ## Examples
 
 ```ts
 import { getWallTimeStatus } from "@sgx4u/date-time";
 
-getWallTimeStatus(
-    { year: 2024, month: 3, day: 10, hour: 2, minute: 30 },
-    "America/New_York",
-);
+getWallTimeStatus({
+    parts: { year: 2024, month: 3, day: 10, hour: 2, minute: 30 },
+    timeZone: "America/New_York",
+});
 // "skipped"
 
-getWallTimeStatus(
-    { year: 2024, month: 11, day: 3, hour: 1, minute: 30 },
-    "America/New_York",
-);
+getWallTimeStatus({
+    parts: { year: 2024, month: 11, day: 3, hour: 1, minute: 30 },
+    timeZone: "America/New_York",
+});
 // "repeated"
 
-getWallTimeStatus(
-    { year: 2024, month: 6, day: 15, hour: 12 },
-    "America/New_York",
-);
+getWallTimeStatus({
+    parts: { year: 2024, month: 6, day: 15, hour: 12 },
+    timeZone: "America/New_York",
+});
 // "valid"
 ```
 

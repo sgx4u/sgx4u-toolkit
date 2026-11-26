@@ -12,32 +12,32 @@ import { doIntervalsOverlap } from "@sgx4u/date-time";
 
 ```ts
 function doIntervalsOverlap(
-    first: Interval,
-    second: Interval,
-    options?: DoIntervalsOverlapOptions,
-): boolean;
+    params: DoIntervalsOverlapParams,
+): boolean | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name                     | Type      | Default | Meaning                                |
-| ------------------------ | --------- | ------- | -------------------------------------- |
-| `countTouchingAsOverlap` | `boolean` | `false` | Whether `[a, b)` and `[b, c)` overlap. |
+| Name                     | Type       | Required | Default | Meaning                                           |
+| ------------------------ | ---------- | -------- | ------- | ------------------------------------------------- |
+| `first`                  | `Interval` | yes      |         | The first interval.                               |
+| `second`                 | `Interval` | yes      |         | The second interval.                              |
+| `countTouchingAsOverlap` | `boolean`  | no       | `false` | When `true`, an endpoint touch counts as overlap. |
 
 ## Examples
 
 ```ts
-doIntervalsOverlap(
-    { start: new Date(0), end: new Date(10) },
-    { start: new Date(10), end: new Date(20) },
-);
+doIntervalsOverlap({
+    first: { start: new Date(0), end: new Date(10) },
+    second: { start: new Date(10), end: new Date(20) },
+});
 // false
 
-doIntervalsOverlap(
-    { start: new Date(0), end: new Date(10) },
-    { start: new Date(10), end: new Date(20) },
-    { countTouchingAsOverlap: true },
-);
+doIntervalsOverlap({
+    first: { start: new Date(0), end: new Date(10) },
+    second: { start: new Date(10), end: new Date(20) },
+    countTouchingAsOverlap: true,
+});
 // true
 
 const leapDay = {
@@ -48,7 +48,7 @@ const march = {
     start: new Date("2024-02-29T12:00:00Z"),
     end: new Date("2024-03-02T00:00:00Z"),
 };
-doIntervalsOverlap(leapDay, march);
+doIntervalsOverlap({ first: leapDay, second: march });
 // true
 ```
 

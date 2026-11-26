@@ -14,9 +14,11 @@ import { getDaysInYear } from "@sgx4u/date-time";
 function getDaysInYear(year: number): 365 | 366 | undefined;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name   | Type     | Required | Default | Meaning             |
+| ------ | -------- | -------- | ------- | ------------------- |
+| `year` | `number` | yes      |         | The Gregorian year. |
 
 ## Examples
 
@@ -36,7 +38,6 @@ getDaysInYear(2000);
 ## Edge cases
 
 A year that is not an integer returns `undefined`.
-
 
 ## Related
 

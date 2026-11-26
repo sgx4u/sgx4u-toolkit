@@ -12,32 +12,34 @@ import { findAvailableSlots } from "@sgx4u/date-time";
 
 ```ts
 function findAvailableSlots(
-    busy: readonly Interval[],
-    options: FindAvailableSlotsOptions,
-): Interval[];
+    params: FindAvailableSlotsParams,
+): Interval[] | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name           | Type        | Default        | Meaning                                               |
-| -------------- | ----------- | -------------- | ----------------------------------------------------- |
-| `within`       | `Interval`  | required       | Window that may contain slots.                        |
-| `slotDuration` | `Duration`  | required       | Exact length of every returned slot.                  |
-| `step`         | `Duration`  | `slotDuration` | How far the next slot start moves.                    |
-| `dailyWindow`  | `TimeRange` |                | When set, a slot must stay inside this clock range.   |
-| `timeZone`     | `string`    | System zone    | Zone used when the step or window uses calendar time. |
+| Name           | Type                  | Required | Default                                  | Meaning                                                               |
+| -------------- | --------------------- | -------- | ---------------------------------------- | --------------------------------------------------------------------- |
+| `busy`         | `readonly Interval[]` | yes      |                                          | Intervals that are already taken.                                     |
+| `within`       | `Interval`            | yes      |                                          | The window that may contain slots.                                    |
+| `slotDuration` | `Duration`            | yes      |                                          | The exact length of every returned slot.                              |
+| `step`         | `Duration`            | no       |                                          | How far the start of the next slot moves. Defaults to `slotDuration`. |
+| `dailyWindow`  | `TimeRange`           | no       |                                          | When set, a slot must lie inside this window on its calendar day.     |
+| `timeZone`     | `string`              | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset                    |
 
 ## Examples
 
 ```ts
-findAvailableSlots([{ start: new Date(10), end: new Date(20) }], {
+findAvailableSlots({
+    busy: [{ start: new Date(10), end: new Date(20) }],
     within: { start: new Date(0), end: new Date(40) },
     slotDuration: { milliseconds: 10 },
     timeZone: "UTC",
 }).map((slot) => [slot.start.getTime(), slot.end.getTime()]);
 // [[0, 10], [20, 30], [30, 40]]
 
-findAvailableSlots([], {
+findAvailableSlots({
+    busy: [],
     within: {
         start: new Date("2026-11-26T08:00:00Z"),
         end: new Date("2026-11-26T18:00:00Z"),

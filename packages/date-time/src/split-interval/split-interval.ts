@@ -84,11 +84,10 @@ export function splitInterval({
             end: new Date(Math.min(next, intervalEnd)),
         });
         if (pieces.length > maximumPieceCount) {
-            throw rangeError(
-                "interval",
-                "at most 100000 pieces",
-                { start, end },
-            );
+            throw rangeError("interval", "at most 100000 pieces", {
+                start,
+                end,
+            });
         }
         cursor = next;
     }

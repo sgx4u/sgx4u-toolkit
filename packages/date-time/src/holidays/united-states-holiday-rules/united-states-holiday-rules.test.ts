@@ -4,9 +4,12 @@ import { unitedStatesHolidayRules } from "../united-states.js";
 
 describe("unitedStatesHolidayRules", () => {
     it("observes Independence Day 2026 on Friday 3 July", () => {
-        const holidays = getHolidaysInYear(2026, unitedStatesHolidayRules);
-        expect(holidays).toHaveLength(11);
-        expect(holidays.every((holiday) => holiday.type === "public")).toBe(
+        const holidays = getHolidaysInYear({
+            year: 2026,
+            rules: unitedStatesHolidayRules,
+        });
+        expect(holidays)?.toHaveLength(11);
+        expect(holidays!.every((holiday) => holiday.type === "public")).toBe(
             true,
         );
         expect(named(holidays, "Independence Day")).toEqual({
@@ -69,13 +72,19 @@ describe("unitedStatesHolidayRules", () => {
     });
 
     it("observes a Saturday holiday on Friday and a Sunday holiday on Monday", () => {
-        const year2020 = getHolidaysInYear(2020, unitedStatesHolidayRules);
+        const year2020 = getHolidaysInYear({
+            year: 2020,
+            rules: unitedStatesHolidayRules,
+        });
         expect(named(year2020, "Independence Day")?.observedDate).toEqual({
             year: 2020,
             month: 7,
             day: 3,
         });
-        const year2021 = getHolidaysInYear(2021, unitedStatesHolidayRules);
+        const year2021 = getHolidaysInYear({
+            year: 2021,
+            rules: unitedStatesHolidayRules,
+        });
         expect(named(year2021, "Independence Day")?.observedDate).toEqual({
             year: 2021,
             month: 7,
@@ -87,45 +96,65 @@ describe("unitedStatesHolidayRules", () => {
         ).toEqual({ year: 2021, month: 6, day: 18 });
         expect(
             named(
-                getHolidaysInYear(2022, unitedStatesHolidayRules),
+                getHolidaysInYear({
+                    year: 2022,
+                    rules: unitedStatesHolidayRules,
+                }),
                 "New Year's Day",
             )?.observedDate,
         ).toEqual({ year: 2021, month: 12, day: 31 });
     });
 
     it("rejects a year that is not an integer", () => {
-        expect(() =>
-            getHolidaysInYear(2026.5, unitedStatesHolidayRules),
-        ).toThrow(RangeError);
-        expect(() =>
-            getHolidaysInYear(2026.5, unitedStatesHolidayRules),
-        ).toThrow("`year`");
-        expect(() =>
-            getHolidaysInYear("2026" as never, unitedStatesHolidayRules),
-        ).toThrow(TypeError);
-        expect(() =>
-            getHolidaysInYear("2026" as never, unitedStatesHolidayRules),
-        ).toThrow("`year`");
+        expect(
+            getHolidaysInYear({
+                year: 2026.5,
+                rules: unitedStatesHolidayRules,
+            }),
+        ).toBeUndefined();
+        expect(
+            getHolidaysInYear({
+                year: "2026" as never,
+                rules: unitedStatesHolidayRules,
+            }),
+        ).toBeUndefined();
     });
 
     it("matches the observed Friday in UTC and the previous evening in New York", () => {
+        const holidays2026 =
+            getHolidaysInYear({
+                year: 2026,
+                rules: unitedStatesHolidayRules,
+            }) ?? [];
+        const configuredHolidays = holidays2026.map((holiday) => ({
+            date: `${holiday.observedDate.year}-${String(holiday.observedDate.month).padStart(2, "0")}-${String(holiday.observedDate.day).padStart(2, "0")}`,
+            name: holiday.name,
+        }));
         expect(
-            isHoliday("2026-07-03T03:00:00Z", unitedStatesHolidayRules, {
+            isHoliday({
+                date: "2026-07-03T03:00:00Z",
+                holidays: configuredHolidays,
                 timeZone: "UTC",
             }),
         ).toBe(true);
         expect(
-            isHoliday("2026-07-03T03:00:00Z", unitedStatesHolidayRules, {
+            isHoliday({
+                date: "2026-07-03T03:00:00Z",
+                holidays: configuredHolidays,
                 timeZone: "America/New_York",
             }),
         ).toBe(false);
         expect(
-            isHoliday("2026-07-15T16:00:00Z", unitedStatesHolidayRules, {
+            isHoliday({
+                date: "2026-07-15T16:00:00Z",
+                holidays: configuredHolidays,
                 timeZone: "America/New_York",
             }),
         ).toBe(false);
         expect(
-            isHoliday("2026-01-15T17:00:00Z", unitedStatesHolidayRules, {
+            isHoliday({
+                date: "2026-01-15T17:00:00Z",
+                holidays: configuredHolidays,
                 timeZone: "America/New_York",
             }),
         ).toBe(false);
@@ -146,7 +175,7 @@ function named(
           observedDate: { year: number; month: number; day: number };
       }
     | undefined {
-    const match = holidays.find((item) => item.name === name);
+    const match = holidays?.find((item) => item.name === name);
     if (match === undefined) {
         return undefined;
     }

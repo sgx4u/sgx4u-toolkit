@@ -96,7 +96,11 @@ function checkedParts(
         checked.year = parts.year;
     }
     if (parts.month !== undefined) {
-        if (!Number.isInteger(parts.month) || parts.month < 1 || parts.month > 12) {
+        if (
+            !Number.isInteger(parts.month) ||
+            parts.month < 1 ||
+            parts.month > 12
+        ) {
             return undefined;
         }
         checked.month = parts.month;
@@ -108,7 +112,11 @@ function checkedParts(
         checked.day = parts.day;
     }
     if (parts.hour !== undefined) {
-        if (!Number.isInteger(parts.hour) || parts.hour < 0 || parts.hour > 23) {
+        if (
+            !Number.isInteger(parts.hour) ||
+            parts.hour < 0 ||
+            parts.hour > 23
+        ) {
             return undefined;
         }
         checked.hour = parts.hour;

@@ -1,12 +1,14 @@
 import { parseCronExpression } from "../parse-cron-expression/parse-cron-expression.js";
-import type { ParseCronExpressionOptions } from "../parse-cron-expression/parse-cron-expression.types.js";
+import type { ParseCronExpressionParams } from "../parse-cron-expression/parse-cron-expression.types.js";
 import { typeError } from "../utils/error.utils.js";
 
 /**
  * Fields for {@link isValidCronExpression}.
  */
-export interface IsValidCronExpressionParams
-    extends ParseCronExpressionOptions {
+export interface IsValidCronExpressionParams extends Omit<
+    ParseCronExpressionParams,
+    "expression"
+> {
     /**
      * The cron text.
      */
@@ -30,5 +32,10 @@ export function isValidCronExpression({
     if (typeof expression !== "string") {
         throw typeError("expression", "a string", expression);
     }
-    return parseCronExpression(expression, { seconds }) !== undefined;
+    return (
+        parseCronExpression({
+            expression,
+            ...(seconds !== undefined ? { seconds } : {}),
+        }) !== undefined
+    );
 }

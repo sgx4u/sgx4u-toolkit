@@ -11,33 +11,36 @@ import { getWeekOfYear } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getWeekOfYear(date: DateInput, options?: WeekOfYearOptions): number;
+function getWeekOfYear(params: GetWeekOfYearParams): number | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name                     | Type      | Default                                 | Meaning                                                              |
-| ------------------------ | --------- | --------------------------------------- | -------------------------------------------------------------------- |
-| `timeZone`               | `string`  | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
-| `weekStartsOn`           | `Weekday` | `1`                                     | ISO weekday that starts the week. `1` is Monday and `7` is Sunday.   |
-| `minimumDaysInFirstWeek` | `number`  | `1`                                     | How many days of the year the first week must contain.               |
+| Name                     | Type        | Required | Default                                  | Meaning                                                 |
+| ------------------------ | ----------- | -------- | ---------------------------------------- | ------------------------------------------------------- |
+| `date`                   | `DateInput` | yes      |                                          | The date to read.                                       |
+| `minimumDaysInFirstWeek` | `number`    | no       | `1`                                      | How many days of the year the first week must contain.  |
+| `timeZone`               | `string`    | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset      |
+| `weekStartsOn`           | `Weekday`   | no       | `1`                                      | ISO weekday number that starts the week. `1` is Monday. |
 
 ## Examples
 
 ```ts
 import { getWeekOfYear } from "@sgx4u/date-time";
 
-getWeekOfYear("2026-01-01T00:00:00Z", {
+getWeekOfYear({
+    date: "2026-01-01T00:00:00Z",
     timeZone: "UTC",
     weekStartsOn: 1,
     minimumDaysInFirstWeek: 4,
 });
 // 1
 
-getWeekOfYear("2023-01-01T00:00:00Z", { timeZone: "UTC" });
+getWeekOfYear({ date: "2023-01-01T00:00:00Z", timeZone: "UTC" });
 // 1
 
-getWeekOfYear("2023-01-01T00:00:00Z", {
+getWeekOfYear({
+    date: "2023-01-01T00:00:00Z",
     timeZone: "UTC",
     weekStartsOn: 1,
     minimumDaysInFirstWeek: 4,

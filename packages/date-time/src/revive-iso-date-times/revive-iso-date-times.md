@@ -14,9 +14,12 @@ import { reviveISODateTimes } from "@sgx4u/date-time";
 function reviveISODateTimes(_key: string, value: unknown): unknown;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name    | Type      | Required | Default | Meaning                                                  |
+| ------- | --------- | -------- | ------- | -------------------------------------------------------- |
+| `_key`  | `string`  | yes      |         | The object key `JSON.parse` is visiting. It is not used. |
+| `value` | `unknown` | yes      |         | The value at that key.                                   |
 
 ## Examples
 

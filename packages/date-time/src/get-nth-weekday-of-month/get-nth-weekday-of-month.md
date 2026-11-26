@@ -12,36 +12,50 @@ import { getNthWeekdayOfMonth } from "@sgx4u/date-time";
 
 ```ts
 function getNthWeekdayOfMonth(
-    year: number,
-    month: number,
-    weekday: Weekday,
-    occurrence: number,
-    options?: TimeZoneOptions,
+    params: GetNthWeekdayOfMonthParams,
 ): Date | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name       | Type     | Default                                 | Meaning                                                              |
-| ---------- | -------- | --------------------------------------- | -------------------------------------------------------------------- |
-| `timeZone` | `string` | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
+| Name         | Type      | Required | Default | Meaning                                             |
+| ------------ | --------- | -------- | ------- | --------------------------------------------------- |
+| `year`       | `number`  | yes      |         | The Gregorian year.                                 |
+| `month`      | `number`  | yes      |         | The month, from 1 through 12.                       |
+| `weekday`    | `Weekday` | yes      |         | ISO weekday, Monday `1` through Sunday `7`.         |
+| `occurrence` | `number`  | yes      |         | An integer from 1 through 5, or from -5 through -1. |
+| `timeZone`   | `string`  | no       |         | Zone used for the result instant.                   |
 
 ## Examples
 
 ```ts
 import { getNthWeekdayOfMonth } from "@sgx4u/date-time";
 
-getNthWeekdayOfMonth(2026, 11, 4, 4, {
+getNthWeekdayOfMonth({
+    year: 2026,
+    month: 11,
+    weekday: 4,
+    occurrence: 4,
     timeZone: "UTC",
 })?.toISOString();
 // "2026-11-26T00:00:00.000Z"
 
-getNthWeekdayOfMonth(2026, 2, 1, -1, {
+getNthWeekdayOfMonth({
+    year: 2026,
+    month: 2,
+    weekday: 1,
+    occurrence: -1,
     timeZone: "UTC",
 })?.toISOString();
 // "2026-02-23T00:00:00.000Z"
 
-getNthWeekdayOfMonth(2026, 2, 1, 5, { timeZone: "UTC" });
+getNthWeekdayOfMonth({
+    year: 2026,
+    month: 2,
+    weekday: 1,
+    occurrence: 5,
+    timeZone: "UTC",
+});
 // undefined
 ```
 

@@ -12,34 +12,35 @@ import { formatDurationAsClock } from "@sgx4u/date-time";
 
 ```ts
 function formatDurationAsClock(
-    duration: Duration | number,
-    options?: FormatDurationAsClockOptions,
-): string;
+    params: FormatDurationAsClockParams,
+): string | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name               | Type      | Default | Meaning                            |
-| ------------------ | --------- | ------- | ---------------------------------- |
-| `alwaysShowHours`  | `boolean` | `true`  | Whether a zero hour field is kept. |
-| `showMilliseconds` | `boolean` | `false` | Whether milliseconds are appended. |
+| Name               | Type                 | Required | Default | Meaning                            |
+| ------------------ | -------------------- | -------- | ------- | ---------------------------------- |
+| `duration`         | `number \| Duration` | yes      |         | A duration or a millisecond count. |
+| `alwaysShowHours`  | `boolean`            | no       | `true`  | Whether a zero hour field is kept. |
+| `showMilliseconds` | `boolean`            | no       | `false` | Whether milliseconds are appended. |
 
 ## Examples
 
 ```ts
-formatDurationAsClock({ hours: 1, minutes: 2, seconds: 3 });
+formatDurationAsClock({ duration: { hours: 1, minutes: 2, seconds: 3 } });
 // "01:02:03"
 
-formatDurationAsClock(0);
+formatDurationAsClock({ duration: 0 });
 // "00:00:00"
 
-formatDurationAsClock(
-    { minutes: 1, seconds: 2, milliseconds: 3 },
-    { alwaysShowHours: false, showMilliseconds: true },
-);
+formatDurationAsClock({
+    duration: { minutes: 1, seconds: 2, milliseconds: 3 },
+    alwaysShowHours: false,
+    showMilliseconds: true,
+});
 // "01:02.003"
 
-formatDurationAsClock(-3_661_000);
+formatDurationAsClock({ duration: -3_661_000 });
 // "-01:01:01"
 ```
 

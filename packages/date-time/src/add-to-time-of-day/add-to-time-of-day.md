@@ -16,12 +16,12 @@ function addToTimeOfDay(
 ): { time: TimeOfDay; dayOffset: number } | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name       | Type        | Required | Default | Meaning              |
-| ---------- | ----------- | -------- | ------- | -------------------- |
-| `time`     | `TimeOfDay` | yes      |         | Starting time.       |
-| `duration` | `Duration`  | yes      |         | Length to add.       |
+| Name       | Type        | Required | Default | Meaning                                                                 |
+| ---------- | ----------- | -------- | ------- | ----------------------------------------------------------------------- |
+| `time`     | `TimeOfDay` | yes      |         | The starting time.                                                      |
+| `duration` | `Duration`  | yes      |         | The length to add. Clock fields may be fractional in the smallest unit. |
 
 ## Examples
 

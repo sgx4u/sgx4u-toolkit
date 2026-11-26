@@ -12,33 +12,33 @@ import { millisecondsToDuration } from "@sgx4u/date-time";
 
 ```ts
 function millisecondsToDuration(
-    milliseconds: number,
-    options?: MillisecondsToDurationOptions,
-): Duration;
+    params: MillisecondsToDurationParams,
+): Duration | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name           | Type                                                                 | Default         | Meaning                                                                                |
-| -------------- | -------------------------------------------------------------------- | --------------- | -------------------------------------------------------------------------------------- |
-| `largestUnit`  | `"week" \| "day" \| "hour" \| "minute" \| "second" \| "millisecond"` | `"day"`         | Largest unit in the result. `"week"` uses 7 days and `"day"` uses 24 hours.            |
-| `smallestUnit` | `"hour" \| "minute" \| "second" \| "millisecond"`                    | `"millisecond"` | Smallest unit in the result. A remainder stays on this field, which may be fractional. |
+| Name           | Type                           | Required | Default         | Meaning                                                                         |
+| -------------- | ------------------------------ | -------- | --------------- | ------------------------------------------------------------------------------- |
+| `milliseconds` | `number`                       | yes      |                 | The signed length in milliseconds.                                              |
+| `largestUnit`  | `"week" \| "day" \| ClockUnit` | no       | `"day"`         | The largest unit in the result. `"week"` uses 7 days and `"day"` uses 24 hours. |
+| `smallestUnit` | `ClockUnit`                    | no       | `"millisecond"` | The smallest unit in the result.                                                |
 
 ## Examples
 
 ```ts
 import { millisecondsToDuration } from "@sgx4u/date-time";
 
-millisecondsToDuration(5_400_000);
+millisecondsToDuration({ milliseconds: 5_400_000 });
 // { hours: 1, minutes: 30 }
 
-millisecondsToDuration(-5_400_000);
+millisecondsToDuration({ milliseconds: -5_400_000 });
 // { hours: -1, minutes: -30 }
 
-millisecondsToDuration(8 * 86_400_000, { largestUnit: "week" });
+millisecondsToDuration({ milliseconds: 8 * 86_400_000, largestUnit: "week" });
 // { weeks: 1, days: 1 }
 
-millisecondsToDuration(90_000, { smallestUnit: "minute" });
+millisecondsToDuration({ milliseconds: 90_000, smallestUnit: "minute" });
 // { minutes: 1.5 }
 ```
 

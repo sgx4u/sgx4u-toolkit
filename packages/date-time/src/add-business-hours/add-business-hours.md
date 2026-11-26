@@ -11,21 +11,19 @@ import { addBusinessHours } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function addBusinessHours(
-    params: AddBusinessHoursParams,
-): Date | undefined;
+function addBusinessHours(params: AddBusinessHoursParams): Date | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name            | Type                                           | Required | Default                    | Meaning                          |
-| --------------- | ---------------------------------------------- | -------- | -------------------------- | -------------------------------- |
-| `date`          | `DateInput`                                    | yes      |                            | Start instant.                   |
-| `duration`      | `Duration`                                     | yes      |                            | Clock units only.                |
-| `workingDays`   | `readonly Weekday[]`                           | no       | `[1, 2, 3, 4, 5]`          | ISO weekdays that are open.      |
-| `businessHours` | `readonly TimeRange[]`                         | no       | `[{ start: "09:00", end: "17:00" }]` | Working windows.     |
-| `holidays`      | `readonly (ConfiguredHoliday \| DateInput)[]` | no       | `[]`                       | Closed dates in `timeZone`.      |
-| `timeZone`      | `string`                                       | no       | System zone                | IANA name or fixed offset.       |
+| Name            | Type                                          | Required | Default                              | Meaning                                                                     |
+| --------------- | --------------------------------------------- | -------- | ------------------------------------ | --------------------------------------------------------------------------- |
+| `date`          | `DateInput`                                   | yes      |                                      | The start instant.                                                          |
+| `duration`      | `Duration`                                    | yes      |                                      | Hours, minutes, seconds, or milliseconds.                                   |
+| `workingDays`   | `readonly Weekday[]`                          | no       | `[1, 2, 3, 4, 5]`                    | ISO weekdays that count as business days. Every other weekday is a weekend. |
+| `holidays`      | `readonly (ConfiguredHoliday \| DateInput)[]` | no       | `[]`                                 | Dates that are closed.                                                      |
+| `businessHours` | `readonly TimeRange[]`                        | no       | `[{ start: "09:00", end: "17:00" }]` | Working windows for a business day. An empty list means the whole day.      |
+| `timeZone`      | `string`                                      | no       | The system time zone.                | IANA time zone or fixed offset the calendar uses.                           |
 
 ## Examples
 

@@ -11,32 +11,34 @@ import { formatDuration } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function formatDuration(
-    duration: Duration,
-    options?: FormatDurationOptions,
-): string;
+function formatDuration(params: FormatDurationParams): string | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name     | Type                                         | Default        | Meaning                                           |
-| -------- | -------------------------------------------- | -------------- | ------------------------------------------------- |
-| `locale` | `string \| readonly string[]`                | Runtime locale | Locale for the unit names.                        |
-| `style`  | `"long" \| "short" \| "narrow" \| "digital"` | `"long"`       | Length of the unit names. `"digital"` is a clock. |
+| Name       | Type                                         | Required | Default                       | Meaning                                                       |
+| ---------- | -------------------------------------------- | -------- | ----------------------------- | ------------------------------------------------------------- |
+| `duration` | `Duration`                                   | yes      |                               | The duration to format.                                       |
+| `style`    | `"long" \| "short" \| "narrow" \| "digital"` | no       | `"long"`                      | The length of the unit names. `"digital"` is a clock.         |
+| `locale`   | `string \| readonly string[]`                | no       | The runtime's default locale. | A BCP 47 language tag, or a list of tags in preference order. |
 
 ## Examples
 
 ```ts
-formatDuration({ hours: 1, minutes: 30 }, { locale: "en" });
+formatDuration({ duration: { hours: 1, minutes: 30 }, locale: "en" });
 // "1 hour, 30 minutes"
 
-formatDuration({ hours: 1, minutes: 30 }, { locale: "en", style: "short" });
+formatDuration({
+    duration: { hours: 1, minutes: 30 },
+    locale: "en",
+    style: "short",
+});
 // "1 hr, 30 min"
 
-formatDuration({ hours: -1 }, { locale: "en" });
+formatDuration({ duration: { hours: -1 }, locale: "en" });
 // "-1 hour"
 
-formatDuration({}, { locale: "en" });
+formatDuration({ duration: {}, locale: "en" });
 // "0 seconds"
 ```
 

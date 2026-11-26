@@ -11,32 +11,30 @@ import { formatUTCOffset } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function formatUTCOffset(
-    offsetMinutes: number,
-    options?: FormatUTCOffsetOptions,
-): string;
+function formatUTCOffset(params: FormatUTCOffsetParams): string | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name          | Type                               | Default      | Meaning                                                                       |
-| ------------- | ---------------------------------- | ------------ | ----------------------------------------------------------------------------- |
-| `style`       | `"extended" \| "basic" \| "short"` | `"extended"` | `extended` is `+05:30`, `basic` is `+0530`, and `short` drops a leading zero. |
-| `useZForZero` | `boolean`                          | `false`      | Whether a zero offset is `Z`.                                                 |
+| Name            | Type                               | Required | Default      | Meaning                                                                       |
+| --------------- | ---------------------------------- | -------- | ------------ | ----------------------------------------------------------------------------- |
+| `offsetMinutes` | `number`                           | yes      |              | Minutes east of UTC. A fraction is kept in the minutes.                       |
+| `style`         | `"short" \| "extended" \| "basic"` | no       | `"extended"` | `extended` is `+05:30`, `basic` is `+0530`, and `short` drops a leading zero. |
+| `useZForZero`   | `boolean`                          | no       | `false`      | Whether a zero offset is `Z`.                                                 |
 
 ## Examples
 
 ```ts
-formatUTCOffset(330);
+formatUTCOffset({ offsetMinutes: 330 });
 // "+05:30"
 
-formatUTCOffset(0);
+formatUTCOffset({ offsetMinutes: 0 });
 // "+00:00"
 
-formatUTCOffset(0, { useZForZero: true });
+formatUTCOffset({ offsetMinutes: 0, useZForZero: true });
 // "Z"
 
-formatUTCOffset(-90, { style: "short" });
+formatUTCOffset({ offsetMinutes: -90, style: "short" });
 // "-1:30"
 ```
 

@@ -11,26 +11,29 @@ import { divideInterval } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function divideInterval(interval: Interval, partCount: number): Interval[];
+function divideInterval(params: DivideIntervalParams): Interval[] | undefined;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name        | Type       | Required | Default | Meaning                                                |
+| ----------- | ---------- | -------- | ------- | ------------------------------------------------------ |
+| `interval`  | `Interval` | yes      |         | The interval to divide.                                |
+| `partCount` | `number`   | yes      |         | How many parts to make. It must be a positive integer. |
 
 ## Examples
 
 ```ts
-divideInterval({ start: new Date(0), end: new Date(10) }, 2).map((part) => [
-    part.start.getTime(),
-    part.end.getTime(),
-]);
+divideInterval({
+    interval: { start: new Date(0), end: new Date(10) },
+    partCount: 2,
+}).map((part) => [part.start.getTime(), part.end.getTime()]);
 // [[0, 5], [5, 10]]
 
-divideInterval({ start: new Date(0), end: new Date(10) }, 3).map((part) => [
-    part.start.getTime(),
-    part.end.getTime(),
-]);
+divideInterval({
+    interval: { start: new Date(0), end: new Date(10) },
+    partCount: 3,
+}).map((part) => [part.start.getTime(), part.end.getTime()]);
 // [[0, 4], [4, 7], [7, 10]]
 ```
 

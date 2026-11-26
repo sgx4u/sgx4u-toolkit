@@ -57,9 +57,7 @@ describe("getUTCOffset", () => {
     });
 
     it("returns undefined for a bad date and throws for a bad zone", () => {
-        expect(
-            getUTCOffset({ date: "nope", timeZone: "UTC" }),
-        ).toBeUndefined();
+        expect(getUTCOffset({ date: "nope", timeZone: "UTC" })).toBeUndefined();
         expect(() =>
             getUTCOffset({
                 date: "2024-06-15T00:00:00Z",

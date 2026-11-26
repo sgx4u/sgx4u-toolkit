@@ -10,17 +10,20 @@ import {
 describe("holiday rules", () => {
     it("observes a Saturday holiday on Friday and finds Good Friday", () => {
         expect(
-            getObservedDate(
-                { year: 2020, month: 7, day: 4 },
-                "nearest-weekday",
-            ),
+            getObservedDate({
+                date: { year: 2020, month: 7, day: 4 },
+                policy: "nearest-weekday",
+            }),
         ).toEqual({
             year: 2020,
             month: 7,
             day: 3,
         });
         expect(
-            getObservedDate({ year: 2020, month: 7, day: 4 }, "next-monday"),
+            getObservedDate({
+                date: { year: 2020, month: 7, day: 4 },
+                policy: "next-monday",
+            }),
         ).toEqual({
             year: 2020,
             month: 7,
@@ -29,14 +32,14 @@ describe("holiday rules", () => {
         const holidays = getHolidaysInYear({
             year: 2026,
             rules: [
-            {
-                name: "Good Friday",
-                date: { kind: "easter-offset", days: -2 },
-            },
-            {
-                name: "Christmas",
-                date: { kind: "fixed", month: 12, day: 25 },
-            },
+                {
+                    name: "Good Friday",
+                    date: { kind: "easter-offset", days: -2 },
+                },
+                {
+                    name: "Christmas",
+                    date: { kind: "fixed", month: 12, day: 25 },
+                },
             ],
         });
         expect(holidays?.[0]).toMatchObject({
@@ -57,26 +60,21 @@ describe("holiday rules", () => {
             })?.name,
         ).toBe("Independence Day");
         expect(
-            isHoliday(
-                "2026-12-25T00:00:00Z",
-                [
-                    {
-                        name: "Christmas",
-                        date: { kind: "fixed", month: 12, day: 25 },
-                    },
-                ],
-                { timeZone: "UTC" },
-            ),
+            isHoliday({
+                date: "2026-12-25T00:00:00Z",
+                holidays: [{ date: "2026-12-25", name: "Christmas" }],
+                timeZone: "UTC",
+            }),
         ).toBe(true);
-        const predicate = createHolidayPredicate(
-            [
+        const predicate = createHolidayPredicate({
+            rules: [
                 {
                     name: "Republic Day",
                     date: { kind: "fixed", month: 1, day: 26 },
                 },
             ],
-            { timeZone: "Asia/Kolkata" },
-        );
+            timeZone: "Asia/Kolkata",
+        });
         expect(predicate(new Date("2026-01-25T18:30:00Z"))).toBe(true);
         expect(
             getHolidaysInYear({

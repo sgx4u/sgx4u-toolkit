@@ -11,7 +11,7 @@ function ends(
         preferFuture?: boolean;
     } = now,
 ): string[] | undefined {
-    const range = parseNaturalDateRange(text, options);
+    const range = parseNaturalDateRange({ text, ...options });
     if (range === undefined) {
         return undefined;
     }
@@ -115,13 +115,16 @@ describe("parseNaturalDateRange", () => {
 
     it("throws TypeError when the text is not a string", () => {
         expect(() =>
-            parseNaturalDateRange(1 as unknown as string, now),
+            parseNaturalDateRange({ text: 1 as unknown as string, ...now }),
         ).toThrow(TypeError);
         expect(() =>
-            parseNaturalDateRange(null as unknown as string, now),
+            parseNaturalDateRange({ text: null as unknown as string, ...now }),
         ).toThrow("`text` must be a string; received null.");
         expect(() =>
-            parseNaturalDateRange({ text: "next week", ...{ timeZone: "Mars/Base" } }),
+            parseNaturalDateRange({
+                text: "next week",
+                ...{ timeZone: "Mars/Base" },
+            }),
         ).toThrow(RangeError);
     });
 });

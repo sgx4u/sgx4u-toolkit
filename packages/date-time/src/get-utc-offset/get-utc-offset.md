@@ -11,28 +11,31 @@ import { getUTCOffset } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getUTCOffset(date: DateInput, timeZone: string): number;
+function getUTCOffset(params: GetUTCOffsetParams): number | undefined;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name       | Type        | Required | Default | Meaning                         |
+| ---------- | ----------- | -------- | ------- | ------------------------------- |
+| `date`     | `DateInput` | yes      |         | The instant to measure.         |
+| `timeZone` | `string`    | yes      |         | An IANA name or a fixed offset. |
 
 ## Examples
 
 ```ts
 import { getUTCOffset } from "@sgx4u/date-time";
 
-getUTCOffset("2024-06-15T12:00:00Z", "Asia/Kolkata");
+getUTCOffset({ date: "2024-06-15T12:00:00Z", timeZone: "Asia/Kolkata" });
 // 330
 
-getUTCOffset("2024-01-15T12:00:00Z", "America/New_York");
+getUTCOffset({ date: "2024-01-15T12:00:00Z", timeZone: "America/New_York" });
 // -300
 
-getUTCOffset("2024-07-15T12:00:00Z", "America/New_York");
+getUTCOffset({ date: "2024-07-15T12:00:00Z", timeZone: "America/New_York" });
 // -240
 
-getUTCOffset("2024-06-15T12:00:00Z", "UTC");
+getUTCOffset({ date: "2024-06-15T12:00:00Z", timeZone: "UTC" });
 // 0
 ```
 

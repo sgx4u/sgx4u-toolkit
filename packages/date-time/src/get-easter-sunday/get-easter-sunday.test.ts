@@ -18,16 +18,12 @@ describe("Easter and Temporal interop", () => {
             month: 4,
             day: 5,
         });
-        expect(
-            getEasterSunday({ year: 2024, tradition: "orthodox" }),
-        ).toEqual({
+        expect(getEasterSunday({ year: 2024, tradition: "orthodox" })).toEqual({
             year: 2024,
             month: 5,
             day: 5,
         });
-        expect(
-            getEasterSunday({ year: 2026, tradition: "orthodox" }),
-        ).toEqual({
+        expect(getEasterSunday({ year: 2026, tradition: "orthodox" })).toEqual({
             year: 2026,
             month: 4,
             day: 12,

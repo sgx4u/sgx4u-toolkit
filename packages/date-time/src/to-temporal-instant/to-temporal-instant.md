@@ -11,12 +11,14 @@ import { toTemporalInstant } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function toTemporalInstant(date: DateInput): TemporalInstant;
+function toTemporalInstant(date: DateInput): TemporalInstant | undefined;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name   | Type        | Required | Default | Meaning                 |
+| ------ | ----------- | -------- | ------- | ----------------------- |
+| `date` | `DateInput` | yes      |         | The instant to convert. |
 
 ## Examples
 

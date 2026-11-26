@@ -76,11 +76,10 @@ export function listBusinessDaysInInterval({
         ) {
             dates.push(new Date(cursor));
             if (dates.length > maximumResultCount) {
-                throw rangeError(
-                    "interval",
-                    "at most 100000 business days",
-                    { start, end },
-                );
+                throw rangeError("interval", "at most 100000 business days", {
+                    start,
+                    end,
+                });
             }
         }
         cursor = next;

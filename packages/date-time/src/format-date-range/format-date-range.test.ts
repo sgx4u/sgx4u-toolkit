@@ -10,7 +10,7 @@ describe("formatDateRange", () => {
             formatDateRange({
                 start: "2026-01-03T00:00:00Z",
                 end: "2026-01-05T00:00:00Z",
-                options,
+                ...options,
             }),
         ).toBe(`Jan 3${dash}5, 2026`);
         expect(
@@ -70,12 +70,12 @@ describe("formatDateRange", () => {
         ).toThrow(
             '`start` must be a date at or before `end`; received "2026-01-05T00:00:00Z".',
         );
-        expect(() =>
+        expect(
             formatDateRange({
                 start: "nope",
                 end: "2026-01-03T00:00:00Z",
                 timeZone: "UTC",
             }),
-        ).toThrow(RangeError);
+        ).toBeUndefined();
     });
 });

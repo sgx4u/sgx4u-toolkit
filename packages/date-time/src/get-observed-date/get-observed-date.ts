@@ -1,5 +1,5 @@
 import type { ObservancePolicy } from "../types/holiday.types.js";
-import type { CalendarDate } from "../types/time.types.js";
+import type { CalendarDate, Weekday } from "../types/time.types.js";
 import { assertWorkingDays } from "../utils/business-config.utils.js";
 import { rangeError, typeError } from "../utils/error.utils.js";
 import { observeDate } from "../utils/holiday.utils.js";
@@ -50,7 +50,11 @@ export function getObservedDate({
             ? defaultWorkingDays
             : assertWorkingDays(workingDays);
     const weekendDays = weekendFromWorkingDays(open);
-    return observeDate(date, policy as ObservancePolicy, weekendDays);
+    return observeDate(
+        date,
+        policy as ObservancePolicy,
+        weekendDays as Weekday[],
+    );
 }
 
 /**

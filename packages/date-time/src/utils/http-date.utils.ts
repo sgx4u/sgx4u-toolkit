@@ -1,4 +1,4 @@
-import { readUtcParts, utcEpochMilliseconds } from "./gregorian.utils.js";
+import { readUTCParts, UTCEpochMilliseconds } from "./gregorian.utils.js";
 
 const shortWeekdays = [
     "Sun",
@@ -48,8 +48,8 @@ const asctimeExpression =
  * @param epochMilliseconds - Unix time in milliseconds.
  * @returns `Thu, 26 Nov 2026 22:00:00 GMT`.
  */
-export function formatHttpDateText(epochMilliseconds: number): string {
-    const parts = readUtcParts(epochMilliseconds);
+export function formatHTTPDateText(epochMilliseconds: number): string {
+    const parts = readUTCParts(epochMilliseconds);
     const weekday =
         shortWeekdays[new Date(epochMilliseconds).getUTCDay()] ?? "Thu";
     const month = shortMonths[parts.month - 1] ?? "Jan";
@@ -67,22 +67,22 @@ export function formatHttpDateText(epochMilliseconds: number): string {
  * @param now - The instant used for the two-digit-year window.
  * @returns The instant, or `undefined` when the text does not match.
  */
-export function parseHttpDateText(
+export function parseHTTPDateText(
     value: string,
     now: number,
 ): number | undefined {
     const fixdate = fixdateExpression.exec(value)?.groups;
     if (fixdate !== undefined) {
-        return buildHttpInstant(fixdate, 4);
+        return buildHTTPInstant(fixdate, 4);
     }
     const rfc850 = rfc850Expression.exec(value)?.groups;
     if (rfc850 !== undefined) {
         const year = expandTwoDigitYear(Number(rfc850.year), now);
-        return buildHttpInstant({ ...rfc850, year: String(year) }, 4);
+        return buildHTTPInstant({ ...rfc850, year: String(year) }, 4);
     }
     const asctime = asctimeExpression.exec(value)?.groups;
     if (asctime !== undefined) {
-        return buildHttpInstant({ ...asctime, day: asctime.day?.trim() }, 4);
+        return buildHTTPInstant({ ...asctime, day: asctime.day?.trim() }, 4);
     }
     return undefined;
 }
@@ -92,7 +92,7 @@ export function parseHttpDateText(
  * @param yearLength - Expected digit count before expansion. Unused after expansion.
  * @returns The instant when the calendar day is real and the weekday matches.
  */
-function buildHttpInstant(
+function buildHTTPInstant(
     groups: Record<string, string | undefined>,
     yearLength: number,
 ): number | undefined {
@@ -113,7 +113,7 @@ function buildHttpInstant(
     ) {
         return undefined;
     }
-    const instant = utcEpochMilliseconds(
+    const instant = UTCEpochMilliseconds(
         year,
         month - 1,
         day,
@@ -122,7 +122,7 @@ function buildHttpInstant(
         second,
         0,
     );
-    const parts = readUtcParts(instant);
+    const parts = readUTCParts(instant);
     if (parts.year !== year || parts.month !== month || parts.day !== day) {
         return undefined;
     }
@@ -145,7 +145,7 @@ function expandTwoDigitYear(year: number, now: number): number {
         return 1900 + year;
     }
     const candidate = 2000 + year;
-    const currentYear = readUtcParts(now).year;
+    const currentYear = readUTCParts(now).year;
     if (candidate - currentYear > 50) {
         return 1900 + year;
     }

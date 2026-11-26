@@ -62,11 +62,10 @@ export function listDatesInInterval({
     while (cursor < intervalEnd) {
         dates.push(new Date(cursor));
         if (dates.length > maximumResultCount) {
-            throw rangeError(
-                "interval",
-                "at most 100000 dates",
-                { start, end },
-            );
+            throw rangeError("interval", "at most 100000 dates", {
+                start,
+                end,
+            });
         }
         const nextDate = addDuration({
             date: new Date(cursor),

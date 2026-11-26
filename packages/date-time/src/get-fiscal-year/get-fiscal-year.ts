@@ -17,9 +17,7 @@ import type { GetFiscalYearParams } from "./get-fiscal-year.types.js";
  * @example
  * getFiscalYear({ date: "2026-04-01T00:00:00Z", fiscalYearStartMonth: 4, timeZone: "UTC" }); // 2027
  */
-export function getFiscalYear(
-    params: GetFiscalYearParams,
-): number | undefined {
+export function getFiscalYear(params: GetFiscalYearParams): number | undefined {
     const settings = readFiscalSettings(params);
     const timeZone = resolveTimeZone(params.timeZone);
     const instant = readDateInput(params.date, timeZone);

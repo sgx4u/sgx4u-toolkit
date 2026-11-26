@@ -12,39 +12,47 @@ import { getTimeZoneDifference } from "@sgx4u/date-time";
 
 ```ts
 function getTimeZoneDifference(
-    firstTimeZone: string,
-    secondTimeZone: string,
-    options?: TimeZoneDifferenceOptions,
-): number;
+    params: GetTimeZoneDifferenceParams,
+): number | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name | Type        | Default          | Meaning                                    |
-| ---- | ----------- | ---------------- | ------------------------------------------ |
-| `at` | `DateInput` | The current time | The instant at which the offsets are read. |
+| Name             | Type        | Required | Default           | Meaning                                    |
+| ---------------- | ----------- | -------- | ----------------- | ------------------------------------------ |
+| `firstTimeZone`  | `string`    | yes      |                   | The zone being compared.                   |
+| `secondTimeZone` | `string`    | yes      |                   | The zone it is compared with.              |
+| `at`             | `DateInput` | no       | The current time. | The instant at which the offsets are read. |
 
 ## Examples
 
 ```ts
 import { getTimeZoneDifference } from "@sgx4u/date-time";
 
-getTimeZoneDifference("Asia/Kolkata", "UTC", {
+getTimeZoneDifference({
+    firstTimeZone: "Asia/Kolkata",
+    secondTimeZone: "UTC",
     at: "2026-01-01T00:00:00Z",
 });
 // 330
 
-getTimeZoneDifference("UTC", "Asia/Kolkata", {
+getTimeZoneDifference({
+    firstTimeZone: "UTC",
+    secondTimeZone: "Asia/Kolkata",
     at: "2026-01-01T00:00:00Z",
 });
 // -330
 
-getTimeZoneDifference("America/New_York", "UTC", {
+getTimeZoneDifference({
+    firstTimeZone: "America/New_York",
+    secondTimeZone: "UTC",
     at: "2024-01-15T12:00:00Z",
 });
 // -300
 
-getTimeZoneDifference("America/New_York", "UTC", {
+getTimeZoneDifference({
+    firstTimeZone: "America/New_York",
+    secondTimeZone: "UTC",
     at: "2024-07-15T12:00:00Z",
 });
 // -240

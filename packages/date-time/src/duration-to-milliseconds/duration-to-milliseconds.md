@@ -12,31 +12,32 @@ import { durationToMilliseconds } from "@sgx4u/date-time";
 
 ```ts
 function durationToMilliseconds(
-    duration: Duration,
-    options?: DurationToMillisecondsOptions,
-): number;
+    params: DurationToMillisecondsParams,
+): number | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name         | Type        | Default         | Meaning                                             |
-| ------------ | ----------- | --------------- | --------------------------------------------------- |
-| `timeZone`   | `string`    | The system zone | Zone used when `relativeTo` is set                  |
-| `relativeTo` | `DateInput` | none            | Required when the duration contains months or years |
+| Name         | Type        | Required | Default                                  | Meaning                                                      |
+| ------------ | ----------- | -------- | ---------------------------------------- | ------------------------------------------------------------ |
+| `duration`   | `Duration`  | yes      |                                          | The duration to measure.                                     |
+| `relativeTo` | `DateInput` | no       |                                          | The instant used when the duration contains months or years. |
+| `timeZone`   | `string`    | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset           |
 
 ## Examples
 
 ```ts
-durationToMilliseconds({ hours: 1, minutes: 30 }); // 5400000
+durationToMilliseconds({ duration: { hours: 1, minutes: 30 } }); // 5400000
 ```
 
 One month from 31 January 2026 is the length through 28 February:
 
 ```ts
-durationToMilliseconds(
-    { months: 1 },
-    { relativeTo: "2026-01-31T00:00:00Z", timeZone: "UTC" },
-); // 2419200000
+durationToMilliseconds({
+    duration: { months: 1 },
+    relativeTo: "2026-01-31T00:00:00Z",
+    timeZone: "UTC",
+}); // 2419200000
 ```
 
 ## Edge cases

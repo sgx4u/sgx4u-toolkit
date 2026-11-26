@@ -8,7 +8,9 @@ const thursdayHours = {
 describe("getNextOpeningTime", () => {
     it("returns the next Thursday opening", () => {
         expect(
-            getNextOpeningTime("2026-11-26T08:00:00Z", thursdayHours, {
+            getNextOpeningTime({
+                date: "2026-11-26T08:00:00Z",
+                schedule: thursdayHours,
                 timeZone: "UTC",
             })?.toISOString(),
         ).toBe("2026-11-26T09:00:00.000Z");
@@ -16,78 +18,101 @@ describe("getNextOpeningTime", () => {
 
     it("keeps an opening that starts now and skips a time already inside the range", () => {
         expect(
-            getNextOpeningTime("2026-11-26T09:00:00.000Z", thursdayHours, {
+            getNextOpeningTime({
+                date: "2026-11-26T09:00:00.000Z",
+                schedule: thursdayHours,
                 timeZone: "UTC",
             })?.toISOString(),
         ).toBe("2026-11-26T09:00:00.000Z");
         expect(
-            getNextOpeningTime("2026-11-26T09:00:00.001Z", thursdayHours, {
+            getNextOpeningTime({
+                date: "2026-11-26T09:00:00.001Z",
+                schedule: thursdayHours,
                 timeZone: "UTC",
             })?.toISOString(),
         ).toBe("2026-12-03T09:00:00.000Z");
         expect(
-            getNextOpeningTime("2026-11-26T17:00:00.000Z", thursdayHours, {
+            getNextOpeningTime({
+                date: "2026-11-26T17:00:00.000Z",
+                schedule: thursdayHours,
                 timeZone: "UTC",
             })?.toISOString(),
         ).toBe("2026-12-03T09:00:00.000Z");
         expect(
-            getNextOpeningTime(
-                "2026-11-25T12:00:00Z",
-                {
+            getNextOpeningTime({
+                date: "2026-11-25T12:00:00Z",
+                schedule: {
                     ...thursdayHours,
                     closures: [{ year: 2026, month: 11, day: 26 }],
                 },
-                { timeZone: "UTC" },
-            )?.toISOString(),
+                timeZone: "UTC",
+            })?.toISOString(),
         ).toBe("2026-12-03T09:00:00.000Z");
         expect(
-            getNextOpeningTime(
-                "2026-11-26T21:00:00Z",
-                { hours: { 4: [{ start: "22:00", end: "02:00" }] } },
-                { timeZone: "UTC" },
-            )?.toISOString(),
+            getNextOpeningTime({
+                date: "2026-11-26T21:00:00Z",
+                schedule: { hours: { 4: [{ start: "22:00", end: "02:00" }] } },
+                timeZone: "UTC",
+            })?.toISOString(),
         ).toBe("2026-11-26T22:00:00.000Z");
         expect(
-            getNextOpeningTime(
-                "2026-11-26T12:00:00Z",
-                { hours: {} },
-                {
-                    timeZone: "UTC",
-                },
-            ),
+            getNextOpeningTime({
+                date: "2026-11-26T12:00:00Z",
+                schedule: { hours: {} },
+                timeZone: "UTC",
+            }),
         ).toBeUndefined();
     });
 
     it("rejects a date or a range that is not real", () => {
         expect(() =>
-            getNextOpeningTime("nope", thursdayHours, { timeZone: "UTC" }),
+            getNextOpeningTime({
+                date: "nope",
+                schedule: thursdayHours,
+                timeZone: "UTC",
+            }),
         ).toThrow(RangeError);
         expect(() =>
-            getNextOpeningTime("nope", thursdayHours, { timeZone: "UTC" }),
+            getNextOpeningTime({
+                date: "nope",
+                schedule: thursdayHours,
+                timeZone: "UTC",
+            }),
         ).toThrow("`date`");
         expect(() =>
-            getNextOpeningTime(null as never, thursdayHours, {
+            getNextOpeningTime({
+                date: null as never,
+                schedule: thursdayHours,
                 timeZone: "UTC",
             }),
         ).toThrow(TypeError);
         expect(() =>
-            getNextOpeningTime(null as never, thursdayHours, {
+            getNextOpeningTime({
+                date: null as never,
+                schedule: thursdayHours,
                 timeZone: "UTC",
             }),
         ).toThrow("`date`");
         expect(() =>
-            getNextOpeningTime(
-                "2026-11-26T08:00:00Z",
-                { hours: { 4: [{ start: "25:00", end: "26:00" }] } },
-                { timeZone: "UTC" },
-            ),
+            getNextOpeningTime({
+                date: "2026-11-26T08:00:00Z",
+                schedule: { hours: { 4: [{ start: "25:00", end: "26:00" }] } },
+                timeZone: "UTC",
+            }),
         ).toThrow("`schedule.hours`");
     });
 
     it("uses the system zone when timeZone is omitted", () => {
         const date = "2026-11-26T12:00:00Z";
-        expect(getNextOpeningTime(date, thursdayHours)?.toISOString()).toBe(
-            getNextOpeningTime(date, thursdayHours, {
+        expect(
+            getNextOpeningTime({
+                date,
+                schedule: thursdayHours,
+            })?.toISOString(),
+        ).toBe(
+            getNextOpeningTime({
+                date,
+                schedule: thursdayHours,
                 timeZone: getLocalTimeZone(),
             })?.toISOString(),
         );
@@ -95,12 +120,16 @@ describe("getNextOpeningTime", () => {
 
     it("reads 09:00 in New York as 13:00 UTC in July and 14:00 UTC in November", () => {
         expect(
-            getNextOpeningTime("2026-07-16T12:00:00Z", thursdayHours, {
+            getNextOpeningTime({
+                date: "2026-07-16T12:00:00Z",
+                schedule: thursdayHours,
                 timeZone: "America/New_York",
             })?.toISOString(),
         ).toBe("2026-07-16T13:00:00.000Z");
         expect(
-            getNextOpeningTime("2026-11-26T13:00:00Z", thursdayHours, {
+            getNextOpeningTime({
+                date: "2026-11-26T13:00:00Z",
+                schedule: thursdayHours,
                 timeZone: "America/New_York",
             })?.toISOString(),
         ).toBe("2026-11-26T14:00:00.000Z");

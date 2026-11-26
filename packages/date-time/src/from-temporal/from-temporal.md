@@ -14,21 +14,22 @@ import { fromTemporal } from "@sgx4u/date-time";
 function fromTemporal(value: TemporalInstantLike): Date | undefined;
 ```
 
-## Options
+## Parameters
 
-This function has no options. Pass `value` as the only argument.
+| Name    | Type                  | Required | Default | Meaning                             |
+| ------- | --------------------- | -------- | ------- | ----------------------------------- |
+| `value` | `TemporalInstantLike` | yes      |         | An object with `epochMilliseconds`. |
 
 ## Examples
 
 ```ts
 fromTemporal({ epochMilliseconds: 0 })?.toISOString();
-// "1970-01-01T00:00:00.000Z" 
+// "1970-01-01T00:00:00.000Z"
 ```
 
 ## Edge cases
 
 An object without a finite `epochMilliseconds` returns `undefined`.
-
 
 ## Related
 

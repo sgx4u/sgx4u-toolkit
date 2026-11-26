@@ -11,36 +11,40 @@ import { getPreviousWeekday } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getPreviousWeekday(
-    date: DateInput,
-    weekday: Weekday,
-    options?: WeekdayStepOptions,
-): Date;
+function getPreviousWeekday(params: GetNextWeekdayParams): Date | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name                | Type      | Default                                 | Meaning                                                                         |
-| ------------------- | --------- | --------------------------------------- | ------------------------------------------------------------------------------- |
-| `timeZone`          | `string`  | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`.            |
-| `includeCurrentDay` | `boolean` | `false`                                 | When `true`, a date that is already that weekday returns the start of that day. |
+| Name                | Type        | Required | Default                                  | Meaning                                                                         |
+| ------------------- | ----------- | -------- | ---------------------------------------- | ------------------------------------------------------------------------------- |
+| `date`              | `DateInput` | yes      |                                          | The date to step from.                                                          |
+| `weekday`           | `Weekday`   | yes      |                                          | ISO weekday, Monday `1` through Sunday `7`.                                     |
+| `includeCurrentDay` | `boolean`   | no       | `false`                                  | When `true`, a date that is already that weekday returns the start of that day. |
+| `timeZone`          | `string`    | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset                              |
 
 ## Examples
 
 ```ts
 import { getPreviousWeekday } from "@sgx4u/date-time";
 
-getPreviousWeekday("2026-11-26T15:00:00Z", 1, {
+getPreviousWeekday({
+    date: "2026-11-26T15:00:00Z",
+    weekday: 1,
     timeZone: "UTC",
 }).toISOString();
 // "2026-11-23T00:00:00.000Z"
 
-getPreviousWeekday("2026-11-26T15:00:00Z", 4, {
+getPreviousWeekday({
+    date: "2026-11-26T15:00:00Z",
+    weekday: 4,
     timeZone: "UTC",
 }).toISOString();
 // "2026-11-19T00:00:00.000Z"
 
-getPreviousWeekday("2026-11-26T15:00:00Z", 4, {
+getPreviousWeekday({
+    date: "2026-11-26T15:00:00Z",
+    weekday: 4,
     timeZone: "UTC",
     includeCurrentDay: true,
 }).toISOString();

@@ -14,12 +14,12 @@ import { createInterval } from "@sgx4u/date-time";
 function createInterval(params: CreateIntervalParams): Interval | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name    | Type        | Required | Default | Meaning                          |
-| ------- | ----------- | -------- | ------- | -------------------------------- |
-| `start` | `DateInput` | yes      |         | First instant, included.         |
-| `end`   | `DateInput` | yes      |         | End instant, excluded.           |
+| Name    | Type        | Required | Default | Meaning                                         |
+| ------- | ----------- | -------- | ------- | ----------------------------------------------- |
+| `start` | `DateInput` | yes      |         | The first instant, included.                    |
+| `end`   | `DateInput` | yes      |         | The instant where the interval stops, excluded. |
 
 ## Examples
 

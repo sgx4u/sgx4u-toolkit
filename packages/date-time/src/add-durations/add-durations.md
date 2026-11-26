@@ -14,12 +14,12 @@ import { addDurations } from "@sgx4u/date-time";
 function addDurations(params: AddDurationsParams): Duration | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name     | Type       | Required | Default | Meaning            |
-| -------- | ---------- | -------- | ------- | ------------------ |
-| `first`  | `Duration` | yes      |         | First duration.    |
-| `second` | `Duration` | yes      |         | Second duration.   |
+| Name     | Type       | Required | Default | Meaning              |
+| -------- | ---------- | -------- | ------- | -------------------- |
+| `first`  | `Duration` | yes      |         | The first duration.  |
+| `second` | `Duration` | yes      |         | The second duration. |
 
 ## Examples
 

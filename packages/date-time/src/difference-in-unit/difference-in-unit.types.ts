@@ -1,6 +1,11 @@
 import type { DateInput } from "../types/date-input.types.js";
 import type { TimeZoneOptions } from "../types/options.types.js";
-import type { RoundingMode, TimeUnit } from "../types/time.types.js";
+import type { TimeUnit } from "../types/time.types.js";
+
+/**
+ * How a fractional unit count is resolved.
+ */
+export type RoundingMode = "truncate" | "floor" | "ceil" | "round";
 
 /**
  * How fractional units are rounded.

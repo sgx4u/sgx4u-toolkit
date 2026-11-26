@@ -11,12 +11,14 @@ import { negateDuration } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function negateDuration(duration: Duration): Duration;
+function negateDuration(duration: Duration): Duration | undefined;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name       | Type       | Required | Default | Meaning                 |
+| ---------- | ---------- | -------- | ------- | ----------------------- |
+| `duration` | `Duration` | yes      |         | The duration to negate. |
 
 ## Examples
 

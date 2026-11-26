@@ -76,10 +76,10 @@ export interface DateParts extends CalendarDate, TimeOfDay {
  */
 export interface DatePartsInput {
     year: number;
-    month?: number;
-    day?: number;
-    hour?: number;
-    minute?: number;
-    second?: number;
-    millisecond?: number;
+    month?: number | undefined;
+    day?: number | undefined;
+    hour?: number | undefined;
+    minute?: number | undefined;
+    second?: number | undefined;
+    millisecond?: number | undefined;
 }

@@ -11,34 +11,34 @@ import { isDaylightSavingTime } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function isDaylightSavingTime(
-    date: DateInput,
-    options?: TimeZoneOptions,
-): boolean;
+function isDaylightSavingTime(params: IsDaylightSavingTimeParams): boolean;
 ```
 
-## Options
+## Parameters
 
-| Name       | Type     | Default                                 | Meaning                                                              |
-| ---------- | -------- | --------------------------------------- | -------------------------------------------------------------------- |
-| `timeZone` | `string` | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
+| Name       | Type        | Required | Default | Meaning                              |
+| ---------- | ----------- | -------- | ------- | ------------------------------------ |
+| `date`     | `DateInput` | yes      |         | The instant to test.                 |
+| `timeZone` | `string`    | no       |         | Zone used for the offset comparison. |
 
 ## Examples
 
 ```ts
 import { isDaylightSavingTime } from "@sgx4u/date-time";
 
-isDaylightSavingTime("2026-01-15T00:00:00Z", {
+isDaylightSavingTime({
+    date: "2026-01-15T00:00:00Z",
     timeZone: "America/New_York",
 });
 // false
 
-isDaylightSavingTime("2026-07-15T00:00:00Z", {
+isDaylightSavingTime({
+    date: "2026-07-15T00:00:00Z",
     timeZone: "America/New_York",
 });
 // true
 
-isDaylightSavingTime("2026-07-15T00:00:00Z", { timeZone: "UTC" });
+isDaylightSavingTime({ date: "2026-07-15T00:00:00Z", timeZone: "UTC" });
 // false
 ```
 

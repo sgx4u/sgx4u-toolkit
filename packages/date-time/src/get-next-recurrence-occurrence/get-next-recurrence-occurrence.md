@@ -12,43 +12,44 @@ import { getNextRecurrenceOccurrence } from "@sgx4u/date-time/recurrence";
 
 ```ts
 function getNextRecurrenceOccurrence(
-    rule: RecurrenceRule,
-    options?: AdjacentRecurrenceOptions,
+    params: GetNextRecurrenceOccurrenceParams,
 ): Date | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name         | Type        | Default                         | Meaning                                         |
-| ------------ | ----------- | ------------------------------- | ----------------------------------------------- |
-| `now`        | `DateInput` | `Date.now()`, read on each call | The instant to use instead of the current time. |
-| `includeNow` | `boolean`   | `false`                         | Whether an occurrence at `now` counts.          |
+| Name         | Type             | Required | Default                          | Meaning                                         |
+| ------------ | ---------------- | -------- | -------------------------------- | ----------------------------------------------- |
+| `rule`       | `RecurrenceRule` | yes      |                                  | The recurrence rule.                            |
+| `includeNow` | `boolean`        | no       | `false`                          | Whether an occurrence exactly at `now` counts.  |
+| `now`        | `DateInput`      | no       | `Date.now()`, read on each call. | The instant to use instead of the current time. |
 
 ## Examples
 
 ```ts
 import { getNextRecurrenceOccurrence } from "@sgx4u/date-time/recurrence";
 
-getNextRecurrenceOccurrence(
-    { start: new Date("2026-11-26T09:00:00Z"), frequency: "daily" },
-    { now: "2026-11-26T09:00:00Z" },
-)?.toISOString();
+getNextRecurrenceOccurrence({
+    rule: { start: new Date("2026-11-26T09:00:00Z"), frequency: "daily" },
+    now: "2026-11-26T09:00:00Z",
+})?.toISOString();
 // "2026-11-27T09:00:00.000Z"
 
-getNextRecurrenceOccurrence(
-    { start: new Date("2026-11-26T09:00:00Z"), frequency: "daily" },
-    { now: "2026-11-26T09:00:00Z", includeNow: true },
-)?.toISOString();
+getNextRecurrenceOccurrence({
+    rule: { start: new Date("2026-11-26T09:00:00Z"), frequency: "daily" },
+    now: "2026-11-26T09:00:00Z",
+    includeNow: true,
+})?.toISOString();
 // "2026-11-26T09:00:00.000Z"
 
-getNextRecurrenceOccurrence(
-    {
+getNextRecurrenceOccurrence({
+    rule: {
         start: new Date("2026-11-26T09:00:00Z"),
         frequency: "daily",
         count: 1,
     },
-    { now: "2026-11-27T09:00:00Z" },
-)?.toISOString();
+    now: "2026-11-27T09:00:00Z",
+})?.toISOString();
 // undefined
 ```
 

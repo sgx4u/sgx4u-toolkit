@@ -16,7 +16,7 @@ describe("getLocaleHourCycle", () => {
     it("throws when the locale tag is invalid", () => {
         expect(() => getLocaleHourCycle("not a locale")).toThrow(RangeError);
         expect(() => getLocaleHourCycle("not a locale")).toThrow(
-            "Incorrect locale information provided",
+            '`locale` must be a BCP 47 language tag; received "not a locale".',
         );
     });
 });

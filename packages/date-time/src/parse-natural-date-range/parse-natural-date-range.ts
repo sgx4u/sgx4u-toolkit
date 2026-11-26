@@ -8,7 +8,7 @@ import type { ParseNaturalDateParams } from "../parse-natural-date/parse-natural
 /**
  * Fields for {@link parseNaturalDateRange}.
  */
-export interface ParseNaturalDateRangeParams extends ParseNaturalDateParams {}
+export type ParseNaturalDateRangeParams = ParseNaturalDateParams;
 
 /**
  * Parses an English date range.

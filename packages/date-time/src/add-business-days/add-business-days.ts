@@ -43,7 +43,5 @@ export function addBusinessDays({
     if (start === undefined) {
         return undefined;
     }
-    return new Date(
-        addBusinessInstant(start.getTime(), amount, resolved),
-    );
+    return new Date(addBusinessInstant(start.getTime(), amount, resolved));
 }

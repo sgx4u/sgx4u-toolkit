@@ -22,9 +22,7 @@ import type { GetNextWeekdayParams } from "./get-next-weekday.types.js";
  *   timeZone: "UTC",
  * })?.toISOString(); // "2026-11-30T00:00:00.000Z"
  */
-export function getNextWeekday(
-    params: GetNextWeekdayParams,
-): Date | undefined {
+export function getNextWeekday(params: GetNextWeekdayParams): Date | undefined {
     return stepToWeekday(params, 1);
 }
 

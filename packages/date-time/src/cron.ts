@@ -4,6 +4,8 @@
  * Import this entry when a program needs cron parsing. It is separate from
  * the root entry so a program that never uses cron does not load it.
  */
+export { createCron } from "./create-cron.js";
+export type { CronInstance } from "./create-cron.js";
 export { describeCronExpression } from "./describe-cron-expression/describe-cron-expression.js";
 export { doesCronMatch } from "./does-cron-match/does-cron-match.js";
 export { getNextCronRuns } from "./get-next-cron-runs/get-next-cron-runs.js";

@@ -72,6 +72,8 @@ describe("getDateParts", () => {
 
     it("returns undefined for an invalid date", () => {
         expect(getDateParts({ date: Number.NaN })).toBeUndefined();
-        expect(getDateParts({ date: true as unknown as string })).toBeUndefined();
+        expect(
+            getDateParts({ date: true as unknown as string }),
+        ).toBeUndefined();
     });
 });

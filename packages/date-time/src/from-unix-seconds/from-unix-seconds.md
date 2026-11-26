@@ -14,21 +14,22 @@ import { fromUnixSeconds } from "@sgx4u/date-time";
 function fromUnixSeconds(seconds: number): Date | undefined;
 ```
 
-## Options
+## Parameters
 
-This function has no options. Pass `seconds` as the only argument.
+| Name      | Type     | Required | Default | Meaning                       |
+| --------- | -------- | -------- | ------- | ----------------------------- |
+| `seconds` | `number` | yes      |         | Seconds since the Unix epoch. |
 
 ## Examples
 
 ```ts
 fromUnixSeconds(0)?.toISOString();
-// "1970-01-01T00:00:00.000Z" 
+// "1970-01-01T00:00:00.000Z"
 ```
 
 ## Edge cases
 
 A non-finite value, or seconds outside the range `Date` can store, returns `undefined`.
-
 
 ## Related
 

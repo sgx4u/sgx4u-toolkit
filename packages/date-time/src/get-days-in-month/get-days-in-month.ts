@@ -25,5 +25,5 @@ export function getDaysInMonth({
     if (month < 1 || month > 12) {
         return undefined;
     }
-    return daysInGregorianMonth(year, month);
+    return daysInGregorianMonth(year, month) as 28 | 29 | 30 | 31;
 }

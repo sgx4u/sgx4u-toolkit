@@ -59,7 +59,7 @@ const textExpression = /(?<number>\d+(?:\.\d+)?|\.\d+)\s*(?<unit>[A-Za-z]+)/g;
 const clockExpression =
     /^(?<negative>-)?(?:(?<hours>\d+):)?(?<minutes>\d{1,2}):(?<seconds>\d{1,2}(?:\.\d+)?)$/;
 
-const isoExpression =
+const ISOExpression =
     /^(?<negative>-)?P(?:(?<years>\d+(?:\.\d+)?)Y)?(?:(?<months>\d+(?:\.\d+)?)M)?(?:(?<weeks>\d+(?:\.\d+)?)W)?(?:(?<days>\d+(?:\.\d+)?)D)?(?:T(?:(?<hours>\d+(?:\.\d+)?)H)?(?:(?<minutes>\d+(?:\.\d+)?)M)?(?:(?<seconds>\d+(?:\.\d+)?)S)?)?$/;
 
 /**
@@ -121,11 +121,11 @@ export function parseDurationWords(value: string): Duration | undefined {
  * @param value - The candidate text.
  * @returns The duration, or `undefined` when the text does not match.
  */
-export function parseIsoDurationText(value: string): Duration | undefined {
+export function parseISODurationText(value: string): Duration | undefined {
     if (value === "P" || value === "PT" || value === "-P" || value === "-PT") {
         return undefined;
     }
-    const groups = isoExpression.exec(value)?.groups;
+    const groups = ISOExpression.exec(value)?.groups;
     if (groups === undefined) {
         return undefined;
     }
@@ -166,7 +166,7 @@ export function parseIsoDurationText(value: string): Duration | undefined {
  * @param duration - A duration.
  * @returns The ISO text.
  */
-export function formatIsoDurationText(duration: Duration): string {
+export function formatISODurationText(duration: Duration): string {
     const sign = durationFieldNames.some(
         (fieldName) => (duration[fieldName] ?? 0) < 0,
     )

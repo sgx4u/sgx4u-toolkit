@@ -1,4 +1,8 @@
-import type { NowOptions, TimeZoneOptions, WeekOptions } from "../types/options.types.js";
+import type {
+    NowOptions,
+    TimeZoneOptions,
+    WeekOptions,
+} from "../types/options.types.js";
 import type { TimeUnit } from "../types/time.types.js";
 import { endOfInstant } from "../utils/arithmetic.utils.js";
 import { readDateInput, resolveNow } from "../utils/date-input.utils.js";
@@ -12,9 +16,7 @@ import { assertTimeUnit } from "../utils/unit.utils.js";
  * Fields for {@link getMillisecondsUntilNextUnit}.
  */
 export interface GetMillisecondsUntilNextUnitParams
-    extends NowOptions,
-        TimeZoneOptions,
-        WeekOptions {
+    extends NowOptions, TimeZoneOptions, WeekOptions {
     /**
      * The boundary to wait for.
      */
@@ -46,7 +48,9 @@ export function getMillisecondsUntilNextUnit({
 }: GetMillisecondsUntilNextUnitParams): number | undefined {
     const zone = resolveTimeZone(timeZone);
     const reference =
-        now === undefined ? resolveNow(undefined, zone) : readDateInput(now, zone);
+        now === undefined
+            ? resolveNow(undefined, zone)
+            : readDateInput(now, zone);
     if (reference === undefined) {
         return undefined;
     }

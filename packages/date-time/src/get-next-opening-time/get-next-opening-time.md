@@ -11,43 +11,41 @@ import { getNextOpeningTime } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getNextOpeningTime(
-    date: DateInput,
-    schedule: WeeklySchedule,
-    options?: TimeZoneOptions,
-): Date | undefined;
+function getNextOpeningTime(params: GetNextOpeningTimeParams): Date | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name       | Type     | Default                                 | Meaning                                                              |
-| ---------- | -------- | --------------------------------------- | -------------------------------------------------------------------- |
-| `timeZone` | `string` | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
+| Name       | Type             | Required | Default | Meaning                             |
+| ---------- | ---------------- | -------- | ------- | ----------------------------------- |
+| `date`     | `DateInput`      | yes      |         | The instant to search from.         |
+| `schedule` | `WeeklySchedule` | yes      |         | Weekly hours and optional closures. |
+| `timeZone` | `string`         | no       |         | Zone used to read the schedule.     |
 
 ## Examples
 
 ```ts
 import { getNextOpeningTime } from "@sgx4u/date-time";
 
-getNextOpeningTime(
-    "2026-11-26T08:00:00Z",
-    { hours: { 4: [{ start: "09:00", end: "17:00" }] } },
-    { timeZone: "UTC" },
-)?.toISOString();
+getNextOpeningTime({
+    date: "2026-11-26T08:00:00Z",
+    schedule: { hours: { 4: [{ start: "09:00", end: "17:00" }] } },
+    timeZone: "UTC",
+})?.toISOString();
 // "2026-11-26T09:00:00.000Z"
 
-getNextOpeningTime(
-    "2026-11-26T12:00:00Z",
-    { hours: { 4: [{ start: "09:00", end: "17:00" }] } },
-    { timeZone: "UTC" },
-)?.toISOString();
+getNextOpeningTime({
+    date: "2026-11-26T12:00:00Z",
+    schedule: { hours: { 4: [{ start: "09:00", end: "17:00" }] } },
+    timeZone: "UTC",
+})?.toISOString();
 // "2026-12-03T09:00:00.000Z"
 
-getNextOpeningTime(
-    "2026-11-27T12:00:00Z",
-    { hours: { 4: [{ start: "09:00", end: "17:00" }] } },
-    { timeZone: "UTC" },
-)?.toISOString();
+getNextOpeningTime({
+    date: "2026-11-27T12:00:00Z",
+    schedule: { hours: { 4: [{ start: "09:00", end: "17:00" }] } },
+    timeZone: "UTC",
+})?.toISOString();
 // "2026-12-03T09:00:00.000Z"
 ```
 

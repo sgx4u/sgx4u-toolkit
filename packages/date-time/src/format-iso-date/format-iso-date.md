@@ -14,12 +14,12 @@ import { formatISODate } from "@sgx4u/date-time";
 function formatISODate(params: FormatISODateParams): string | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name       | Type        | Required | Default     | Meaning                    |
-| ---------- | ----------- | -------- | ----------- | -------------------------- |
-| `date`     | `DateInput` | yes      |             | Instant to format.         |
-| `timeZone` | `string`    | no       | System zone | IANA name or fixed offset. |
+| Name       | Type        | Required | Default                                  | Meaning                                            |
+| ---------- | ----------- | -------- | ---------------------------------------- | -------------------------------------------------- |
+| `date`     | `DateInput` | yes      |                                          | The instant to format.                             |
+| `timeZone` | `string`    | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset |
 
 ## Examples
 

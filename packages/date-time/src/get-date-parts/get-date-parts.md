@@ -14,41 +14,37 @@ import { getDateParts } from "@sgx4u/date-time";
 function getDateParts(params: GetDatePartsParams): DateParts | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name       | Type        | Required | Default                                 | Meaning                                                              |
-| ---------- | ----------- | -------- | --------------------------------------- | -------------------------------------------------------------------- |
-| `date`     | `DateInput` | Yes      | —                                       | The instant to read.                                                 |
-| `timeZone` | `string`    | No       | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
+| Name       | Type        | Required | Default                                  | Meaning                                            |
+| ---------- | ----------- | -------- | ---------------------------------------- | -------------------------------------------------- |
+| `date`     | `DateInput` | yes      |                                          | The instant to read.                               |
+| `timeZone` | `string`    | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset |
 
 ## Examples
 
 ```ts
 import { getDateParts } from "@sgx4u/date-time";
 
-getDateParts("2024-06-15T16:00:00.000Z", {
-    timeZone: "America/New_York",
-}).hour;
+getDateParts({ date: "2024-06-15T16:00:00.000Z", timeZone: "America/New_York" })
+    .hour;
 // 12
 
-getDateParts("2024-06-15T16:00:00.000Z", {
-    timeZone: "Asia/Kolkata",
-}).minute;
+getDateParts({ date: "2024-06-15T16:00:00.000Z", timeZone: "Asia/Kolkata" })
+    .minute;
 // 30
 
-getDateParts("2024-06-15", { timeZone: "UTC" }).hour;
+getDateParts({ date: "2024-06-15", timeZone: "UTC" }).hour;
 // 0
 
-getDateParts("2024-06-15T16:00:00.000Z", {
-    timeZone: "Asia/Kolkata",
-}).offsetMinutes;
+getDateParts({ date: "2024-06-15T16:00:00.000Z", timeZone: "Asia/Kolkata" })
+    .offsetMinutes;
 // 330
 ```
 
 ## Edge cases
 
 Invalid `date` returns `undefined`. An invalid `timeZone` throws.
-
 
 ## Related
 

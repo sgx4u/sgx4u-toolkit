@@ -11,16 +11,16 @@ import { getMonthNames } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getMonthNames(options?: MonthNameOptions): string[];
+function getMonthNames(params: GetMonthNamesParams = {}): string[];
 ```
 
-## Options
+## Parameters
 
-| Name      | Type                            | Default                      | Meaning                                                                      |
-| --------- | ------------------------------- | ---------------------------- | ---------------------------------------------------------------------------- |
-| `locale`  | `string \| readonly string[]`   | The runtime's default locale | A BCP 47 language tag, or a list of tags in preference order.                |
-| `width`   | `"long" \| "short" \| "narrow"` | `"long"`                     | The name length.                                                             |
-| `context` | `"format" \| "standalone"`      | `"standalone"`               | `"format"` is the name used inside a date. `"standalone"` is the name alone. |
+| Name      | Type                            | Required | Default                       | Meaning                                                                      |
+| --------- | ------------------------------- | -------- | ----------------------------- | ---------------------------------------------------------------------------- |
+| `width`   | `"long" \| "short" \| "narrow"` | no       | `"long"`                      | The name length.                                                             |
+| `context` | `"format" \| "standalone"`      | no       | `"standalone"`                | `"format"` is the name used inside a date. `"standalone"` is the name alone. |
+| `locale`  | `string \| readonly string[]`   | no       | The runtime's default locale. | A BCP 47 language tag, or a list of tags in preference order.                |
 
 ## Examples
 

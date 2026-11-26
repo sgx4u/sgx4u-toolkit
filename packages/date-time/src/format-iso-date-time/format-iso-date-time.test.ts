@@ -96,8 +96,8 @@ describe("formatISODateTime", () => {
         ).toThrow(
             '`precision` must be "minute", "second", or "millisecond"; received "hour".',
         );
-        expect(() =>
+        expect(
             formatISODateTime({ date: "nope", timeZone: "UTC" }),
-        ).toThrow(RangeError);
+        ).toBeUndefined();
     });
 });

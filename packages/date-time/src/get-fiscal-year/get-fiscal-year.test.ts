@@ -5,24 +5,24 @@ const april = { fiscalYearStartMonth: 4, timeZone: "UTC" } as const;
 
 describe("getFiscalYear", () => {
     it("labels 1 April 2026 through 31 March 2027 as fiscal year 2027", () => {
-        expect(
-            getFiscalYear({ date: "2026-03-31T00:00:00Z", ...april }),
-        ).toBe(2026);
-        expect(
-            getFiscalYear({ date: "2026-04-01T00:00:00Z", ...april }),
-        ).toBe(2027);
-        expect(
-            getFiscalYear({ date: "2026-12-31T00:00:00Z", ...april }),
-        ).toBe(2027);
-        expect(
-            getFiscalYear({ date: "2027-01-01T00:00:00Z", ...april }),
-        ).toBe(2027);
-        expect(
-            getFiscalYear({ date: "2027-03-31T00:00:00Z", ...april }),
-        ).toBe(2027);
-        expect(
-            getFiscalYear({ date: "2027-04-01T00:00:00Z", ...april }),
-        ).toBe(2028);
+        expect(getFiscalYear({ date: "2026-03-31T00:00:00Z", ...april })).toBe(
+            2026,
+        );
+        expect(getFiscalYear({ date: "2026-04-01T00:00:00Z", ...april })).toBe(
+            2027,
+        );
+        expect(getFiscalYear({ date: "2026-12-31T00:00:00Z", ...april })).toBe(
+            2027,
+        );
+        expect(getFiscalYear({ date: "2027-01-01T00:00:00Z", ...april })).toBe(
+            2027,
+        );
+        expect(getFiscalYear({ date: "2027-03-31T00:00:00Z", ...april })).toBe(
+            2027,
+        );
+        expect(getFiscalYear({ date: "2027-04-01T00:00:00Z", ...april })).toBe(
+            2028,
+        );
         expect(
             getFiscalYear({
                 date: "2026-04-01T00:00:00Z",
@@ -72,7 +72,9 @@ describe("getFiscalYear", () => {
 
     it("throws when the start month is missing or out of range", () => {
         expect(() =>
-            getFiscalYear({ date: "2026-04-01T00:00:00Z" } as never),
+            getFiscalYear({
+                date: "2026-04-01T00:00:00Z",
+            } as never),
         ).toThrow(TypeError);
         expect(() =>
             getFiscalYear({

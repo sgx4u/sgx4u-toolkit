@@ -28,7 +28,8 @@ export function isFuture({ date, now }: IsFutureParams): boolean {
     if (instant === undefined) {
         return false;
     }
-    const reference = now === undefined ? resolveNow(undefined) : readDateInput(now);
+    const reference =
+        now === undefined ? resolveNow(undefined) : readDateInput(now);
     if (reference === undefined) {
         return false;
     }

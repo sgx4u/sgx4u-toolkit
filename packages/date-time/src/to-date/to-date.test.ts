@@ -18,7 +18,10 @@ describe("toDate", () => {
 
     it("reads a date-only string as midnight in the given zone", () => {
         expect(
-            toDate({ date: "2026-11-26", timeZone: "Asia/Kolkata" })?.toISOString(),
+            toDate({
+                date: "2026-11-26",
+                timeZone: "Asia/Kolkata",
+            })?.toISOString(),
         ).toBe("2026-11-25T18:30:00.000Z");
         expect(
             toDate({ date: "2026-11-26", timeZone: "UTC" })?.toISOString(),

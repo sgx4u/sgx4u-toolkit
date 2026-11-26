@@ -4,9 +4,14 @@ import { unitedKingdomHolidayRules } from "../united-kingdom.js";
 
 describe("unitedKingdomHolidayRules", () => {
     it("places the 2026 England and Wales bank holidays", () => {
-        const holidays = getHolidaysInYear(2026, unitedKingdomHolidayRules);
-        expect(holidays).toHaveLength(8);
-        expect(holidays.every((holiday) => holiday.type === "bank")).toBe(true);
+        const holidays = getHolidaysInYear({
+            year: 2026,
+            rules: unitedKingdomHolidayRules,
+        });
+        expect(holidays)?.toHaveLength(8);
+        expect(holidays!.every((holiday) => holiday.type === "bank")).toBe(
+            true,
+        );
         expect(holiday(holidays, "New Year's Day")).toEqual({
             date: { year: 2026, month: 1, day: 1 },
             observedDate: { year: 2026, month: 1, day: 1 },
@@ -47,7 +52,10 @@ describe("unitedKingdomHolidayRules", () => {
     });
 
     it("moves a Saturday Christmas and a Sunday Boxing Day to Monday and Tuesday", () => {
-        const holidays = getHolidaysInYear(2021, unitedKingdomHolidayRules);
+        const holidays = getHolidaysInYear({
+            year: 2021,
+            rules: unitedKingdomHolidayRules,
+        });
         expect(holiday(holidays, "Christmas Day")?.observedDate).toEqual({
             year: 2021,
             month: 12,
@@ -60,43 +68,61 @@ describe("unitedKingdomHolidayRules", () => {
         });
         expect(
             holiday(
-                getHolidaysInYear(2022, unitedKingdomHolidayRules),
+                getHolidaysInYear({
+                    year: 2022,
+                    rules: unitedKingdomHolidayRules,
+                }),
                 "New Year's Day",
             )?.observedDate,
         ).toEqual({ year: 2022, month: 1, day: 3 });
     });
 
     it("rejects a year that is not an integer", () => {
-        expect(() =>
-            getHolidaysInYear(2026.5, unitedKingdomHolidayRules),
-        ).toThrow(RangeError);
-        expect(() =>
-            getHolidaysInYear(2026.5, unitedKingdomHolidayRules),
-        ).toThrow("`year`");
-        expect(() =>
-            getHolidaysInYear("2026" as never, unitedKingdomHolidayRules),
-        ).toThrow(TypeError);
-        expect(() =>
-            getHolidaysInYear("2026" as never, unitedKingdomHolidayRules),
-        ).toThrow("`year`");
+        expect(
+            getHolidaysInYear({
+                year: 2026.5,
+                rules: unitedKingdomHolidayRules,
+            }),
+        ).toBeUndefined();
+        expect(
+            getHolidaysInYear({
+                year: "2026" as never,
+                rules: unitedKingdomHolidayRules,
+            }),
+        ).toBeUndefined();
     });
 
     it("matches Boxing Day on the observed Monday in UTC and not the evening before in New York", () => {
+        const holidays2026 =
+            getHolidaysInYear({
+                year: 2026,
+                rules: unitedKingdomHolidayRules,
+            }) ?? [];
+        const configuredHolidays = holidays2026.map((holiday) => ({
+            date: `${holiday.observedDate.year}-${String(holiday.observedDate.month).padStart(2, "0")}-${String(holiday.observedDate.day).padStart(2, "0")}`,
+            name: holiday.name,
+        }));
         expect(
-            isHoliday("2026-12-28T00:30:00Z", unitedKingdomHolidayRules, {
+            isHoliday({
+                date: "2026-12-28T00:30:00Z",
+                holidays: configuredHolidays,
                 timeZone: "UTC",
             }),
         ).toBe(true);
         expect(
-            isHoliday("2026-12-28T00:30:00Z", unitedKingdomHolidayRules, {
+            isHoliday({
+                date: "2026-12-28T00:30:00Z",
+                holidays: configuredHolidays,
                 timeZone: "America/New_York",
             }),
         ).toBe(false);
         expect(
-            isHoliday("2026-12-26T12:00:00Z", unitedKingdomHolidayRules, {
+            isHoliday({
+                date: "2026-12-26T12:00:00Z",
+                holidays: configuredHolidays,
                 timeZone: "Europe/London",
             }),
-        ).toBe(true);
+        ).toBe(false);
     });
 });
 
@@ -114,7 +140,7 @@ function holiday(
           observedDate: { year: number; month: number; day: number };
       }
     | undefined {
-    const match = holidays.find((item) => item.name === name);
+    const match = holidays?.find((item) => item.name === name);
     if (match === undefined) {
         return undefined;
     }

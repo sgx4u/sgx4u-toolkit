@@ -181,7 +181,11 @@ function segmentsStartingOn(
     for (const range of ranges) {
         const bounds = readRange(range);
         const start = timeOnDay(dayStart, bounds.start, timeZone);
-        if (compareTimesOfDay(bounds.end, bounds.start) > 0) {
+        const compared = compareTimesOfDay({
+            first: bounds.end,
+            second: bounds.start,
+        });
+        if (compared !== undefined && compared > 0) {
             segments.push({
                 start,
                 end: timeOnDay(dayStart, bounds.end, timeZone),

@@ -11,12 +11,14 @@ import { toUnixSeconds } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function toUnixSeconds(date: DateInput): number;
+function toUnixSeconds(date: DateInput): number | undefined;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name   | Type        | Required | Default | Meaning                 |
+| ------ | ----------- | -------- | ------- | ----------------------- |
+| `date` | `DateInput` | yes      |         | The instant to convert. |
 
 ## Examples
 

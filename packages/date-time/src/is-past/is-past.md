@@ -11,33 +11,34 @@ import { isPast } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function isPast(date: DateInput, options?: NowOptions): boolean;
+function isPast(params: IsPastParams): boolean;
 ```
 
-## Options
+## Parameters
 
-| Name  | Type        | Default                         | Meaning                                         |
-| ----- | ----------- | ------------------------------- | ----------------------------------------------- |
-| `now` | `DateInput` | `Date.now()`, read on each call | The instant to use instead of the current time. |
+| Name   | Type        | Required | Default | Meaning                                         |
+| ------ | ----------- | -------- | ------- | ----------------------------------------------- |
+| `date` | `DateInput` | yes      |         | The date to test.                               |
+| `now`  | `DateInput` | no       |         | The instant to use instead of the current time. |
 
 ## Examples
 
 ```ts
 import { isPast } from "@sgx4u/date-time";
 
-isPast("2020-01-01T00:00:00Z", { now: "2026-01-01T00:00:00Z" });
+isPast({ date: "2020-01-01T00:00:00Z", now: "2026-01-01T00:00:00Z" });
 // true
 
-isPast("2026-01-01T00:00:00Z", { now: "2026-01-01T00:00:00Z" });
+isPast({ date: "2026-01-01T00:00:00Z", now: "2026-01-01T00:00:00Z" });
 // false
 
-isPast("2027-01-01T00:00:00Z", { now: "2026-01-01T00:00:00Z" });
+isPast({ date: "2027-01-01T00:00:00Z", now: "2026-01-01T00:00:00Z" });
 // false
 ```
 
 ## Edge cases
 
-Equal to `now` returns `false`. `now` defaults to the current time, read on each call. A value that is not a real date throws a `RangeError`.
+Equal to `now` returns `false`. `now` defaults to the current time, read on each call. A value that is not a real date returns `undefined`.
 
 ## Related
 

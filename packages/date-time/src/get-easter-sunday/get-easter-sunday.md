@@ -11,35 +11,36 @@ import { getEasterSunday } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getEasterSunday(params: GetEasterSundayParams): CalendarDate | undefined;
+function getEasterSunday(
+    params: GetEasterSundayParams,
+): CalendarDate | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name        | Type                      | Required | Default     | Meaning                                                                                                             |
-| ----------- | ------------------------- | -------- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
-| `year`      | `number`                  | Yes      | —           | Gregorian year from 1583 through 9999.                                                                              |
-| `tradition` | `"western" \| "orthodox"` | No       | `"western"` | Western Easter uses the Gregorian computus. Orthodox Easter uses the Julian computus converted to a Gregorian date. |
+| Name        | Type                      | Required | Default     | Meaning                                                              |
+| ----------- | ------------------------- | -------- | ----------- | -------------------------------------------------------------------- |
+| `year`      | `number`                  | yes      |             | The Gregorian year.                                                  |
+| `tradition` | `"western" \| "orthodox"` | no       | `"western"` | Western Easter uses the Gregorian computus. Orthodox Easter uses the |
 
 ## Examples
 
 ```ts
 import { getEasterSunday } from "@sgx4u/date-time";
 
-getEasterSunday(2026);
+getEasterSunday({ year: 2026 });
 // { year: 2026, month: 4, day: 5 }
 
-getEasterSunday(2026, { tradition: "orthodox" });
+getEasterSunday({ year: 2026, tradition: "orthodox" });
 // { year: 2026, month: 4, day: 12 }
 
-getEasterSunday(2024);
+getEasterSunday({ year: 2024 });
 // { year: 2024, month: 3, day: 31 }
 ```
 
 ## Edge cases
 
 A non-integer year or a year outside 1583 through 9999 returns `undefined`. An unknown `tradition` throws.
-
 
 ## Related
 

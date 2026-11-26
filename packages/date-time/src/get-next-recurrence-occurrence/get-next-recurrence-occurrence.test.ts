@@ -9,7 +9,8 @@ const daily = {
 describe("getNextRecurrenceOccurrence", () => {
     it("returns the following daily occurrence", () => {
         expect(
-            getNextRecurrenceOccurrence(daily, {
+            getNextRecurrenceOccurrence({
+                rule: daily,
                 now: "2026-11-26T09:00:00Z",
             })?.toISOString(),
         ).toBe("2026-11-27T09:00:00.000Z");
@@ -17,80 +18,85 @@ describe("getNextRecurrenceOccurrence", () => {
 
     it("includes now only when asked and stops at count or until", () => {
         expect(
-            getNextRecurrenceOccurrence(daily, {
+            getNextRecurrenceOccurrence({
+                rule: daily,
                 now: "2026-11-26T09:00:00Z",
                 includeNow: true,
             })?.toISOString(),
         ).toBe("2026-11-26T09:00:00.000Z");
         expect(
-            getNextRecurrenceOccurrence(daily, {
+            getNextRecurrenceOccurrence({
+                rule: daily,
                 now: "2026-11-25T09:00:00Z",
             })?.toISOString(),
         ).toBe("2026-11-26T09:00:00.000Z");
         expect(
-            getNextRecurrenceOccurrence(
-                { ...daily, count: 1 },
-                { now: "2026-11-26T09:00:00Z" },
-            ),
+            getNextRecurrenceOccurrence({
+                rule: { ...daily, count: 1 },
+                now: "2026-11-26T09:00:00Z",
+            }),
         ).toBeUndefined();
         expect(
-            getNextRecurrenceOccurrence(
-                { ...daily, until: new Date("2026-11-26T09:00:00.000Z") },
-                { now: "2026-11-26T09:00:00Z" },
-            ),
+            getNextRecurrenceOccurrence({
+                rule: { ...daily, until: new Date("2026-11-26T09:00:00.000Z") },
+                now: "2026-11-26T09:00:00Z",
+            }),
         ).toBeUndefined();
         expect(
-            getNextRecurrenceOccurrence(
-                {
+            getNextRecurrenceOccurrence({
+                rule: {
                     ...daily,
                     excludedDates: [new Date("2026-11-27T09:00:00.000Z")],
                 },
-                { now: "2026-11-26T09:00:00Z" },
-            )?.toISOString(),
+                now: "2026-11-26T09:00:00Z",
+            })?.toISOString(),
         ).toBe("2026-11-28T09:00:00.000Z");
     });
 
     it("rejects a now that is not a real date", () => {
         expect(() =>
-            getNextRecurrenceOccurrence(daily, { now: "nope" }),
+            getNextRecurrenceOccurrence({ rule: daily, now: "nope" }),
         ).toThrow(RangeError);
         expect(() =>
-            getNextRecurrenceOccurrence(daily, { now: "nope" }),
+            getNextRecurrenceOccurrence({ rule: daily, now: "nope" }),
         ).toThrow("`now`");
         expect(() =>
-            getNextRecurrenceOccurrence(daily, { now: null as never }),
+            getNextRecurrenceOccurrence({ rule: daily, now: null as never }),
         ).toThrow(TypeError);
         expect(() =>
-            getNextRecurrenceOccurrence(daily, { now: null as never }),
+            getNextRecurrenceOccurrence({ rule: daily, now: null as never }),
         ).toThrow("`now`");
     });
 
     it("excludes now and evaluates a floating rule in UTC", () => {
         const now = "2026-11-26T09:00:00Z";
-        expect(getNextRecurrenceOccurrence(daily, { now })?.toISOString()).toBe(
-            getNextRecurrenceOccurrence(daily, {
+        expect(
+            getNextRecurrenceOccurrence({ rule: daily, now })?.toISOString(),
+        ).toBe(
+            getNextRecurrenceOccurrence({
+                rule: daily,
                 now,
                 includeNow: false,
             })?.toISOString(),
         );
         expect(
-            getNextRecurrenceOccurrence(
-                { ...daily, timeZone: "UTC" },
-                { now },
-            )?.toISOString(),
+            getNextRecurrenceOccurrence({
+                rule: { ...daily, timeZone: "UTC" },
+                now,
+            })?.toISOString(),
         ).toBe("2026-11-27T09:00:00.000Z");
     });
 
     it("keeps 09:00 wall time across the New York spring-forward", () => {
         expect(
-            getNextRecurrenceOccurrence(
-                {
+            getNextRecurrenceOccurrence({
+                rule: {
                     start: new Date("2024-03-09T14:00:00.000Z"),
                     frequency: "daily",
                     timeZone: "America/New_York",
                 },
-                { now: "2024-03-09T14:00:00Z" },
-            )?.toISOString(),
+                now: "2024-03-09T14:00:00Z",
+            })?.toISOString(),
         ).toBe("2024-03-10T13:00:00.000Z");
     });
 });

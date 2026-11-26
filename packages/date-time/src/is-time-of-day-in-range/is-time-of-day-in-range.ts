@@ -27,11 +27,11 @@ export function isTimeOfDayInRange({
 }: IsTimeOfDayInRangeParams): boolean {
     const start = readBound(range.start, "range.start");
     const end = readBound(range.end, "range.end");
-    const afterStart = compareTimesOfDay(time, start) >= 0;
+    const afterStart = compareTimesOfDay({ first: time, second: start })! >= 0;
     const beforeEnd = includeEnd
-        ? compareTimesOfDay(time, end) <= 0
-        : compareTimesOfDay(time, end) < 0;
-    if (compareTimesOfDay(end, start) > 0) {
+        ? compareTimesOfDay({ first: time, second: end })! <= 0
+        : compareTimesOfDay({ first: time, second: end })! < 0;
+    if (compareTimesOfDay({ first: end, second: start })! > 0) {
         return afterStart && beforeEnd;
     }
     return afterStart || beforeEnd;

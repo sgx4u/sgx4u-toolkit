@@ -1,4 +1,3 @@
-import type { DateInput } from "../types/date-input.types.js";
 import { readDateInput } from "../utils/date-input.utils.js";
 import { rangeError } from "../utils/error.utils.js";
 import type { SortDatesParams } from "./sort-dates.types.js";

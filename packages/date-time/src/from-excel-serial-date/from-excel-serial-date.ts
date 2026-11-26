@@ -1,4 +1,3 @@
-import { rangeError } from "../utils/error.utils.js";
 import { partsFromSerial } from "../utils/excel.utils.js";
 import {
     instantFromWallTime,
@@ -36,10 +35,6 @@ export function fromExcelSerialDate({
     }
     const parts = partsFromSerial(serial, system);
     return new Date(
-        instantFromWallTime(
-            parts,
-            resolveTimeZone(timeZone),
-            "compatible",
-        ),
+        instantFromWallTime(parts, resolveTimeZone(timeZone), "compatible"),
     );
 }

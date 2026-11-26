@@ -26,7 +26,11 @@ export function parseCronExpression({
     if (typeof expression !== "string") {
         throw typeError("expression", "a string", expression);
     }
-    if (seconds !== "optional" && seconds !== "required" && seconds !== "none") {
+    if (
+        seconds !== "optional" &&
+        seconds !== "required" &&
+        seconds !== "none"
+    ) {
         throw rangeError(
             "seconds",
             `"optional", "required", or "none"`,

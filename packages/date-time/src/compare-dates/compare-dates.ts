@@ -2,7 +2,7 @@ import { readDateInput } from "../utils/date-input.utils.js";
 import type { CompareDatesParams } from "./compare-dates.types.js";
 
 /**
- * Compares two dates for `Array#sort`.
+ * Compares two instants.
  *
  * @param params - `first` and `second` are the instants to order.
  * @returns `-1` when `first` is earlier, `1` when it is later, `0` when they match, or `undefined` when either value is not a real date.

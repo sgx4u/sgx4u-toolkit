@@ -11,15 +11,17 @@ import { getDaysInMonth } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getDaysInMonth(params: GetDaysInMonthParams): 28 | 29 | 30 | 31 | undefined;
+function getDaysInMonth(
+    params: GetDaysInMonthParams,
+): 28 | 29 | 30 | 31 | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name    | Type     | Required | Default | Meaning                  |
-| ------- | -------- | -------- | ------- | ------------------------ |
-| `year`  | `number` | Yes      | —       | Gregorian year.          |
-| `month` | `number` | Yes      | —       | Month from 1 through 12. |
+| Name    | Type     | Required | Default | Meaning                       |
+| ------- | -------- | -------- | ------- | ----------------------------- |
+| `year`  | `number` | yes      |         | The Gregorian year.           |
+| `month` | `number` | yes      |         | The month, from 1 through 12. |
 
 ## Examples
 
@@ -34,7 +36,6 @@ getDaysInMonth({ year: 2023, month: 2 });
 ## Edge cases
 
 A non-integer `year` or `month`, or a month outside 1 through 12, returns `undefined`.
-
 
 ## Related
 

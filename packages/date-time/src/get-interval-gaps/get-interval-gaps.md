@@ -14,41 +14,47 @@ import { getIntervalGaps } from "@sgx4u/date-time";
 function getIntervalGaps(params: GetIntervalGapsParams): Interval[] | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name        | Type                  | Required | Default | Meaning                              |
-| ----------- | --------------------- | -------- | ------- | ------------------------------------ |
-| `intervals` | `readonly Interval[]` | Yes      | —       | Covered intervals.                   |
-| `within`    | `Interval`            | No       | —       | Optional window to measure inside.   |
+| Name        | Type                  | Required | Default | Meaning                               |
+| ----------- | --------------------- | -------- | ------- | ------------------------------------- |
+| `intervals` | `readonly Interval[]` | yes      |         | The covered intervals.                |
+| `within`    | `Interval`            | no       |         | An optional window to measure inside. |
 
 ## Examples
 
 ```ts
 import { getIntervalGaps } from "@sgx4u/date-time";
 
-getIntervalGaps([
-    { start: new Date(0), end: new Date(5) },
-    { start: new Date(10), end: new Date(15) },
-]).map((gap) => [gap.start.getTime(), gap.end.getTime()]);
+getIntervalGaps({
+    intervals: [
+        { start: new Date(0), end: new Date(5) },
+        { start: new Date(10), end: new Date(15) },
+    ],
+}).map((gap) => [gap.start.getTime(), gap.end.getTime()]);
 // [[5, 10]]
 
-getIntervalGaps([{ start: new Date(5), end: new Date(10) }], {
-    start: new Date(0),
-    end: new Date(20),
+getIntervalGaps({
+    intervals: [{ start: new Date(5), end: new Date(10) }],
+    within: {
+        start: new Date(0),
+        end: new Date(20),
+    },
 }).map((gap) => [gap.start.getTime(), gap.end.getTime()]);
 // [[0, 5], [10, 20]]
 
-getIntervalGaps([
-    { start: new Date(0), end: new Date(10) },
-    { start: new Date(10), end: new Date(20) },
-]).length;
+getIntervalGaps({
+    intervals: [
+        { start: new Date(0), end: new Date(10) },
+        { start: new Date(10), end: new Date(20) },
+    ],
+}).length;
 // 0
 ```
 
 ## Edge cases
 
 An invalid interval in the list or in `within` returns `undefined`. A non-array `intervals` throws.
-
 
 ## Related
 

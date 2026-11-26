@@ -1,14 +1,12 @@
-import type { DateInput } from "../types/date-input.types.js";
-import type { Duration } from "../types/duration.types.js";
 import { addDurationToInstant } from "../utils/arithmetic.utils.js";
-import { resolveDateInput } from "../utils/date-input.utils.js";
-import { assertDuration } from "../utils/duration.utils.js";
+import { readDateInput } from "../utils/date-input.utils.js";
+import { readDuration } from "../utils/duration.utils.js";
+import { rangeError } from "../utils/error.utils.js";
 import {
     resolveDisambiguation,
     resolveTimeZone,
 } from "../utils/time-zone.utils.js";
-import type { AddDurationOptions } from "./add-duration.types.js";
-import { rangeError } from "../utils/error.utils.js";
+import type { AddDurationParams } from "./add-duration.types.js";
 
 /**
  * Adds a duration to a date.
@@ -18,32 +16,37 @@ import { rangeError } from "../utils/error.utils.js";
  * are elapsed time, so 24 hours and one day differ across a daylight-saving
  * change. The input date is not mutated.
  *
- * @param date - The starting instant.
- * @param duration - The length to add. Every field must share one sign.
- * @param options - `timeZone` defaults to the system zone, `disambiguation` to `"compatible"`, and `overflow` to `"constrain"`.
- * @returns A new `Date`.
- * @throws {@link TypeError} When `date` or `duration` has the wrong type.
- * @throws {@link RangeError} When a value is invalid, the day does not exist and `overflow` is `"reject"`, or `"reject"` hits a gap or overlap.
+ * @param params - `date` is the starting instant and `duration` is the length to add. Every duration field must share one sign. `timeZone` defaults to the system zone, `disambiguation` to `"compatible"`, and `overflow` to `"constrain"`.
+ * @returns A new `Date`, or `undefined` when `date` or `duration` is not usable.
+ * @throws {@link RangeError} When `timeZone` is not a usable zone, `disambiguation` or `overflow` is not a known mode, the day does not exist and `overflow` is `"reject"`, or `"reject"` hits a gap or overlap.
  * @example
- * addDuration("2026-01-31T00:00:00Z", { months: 1 }, { timeZone: "UTC" }).toISOString(); // "2026-02-28T00:00:00.000Z"
+ * addDuration({ date: "2026-01-31T00:00:00Z", duration: { months: 1 }, timeZone: "UTC" })?.toISOString();
  */
-export function addDuration(
-    date: DateInput,
-    duration: Duration,
-    options?: AddDurationOptions,
-): Date {
-    const checked = assertDuration(duration, "duration");
-    const overflow = options?.overflow ?? "constrain";
+export function addDuration({
+    date,
+    duration,
+    timeZone,
+    disambiguation,
+    overflow = "constrain",
+}: AddDurationParams): Date | undefined {
+    const checked = readDuration(duration);
+    if (checked === undefined) {
+        return undefined;
+    }
     if (overflow !== "constrain" && overflow !== "reject") {
         throw rangeError("overflow", `"constrain" or "reject"`, overflow);
     }
-    const timeZone = resolveTimeZone(options?.timeZone);
+    const zone = resolveTimeZone(timeZone);
+    const resolved = readDateInput(date, zone);
+    if (resolved === undefined) {
+        return undefined;
+    }
     return new Date(
         addDurationToInstant(
-            resolveDateInput(date, "date", timeZone).getTime(),
+            resolved.getTime(),
             checked,
-            timeZone,
-            resolveDisambiguation(options?.disambiguation),
+            zone,
+            resolveDisambiguation(disambiguation),
             overflow,
         ),
     );

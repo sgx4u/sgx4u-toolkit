@@ -11,42 +11,44 @@ import { mergeIntervals } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function mergeIntervals(
-    intervals: readonly Interval[],
-    options?: MergeIntervalsOptions,
-): Interval[];
+function mergeIntervals(params: MergeIntervalsParams): Interval[] | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name            | Type      | Default | Meaning                                            |
-| --------------- | --------- | ------- | -------------------------------------------------- |
-| `mergeTouching` | `boolean` | `true`  | Whether `[a, b)` and `[b, c)` become one interval. |
+| Name            | Type                  | Required | Default | Meaning                                            |
+| --------------- | --------------------- | -------- | ------- | -------------------------------------------------- |
+| `intervals`     | `readonly Interval[]` | yes      |         | The intervals to combine.                          |
+| `mergeTouching` | `boolean`             | no       | `true`  | Whether `[a, b)` and `[b, c)` become one interval. |
 
 ## Examples
 
 ```ts
 import { mergeIntervals } from "@sgx4u/date-time";
 
-mergeIntervals([
-    { start: new Date(0), end: new Date(10) },
-    { start: new Date(10), end: new Date(20) },
-]).length;
-// 1
-
-mergeIntervals(
-    [
+mergeIntervals({
+    intervals: [
         { start: new Date(0), end: new Date(10) },
         { start: new Date(10), end: new Date(20) },
     ],
-    { mergeTouching: false },
-).length;
+}).length;
+// 1
+
+mergeIntervals({
+    intervals: [
+        { start: new Date(0), end: new Date(10) },
+        { start: new Date(10), end: new Date(20) },
+    ],
+    mergeTouching: false,
+}).length;
 // 2
 
-mergeIntervals([
-    { start: new Date(10), end: new Date(20) },
-    { start: new Date(0), end: new Date(15) },
-])[0]?.end.getTime();
+mergeIntervals({
+    intervals: [
+        { start: new Date(10), end: new Date(20) },
+        { start: new Date(0), end: new Date(15) },
+    ],
+})[0]?.end.getTime();
 // 20
 ```
 

@@ -11,12 +11,14 @@ import { formatHTTPDate } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function formatHTTPDate(date: DateInput): string;
+function formatHTTPDate(date: DateInput): string | undefined;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name   | Type        | Required | Default | Meaning                |
+| ------ | ----------- | -------- | ------- | ---------------------- |
+| `date` | `DateInput` | yes      |         | The instant to format. |
 
 ## Examples
 

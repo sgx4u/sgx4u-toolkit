@@ -14,9 +14,11 @@ import { getISOWeeksInYear } from "@sgx4u/date-time";
 function getISOWeeksInYear(year: number): 52 | 53 | undefined;
 ```
 
-## Options
+## Parameters
 
-This function has no options.
+| Name   | Type     | Required | Default | Meaning             |
+| ------ | -------- | -------- | ------- | ------------------- |
+| `year` | `number` | yes      |         | The Gregorian year. |
 
 ## Examples
 
@@ -36,7 +38,6 @@ getISOWeeksInYear(2026);
 ## Edge cases
 
 A non-integer year returns `undefined`.
-
 
 ## Related
 

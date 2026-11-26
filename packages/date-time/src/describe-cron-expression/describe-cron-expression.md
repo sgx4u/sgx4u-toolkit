@@ -11,31 +11,29 @@ import { describeCronExpression } from "@sgx4u/date-time/cron";
 ## Signature
 
 ```ts
-function describeCronExpression(
-    schedule: string | CronSchedule,
-    options?: DescribeCronExpressionOptions,
-): string;
+function describeCronExpression(params: DescribeCronExpressionParams): string;
 ```
 
-## Options
+## Parameters
 
-| Name        | Type             | Default | Meaning                                         |
-| ----------- | ---------------- | ------- | ----------------------------------------------- |
-| `hourCycle` | `"h12" \| "h23"` | `"h12"` | `"h12"` writes AM and PM. `"h23"` writes 00–23. |
+| Name        | Type                     | Required | Default | Meaning                                                            |
+| ----------- | ------------------------ | -------- | ------- | ------------------------------------------------------------------ |
+| `schedule`  | `string \| CronSchedule` | yes      |         | A cron expression or a parsed schedule.                            |
+| `hourCycle` | `"h12" \| "h23"`         | no       | `"h12"` | `"h12"` writes AM and PM. `"h23"` writes hours from 00 through 23. |
 
 ## Examples
 
 ```ts
-describeCronExpression("0 9 * * 1-5");
+describeCronExpression({ schedule: "0 9 * * 1-5" });
 // "At 09:00 AM, Monday through Friday"
 
-describeCronExpression("0 9 * * 1-5", { hourCycle: "h23" });
+describeCronExpression({ schedule: "0 9 * * 1-5", hourCycle: "h23" });
 // "At 09:00, Monday through Friday"
 
-describeCronExpression("0 0 29 2 *");
+describeCronExpression({ schedule: "0 0 29 2 *" });
 // "At 12:00 AM"
 
-describeCronExpression("0 0 * * 0");
+describeCronExpression({ schedule: "0 0 * * 0" });
 // "At 12:00 AM, Sunday"
 ```
 

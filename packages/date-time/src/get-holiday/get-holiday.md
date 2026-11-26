@@ -14,58 +14,58 @@ import { getHoliday } from "@sgx4u/date-time";
 function getHoliday(params: GetHolidayParams): Holiday | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name                | Type                    | Required | Default     | Meaning                                                                                                 |
-| ------------------- | ----------------------- | -------- | ----------- | ------------------------------------------------------------------------------------------------------- |
-| `date`              | `DateInput`             | Yes      | —           | The date to test.                                                                                       |
-| `rules`             | `readonly HolidayRule[]`| Yes      | —           | Holiday rules to expand.                                                                                |
-| `timeZone`          | `string`                | No       | System zone | Calendar day for matching.                                                                              |
-| `matchObservedDate` | `boolean`               | No       | `true`      | Match the observed substitute day. When false, only the original date matches.                          |
+| Name                | Type                     | Required | Default                                  | Meaning                                                                        |
+| ------------------- | ------------------------ | -------- | ---------------------------------------- | ------------------------------------------------------------------------------ |
+| `date`              | `DateInput`              | yes      |                                          | The date to test.                                                              |
+| `rules`             | `readonly HolidayRule[]` | yes      |                                          | The holiday rules.                                                             |
+| `matchObservedDate` | `boolean`                | no       | `true`                                   | Match the observed substitute day. When false, only the original date matches. |
+| `timeZone`          | `string`                 | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset                             |
 
 ## Examples
 
 ```ts
 import { getHoliday } from "@sgx4u/date-time";
 
-getHoliday(
-    "2020-07-03T00:00:00Z",
-    [
+getHoliday({
+    date: "2020-07-03T00:00:00Z",
+    rules: [
         {
             name: "Independence Day",
             date: { kind: "fixed", month: 7, day: 4 },
             observed: "nearest-weekday",
         },
     ],
-    { timeZone: "UTC" },
-)?.name;
+    timeZone: "UTC",
+})?.name;
 // "Independence Day"
 
-getHoliday(
-    "2020-07-03T00:00:00Z",
-    [
+getHoliday({
+    date: "2020-07-03T00:00:00Z",
+    rules: [
         {
             name: "Independence Day",
             date: { kind: "fixed", month: 7, day: 4 },
             observed: "nearest-weekday",
         },
     ],
-    { timeZone: "UTC", matchObservedDate: false },
-)?.name;
+    timeZone: "UTC",
+    matchObservedDate: false,
+})?.name;
 // undefined
 
-getHoliday(
-    "2026-04-03T00:00:00Z",
-    [{ name: "Good Friday", date: { kind: "easter-offset", days: -2 } }],
-    { timeZone: "UTC" },
-)?.name;
+getHoliday({
+    date: "2026-04-03T00:00:00Z",
+    rules: [{ name: "Good Friday", date: { kind: "easter-offset", days: -2 } }],
+    timeZone: "UTC",
+})?.name;
 // "Good Friday"
 ```
 
 ## Edge cases
 
 Not a holiday returns `undefined`. A non-array `rules` throws. A bad `date` or invalid `timeZone` throws.
-
 
 ## Related
 

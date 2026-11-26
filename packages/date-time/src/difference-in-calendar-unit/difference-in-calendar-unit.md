@@ -12,45 +12,45 @@ import { differenceInCalendarUnit } from "@sgx4u/date-time";
 
 ```ts
 function differenceInCalendarUnit(
-    later: DateInput,
-    earlier: DateInput,
-    unit: CalendarUnit,
-    options?: TimeZoneOptions & WeekOptions,
-): number;
+    params: DifferenceInCalendarUnitParams,
+): number | undefined;
 ```
 
-## Options
+## Parameters
 
-| Name           | Type      | Default     | Meaning                                        |
-| -------------- | --------- | ----------- | ---------------------------------------------- |
-| `timeZone`     | `string`  | System zone | Zone used to read the calendar fields.         |
-| `weekStartsOn` | `Weekday` | `1`         | ISO weekday that starts a week. `1` is Monday. |
+| Name           | Type           | Required | Default                                  | Meaning                                                 |
+| -------------- | -------------- | -------- | ---------------------------------------- | ------------------------------------------------------- |
+| `later`        | `DateInput`    | yes      |                                          | The end instant.                                        |
+| `earlier`      | `DateInput`    | yes      |                                          | The start instant.                                      |
+| `unit`         | `CalendarUnit` | yes      |                                          | `"year"`, `"quarter"`, `"month"`, `"week"`, or `"day"`. |
+| `timeZone`     | `string`       | no       | The system time zone, read on each call. | An IANA time zone name, `"UTC"`, or a fixed offset      |
+| `weekStartsOn` | `Weekday`      | no       | `1`                                      | ISO weekday number that starts the week. `1` is Monday. |
 
 ## Examples
 
 ```ts
-differenceInCalendarUnit(
-    "2027-01-01T00:00:00Z",
-    "2026-12-31T00:00:00Z",
-    "year",
-    { timeZone: "UTC" },
-);
+differenceInCalendarUnit({
+    later: "2027-01-01T00:00:00Z",
+    earlier: "2026-12-31T00:00:00Z",
+    unit: "year",
+    timeZone: "UTC",
+});
 // 1
 
-differenceInCalendarUnit(
-    "2026-02-01T00:00:00Z",
-    "2026-01-31T00:00:00Z",
-    "month",
-    { timeZone: "UTC" },
-);
+differenceInCalendarUnit({
+    later: "2026-02-01T00:00:00Z",
+    earlier: "2026-01-31T00:00:00Z",
+    unit: "month",
+    timeZone: "UTC",
+});
 // 1
 
-differenceInCalendarUnit(
-    "2024-03-01T00:00:00Z",
-    "2024-02-28T00:00:00Z",
-    "day",
-    { timeZone: "UTC" },
-);
+differenceInCalendarUnit({
+    later: "2024-03-01T00:00:00Z",
+    earlier: "2024-02-28T00:00:00Z",
+    unit: "day",
+    timeZone: "UTC",
+});
 // 2
 ```
 
