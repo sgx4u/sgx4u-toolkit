@@ -2,8 +2,10 @@
 "@sgx4u/date-time": minor
 ---
 
-Summary: `@sgx4u/date-time` takes flat arguments, returns `undefined` for invalid input, and can bind defaults with `createDateTime`.
+Summary: First release of dates, durations, intervals, business time, and time zones.
 
-A function that needs one value takes that value directly. A function that needs several values takes one object, and options are fields of that object. Invalid dates and unparseable text return `undefined`. `is*` functions return `false`. A bad time zone, locale, unit, or config still throws.
+Added: `createDateTime` binds a time zone, locale, week start, holiday list, and business hours, then returns the root functions with those defaults. A field on a call replaces the bound value. `createRecurrence`, `createCron`, `createNaturalLanguage`, and `createAstronomy` take the same config.
 
-`createDateTime({ timeZone, locale, weekStartsOn, holidays, ... })` returns the root functions with those defaults. A field on a call replaces the default. `createRecurrence`, `createCron`, `createNaturalLanguage`, and `createAstronomy` take the same config. Business-day functions use the configured holidays. `indiaHolidays`, `unitedStatesHolidays`, and `unitedKingdomHolidays` return `{ date, name }` entries that can be passed as `holidays`.
+Added: `addDuration` and every other function that needs several values takes one flat object. A function that needs one value takes that value directly. Invalid dates and unparseable text return `undefined`. `isValidDate` and the other `is*` functions return `false` for invalid input.
+
+Added: `indiaHolidays`, `unitedStatesHolidays`, and `unitedKingdomHolidays` return `{ date, name }` entries for one year. Business-day functions use a `holidays` list in that shape.
