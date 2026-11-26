@@ -1,6 +1,6 @@
 # `getHolidaysInYear`
 
-See the TSDoc on `getHolidaysInYear` for the contract.
+Expands holiday rules for one Gregorian year.
 
 ## Import
 
@@ -8,14 +8,47 @@ See the TSDoc on `getHolidaysInYear` for the contract.
 import { getHolidaysInYear } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function getHolidaysInYear(
+    year: number,
+    rules: readonly HolidayRule[],
+): Holiday[];
+```
+
+## Options
+
+This function has no options.
+
 ## Examples
 
-4 July 2020 was a Saturday. `nearest-weekday` observes it on 3 July, and `next-monday` observes it on 6 July. Good Friday 2026 is 3 April, two days before Easter Sunday.
+```ts
+import { getHolidaysInYear } from "@sgx4u/date-time";
+
+getHolidaysInYear(2026, [
+    { name: "Christmas", date: { kind: "fixed", month: 12, day: 25 } },
+]);
+// [{ name: "Christmas", type: "public", date: { year: 2026, month: 12, day: 25 }, observedDate: { year: 2026, month: 12, day: 25 } }]
+
+getHolidaysInYear(2026, [
+    { name: "Christmas", date: { kind: "fixed", month: 12, day: 25 } },
+    { name: "New Year", date: { kind: "fixed", month: 1, day: 1 } },
+]).map((holiday) => holiday.name);
+// ["New Year", "Christmas"]
+
+getHolidaysInYear(2026, [
+    { name: "Good Friday", date: { kind: "easter-offset", days: -2 } },
+])[0]?.date;
+// { year: 2026, month: 4, day: 3 }
+```
 
 ## Edge cases
 
-A `year-table` rule returns nothing for a year that is not in the table. When an observed day collides with another holiday, it moves forward again.
+Results are sorted by the observed date. A rule's `type` defaults to `"public"` and `observed` defaults to `"none"`. A `"year-table"` rule with no entry for the year is skipped. An `"intl-calendar"` rule can match twice when that calendar date occurs twice in the Gregorian year. `rules` must be an array.
 
 ## Related
 
-- [`getEasterSunday`](../get-easter-sunday/get-easter-sunday.md)
+- [`getHoliday`](../get-holiday/get-holiday.md)
+- [`isHoliday`](../is-holiday/is-holiday.md)
+- [`getObservedDate`](../get-observed-date/get-observed-date.md)

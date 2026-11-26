@@ -1,6 +1,6 @@
 # `parseRecurrenceRule`
 
-Parses DTSTART, RRULE, RDATE, and EXDATE. RSCALE and SKIP are not supported.
+Parses an RFC 5545 recurrence.
 
 ## Import
 
@@ -8,14 +8,44 @@ Parses DTSTART, RRULE, RDATE, and EXDATE. RSCALE and SKIP are not supported.
 import { parseRecurrenceRule } from "@sgx4u/date-time/recurrence";
 ```
 
+## Signature
+
+```ts
+function parseRecurrenceRule(value: string): RecurrenceRule | undefined;
+```
+
+## Options
+
+This function has no options.
+
 ## Examples
 
-A weekly rule starting Thursday 26 November 2026 at 09:00 UTC, every 2 weeks on Monday and Friday, produces 27 November, 7 December, and 11 December inside that window.
+```ts
+parseRecurrenceRule("DTSTART:20261126T090000Z\nRRULE:FREQ=DAILY")?.frequency;
+// "daily"
+
+parseRecurrenceRule(
+    "DTSTART:20261126T090000Z\nRRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,FR",
+)?.interval;
+// 2
+
+parseRecurrenceRule(
+    "DTSTART:20261126T090000Z\nRRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,FR",
+)?.byWeekday;
+// [{ weekday: 1 }, { weekday: 5 }]
+
+parseRecurrenceRule(
+    "DTSTART:20261126T090000Z\nRRULE:FREQ=DAILY;RSCALE=GREGORIAN",
+);
+// undefined
+```
 
 ## Edge cases
 
-`RSCALE` and `SKIP` return `undefined`. `count` and `until` together are rejected. More occurrences than `limit` throws `RangeError`.
+Text that is not a supported recurrence returns `undefined`. The text may contain `DTSTART` with `TZID` or `Z`, an `RRULE`, and `RDATE` and `EXDATE` lines. `RSCALE` and `SKIP` return `undefined`. A rule that sets both `COUNT` and `UNTIL` returns `undefined`. A floating start, one with no `Z` and no `TZID`, is stored as an instant and evaluated in UTC. A `TZID` is kept on `timeZone` for later expansion. A value that is not a string throws `TypeError`.
 
 ## Related
 
-- [`parseRecurrenceRule`](../parse-recurrence-rule/parse-recurrence-rule.md)
+- [`formatRecurrenceRule`](../format-recurrence-rule/format-recurrence-rule.md) writes a rule as RFC 5545 text.
+- [`isValidRecurrenceRule`](../is-valid-recurrence-rule/is-valid-recurrence-rule.md) reports whether text is supported.
+- [`describeRecurrenceRule`](../describe-recurrence-rule/describe-recurrence-rule.md) describes a rule in English.

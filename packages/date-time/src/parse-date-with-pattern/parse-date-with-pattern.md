@@ -1,6 +1,6 @@
 # `parseDateWithPattern`
 
-See the TSDoc on `parseDateWithPattern` for the contract.
+Parses text written with the same tokens as `formatDate`.
 
 ## Import
 
@@ -8,14 +8,58 @@ See the TSDoc on `parseDateWithPattern` for the contract.
 import { parseDateWithPattern } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function parseDateWithPattern(
+    value: string,
+    pattern: string,
+    options?: ParseDateWithPatternOptions,
+): Date | undefined;
+```
+
+## Options
+
+| Name             | Type                                               | Default        | Meaning                                                 |
+| ---------------- | -------------------------------------------------- | -------------- | ------------------------------------------------------- |
+| `timeZone`       | `string`                                           | System zone    | Zone the wall time belongs to.                          |
+| `locale`         | `string \| readonly string[]`                      | Runtime locale | Locale for month names, weekday names, eras, and AM/PM. |
+| `disambiguation` | `"compatible" \| "earlier" \| "later" \| "reject"` | `"compatible"` | How a skipped or repeated wall time is chosen.          |
+| `referenceDate`  | `DateInput`                                        | Current time   | Source for fields the pattern leaves out.               |
+
 ## Examples
 
-A padded pattern such as `yyyy-MM-dd HH:mm:ss.SSS` round-trips through `formatDate`. `2026-02-30` does not parse.
+```ts
+parseDateWithPattern("2026-11-26 03:30", "yyyy-MM-dd HH:mm", {
+    timeZone: "Asia/Kolkata",
+})?.toISOString();
+// "2026-11-25T22:00:00.000Z"
+
+parseDateWithPattern("November 26, 2026", "MMMM d, yyyy", {
+    timeZone: "UTC",
+    locale: "en-US",
+})?.toISOString();
+// "2026-11-26T00:00:00.000Z"
+
+parseDateWithPattern("3:30 PM", "h:mm a", {
+    timeZone: "UTC",
+    locale: "en-US",
+    referenceDate: "2026-11-26T00:00:00Z",
+})?.toISOString();
+// "2026-11-26T15:30:00.000Z"
+
+parseDateWithPattern("2026-02-30", "yyyy-MM-dd", { timeZone: "UTC" });
+// undefined
+```
 
 ## Edge cases
 
-An unknown token throws `RangeError`. An impossible day returns `undefined`. Missing time fields become zero when the pattern contains a date field.
+Text that does not match the pattern returns `undefined`. A day that does not exist returns `undefined`. Numeric tokens match exactly. Month names, weekday names, eras, and AM/PM come from `Intl` for `locale`. Fields missing from the pattern come from `referenceDate`. When the pattern contains a date field, omitted time fields become zero. A value or pattern that is not a string throws `TypeError`. An unknown token throws `RangeError`.
+
+`"compatible"` moves a skipped wall time forward by the gap and keeps the earlier instant of a repeated time. `2024-03-10 02:30` in `America/New_York` returns `2024-03-10T07:30:00.000Z`. `"reject"` on that gap returns `undefined`.
 
 ## Related
 
-- [`formatDate`](../format-date/format-date.md)
+- [`formatDate`](../format-date/format-date.md) writes text with the same tokens.
+- [`matchesDatePattern`](../matches-date-pattern/matches-date-pattern.md) reports whether text fits a pattern.
+- [`parseLocaleDate`](../parse-locale-date/parse-locale-date.md) parses a locale's numeric date.

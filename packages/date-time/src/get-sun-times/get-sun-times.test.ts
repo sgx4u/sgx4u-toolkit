@@ -18,8 +18,13 @@ describe("getSunTimes", () => {
         expect(sunset).toBeGreaterThan(times.solarNoon.getTime());
         expect(times.civilDawn?.getTime() ?? 0).toBeLessThan(sunrise);
         expect(
-            Math.abs(sunrise - Date.parse("2024-03-20T06:00:00Z")),
-        ).toBeLessThan(5 * 60_000);
+            Math.abs(sunrise - Date.parse("2024-03-20T06:04:00Z")),
+        ).toBeLessThan(60_000);
+        expect(
+            Math.abs(
+                times.solarNoon.getTime() - Date.parse("2024-03-20T12:07:27Z"),
+            ),
+        ).toBeLessThan(60_000);
     });
 
     it("omits sunrise during polar night", () => {

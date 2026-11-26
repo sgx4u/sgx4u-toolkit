@@ -1,6 +1,6 @@
 # `getWeekOfMonth`
 
-See the TSDoc on `getWeekOfMonth` for the contract.
+Returns the week of the month, from 1 through 6.
 
 ## Import
 
@@ -8,14 +8,46 @@ See the TSDoc on `getWeekOfMonth` for the contract.
 import { getWeekOfMonth } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function getWeekOfMonth(
+    date: DateInput,
+    options?: TimeZoneOptions & WeekOptions,
+): number;
+```
+
+## Options
+
+| Name           | Type      | Default                                 | Meaning                                                              |
+| -------------- | --------- | --------------------------------------- | -------------------------------------------------------------------- |
+| `timeZone`     | `string`  | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
+| `weekStartsOn` | `Weekday` | `1`                                     | ISO weekday that starts the week. `1` is Monday and `7` is Sunday.   |
+
 ## Examples
 
-The TSDoc `@example` is the call covered by the tests.
+```ts
+import { getWeekOfMonth } from "@sgx4u/date-time";
+
+getWeekOfMonth("2026-11-01T00:00:00Z", { timeZone: "UTC" });
+// 1
+
+getWeekOfMonth("2026-11-26T00:00:00Z", { timeZone: "UTC" });
+// 5
+
+getWeekOfMonth("2026-11-26T00:00:00Z", {
+    timeZone: "UTC",
+    weekStartsOn: 7,
+});
+// 4
+```
 
 ## Edge cases
 
-A value of the wrong type throws `TypeError`. An invalid date or option throws `RangeError`. Inputs are not mutated. A function that takes `timeZone` reads wall-clock fields in that zone, including across a daylight-saving change.
+The first week is the week that contains day 1, using `weekStartsOn`. The default start is Monday. A value that is not a real date throws a `RangeError`.
 
 ## Related
 
-- [`toDate`](../to-date/to-date.md)
+- [`getWeekOfYear`](../get-week-of-year/get-week-of-year.md)
+- [`getNthWeekdayOfMonth`](../get-nth-weekday-of-month/get-nth-weekday-of-month.md)
+- [`getLocaleWeekInfo`](../get-locale-week-info/get-locale-week-info.md)

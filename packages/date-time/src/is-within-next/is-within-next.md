@@ -1,6 +1,6 @@
 # `isWithinNext`
 
-See the TSDoc on `isWithinNext` for the contract.
+Reports whether a date is between now and now plus a duration.
 
 ## Import
 
@@ -8,14 +8,65 @@ See the TSDoc on `isWithinNext` for the contract.
 import { isWithinNext } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function isWithinNext(
+    date: DateInput,
+    duration: Duration,
+    options?: NowOptions & TimeZoneOptions,
+): boolean;
+```
+
+## Options
+
+| Name       | Type        | Default                                 | Meaning                                                              |
+| ---------- | ----------- | --------------------------------------- | -------------------------------------------------------------------- |
+| `now`      | `DateInput` | `Date.now()`, read on each call         | The instant to use instead of the current time.                      |
+| `timeZone` | `string`    | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
+
 ## Examples
 
-The TSDoc `@example` is the call covered by the tests.
+```ts
+import { isWithinNext } from "@sgx4u/date-time";
+
+isWithinNext(
+    "2026-01-01T12:00:00Z",
+    { hours: 24 },
+    {
+        now: "2026-01-01T00:00:00Z",
+        timeZone: "UTC",
+    },
+);
+// true
+
+isWithinNext(
+    "2026-01-02T00:00:00Z",
+    { hours: 24 },
+    {
+        now: "2026-01-01T00:00:00Z",
+        timeZone: "UTC",
+    },
+);
+// true
+
+isWithinNext(
+    "2026-01-02T00:00:00.001Z",
+    { hours: 24 },
+    {
+        now: "2026-01-01T00:00:00Z",
+        timeZone: "UTC",
+    },
+);
+// false
+```
 
 ## Edge cases
 
-A value of the wrong type throws `TypeError`. An invalid date or option throws `RangeError`. Inputs are not mutated. A function that takes `timeZone` reads wall-clock fields in that zone, including across a daylight-saving change.
+Both ends are included. Calendar units in the duration are applied in `timeZone`. A negative duration throws a `RangeError`.
 
 ## Related
 
-- [`toDate`](../to-date/to-date.md)
+- [`isWithinLast`](../is-within-last/is-within-last.md)
+- [`isFuture`](../is-future/is-future.md)
+- [`isTomorrow`](../is-tomorrow/is-tomorrow.md)

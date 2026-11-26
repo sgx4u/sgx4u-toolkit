@@ -1,6 +1,6 @@
 # `isBusinessDay`
 
-See the TSDoc on `isBusinessDay` for the contract.
+Reports whether a date falls on a business day.
 
 ## Import
 
@@ -8,14 +8,47 @@ See the TSDoc on `isBusinessDay` for the contract.
 import { isBusinessDay } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function isBusinessDay(date: DateInput, calendar?: BusinessCalendar): boolean;
+```
+
+## Options
+
+The `calendar` argument is optional. Omitted fields use these defaults.
+
+| Name           | Type                                                | Default                              | Meaning                                                                                                   |
+| -------------- | --------------------------------------------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------------- |
+| `weekendDays`  | `readonly Weekday[]`                                | `[6, 7]`                             | ISO weekdays that are not business days.                                                                  |
+| `holidays`     | `readonly DateInput[] \| ((date: Date) => boolean)` | `[]`                                 | Closed dates, or a predicate that reports a holiday. A list is matched on the calendar day in `timeZone`. |
+| `workingHours` | `readonly TimeRange[]`                              | `[{ start: "09:00", end: "17:00" }]` | Working windows on a business day. An empty list means the whole day.                                     |
+| `timeZone`     | `string`                                            | The system time zone                 | IANA time zone or fixed offset the calendar uses.                                                         |
+
 ## Examples
 
-A Saturday is not a business day with the default weekend. Adding one business day to a Friday lands on Monday and keeps the time of day.
+```ts
+import { isBusinessDay } from "@sgx4u/date-time";
+
+isBusinessDay("2026-11-26T00:00:00Z", { timeZone: "UTC" });
+// true
+
+isBusinessDay("2026-11-28T00:00:00Z", { timeZone: "UTC" });
+// false
+
+isBusinessDay("2026-11-26T00:00:00Z", {
+    timeZone: "UTC",
+    holidays: ["2026-11-26"],
+});
+// false
+```
 
 ## Edge cases
 
-Amount `0` returns the same instant. A start on a weekend does not count as a step. The search stops with `RangeError` after 3660 consecutive non-business days.
+A business day is a day whose ISO weekday is not in `weekendDays` and that `holidays` does not match. The default weekend is Saturday and Sunday. `workingHours` does not affect this check. A value that is not a real date throws a `RangeError`.
 
 ## Related
 
-- [`addDuration`](../add-duration/add-duration.md)
+- [`isWithinBusinessHours`](../is-within-business-hours/is-within-business-hours.md)
+- [`getNextBusinessDay`](../get-next-business-day/get-next-business-day.md)
+- [`isWeekend`](../is-weekend/is-weekend.md)

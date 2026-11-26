@@ -9,5 +9,15 @@ describe("normalizeDuration", () => {
         });
         expect(normalizeDuration({ hours: 26 })).toEqual({ days: 1, hours: 2 });
         expect(normalizeDuration({ months: 1, minutes: 90 }).months).toBe(1);
+        expect(
+            normalizeDuration(
+                { months: 1, days: 40 },
+                {
+                    relativeTo: "2026-01-31T00:00:00Z",
+                    timeZone: "UTC",
+                    largestUnit: "year",
+                },
+            ),
+        ).toEqual({ months: 2, weeks: 1, days: 2 });
     });
 });

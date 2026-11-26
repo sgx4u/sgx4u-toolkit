@@ -1,6 +1,6 @@
 # `mergeIntervals`
 
-See the TSDoc on `mergeIntervals` for the contract.
+Returns the sorted union of intervals, with overlaps joined.
 
 ## Import
 
@@ -8,14 +8,54 @@ See the TSDoc on `mergeIntervals` for the contract.
 import { mergeIntervals } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function mergeIntervals(
+    intervals: readonly Interval[],
+    options?: MergeIntervalsOptions,
+): Interval[];
+```
+
+## Options
+
+| Name            | Type      | Default | Meaning                                            |
+| --------------- | --------- | ------- | -------------------------------------------------- |
+| `mergeTouching` | `boolean` | `true`  | Whether `[a, b)` and `[b, c)` become one interval. |
+
 ## Examples
 
-The TSDoc `@example` is covered by the tests. Intervals are half-open: the start is included and the end is excluded.
+```ts
+import { mergeIntervals } from "@sgx4u/date-time";
+
+mergeIntervals([
+    { start: new Date(0), end: new Date(10) },
+    { start: new Date(10), end: new Date(20) },
+]).length;
+// 1
+
+mergeIntervals(
+    [
+        { start: new Date(0), end: new Date(10) },
+        { start: new Date(10), end: new Date(20) },
+    ],
+    { mergeTouching: false },
+).length;
+// 2
+
+mergeIntervals([
+    { start: new Date(10), end: new Date(20) },
+    { start: new Date(0), end: new Date(15) },
+])[0]?.end.getTime();
+// 20
+```
 
 ## Edge cases
 
-An end before the start throws `RangeError`. Touching intervals do not overlap unless `countTouchingAsOverlap` is true. `mergeIntervals` joins touching intervals by default. Inputs are not mutated.
+The input array is not reordered. The result is sorted by start. Empty intervals are kept only when they do not fall inside another interval. `intervals` must be an array. An invalid interval throws a `RangeError`.
 
 ## Related
 
-- [`createInterval`](../create-interval/create-interval.md)
+- [`getIntervalGaps`](../get-interval-gaps/get-interval-gaps.md)
+- [`getIntervalIntersection`](../get-interval-intersection/get-interval-intersection.md)
+- [`isValidInterval`](../is-valid-interval/is-valid-interval.md)

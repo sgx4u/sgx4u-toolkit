@@ -10,17 +10,56 @@ import { isBetween } from "@sgx4u/date-time";
 
 ## Signature
 
-See the TSDoc on `isBetween` for the parameters, defaults, and thrown errors.
+```ts
+function isBetween(
+    date: DateInput,
+    start: DateInput,
+    end: DateInput,
+    options?: IsBetweenOptions,
+): boolean;
+```
+
+## Options
+
+| Name           | Type      | Default | Meaning                                  |
+| -------------- | --------- | ------- | ---------------------------------------- |
+| `includeStart` | `boolean` | `true`  | Whether the start instant itself counts. |
+| `includeEnd`   | `boolean` | `true`  | Whether the end instant itself counts.   |
 
 ## Examples
 
-The examples in the TSDoc are the calls covered by `is-between.test.ts`.
+```ts
+import { isBetween } from "@sgx4u/date-time";
+
+isBetween(
+    "2024-01-02T00:00:00Z",
+    "2024-01-01T00:00:00Z",
+    "2024-01-03T00:00:00Z",
+);
+// true
+
+isBetween(
+    "2024-01-01T00:00:00Z",
+    "2024-01-01T00:00:00Z",
+    "2024-01-03T00:00:00Z",
+    { includeStart: false },
+);
+// false
+
+isBetween(
+    "2024-01-02T00:00:00Z",
+    "2024-01-03T00:00:00Z",
+    "2024-01-01T00:00:00Z",
+);
+// false
+```
 
 ## Edge cases
 
-Invalid dates throw `RangeError`. A value of the wrong type throws `TypeError`. Inputs are not mutated. Functions that take `timeZone` resolve daylight-saving gaps with the same rules as `createDate`.
+Both ends are included unless the matching option is `false`. When `start` is after `end`, no instant is inside the range. A value that is not a real date throws a `RangeError`.
 
 ## Related
 
-- [`toDate`](../to-date/to-date.md)
-- [`getDateParts`](../get-date-parts/get-date-parts.md)
+- [`isAfter`](../is-after/is-after.md)
+- [`isBefore`](../is-before/is-before.md)
+- [`isWithinInterval`](../is-within-interval/is-within-interval.md)

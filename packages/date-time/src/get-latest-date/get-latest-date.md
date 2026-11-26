@@ -10,17 +10,35 @@ import { getLatestDate } from "@sgx4u/date-time";
 
 ## Signature
 
-See the TSDoc on `getLatestDate` for the parameters, defaults, and thrown errors.
+```ts
+function getLatestDate(dates: readonly DateInput[]): Date | undefined;
+```
+
+## Options
+
+This function has no options.
 
 ## Examples
 
-The examples in the TSDoc are the calls covered by `get-latest-date.test.ts`.
+```ts
+import { getLatestDate } from "@sgx4u/date-time";
+
+getLatestDate(["2024-01-01T00:00:00Z", "2024-01-02T00:00:00Z"])?.toISOString();
+// "2024-01-02T00:00:00.000Z"
+
+getLatestDate(["2024-01-02T00:00:00Z", "2024-01-01T00:00:00Z"])?.toISOString();
+// "2024-01-02T00:00:00.000Z"
+
+getLatestDate([]);
+// undefined
+```
 
 ## Edge cases
 
-Invalid dates throw `RangeError`. A value of the wrong type throws `TypeError`. Inputs are not mutated. Functions that take `timeZone` resolve daylight-saving gaps with the same rules as `createDate`.
+The input array is not reordered. An empty list returns `undefined`. A non-array, or an entry that is not a real date, throws. The returned `Date` is a new object.
 
 ## Related
 
-- [`toDate`](../to-date/to-date.md)
-- [`getDateParts`](../get-date-parts/get-date-parts.md)
+- [`getEarliestDate`](../get-earliest-date/get-earliest-date.md)
+- [`isAfter`](../is-after/is-after.md)
+- [`isSameInstant`](../is-same-instant/is-same-instant.md)

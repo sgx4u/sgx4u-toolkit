@@ -1,6 +1,6 @@
 # `toTemporalInstant`
 
-See the TSDoc on `toTemporalInstant` for the contract.
+Returns a Temporal instant for a date.
 
 ## Import
 
@@ -8,14 +8,35 @@ See the TSDoc on `toTemporalInstant` for the contract.
 import { toTemporalInstant } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function toTemporalInstant(date: DateInput): TemporalInstant;
+```
+
+## Options
+
+This function has no options.
+
 ## Examples
 
-Western Easter 2026 is 5 April. Orthodox Easter 2026 is 12 April. `fromTemporal` reads `epochMilliseconds`. `toTemporalInstant` throws when the runtime has no `Temporal` global.
+```ts
+toTemporalInstant(0).epochMilliseconds;
+// 0
+
+toTemporalInstant(-1500).epochMilliseconds;
+// -1500
+
+toTemporalInstant("2024-02-29T00:00:00.000Z").epochMilliseconds;
+// 1709164800000
+```
 
 ## Edge cases
 
-Easter years outside 1583 through 9999 throw `RangeError`.
+The call uses `Temporal.Instant.fromEpochMilliseconds` on the global object. When that function is missing, the call throws `TypeError`. An invalid date throws `RangeError` once Temporal is present. A `Date`, a millisecond timestamp, and an ISO date-time with an offset are the same instant. The returned object exposes `epochMilliseconds`.
 
 ## Related
 
-- [`getDateParts`](../get-date-parts/get-date-parts.md)
+- [`fromTemporal`](../from-temporal/from-temporal.md) returns a `Date` from a Temporal instant.
+- [`toUnixSeconds`](../to-unix-seconds/to-unix-seconds.md) returns whole Unix seconds.
+- [`toDate`](../to-date/to-date.md) returns a `Date` for the same inputs.

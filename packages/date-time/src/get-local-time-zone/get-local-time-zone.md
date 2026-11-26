@@ -1,6 +1,6 @@
 # `getLocalTimeZone`
 
-Returns the system's IANA time zone, read on each call.
+Returns the system's IANA time zone.
 
 ## Import
 
@@ -14,16 +14,28 @@ import { getLocalTimeZone } from "@sgx4u/date-time";
 function getLocalTimeZone(): string;
 ```
 
+## Options
+
+This function has no options.
+
 ## Examples
 
 ```ts
-getLocalTimeZone(); // "Asia/Kolkata" when that is the system zone
+import { getLocalTimeZone, isValidTimeZone } from "@sgx4u/date-time";
+
+getLocalTimeZone();
+// "UTC"
+
+isValidTimeZone(getLocalTimeZone());
+// true
 ```
 
 ## Edge cases
 
-The name is not cached. A later call sees a zone change made by the runtime.
+The name is read on each call and is not cached, so a process that changes its zone sees the new name on the next call. The first example is the zone of the runtime that produced this page; a process whose zone is not UTC returns that other name.
 
 ## Related
 
-- [`isValidTimeZone`](../is-valid-time-zone/is-valid-time-zone.md) checks a zone name.
+- [`isValidTimeZone`](../is-valid-time-zone/is-valid-time-zone.md)
+- [`listTimeZones`](../list-time-zones/list-time-zones.md)
+- [`getUtcOffset`](../get-utc-offset/get-utc-offset.md)

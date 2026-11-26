@@ -1,6 +1,6 @@
 # `getAgeAsDuration`
 
-See the TSDoc on `getAgeAsDuration` for the contract.
+Returns an age as years, months, and days.
 
 ## Import
 
@@ -8,14 +8,51 @@ See the TSDoc on `getAgeAsDuration` for the contract.
 import { getAgeAsDuration } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function getAgeAsDuration(birthDate: DateInput, options?: AgeOptions): Duration;
+```
+
+## Options
+
+| Name                           | Type                         | Default                                 | Meaning                                                              |
+| ------------------------------ | ---------------------------- | --------------------------------------- | -------------------------------------------------------------------- |
+| `now`                          | `DateInput`                  | `Date.now()`, read on each call         | The instant to use instead of the current time.                      |
+| `timeZone`                     | `string`                     | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
+| `leapDayBirthdayInCommonYears` | `"february-28" \| "march-1"` | `"march-1"`                             | Where a February 29 birthday is reached in a common year.            |
+
 ## Examples
 
-The TSDoc `@example` is the call covered by the tests.
+```ts
+import { getAgeAsDuration } from "@sgx4u/date-time";
+
+getAgeAsDuration("2020-01-31", {
+    now: "2021-03-01T00:00:00Z",
+    timeZone: "UTC",
+});
+// { years: 1, months: 1, days: 1 }
+
+getAgeAsDuration("2020-01-31", {
+    now: "2020-01-31T12:00:00Z",
+    timeZone: "UTC",
+});
+// {  }
+
+getAgeAsDuration("2000-02-29", {
+    now: "2021-02-28T00:00:00Z",
+    timeZone: "UTC",
+    leapDayBirthdayInCommonYears: "february-28",
+});
+// { years: 21 }
+```
 
 ## Edge cases
 
-A value of the wrong type throws `TypeError`. An invalid date or option throws `RangeError`. Inputs are not mutated. A function that takes `timeZone` reads wall-clock fields in that zone, including across a daylight-saving change.
+Zero fields are omitted, so an anniversary that falls on `now` returns `{}`. A February 29 birthday follows the same common-year rule as `getAge`. A birth date after `now` throws a `RangeError`.
 
 ## Related
 
-- [`toDate`](../to-date/to-date.md)
+- [`getAge`](../get-age/get-age.md)
+- [`getNextAnniversary`](../get-next-anniversary/get-next-anniversary.md)
+- [`negateDuration`](../negate-duration/negate-duration.md)

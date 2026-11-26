@@ -1,6 +1,6 @@
 # `negateDuration`
 
-See the TSDoc on `negateDuration` for the contract.
+Returns a duration with every field's sign flipped.
 
 ## Import
 
@@ -8,14 +8,37 @@ See the TSDoc on `negateDuration` for the contract.
 import { negateDuration } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function negateDuration(duration: Duration): Duration;
+```
+
+## Options
+
+This function has no options.
+
 ## Examples
 
-The TSDoc `@example` is covered by the tests.
+```ts
+import { negateDuration } from "@sgx4u/date-time";
+
+negateDuration({ hours: 2 });
+// { hours: -2 }
+
+negateDuration({ hours: -2, minutes: -30 });
+// { hours: 2, minutes: 30 }
+
+negateDuration({ hours: 0 });
+// { hours: 0 }
+```
 
 ## Edge cases
 
-A value of the wrong type throws `TypeError`. An invalid option throws `RangeError`. `listTimeZones` returns an empty list when the runtime cannot enumerate zones.
+Zero fields stay zero. The input is not changed. A value that is not a valid duration throws a `RangeError`. Fields must already share one sign.
 
 ## Related
 
-- [`getUtcOffset`](../get-utc-offset/get-utc-offset.md)
+- [`millisecondsToDuration`](../milliseconds-to-duration/milliseconds-to-duration.md)
+- [`isValidDuration`](../is-valid-duration/is-valid-duration.md)
+- [`getAgeAsDuration`](../get-age-as-duration/get-age-as-duration.md)

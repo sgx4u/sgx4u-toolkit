@@ -22,5 +22,25 @@ describe("parseDateWithPattern", () => {
             }),
         ).toBeUndefined();
         expect(() => parseDateWithPattern("2026", "QQQQQ")).toThrow(RangeError);
+        expect(
+            parseDateWithPattern("November 26, 2026", "MMMM d, yyyy", {
+                timeZone: "UTC",
+                locale: "en-US",
+            })?.toISOString(),
+        ).toBe("2026-11-26T00:00:00.000Z");
+        expect(
+            parseDateWithPattern("Thursday", "EEEE", {
+                timeZone: "UTC",
+                locale: "en-US",
+                referenceDate: "2026-11-26T00:00:00Z",
+            })?.toISOString(),
+        ).toBe("2026-11-26T00:00:00.000Z");
+        expect(
+            parseDateWithPattern("3:30 PM", "h:mm a", {
+                timeZone: "UTC",
+                locale: "en-US",
+                referenceDate: "2026-11-26T00:00:00Z",
+            })?.toISOString(),
+        ).toBe("2026-11-26T15:30:00.000Z");
     });
 });

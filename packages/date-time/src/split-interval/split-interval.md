@@ -1,6 +1,6 @@
 # `splitInterval`
 
-Splits a half-open interval into consecutive steps. The last piece may be shorter. A zero step throws.
+Splits an interval into consecutive pieces of a step.
 
 ## Import
 
@@ -8,14 +8,57 @@ Splits a half-open interval into consecutive steps. The last piece may be shorte
 import { splitInterval } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function splitInterval(
+    interval: Interval,
+    step: Duration,
+    options?: TimeZoneOptions,
+): Interval[];
+```
+
+## Options
+
+| Name       | Type     | Default     | Meaning                                         |
+| ---------- | -------- | ----------- | ----------------------------------------------- |
+| `timeZone` | `string` | System zone | Zone used when `step` contains a calendar unit. |
+
 ## Examples
 
-See the TSDoc example on `splitInterval`.
+```ts
+splitInterval({ start: new Date(0), end: new Date(10) }, { milliseconds: 4 });
+// [
+//   { start: new Date(0), end: new Date(4) },
+//   { start: new Date(4), end: new Date(8) },
+//   { start: new Date(8), end: new Date(10) },
+// ]
+
+splitInterval({ start: new Date(0), end: new Date(0) }, { milliseconds: 4 });
+// []
+
+splitInterval(
+    {
+        start: new Date("2026-01-31T00:00:00Z"),
+        end: new Date("2026-03-15T00:00:00Z"),
+    },
+    { months: 1 },
+    { timeZone: "UTC" },
+).map((piece) => [piece.start.toISOString(), piece.end.toISOString()]);
+// [
+//   ["2026-01-31T00:00:00.000Z", "2026-02-28T00:00:00.000Z"],
+//   ["2026-02-28T00:00:00.000Z", "2026-03-15T00:00:00.000Z"],
+// ]
+```
 
 ## Edge cases
 
-A zero or negative step throws `RangeError`. Results stop at 100000 entries.
+The last piece is shorter when the interval does not divide evenly. An empty interval returns `[]`. A zero or negative step throws `RangeError`. More than 100000 pieces throws `RangeError`. An invalid interval throws `RangeError`.
+
+Hours and smaller units are elapsed time. Days, weeks, and months step on the wall clock in `timeZone`. One calendar day across the 2024 spring-forward in `America/New_York` is 23 hours: the piece that starts at `2024-03-09T14:00:00.000Z` ends at `2024-03-10T13:00:00.000Z`. A month step clamps a missing day, so January 31 plus one month in a non-leap year lands on February 28.
 
 ## Related
 
-- [`addDuration`](../add-duration/add-duration.md)
+- [`divideInterval`](../divide-interval/divide-interval.md) splits an interval into equal parts.
+- [`listDatesInInterval`](../list-dates-in-interval/list-dates-in-interval.md) lists the dates inside an interval.
+- [`getIntervalDuration`](../get-interval-duration/get-interval-duration.md) returns the length of an interval.

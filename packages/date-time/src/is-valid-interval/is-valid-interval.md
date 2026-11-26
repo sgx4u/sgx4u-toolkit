@@ -1,6 +1,6 @@
 # `isValidInterval`
 
-See the TSDoc on `isValidInterval` for the contract.
+Reports whether a value is a half-open interval.
 
 ## Import
 
@@ -8,14 +8,37 @@ See the TSDoc on `isValidInterval` for the contract.
 import { isValidInterval } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function isValidInterval(value: unknown): value is Interval;
+```
+
+## Options
+
+This function has no options.
+
 ## Examples
 
-The TSDoc `@example` is covered by the tests. Intervals are half-open: the start is included and the end is excluded.
+```ts
+import { isValidInterval } from "@sgx4u/date-time";
+
+isValidInterval({ start: new Date(0), end: new Date(1) });
+// true
+
+isValidInterval({ start: new Date(0), end: new Date(0) });
+// true
+
+isValidInterval({ start: new Date(1), end: new Date(0) });
+// false
+```
 
 ## Edge cases
 
-An end before the start throws `RangeError`. Touching intervals do not overlap unless `countTouchingAsOverlap` is true. `mergeIntervals` joins touching intervals by default. Inputs are not mutated.
+Both sides must be real dates, and `end` must not be before `start`. `start` equal to `end` is an empty interval and is valid. The function does not throw.
 
 ## Related
 
-- [`createInterval`](../create-interval/create-interval.md)
+- [`isWithinInterval`](../is-within-interval/is-within-interval.md)
+- [`getIntervalIntersection`](../get-interval-intersection/get-interval-intersection.md)
+- [`mergeIntervals`](../merge-intervals/merge-intervals.md)

@@ -1,6 +1,12 @@
 import type { Duration } from "../types/duration.types.js";
+import {
+    addDurationToInstant,
+    durationBetweenInstants,
+} from "../utils/arithmetic.utils.js";
+import { resolveDateInput } from "../utils/date-input.utils.js";
 import { assertDuration, durationFieldNames } from "../utils/duration.utils.js";
 import { rangeError } from "../utils/error.utils.js";
+import { resolveTimeZone } from "../utils/time-zone.utils.js";
 import { isTimeUnit } from "../utils/unit.utils.js";
 import type { NormalizeDurationOptions } from "./normalize-duration.types.js";
 
@@ -30,6 +36,8 @@ const rank: Readonly<Record<string, number>> = {
  *
  * Without `relativeTo`, a day is 24 hours and the function does not convert
  * to or from months or years. `90` minutes becomes `1` hour and `30` minutes.
+ * With `relativeTo`, the duration is added to that instant and read back, so
+ * months and years balance on the calendar in the zone.
  *
  * @param duration - The duration to balance.
  * @param options - `largestUnit` defaults to `"day"`.
@@ -46,6 +54,28 @@ export function normalizeDuration(
     const largestUnit = options?.largestUnit ?? "day";
     if (!isTimeUnit(largestUnit)) {
         throw rangeError("largestUnit", "a time unit", largestUnit);
+    }
+    if (options?.relativeTo !== undefined) {
+        const timeZone = resolveTimeZone(options.timeZone);
+        const start = resolveDateInput(
+            options.relativeTo,
+            "relativeTo",
+            timeZone,
+        ).getTime();
+        const end = addDurationToInstant(
+            start,
+            checked,
+            timeZone,
+            "compatible",
+            "constrain",
+        );
+        return durationBetweenInstants(
+            end,
+            start,
+            timeZone,
+            largestUnit,
+            "millisecond",
+        );
     }
     const balanced: Record<string, number> = {};
     for (const fieldName of durationFieldNames) {

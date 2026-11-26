@@ -12,7 +12,8 @@ import type { ParseDateWithPatternOptions } from "./parse-date-with-pattern.type
 /**
  * Parses text written with the same tokens as `formatDate`.
  *
- * Numeric tokens are matched exactly. A day that does not exist returns
+ * Numeric tokens are matched exactly. Month names, weekday names, eras,
+ * and AM/PM are matched from `Intl` for `locale`. A day that does not exist returns
  * `undefined`; the parser does not roll it into the next month. Missing
  * fields come from `referenceDate`, except time fields, which become zero
  * when any date field is present.
@@ -45,7 +46,13 @@ export function parseDateWithPattern(
         ).getTime(),
         timeZone,
     );
-    const fields = parseNumericPattern(value, pattern, reference, true);
+    const fields = parseNumericPattern(
+        value,
+        pattern,
+        reference,
+        true,
+        options?.locale,
+    );
     if (fields === undefined) {
         return undefined;
     }

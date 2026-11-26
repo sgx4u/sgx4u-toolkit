@@ -1,6 +1,6 @@
 # `getWeekOfYear`
 
-See the TSDoc on `getWeekOfYear` for the contract.
+Returns a locale-style week number.
 
 ## Import
 
@@ -8,14 +8,49 @@ See the TSDoc on `getWeekOfYear` for the contract.
 import { getWeekOfYear } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function getWeekOfYear(date: DateInput, options?: WeekOfYearOptions): number;
+```
+
+## Options
+
+| Name                     | Type      | Default                                 | Meaning                                                              |
+| ------------------------ | --------- | --------------------------------------- | -------------------------------------------------------------------- |
+| `timeZone`               | `string`  | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
+| `weekStartsOn`           | `Weekday` | `1`                                     | ISO weekday that starts the week. `1` is Monday and `7` is Sunday.   |
+| `minimumDaysInFirstWeek` | `number`  | `1`                                     | How many days of the year the first week must contain.               |
+
 ## Examples
 
-The TSDoc `@example` is the call covered by the tests.
+```ts
+import { getWeekOfYear } from "@sgx4u/date-time";
+
+getWeekOfYear("2026-01-01T00:00:00Z", {
+    timeZone: "UTC",
+    weekStartsOn: 1,
+    minimumDaysInFirstWeek: 4,
+});
+// 1
+
+getWeekOfYear("2023-01-01T00:00:00Z", { timeZone: "UTC" });
+// 1
+
+getWeekOfYear("2023-01-01T00:00:00Z", {
+    timeZone: "UTC",
+    weekStartsOn: 1,
+    minimumDaysInFirstWeek: 4,
+});
+// 52
+```
 
 ## Edge cases
 
-A value of the wrong type throws `TypeError`. An invalid date or option throws `RangeError`. Inputs are not mutated. A function that takes `timeZone` reads wall-clock fields in that zone, including across a daylight-saving change.
+Week 1 is the first week, starting on `weekStartsOn`, that contains at least `minimumDaysInFirstWeek` days of the year. Monday and `4` match the ISO week. `minimumDaysInFirstWeek` outside 1 through 7 throws a `RangeError`.
 
 ## Related
 
-- [`toDate`](../to-date/to-date.md)
+- [`getIsoWeek`](../get-iso-week/get-iso-week.md)
+- [`getWeekOfMonth`](../get-week-of-month/get-week-of-month.md)
+- [`getLocaleWeekInfo`](../get-locale-week-info/get-locale-week-info.md)

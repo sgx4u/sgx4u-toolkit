@@ -1,6 +1,6 @@
 # `getWeekdayNames`
 
-See the TSDoc on `getWeekdayNames` for the contract.
+Returns the 7 weekday names, starting on `startsOn`.
 
 ## Import
 
@@ -8,14 +8,41 @@ See the TSDoc on `getWeekdayNames` for the contract.
 import { getWeekdayNames } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function getWeekdayNames(options?: WeekdayNameOptions): string[];
+```
+
+## Options
+
+| Name       | Type                            | Default                      | Meaning                                                       |
+| ---------- | ------------------------------- | ---------------------------- | ------------------------------------------------------------- |
+| `locale`   | `string \| readonly string[]`   | The runtime's default locale | A BCP 47 language tag, or a list of tags in preference order. |
+| `width`    | `"long" \| "short" \| "narrow"` | `"long"`                     | The name length.                                              |
+| `startsOn` | `Weekday`                       | `1`                          | The ISO weekday that comes first. `1` is Monday.              |
+
 ## Examples
 
-Names come from `Intl` for a fixed UTC reference date, so they do not depend on the system zone. `en-US` month names start with January and weekday names start on Monday unless `startsOn` says otherwise.
+```ts
+import { getWeekdayNames } from "@sgx4u/date-time";
+
+getWeekdayNames({ locale: "en-US" })[0];
+// "Monday"
+
+getWeekdayNames({ locale: "en-US", width: "short" })[0];
+// "Mon"
+
+getWeekdayNames({ locale: "en-US", startsOn: 7 })[0];
+// "Sunday"
+```
 
 ## Edge cases
 
-`formatDateWithStyle` uses `dateStyle: "medium"` when neither style is set.
+The names come from the runtime for a fixed UTC week, so the result does not depend on the system zone. Monday 3 January 2000 is the reference Monday. An invalid `width` or `startsOn` throws a `RangeError`.
 
 ## Related
 
-- [`formatDate`](../format-date/format-date.md)
+- [`getMonthNames`](../get-month-names/get-month-names.md)
+- [`getLocaleWeekInfo`](../get-locale-week-info/get-locale-week-info.md)
+- [`getNextWeekday`](../get-next-weekday/get-next-weekday.md)

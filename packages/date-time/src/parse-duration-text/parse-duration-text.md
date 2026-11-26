@@ -1,6 +1,6 @@
 # `parseDurationText`
 
-See the TSDoc on `parseDurationText` for the contract.
+Parses English duration text.
 
 ## Import
 
@@ -8,14 +8,38 @@ See the TSDoc on `parseDurationText` for the contract.
 import { parseDurationText } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function parseDurationText(value: string): Duration | undefined;
+```
+
+## Options
+
+This function has no options.
+
 ## Examples
 
-The TSDoc `@example` is covered by the tests.
+```ts
+parseDurationText("1h 30m");
+// { hours: 1, minutes: 30 }
+
+parseDurationText("2 days 3 hours");
+// { days: 2, hours: 3 }
+
+parseDurationText("-1.5 hours");
+// { hours: -1.5 }
+
+parseDurationText("1:30:00");
+// { hours: 1, minutes: 30, seconds: 0 }
+```
 
 ## Edge cases
 
-A value of the wrong type throws `TypeError`. An invalid duration throws `RangeError`. Parsers return `undefined` when the text does not match.
+Text that does not match returns `undefined`, including an empty string and a phrase with no known unit. Units may repeat and may appear in any order. A leading `-` negates every field. `H:mm:ss` and `mm:ss` are accepted. A fraction is allowed on a clock field when that field is the smallest non-zero one. A fraction on a calendar field returns `undefined`. A value that is not a string throws `TypeError`.
 
 ## Related
 
-- [`addDuration`](../add-duration/add-duration.md)
+- [`parseIsoDuration`](../parse-iso-duration/parse-iso-duration.md) reads an ISO 8601 duration.
+- [`formatDuration`](../format-duration/format-duration.md) writes a duration as words.
+- [`formatDurationCompact`](../format-duration-compact/format-duration-compact.md) writes compact unit symbols.

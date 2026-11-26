@@ -1,6 +1,6 @@
 # `addToTimeOfDay`
 
-See the TSDoc on `addToTimeOfDay` for the contract.
+Adds a duration to a time of day and reports how many calendar days the result crossed.
 
 ## Import
 
@@ -8,14 +8,47 @@ See the TSDoc on `addToTimeOfDay` for the contract.
 import { addToTimeOfDay } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function addToTimeOfDay(
+    time: TimeOfDay,
+    duration: Duration,
+): { time: TimeOfDay; dayOffset: number };
+```
+
+## Options
+
+This function has no options.
+
 ## Examples
 
-03:30 in Asia/Kolkata kept as a wall time in UTC is 03:30Z. Kolkata is 330 minutes ahead of UTC. 23:30 plus 2 hours is 01:30 on the next day.
+```ts
+addToTimeOfDay(
+    { hour: 23, minute: 30, second: 0, millisecond: 0 },
+    { hours: 2 },
+);
+// { time: { hour: 1, minute: 30, second: 0, millisecond: 0 }, dayOffset: 1 }
+
+addToTimeOfDay(
+    { hour: 1, minute: 30, second: 0, millisecond: 0 },
+    { hours: -2 },
+);
+// { time: { hour: 23, minute: 30, second: 0, millisecond: 0 }, dayOffset: -1 }
+
+addToTimeOfDay(
+    { hour: 23, minute: 59, second: 59, millisecond: 500 },
+    { milliseconds: 500 },
+);
+// { time: { hour: 0, minute: 0, second: 0, millisecond: 0 }, dayOffset: 1 }
+```
 
 ## Edge cases
 
-`addToTimeOfDay` rejects months and years. Daylight saving is the offset above the smaller of 1 January and 1 July.
+Months and years throw `RangeError` because a time of day has no calendar date. Weeks and days become part of `dayOffset`. A time that is not an object of finite numbers throws `TypeError`. The wrap uses a 24-hour day of 86,400,000 milliseconds.
 
 ## Related
 
-- [`getUtcOffset`](../get-utc-offset/get-utc-offset.md)
+- [`formatTimeOfDay`](../format-time-of-day/format-time-of-day.md) writes the resulting time.
+- [`compareTimesOfDay`](../compare-times-of-day/compare-times-of-day.md) orders two times of day.
+- [`getTimeOfDay`](../get-time-of-day/get-time-of-day.md) reads the time of day from an instant.

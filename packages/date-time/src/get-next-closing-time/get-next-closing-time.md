@@ -1,6 +1,6 @@
 # `getNextClosingTime`
 
-See the TSDoc on `getNextClosingTime` for the contract.
+Returns the next time a weekly schedule closes.
 
 ## Import
 
@@ -8,14 +8,55 @@ See the TSDoc on `getNextClosingTime` for the contract.
 import { getNextClosingTime } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function getNextClosingTime(
+    date: DateInput,
+    schedule: WeeklySchedule,
+    options?: TimeZoneOptions,
+): Date | undefined;
+```
+
+## Options
+
+| Name       | Type     | Default                                 | Meaning                                                              |
+| ---------- | -------- | --------------------------------------- | -------------------------------------------------------------------- |
+| `timeZone` | `string` | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
+
 ## Examples
 
-Thursday 26 November 2026 is open from 09:00 to 17:00 UTC when weekday 4 has that range. A 22:00–02:00 range is still open at 01:00 the next day.
+```ts
+import { getNextClosingTime } from "@sgx4u/date-time";
+
+getNextClosingTime(
+    "2026-11-26T12:00:00Z",
+    { hours: { 4: [{ start: "09:00", end: "17:00" }] } },
+    { timeZone: "UTC" },
+)?.toISOString();
+// "2026-11-26T17:00:00.000Z"
+
+getNextClosingTime(
+    "2026-11-26T08:00:00Z",
+    { hours: { 4: [{ start: "09:00", end: "17:00" }] } },
+    { timeZone: "UTC" },
+)?.toISOString();
+// "2026-11-26T17:00:00.000Z"
+
+getNextClosingTime(
+    "2026-11-26T18:00:00Z",
+    { hours: { 4: [{ start: "09:00", end: "17:00" }] } },
+    { timeZone: "UTC" },
+)?.toISOString();
+// "2026-12-03T17:00:00.000Z"
+```
 
 ## Edge cases
 
-A closure removes the calendar day and the overnight range that starts on it. The search stops after 400 days.
+Weekday keys are ISO numbers, so `4` is Thursday. When the instant is open, the result is the end of the current open interval. When it is closed, the result is the end of the next open interval. The search stops after 400 days and returns `undefined` when the schedule does not close. A range whose end is not after its start continues past midnight.
 
 ## Related
 
+- [`getNextOpeningTime`](../get-next-opening-time/get-next-opening-time.md)
+- [`isOpenAt`](../is-open-at/is-open-at.md)
 - [`isWithinBusinessHours`](../is-within-business-hours/is-within-business-hours.md)

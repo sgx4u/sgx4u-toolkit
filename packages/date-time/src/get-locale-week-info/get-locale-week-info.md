@@ -1,6 +1,6 @@
 # `getLocaleWeekInfo`
 
-See the TSDoc on `getLocaleWeekInfo` for the contract.
+Returns the week rules the runtime reports for a locale.
 
 ## Import
 
@@ -8,14 +8,39 @@ See the TSDoc on `getLocaleWeekInfo` for the contract.
 import { getLocaleWeekInfo } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function getLocaleWeekInfo(locale?: string): LocaleWeekInfo;
+```
+
+## Options
+
+| Name     | Type     | Default                      | Meaning                                            |
+| -------- | -------- | ---------------------------- | -------------------------------------------------- |
+| `locale` | `string` | The runtime's default locale | A BCP 47 language tag passed as the only argument. |
+
 ## Examples
 
-The TSDoc `@example` is the call covered by the tests.
+```ts
+import { getLocaleWeekInfo } from "@sgx4u/date-time";
+
+getLocaleWeekInfo("en-US").firstDay;
+// 7
+
+getLocaleWeekInfo("en-GB");
+// { firstDay: 1, weekendDays: [6, 7], minimumDaysInFirstWeek: 4 }
+
+getLocaleWeekInfo("en-US").weekendDays;
+// [6, 7]
+```
 
 ## Edge cases
 
-A value of the wrong type throws `TypeError`. An invalid date or option throws `RangeError`. Inputs are not mutated. A function that takes `timeZone` reads wall-clock fields in that zone, including across a daylight-saving change.
+`firstDay` is an ISO weekday. When the runtime has no week data for the locale, the result is the ISO default: Monday, weekend Saturday and Sunday, and four days in the first week.
 
 ## Related
 
-- [`toDate`](../to-date/to-date.md)
+- [`getWeekOfYear`](../get-week-of-year/get-week-of-year.md)
+- [`getWeekdayNames`](../get-weekday-names/get-weekday-names.md)
+- [`isWeekend`](../is-weekend/is-weekend.md)

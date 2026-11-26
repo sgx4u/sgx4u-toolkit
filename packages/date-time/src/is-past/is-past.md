@@ -1,6 +1,6 @@
 # `isPast`
 
-See the TSDoc on `isPast` for the contract.
+Reports whether a date is strictly before now.
 
 ## Import
 
@@ -8,14 +8,39 @@ See the TSDoc on `isPast` for the contract.
 import { isPast } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function isPast(date: DateInput, options?: NowOptions): boolean;
+```
+
+## Options
+
+| Name  | Type        | Default                         | Meaning                                         |
+| ----- | ----------- | ------------------------------- | ----------------------------------------------- |
+| `now` | `DateInput` | `Date.now()`, read on each call | The instant to use instead of the current time. |
+
 ## Examples
 
-The TSDoc `@example` is the call covered by the tests.
+```ts
+import { isPast } from "@sgx4u/date-time";
+
+isPast("2020-01-01T00:00:00Z", { now: "2026-01-01T00:00:00Z" });
+// true
+
+isPast("2026-01-01T00:00:00Z", { now: "2026-01-01T00:00:00Z" });
+// false
+
+isPast("2027-01-01T00:00:00Z", { now: "2026-01-01T00:00:00Z" });
+// false
+```
 
 ## Edge cases
 
-A value of the wrong type throws `TypeError`. An invalid date or option throws `RangeError`. Inputs are not mutated. A function that takes `timeZone` reads wall-clock fields in that zone, including across a daylight-saving change.
+Equal to `now` returns `false`. `now` defaults to the current time, read on each call. A value that is not a real date throws a `RangeError`.
 
 ## Related
 
-- [`toDate`](../to-date/to-date.md)
+- [`isFuture`](../is-future/is-future.md)
+- [`isWithinLast`](../is-within-last/is-within-last.md)
+- [`getRelativeTimeParts`](../get-relative-time-parts/get-relative-time-parts.md)

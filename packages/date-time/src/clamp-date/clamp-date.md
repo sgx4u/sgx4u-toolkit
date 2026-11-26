@@ -1,6 +1,6 @@
 # `clampDate`
 
-Limits a date to an inclusive range.
+Limits a date to an inclusive range and returns a new `Date`.
 
 ## Import
 
@@ -10,17 +10,39 @@ import { clampDate } from "@sgx4u/date-time";
 
 ## Signature
 
-See the TSDoc on `clampDate` for the parameters, defaults, and thrown errors.
+```ts
+function clampDate(
+    date: DateInput,
+    bounds: { start: DateInput; end: DateInput },
+): Date;
+```
+
+## Options
+
+This function has no options.
 
 ## Examples
 
-The examples in the TSDoc are the calls covered by `clamp-date.test.ts`.
+```ts
+clampDate("2024-01-10T00:00:00Z", {
+    start: "2024-01-01T00:00:00Z",
+    end: "2024-01-05T00:00:00Z",
+}).toISOString();
+// "2024-01-05T00:00:00.000Z"
+
+clampDate("2024-01-03T00:00:00Z", {
+    start: "2024-01-01T00:00:00Z",
+    end: "2024-01-05T00:00:00Z",
+}).toISOString();
+// "2024-01-03T00:00:00.000Z"
+```
 
 ## Edge cases
 
-Invalid dates throw `RangeError`. A value of the wrong type throws `TypeError`. Inputs are not mutated. Functions that take `timeZone` resolve daylight-saving gaps with the same rules as `createDate`.
+`start` after `end` throws `RangeError`. A value that is not a real date throws `RangeError`. A value of the wrong type throws `TypeError`. `bounds` must be an object. The inputs are not mutated. A date already inside the range is returned as its own instant.
 
 ## Related
 
-- [`toDate`](../to-date/to-date.md)
-- [`getDateParts`](../get-date-parts/get-date-parts.md)
+- [`isWithinInterval`](../is-within-interval/is-within-interval.md) tests a half-open interval.
+- [`compareDates`](../compare-dates/compare-dates.md) orders two instants.
+- [`getEarliestDate`](../get-earliest-date/get-earliest-date.md) returns the earliest instant in a list.

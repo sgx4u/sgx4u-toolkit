@@ -1,6 +1,6 @@
 # `getTimeZoneTransitions`
 
-See the TSDoc on `getTimeZoneTransitions` for the contract.
+Returns every offset change inside an interval.
 
 ## Import
 
@@ -8,14 +8,58 @@ See the TSDoc on `getTimeZoneTransitions` for the contract.
 import { getTimeZoneTransitions } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function getTimeZoneTransitions(
+    interval: Interval,
+    timeZone: string,
+): TimeZoneTransition[];
+```
+
+## Options
+
+This function has no options.
+
 ## Examples
 
-On 10 March 2024, 02:30 in America/New_York is skipped. The spring-forward transition is 2024-03-10T07:00:00.000Z, from -300 minutes to -240.
+```ts
+import { getTimeZoneTransitions } from "@sgx4u/date-time";
+
+getTimeZoneTransitions(
+    {
+        start: new Date("2024-03-10T00:00:00Z"),
+        end: new Date("2024-03-11T00:00:00Z"),
+    },
+    "America/New_York",
+)[0]?.instant.toISOString();
+// "2024-03-10T07:00:00.000Z"
+
+getTimeZoneTransitions(
+    {
+        start: new Date("2024-01-01T00:00:00Z"),
+        end: new Date("2025-01-01T00:00:00Z"),
+    },
+    "America/New_York",
+).length;
+// 2
+
+getTimeZoneTransitions(
+    {
+        start: new Date("2024-01-01T00:00:00Z"),
+        end: new Date("2025-01-01T00:00:00Z"),
+    },
+    "UTC",
+).length;
+// 0
+```
 
 ## Edge cases
 
-`getTimeZoneTransitions` throws when the interval is longer than 50 years. The next and previous searches stop after two years and return `undefined`.
+Transitions are oldest first. The interval is half-open. A fixed offset contributes nothing. An interval longer than 50 years throws a `RangeError`, as does an unknown zone.
 
 ## Related
 
-- [`getUtcOffset`](../get-utc-offset/get-utc-offset.md)
+- [`getNextTimeZoneTransition`](../get-next-time-zone-transition/get-next-time-zone-transition.md)
+- [`getPreviousTimeZoneTransition`](../get-previous-time-zone-transition/get-previous-time-zone-transition.md)
+- [`getWallTimeStatus`](../get-wall-time-status/get-wall-time-status.md)

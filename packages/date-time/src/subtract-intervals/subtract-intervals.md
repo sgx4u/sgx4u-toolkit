@@ -1,6 +1,6 @@
 # `subtractIntervals`
 
-See the TSDoc on `subtractIntervals` for the contract.
+Returns the remaining pieces of an interval after other intervals are removed.
 
 ## Import
 
@@ -8,14 +8,45 @@ See the TSDoc on `subtractIntervals` for the contract.
 import { subtractIntervals } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function subtractIntervals(
+    source: Interval,
+    removed: readonly Interval[],
+): Interval[];
+```
+
+## Options
+
+This function has no options.
+
 ## Examples
 
-The TSDoc `@example` is covered by the tests. Intervals are half-open: the start is included and the end is excluded.
+```ts
+subtractIntervals({ start: new Date(0), end: new Date(10) }, [
+    { start: new Date(2), end: new Date(4) },
+]);
+// [
+//   { start: new Date(0), end: new Date(2) },
+//   { start: new Date(4), end: new Date(10) },
+// ]
+
+subtractIntervals({ start: new Date(0), end: new Date(10) }, [
+    { start: new Date(0), end: new Date(10) },
+]);
+// []
+
+subtractIntervals({ start: new Date(0), end: new Date(10) }, []);
+// [{ start: new Date(0), end: new Date(10) }]
+```
 
 ## Edge cases
 
-An end before the start throws `RangeError`. Touching intervals do not overlap unless `countTouchingAsOverlap` is true. `mergeIntervals` joins touching intervals by default. Inputs are not mutated.
+The pieces are sorted and half-open. Empty pieces are omitted. A removed interval that lies outside `source` leaves `source` whole. Overlapping removed intervals are merged before the cut. A value that is not an array throws `TypeError`. An invalid interval throws `RangeError`. Intervals are instants, so the cut follows absolute time across a daylight-saving change.
 
 ## Related
 
-- [`createInterval`](../create-interval/create-interval.md)
+- [`mergeIntervals`](../merge-intervals/merge-intervals.md) joins overlapping intervals.
+- [`getIntervalGaps`](../get-interval-gaps/get-interval-gaps.md) returns the uncovered time between intervals.
+- [`getIntervalIntersection`](../get-interval-intersection/get-interval-intersection.md) returns the shared part of two intervals.

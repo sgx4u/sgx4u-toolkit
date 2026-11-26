@@ -1,6 +1,6 @@
 # `isValidTimeZone`
 
-Reports whether a value is an IANA time zone or a fixed offset this runtime accepts.
+Reports whether a value is a zone this runtime can use.
 
 ## Import
 
@@ -14,20 +14,34 @@ import { isValidTimeZone } from "@sgx4u/date-time";
 function isValidTimeZone(timeZone: unknown): boolean;
 ```
 
+## Options
+
+This function has no options.
+
 ## Examples
 
 ```ts
-isValidTimeZone("Asia/Kolkata"); // true
-isValidTimeZone("+05:30"); // true
-isValidTimeZone("+0530"); // true
-isValidTimeZone("Mars/Base"); // false
+import { isValidTimeZone } from "@sgx4u/date-time";
+
+isValidTimeZone("Asia/Kolkata");
+// true
+
+isValidTimeZone("+05:30");
+// true
+
+isValidTimeZone("Mars/Olympus");
+// false
+
+isValidTimeZone(330);
+// false
 ```
 
 ## Edge cases
 
-A non-string returns `false` and does not throw. Hours must be `00`–`23` and minutes `00`–`59`. The function does not throw.
+An IANA name is accepted when the runtime accepts it. A fixed offset `±HH:mm`, `±HHmm`, or `±HH` is accepted from its text, with hours 00 through 23 and minutes 00 through 59. Anything else, including a non-string, returns `false`. The function does not throw.
 
 ## Related
 
-- [`getLocalTimeZone`](../get-local-time-zone/get-local-time-zone.md) reads the system zone.
-- [`getUtcOffset`](../get-utc-offset/get-utc-offset.md) measures one instant.
+- [`getLocalTimeZone`](../get-local-time-zone/get-local-time-zone.md)
+- [`listTimeZones`](../list-time-zones/list-time-zones.md)
+- [`getUtcOffset`](../get-utc-offset/get-utc-offset.md)

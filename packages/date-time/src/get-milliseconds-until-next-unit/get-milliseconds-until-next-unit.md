@@ -1,6 +1,6 @@
 # `getMillisecondsUntilNextUnit`
 
-See the TSDoc on `getMillisecondsUntilNextUnit` for the contract.
+Returns the delay until the next unit boundary.
 
 ## Import
 
@@ -8,14 +8,54 @@ See the TSDoc on `getMillisecondsUntilNextUnit` for the contract.
 import { getMillisecondsUntilNextUnit } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function getMillisecondsUntilNextUnit(
+    unit: TimeUnit,
+    options?: NowOptions & TimeZoneOptions & WeekOptions,
+): number;
+```
+
+## Options
+
+| Name           | Type        | Default                                 | Meaning                                                              |
+| -------------- | ----------- | --------------------------------------- | -------------------------------------------------------------------- |
+| `now`          | `DateInput` | `Date.now()`, read on each call         | The instant to use instead of the current time.                      |
+| `timeZone`     | `string`    | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
+| `weekStartsOn` | `Weekday`   | `1`                                     | ISO weekday that starts the week. `1` is Monday and `7` is Sunday.   |
+
 ## Examples
 
-The TSDoc `@example` is the call covered by the tests.
+```ts
+import { getMillisecondsUntilNextUnit } from "@sgx4u/date-time";
+
+getMillisecondsUntilNextUnit("hour", {
+    now: "2026-01-01T00:00:00Z",
+    timeZone: "UTC",
+});
+// 3600000
+
+getMillisecondsUntilNextUnit("hour", {
+    now: "2026-01-01T00:30:00Z",
+    timeZone: "UTC",
+});
+// 1800000
+
+getMillisecondsUntilNextUnit("week", {
+    now: "2026-01-01T00:00:00Z",
+    timeZone: "UTC",
+    weekStartsOn: 1,
+});
+// 345600000
+```
 
 ## Edge cases
 
-A value of the wrong type throws `TypeError`. An invalid date or option throws `RangeError`. Inputs are not mutated. A function that takes `timeZone` reads wall-clock fields in that zone, including across a daylight-saving change.
+The result is in `(0, unit length]`. At an exact boundary it is the full length of the following unit, never zero. Weeks start on `weekStartsOn`. An unknown unit throws a `RangeError`.
 
 ## Related
 
-- [`toDate`](../to-date/to-date.md)
+- [`getCountdownParts`](../get-countdown-parts/get-countdown-parts.md)
+- [`getRelativeTimeParts`](../get-relative-time-parts/get-relative-time-parts.md)
+- [`isSameUnit`](../is-same-unit/is-same-unit.md)

@@ -10,17 +10,42 @@ import { sortDates } from "@sgx4u/date-time";
 
 ## Signature
 
-See the TSDoc on `sortDates` for the parameters, defaults, and thrown errors.
+```ts
+function sortDates(
+    dates: readonly DateInput[],
+    options?: SortDatesOptions,
+): Date[];
+```
+
+## Options
+
+| Name    | Type                          | Default       | Meaning                        |
+| ------- | ----------------------------- | ------------- | ------------------------------ |
+| `order` | `"ascending" \| "descending"` | `"ascending"` | Oldest first, or newest first. |
 
 ## Examples
 
-The examples in the TSDoc are the calls covered by `sort-dates.test.ts`.
+```ts
+sortDates(["2024-01-02T00:00:00Z", "2024-01-01T00:00:00Z"]).map((date) =>
+    date.toISOString(),
+);
+// ["2024-01-01T00:00:00.000Z", "2024-01-02T00:00:00.000Z"]
+
+sortDates(["2024-01-02T00:00:00Z", "2024-01-01T00:00:00Z"], {
+    order: "descending",
+})[0]?.toISOString();
+// "2024-01-02T00:00:00.000Z"
+
+sortDates([]).length;
+// 0
+```
 
 ## Edge cases
 
-Invalid dates throw `RangeError`. A value of the wrong type throws `TypeError`. Inputs are not mutated. Functions that take `timeZone` resolve daylight-saving gaps with the same rules as `createDate`.
+The input array stays in its original order. Each result is a new `Date`. Equal instants keep their original relative order. A value that is not an array throws `TypeError`. An entry that is not a real date throws `RangeError`. An unknown `order` throws `RangeError`. Ordering compares absolute instants.
 
 ## Related
 
-- [`toDate`](../to-date/to-date.md)
-- [`getDateParts`](../get-date-parts/get-date-parts.md)
+- [`compareDates`](../compare-dates/compare-dates.md) compares two dates for `Array#sort`.
+- [`getEarliestDate`](../get-earliest-date/get-earliest-date.md) returns the earliest date in a list.
+- [`removeDuplicateDates`](../remove-duplicate-dates/remove-duplicate-dates.md) keeps the first date of each unit.

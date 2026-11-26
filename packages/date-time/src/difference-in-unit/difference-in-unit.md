@@ -1,6 +1,6 @@
 # `differenceInUnit`
 
-See the TSDoc on `differenceInUnit` for the contract.
+Counts whole units from `earlier` to `later`.
 
 ## Import
 
@@ -8,14 +8,56 @@ See the TSDoc on `differenceInUnit` for the contract.
 import { differenceInUnit } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function differenceInUnit(
+    later: DateInput,
+    earlier: DateInput,
+    unit: TimeUnit,
+    options?: DifferenceInUnitOptions,
+): number;
+```
+
+## Options
+
+| Name       | Type                                         | Default      | Meaning                                   |
+| ---------- | -------------------------------------------- | ------------ | ----------------------------------------- |
+| `timeZone` | `string`                                     | System zone  | Zone used for calendar units.             |
+| `rounding` | `"truncate" \| "floor" \| "ceil" \| "round"` | `"truncate"` | How a fractional unit becomes an integer. |
+
+`"truncate"` moves toward zero. `"round"` at a half moves away from zero.
+
 ## Examples
 
-The TSDoc `@example` is the call covered by the tests.
+```ts
+differenceInUnit("2026-03-01T00:00:00Z", "2026-01-31T00:00:00Z", "month", {
+    timeZone: "UTC",
+});
+// 1
+
+differenceInUnit("2026-01-01T01:30:00Z", "2026-01-01T00:00:00Z", "hour", {
+    timeZone: "UTC",
+    rounding: "round",
+});
+// 2
+
+differenceInUnit("2024-03-01T00:00:00Z", "2024-02-28T00:00:00Z", "day", {
+    timeZone: "UTC",
+});
+// 2
+
+differenceInUnit("2025-02-28T00:00:00Z", "2024-02-29T00:00:00Z", "year", {
+    timeZone: "UTC",
+});
+// 1
+```
 
 ## Edge cases
 
-A value of the wrong type throws `TypeError`. An invalid date or option throws `RangeError`. Inputs are not mutated. A function that takes `timeZone` reads wall-clock fields in that zone, including across a daylight-saving change.
+Calendar units use the largest count that, added to `earlier`, does not pass `later`. Clock units divide the elapsed milliseconds. The result is negative when `later` is before `earlier`. An unknown `rounding` throws `RangeError`. A date that does not parse throws `RangeError`. 28 February 2024 to 1 March 2024 is two calendar days because 2024 is a leap year.
 
 ## Related
 
-- [`toDate`](../to-date/to-date.md)
+- [`differenceInCalendarUnit`](../difference-in-calendar-unit/difference-in-calendar-unit.md) counts boundaries crossed, not whole units that fit.
+- [`differenceAsDuration`](../difference-as-duration/difference-as-duration.md) returns the distance as a duration.

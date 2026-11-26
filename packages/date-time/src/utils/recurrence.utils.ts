@@ -5,7 +5,12 @@ import type {
 } from "../types/recurrence.types.js";
 import type { Weekday } from "../types/time.types.js";
 import { addDurationToInstant } from "./arithmetic.utils.js";
-import { daysInGregorianMonth, isoWeekdayNumber } from "./gregorian.utils.js";
+import {
+    addGregorianDays,
+    daysInGregorianMonth,
+    isoWeekdayNumber,
+} from "./gregorian.utils.js";
+import { weekOfDate } from "./week.utils.js";
 import {
     instantFromWallTime,
     readDateParts,
@@ -418,6 +423,9 @@ function daysInPeriod(
     parts: { year: number; month: number; day: number; weekday: Weekday },
     rule: RecurrenceRule,
 ): { year: number; month: number; day: number }[] {
+    if (rule.frequency === "yearly" && rule.byWeekNumber !== undefined) {
+        return daysInWeekNumbers(parts, rule);
+    }
     if (rule.frequency === "yearly") {
         const months = rule.byMonth ?? [parts.month];
         const days: { year: number; month: number; day: number }[] = [];
@@ -433,6 +441,74 @@ function daysInPeriod(
         return daysInWeek(parts, rule);
     }
     return [{ year: parts.year, month: parts.month, day: parts.day }];
+}
+
+/**
+ * Days of the requested week numbers in a year.
+ *
+ * Week 1 is the first week, starting on `weekStart`, that has at least four
+ * days in the year. A negative week counts back from the last week. When
+ * `BYDAY` is absent, the weekday of the start is used.
+ *
+ * @param parts - A day in the year being expanded.
+ * @param rule - The rule.
+ * @returns One date for each selected weekday of each selected week.
+ */
+function daysInWeekNumbers(
+    parts: { year: number; month: number; day: number; weekday: Weekday },
+    rule: RecurrenceRule,
+): { year: number; month: number; day: number }[] {
+    const weekStartsOn = rule.weekStart ?? 1;
+    const lastWeek = weekOfDate(parts.year, 12, 28, weekStartsOn, 4).week;
+    const weekNumbers = (rule.byWeekNumber ?? [])
+        .map((weekNumber) =>
+            weekNumber > 0 ? weekNumber : lastWeek + weekNumber + 1,
+        )
+        .filter((weekNumber) => weekNumber >= 1 && weekNumber <= lastWeek);
+    const weekdays = rule.byWeekday?.map((weekday) => weekday.weekday) ?? [
+        parts.weekday,
+    ];
+    const weekOne = startOfWeekContaining(parts.year, 1, 4, weekStartsOn);
+    const days: { year: number; month: number; day: number }[] = [];
+    for (const weekNumber of weekNumbers) {
+        const weekStart = addGregorianDays(
+            weekOne.year,
+            weekOne.month,
+            weekOne.day,
+            (weekNumber - 1) * 7,
+        );
+        for (let offset = 0; offset < 7; offset += 1) {
+            const date = addGregorianDays(
+                weekStart.year,
+                weekStart.month,
+                weekStart.day,
+                offset,
+            );
+            const weekday = isoWeekdayNumber(date.year, date.month, date.day);
+            if (weekdays.includes(weekday)) {
+                days.push(date);
+            }
+        }
+    }
+    return days;
+}
+
+/**
+ * @param year - The year.
+ * @param month - The month.
+ * @param day - A day that belongs to the wanted week.
+ * @param weekStartsOn - ISO weekday that starts the week.
+ * @returns The first day of that week.
+ */
+function startOfWeekContaining(
+    year: number,
+    month: number,
+    day: number,
+    weekStartsOn: Weekday,
+): { year: number; month: number; day: number } {
+    const weekday = isoWeekdayNumber(year, month, day);
+    const daysBack = (weekday - weekStartsOn + 7) % 7;
+    return addGregorianDays(year, month, day, -daysBack);
 }
 
 /**

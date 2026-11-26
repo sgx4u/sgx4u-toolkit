@@ -1,6 +1,6 @@
 # `getMoonPhase`
 
-Returns the moon's synodic phase and one of eight names.
+Returns the moon phase at an instant.
 
 ## Import
 
@@ -11,22 +11,33 @@ import { getMoonPhase } from "@sgx4u/date-time/astronomy";
 ## Signature
 
 ```ts
-function getMoonPhase(date: DateInput): {
-    fraction: number;
-    name: MoonPhaseName;
-};
+function getMoonPhase(date: DateInput): MoonPhase;
 ```
+
+## Options
+
+This function has no options.
 
 ## Examples
 
 ```ts
-getMoonPhase("2000-01-06T18:14:00.000Z").name; // "new-moon"
+import { getMoonPhase } from "@sgx4u/date-time/astronomy";
+
+getMoonPhase("2000-01-06T18:14:00.000Z").name;
+// "new-moon"
+
+getMoonPhase("2000-01-13T18:14:00.000Z").name;
+// "first-quarter"
+
+getMoonPhase("2000-01-21T12:36:00.000Z").name;
+// "full-moon"
 ```
 
 ## Edge cases
 
-`fraction` is in `[0, 1)`. The names are equal parts of the cycle, centred on new moon, first quarter, full moon, and last quarter. The reference new moon is 2000-01-06 18:14 UTC.
+`fraction` is in `[0, 1)`, measured from the 2000-01-06 18:14 UTC new moon with a 29.530588853-day month. The eight names are equal parts of that cycle, centred on new moon, first quarter, full moon, and last quarter. A value that is not a real date throws a `RangeError`.
 
 ## Related
 
-- [`getSeason`](../get-season/get-season.md) is on the root entry.
+- [`getSunTimes`](../get-sun-times/get-sun-times.md)
+- [`getSeason`](../get-season/get-season.md)

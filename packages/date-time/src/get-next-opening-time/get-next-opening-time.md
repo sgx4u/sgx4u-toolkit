@@ -1,6 +1,6 @@
 # `getNextOpeningTime`
 
-See the TSDoc on `getNextOpeningTime` for the contract.
+Returns the next time a weekly schedule opens.
 
 ## Import
 
@@ -8,14 +8,55 @@ See the TSDoc on `getNextOpeningTime` for the contract.
 import { getNextOpeningTime } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function getNextOpeningTime(
+    date: DateInput,
+    schedule: WeeklySchedule,
+    options?: TimeZoneOptions,
+): Date | undefined;
+```
+
+## Options
+
+| Name       | Type     | Default                                 | Meaning                                                              |
+| ---------- | -------- | --------------------------------------- | -------------------------------------------------------------------- |
+| `timeZone` | `string` | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
+
 ## Examples
 
-Thursday 26 November 2026 is open from 09:00 to 17:00 UTC when weekday 4 has that range. A 22:00–02:00 range is still open at 01:00 the next day.
+```ts
+import { getNextOpeningTime } from "@sgx4u/date-time";
+
+getNextOpeningTime(
+    "2026-11-26T08:00:00Z",
+    { hours: { 4: [{ start: "09:00", end: "17:00" }] } },
+    { timeZone: "UTC" },
+)?.toISOString();
+// "2026-11-26T09:00:00.000Z"
+
+getNextOpeningTime(
+    "2026-11-26T12:00:00Z",
+    { hours: { 4: [{ start: "09:00", end: "17:00" }] } },
+    { timeZone: "UTC" },
+)?.toISOString();
+// "2026-12-03T09:00:00.000Z"
+
+getNextOpeningTime(
+    "2026-11-27T12:00:00Z",
+    { hours: { 4: [{ start: "09:00", end: "17:00" }] } },
+    { timeZone: "UTC" },
+)?.toISOString();
+// "2026-12-03T09:00:00.000Z"
+```
 
 ## Edge cases
 
-A closure removes the calendar day and the overnight range that starts on it. The search stops after 400 days.
+An instant that is already inside open hours is not returned. Weekday `4` is Thursday. The search stops after 400 days and returns `undefined` when the schedule never opens. A range whose end is not after its start continues past midnight. A closure removes that calendar day.
 
 ## Related
 
-- [`isWithinBusinessHours`](../is-within-business-hours/is-within-business-hours.md)
+- [`getNextClosingTime`](../get-next-closing-time/get-next-closing-time.md)
+- [`isOpenAt`](../is-open-at/is-open-at.md)
+- [`getNextBusinessHoursStart`](../get-next-business-hours-start/get-next-business-hours-start.md)

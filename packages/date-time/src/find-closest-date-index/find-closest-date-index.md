@@ -10,17 +10,35 @@ import { findClosestDateIndex } from "@sgx4u/date-time";
 
 ## Signature
 
-See the TSDoc on `findClosestDateIndex` for the parameters, defaults, and thrown errors.
+```ts
+function findClosestDateIndex(
+    target: DateInput,
+    candidates: readonly DateInput[],
+): number;
+```
+
+## Options
+
+This function has no options.
 
 ## Examples
 
-The examples in the TSDoc are the calls covered by `find-closest-date-index.test.ts`.
+```ts
+findClosestDateIndex("2024-01-01T12:00:00Z", [
+    "2024-01-02T00:00:00Z",
+    "2024-01-01T00:00:00Z",
+]);
+// 1
+
+findClosestDateIndex("2024-01-01T00:00:00Z", []);
+// -1
+```
 
 ## Edge cases
 
-Invalid dates throw `RangeError`. A value of the wrong type throws `TypeError`. Inputs are not mutated. Functions that take `timeZone` resolve daylight-saving gaps with the same rules as `createDate`.
+On a tie the earlier candidate wins. Equal candidates keep the first index. An empty list returns `-1`. A value that is not a real date throws `RangeError`. `candidates` must be an array.
 
 ## Related
 
-- [`toDate`](../to-date/to-date.md)
-- [`getDateParts`](../get-date-parts/get-date-parts.md)
+- [`findClosestDate`](../find-closest-date/find-closest-date.md) returns the date at that index.
+- [`getEarliestDate`](../get-earliest-date/get-earliest-date.md) returns the earliest instant in a list.

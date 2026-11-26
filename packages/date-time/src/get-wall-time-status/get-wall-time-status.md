@@ -1,6 +1,6 @@
 # `getWallTimeStatus`
 
-See the TSDoc on `getWallTimeStatus` for the contract.
+Reports whether a wall time exists once, never, or twice.
 
 ## Import
 
@@ -8,14 +8,49 @@ See the TSDoc on `getWallTimeStatus` for the contract.
 import { getWallTimeStatus } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function getWallTimeStatus(
+    parts: DatePartsInput,
+    timeZone: string,
+): WallTimeStatus;
+```
+
+## Options
+
+This function has no options.
+
 ## Examples
 
-On 10 March 2024, 02:30 in America/New_York is skipped. The spring-forward transition is 2024-03-10T07:00:00.000Z, from -300 minutes to -240.
+```ts
+import { getWallTimeStatus } from "@sgx4u/date-time";
+
+getWallTimeStatus(
+    { year: 2024, month: 3, day: 10, hour: 2, minute: 30 },
+    "America/New_York",
+);
+// "skipped"
+
+getWallTimeStatus(
+    { year: 2024, month: 11, day: 3, hour: 1, minute: 30 },
+    "America/New_York",
+);
+// "repeated"
+
+getWallTimeStatus(
+    { year: 2024, month: 6, day: 15, hour: 12 },
+    "America/New_York",
+);
+// "valid"
+```
 
 ## Edge cases
 
-`getTimeZoneTransitions` throws when the interval is longer than 50 years. The next and previous searches stop after two years and return `undefined`.
+`"skipped"` is a spring-forward gap, `"repeated"` is a fall-back overlap, and `"valid"` exists once. Omitted clock fields default to 0, and an omitted month or day defaults to 1. A calendar day that does not exist, or an unknown zone, throws a `RangeError`.
 
 ## Related
 
-- [`getUtcOffset`](../get-utc-offset/get-utc-offset.md)
+- [`getDateParts`](../get-date-parts/get-date-parts.md)
+- [`getNextTimeZoneTransition`](../get-next-time-zone-transition/get-next-time-zone-transition.md)
+- [`isDaylightSavingTime`](../is-daylight-saving-time/is-daylight-saving-time.md)

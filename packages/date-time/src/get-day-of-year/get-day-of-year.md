@@ -1,6 +1,6 @@
 # `getDayOfYear`
 
-See the TSDoc on `getDayOfYear` for the contract.
+Returns the day of the year, from 1 through 366.
 
 ## Import
 
@@ -8,14 +8,39 @@ See the TSDoc on `getDayOfYear` for the contract.
 import { getDayOfYear } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function getDayOfYear(date: DateInput, options?: TimeZoneOptions): number;
+```
+
+## Options
+
+| Name       | Type     | Default                                 | Meaning                                                              |
+| ---------- | -------- | --------------------------------------- | -------------------------------------------------------------------- |
+| `timeZone` | `string` | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
+
 ## Examples
 
-The TSDoc `@example` is the call covered by the tests.
+```ts
+import { getDayOfYear } from "@sgx4u/date-time";
+
+getDayOfYear("2024-01-01T00:00:00Z", { timeZone: "UTC" });
+// 1
+
+getDayOfYear("2024-03-01T00:00:00Z", { timeZone: "UTC" });
+// 61
+
+getDayOfYear("2023-03-01T00:00:00Z", { timeZone: "UTC" });
+// 60
+```
 
 ## Edge cases
 
-A value of the wrong type throws `TypeError`. An invalid date or option throws `RangeError`. Inputs are not mutated. A function that takes `timeZone` reads wall-clock fields in that zone, including across a daylight-saving change.
+The number is the calendar day in `timeZone`, so a late UTC instant can already be the next day in a zone ahead of UTC. March 1 is day 61 in a leap year and day 60 otherwise. A value that is not a real date throws a `RangeError`.
 
 ## Related
 
-- [`toDate`](../to-date/to-date.md)
+- [`getDaysInYear`](../get-days-in-year/get-days-in-year.md)
+- [`isLeapYear`](../is-leap-year/is-leap-year.md)
+- [`getQuarter`](../get-quarter/get-quarter.md)

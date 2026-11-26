@@ -20,10 +20,12 @@ export interface SunLocation {
 /**
  * Returns sunrise, sunset, solar noon, and civil twilight for one day.
  *
- * The calculation is the NOAA solar-position approximation. `sunrise` and
- * `sunset` are absent during polar day or polar night. Results are within
- * a few minutes for latitudes between -65 and 65. The equinox sunrise
- * at the equator is about four minutes from 06:00 UTC in this approximation.
+ * The calculation is the NOAA solar-position approximation, iterated at the
+ * candidate instant. `sunrise` and `sunset` are absent during polar day or
+ * polar night. For latitudes between -65 and 65 the result is within about
+ * one minute of the refraction-corrected sunrise. At the equator on the
+ * March equinox that instant is near 06:04 UTC, because of the equation of
+ * time and the 0.833° sunrise zenith, not 06:00.
  *
  * @param date - Any instant on the civil day to compute, in `timeZone`.
  * @param location - Latitude and longitude in degrees.

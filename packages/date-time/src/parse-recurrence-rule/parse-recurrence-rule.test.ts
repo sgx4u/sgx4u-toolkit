@@ -38,6 +38,17 @@ describe("recurrence", () => {
             "2026-12-07T09:00:00.000Z",
             "2026-12-11T09:00:00.000Z",
         ]);
+        const weekTen = parseRecurrenceRule(
+            "DTSTART:20260101T090000Z\nRRULE:FREQ=YEARLY;BYWEEKNO=10;BYDAY=MO",
+        );
+        expect(
+            listRecurrenceOccurrences(weekTen ?? rule, {
+                between: {
+                    start: new Date("2026-01-01T00:00:00Z"),
+                    end: new Date("2027-01-01T00:00:00Z"),
+                },
+            }).map((date) => date.toISOString()),
+        ).toEqual(["2026-03-02T09:00:00.000Z"]);
         expect(
             getNextRecurrenceOccurrence(
                 { start: new Date("2026-11-26T09:00:00Z"), frequency: "daily" },

@@ -1,6 +1,6 @@
 # `isBefore`
 
-Reports whether a date is strictly earlier than another.
+Reports whether a date is strictly earlier than a reference.
 
 ## Import
 
@@ -10,17 +10,35 @@ import { isBefore } from "@sgx4u/date-time";
 
 ## Signature
 
-See the TSDoc on `isBefore` for the parameters, defaults, and thrown errors.
+```ts
+function isBefore(date: DateInput, reference: DateInput): boolean;
+```
+
+## Options
+
+This function has no options.
 
 ## Examples
 
-The examples in the TSDoc are the calls covered by `is-before.test.ts`.
+```ts
+import { isBefore } from "@sgx4u/date-time";
+
+isBefore("2024-01-01T00:00:00Z", "2024-01-02T00:00:00Z");
+// true
+
+isBefore("2024-01-01T00:00:00Z", "2024-01-01T00:00:00Z");
+// false
+
+isBefore("2024-01-02T00:00:00Z", "2024-01-01T00:00:00Z");
+// false
+```
 
 ## Edge cases
 
-Invalid dates throw `RangeError`. A value of the wrong type throws `TypeError`. Inputs are not mutated. Functions that take `timeZone` resolve daylight-saving gaps with the same rules as `createDate`.
+Equal instants return `false`. A value that is not a real date throws a `RangeError`. It is not treated as "not before".
 
 ## Related
 
-- [`toDate`](../to-date/to-date.md)
-- [`getDateParts`](../get-date-parts/get-date-parts.md)
+- [`isAfter`](../is-after/is-after.md)
+- [`isBetween`](../is-between/is-between.md)
+- [`isSameInstant`](../is-same-instant/is-same-instant.md)

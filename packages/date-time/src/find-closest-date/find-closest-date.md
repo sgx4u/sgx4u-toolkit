@@ -10,17 +10,36 @@ import { findClosestDate } from "@sgx4u/date-time";
 
 ## Signature
 
-See the TSDoc on `findClosestDate` for the parameters, defaults, and thrown errors.
+```ts
+function findClosestDate(
+    target: DateInput,
+    candidates: readonly DateInput[],
+): Date | undefined;
+```
+
+## Options
+
+This function has no options.
 
 ## Examples
 
-The examples in the TSDoc are the calls covered by `find-closest-date.test.ts`.
+```ts
+findClosestDate("2024-01-01T12:00:00Z", [
+    "2024-01-01T00:00:00Z",
+    "2024-01-02T00:00:00Z",
+])?.toISOString();
+// "2024-01-01T00:00:00.000Z"
+
+findClosestDate("2024-01-01T00:00:00Z", []);
+// undefined
+```
 
 ## Edge cases
 
-Invalid dates throw `RangeError`. A value of the wrong type throws `TypeError`. Inputs are not mutated. Functions that take `timeZone` resolve daylight-saving gaps with the same rules as `createDate`.
+On a tie the earlier candidate wins. When two candidates are the same instant, the first one in the list wins. An empty list returns `undefined`. The array is not reordered. A value that is not a real date throws `RangeError`. `candidates` must be an array.
 
 ## Related
 
-- [`toDate`](../to-date/to-date.md)
-- [`getDateParts`](../get-date-parts/get-date-parts.md)
+- [`findClosestDateIndex`](../find-closest-date-index/find-closest-date-index.md) returns the index of that candidate.
+- [`getEarliestDate`](../get-earliest-date/get-earliest-date.md) returns the earliest instant in a list.
+- [`compareDates`](../compare-dates/compare-dates.md) orders two instants.

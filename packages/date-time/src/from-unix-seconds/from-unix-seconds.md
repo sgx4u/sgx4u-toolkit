@@ -1,6 +1,6 @@
 # `fromUnixSeconds`
 
-See the TSDoc on `fromUnixSeconds` for the contract, defaults, and errors.
+Returns a date from whole or fractional Unix seconds.
 
 ## Import
 
@@ -8,14 +8,36 @@ See the TSDoc on `fromUnixSeconds` for the contract, defaults, and errors.
 import { fromUnixSeconds } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function fromUnixSeconds(seconds: number): Date;
+```
+
+## Options
+
+This function has no options.
+
 ## Examples
 
-The TSDoc `@example` is covered by the tests.
+```ts
+fromUnixSeconds(0).toISOString();
+// "1970-01-01T00:00:00.000Z"
+
+fromUnixSeconds(1.5).toISOString();
+// "1970-01-01T00:00:01.500Z"
+
+fromUnixSeconds(1_709_164_800).toISOString();
+// "2024-02-29T00:00:00.000Z"
+
+fromUnixSeconds(1_767_225_600).toISOString();
+// "2026-01-01T00:00:00.000Z"
+```
 
 ## Edge cases
 
-A value of the wrong type throws `TypeError`. An invalid date or option throws `RangeError`. A parser returns `undefined` when the text does not match. Inputs are not mutated.
+A non-number throws `TypeError`. `NaN` throws `RangeError`. A value outside the range `Date` can store, such as `1e16` seconds, throws `RangeError`. A fractional second becomes milliseconds.
 
 ## Related
 
-- [`toDate`](../to-date/to-date.md)
+- [`toUnixSeconds`](../to-unix-seconds/to-unix-seconds.md) writes Unix seconds for an instant.

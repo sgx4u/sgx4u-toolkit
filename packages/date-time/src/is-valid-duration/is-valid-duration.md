@@ -1,6 +1,6 @@
 # `isValidDuration`
 
-See the TSDoc on `isValidDuration` for the contract.
+Reports whether a value is a duration.
 
 ## Import
 
@@ -8,14 +8,40 @@ See the TSDoc on `isValidDuration` for the contract.
 import { isValidDuration } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function isValidDuration(value: unknown): value is Duration;
+```
+
+## Options
+
+This function has no options.
+
 ## Examples
 
-The TSDoc `@example` is covered by the tests.
+```ts
+import { isValidDuration } from "@sgx4u/date-time";
+
+isValidDuration({ hours: 1, minutes: 30 });
+// true
+
+isValidDuration({});
+// true
+
+isValidDuration({ hours: 1, minutes: -30 });
+// false
+
+isValidDuration({ days: 1.5 });
+// false
+```
 
 ## Edge cases
 
-A value of the wrong type throws `TypeError`. An invalid duration throws `RangeError`. Parsers return `undefined` when the text does not match.
+Known fields must be finite numbers and share one sign. The empty object is a zero duration. A fraction is allowed only on the smallest non-zero clock field (`hours`, `minutes`, `seconds`, or `milliseconds`). The function does not throw.
 
 ## Related
 
-- [`addDuration`](../add-duration/add-duration.md)
+- [`negateDuration`](../negate-duration/negate-duration.md)
+- [`millisecondsToDuration`](../milliseconds-to-duration/milliseconds-to-duration.md)
+- [`getIntervalDuration`](../get-interval-duration/get-interval-duration.md)

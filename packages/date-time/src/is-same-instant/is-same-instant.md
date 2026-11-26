@@ -10,17 +10,35 @@ import { isSameInstant } from "@sgx4u/date-time";
 
 ## Signature
 
-See the TSDoc on `isSameInstant` for the parameters, defaults, and thrown errors.
+```ts
+function isSameInstant(first: DateInput, second: DateInput): boolean;
+```
+
+## Options
+
+This function has no options.
 
 ## Examples
 
-The examples in the TSDoc are the calls covered by `is-same-instant.test.ts`.
+```ts
+import { isSameInstant } from "@sgx4u/date-time";
+
+isSameInstant("1970-01-01T00:00:00.000Z", 0);
+// true
+
+isSameInstant("2024-01-01T00:00:00Z", "2024-01-01T00:00:00.000Z");
+// true
+
+isSameInstant("2024-01-01T00:00:00Z", 0);
+// false
+```
 
 ## Edge cases
 
-Invalid dates throw `RangeError`. A value of the wrong type throws `TypeError`. Inputs are not mutated. Functions that take `timeZone` resolve daylight-saving gaps with the same rules as `createDate`.
+A number is Unix time in milliseconds. Text with a `Z` or numeric offset is an instant. A value that is not a real date throws a `RangeError`.
 
 ## Related
 
-- [`toDate`](../to-date/to-date.md)
-- [`getDateParts`](../get-date-parts/get-date-parts.md)
+- [`isAfter`](../is-after/is-after.md)
+- [`isBefore`](../is-before/is-before.md)
+- [`isValidDate`](../is-valid-date/is-valid-date.md)

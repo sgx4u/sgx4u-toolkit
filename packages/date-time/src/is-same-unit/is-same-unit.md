@@ -10,17 +10,49 @@ import { isSameUnit } from "@sgx4u/date-time";
 
 ## Signature
 
-See the TSDoc on `isSameUnit` for the parameters, defaults, and thrown errors.
+```ts
+function isSameUnit(
+    first: DateInput,
+    second: DateInput,
+    unit: TimeUnit,
+    options?: TimeZoneOptions & WeekOptions,
+): boolean;
+```
+
+## Options
+
+| Name           | Type      | Default                                 | Meaning                                                              |
+| -------------- | --------- | --------------------------------------- | -------------------------------------------------------------------- |
+| `timeZone`     | `string`  | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
+| `weekStartsOn` | `Weekday` | `1`                                     | ISO weekday that starts the week. `1` is Monday and `7` is Sunday.   |
 
 ## Examples
 
-The examples in the TSDoc are the calls covered by `is-same-unit.test.ts`.
+```ts
+import { isSameUnit } from "@sgx4u/date-time";
+
+isSameUnit("2024-06-15T23:00:00Z", "2024-06-16T02:00:00Z", "day", {
+    timeZone: "Asia/Kolkata",
+});
+// true
+
+isSameUnit("2024-06-15T23:00:00Z", "2024-06-16T02:00:00Z", "day", {
+    timeZone: "UTC",
+});
+// false
+
+isSameUnit("2026-11-23T00:00:00Z", "2026-11-29T00:00:00Z", "week", {
+    timeZone: "UTC",
+});
+// true
+```
 
 ## Edge cases
 
-Invalid dates throw `RangeError`. A value of the wrong type throws `TypeError`. Inputs are not mutated. Functions that take `timeZone` resolve daylight-saving gaps with the same rules as `createDate`.
+The comparison uses the start of the unit, so a daylight-saving day still counts as one day. A week uses `weekStartsOn`, which defaults to Monday. An unknown unit or zone throws a `RangeError`.
 
 ## Related
 
-- [`toDate`](../to-date/to-date.md)
+- [`getWeekOfYear`](../get-week-of-year/get-week-of-year.md)
+- [`isToday`](../is-today/is-today.md)
 - [`getDateParts`](../get-date-parts/get-date-parts.md)

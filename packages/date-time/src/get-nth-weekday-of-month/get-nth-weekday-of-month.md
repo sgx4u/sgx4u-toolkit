@@ -1,6 +1,6 @@
 # `getNthWeekdayOfMonth`
 
-Returns the nth weekday of a month, or undefined when it does not exist.
+Returns the start of the nth weekday in a month.
 
 ## Import
 
@@ -10,17 +10,47 @@ import { getNthWeekdayOfMonth } from "@sgx4u/date-time";
 
 ## Signature
 
-See the TSDoc on `getNthWeekdayOfMonth` for the parameters, defaults, and thrown errors.
+```ts
+function getNthWeekdayOfMonth(
+    year: number,
+    month: number,
+    weekday: Weekday,
+    occurrence: number,
+    options?: TimeZoneOptions,
+): Date | undefined;
+```
+
+## Options
+
+| Name       | Type     | Default                                 | Meaning                                                              |
+| ---------- | -------- | --------------------------------------- | -------------------------------------------------------------------- |
+| `timeZone` | `string` | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
 
 ## Examples
 
-The examples in the TSDoc are the calls covered by `get-nth-weekday-of-month.test.ts`.
+```ts
+import { getNthWeekdayOfMonth } from "@sgx4u/date-time";
+
+getNthWeekdayOfMonth(2026, 11, 4, 4, {
+    timeZone: "UTC",
+})?.toISOString();
+// "2026-11-26T00:00:00.000Z"
+
+getNthWeekdayOfMonth(2026, 2, 1, -1, {
+    timeZone: "UTC",
+})?.toISOString();
+// "2026-02-23T00:00:00.000Z"
+
+getNthWeekdayOfMonth(2026, 2, 1, 5, { timeZone: "UTC" });
+// undefined
+```
 
 ## Edge cases
 
-Invalid dates throw `RangeError`. A value of the wrong type throws `TypeError`. Inputs are not mutated. Functions that take `timeZone` resolve daylight-saving gaps with the same rules as `createDate`.
+`occurrence` `1` is the first and `-1` is the last. `5` is the fifth, which does not exist in every month and then returns `undefined`. `occurrence` must be an integer from 1 through 5 or from -5 through -1. `month` must be 1 through 12.
 
 ## Related
 
-- [`toDate`](../to-date/to-date.md)
-- [`getDateParts`](../get-date-parts/get-date-parts.md)
+- [`getNextWeekday`](../get-next-weekday/get-next-weekday.md)
+- [`getPreviousWeekday`](../get-previous-weekday/get-previous-weekday.md)
+- [`getWeekOfMonth`](../get-week-of-month/get-week-of-month.md)

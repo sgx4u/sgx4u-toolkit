@@ -34,11 +34,20 @@ createDate(
     { timeZone: "Asia/Kolkata" },
 ).toISOString();
 // "2026-11-26T03:30:00.000Z"
+
+createDate({ year: 2026 }, { timeZone: "UTC" }).toISOString();
+// "2026-01-01T00:00:00.000Z"
+
+createDate(
+    { year: 2024, month: 3, day: 10, hour: 2, minute: 30 },
+    { timeZone: "America/New_York", disambiguation: "compatible" },
+).toISOString();
+// "2024-03-10T07:30:00.000Z"
 ```
 
 ## Edge cases
 
-February 30 throws `RangeError`. In `America/New_York`, `2024-03-10` 02:30 does not exist. `"compatible"` returns 03:30 EDT (`2024-03-10T07:30:00.000Z`). `"earlier"` returns 01:30 EST. `"reject"` throws. On `2024-11-03`, 01:30 happens twice; `"compatible"` keeps the earlier instant.
+February 30 throws `RangeError`. In `America/New_York`, `2024-03-10` 02:30 does not exist. `"compatible"` returns 03:30 EDT (`2024-03-10T07:30:00.000Z`). `"earlier"` returns 01:30 EST (`2024-03-10T06:30:00.000Z`). `"reject"` throws. On `2024-11-03`, 01:30 happens twice; `"compatible"` keeps the earlier instant and `"later"` returns `2024-11-03T06:30:00.000Z`.
 
 ## Related
 

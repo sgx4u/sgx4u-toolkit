@@ -1,21 +1,55 @@
 # `unitedStatesHolidayRules`
 
-The eleven United States federal holidays. A Saturday holiday is observed on Friday and a Sunday holiday on Monday.
+Lists the eleven United States federal holidays, observing Saturday on Friday and Sunday on Monday.
 
 ## Import
 
 ```ts
 import { unitedStatesHolidayRules } from "@sgx4u/date-time/holidays/united-states";
+import { getHolidaysInYear } from "@sgx4u/date-time";
 ```
+
+## Signature
+
+```ts
+const unitedStatesHolidayRules: readonly HolidayRule[];
+```
+
+## Options
+
+This function has no options.
 
 ## Examples
 
-Pass the array to `getHolidaysInYear`. In 2026, Holi is 4 March, Diwali is 8 November, and United States Independence Day is observed on 3 July.
+```ts
+import { unitedStatesHolidayRules } from "@sgx4u/date-time/holidays/united-states";
+import { getHolidaysInYear } from "@sgx4u/date-time";
+
+getHolidaysInYear(2026, unitedStatesHolidayRules).length;
+// 11
+
+getHolidaysInYear(2026, unitedStatesHolidayRules).find(
+    (holiday) => holiday.name === "Independence Day",
+)?.observedDate;
+// { year: 2026, month: 7, day: 3 }
+
+getHolidaysInYear(2026, unitedStatesHolidayRules).find(
+    (holiday) => holiday.name === "Thanksgiving Day",
+)?.date;
+// { year: 2026, month: 11, day: 26 }
+
+getHolidaysInYear(2026, unitedStatesHolidayRules).find(
+    (holiday) => holiday.name === "Birthday of Martin Luther King, Jr.",
+)?.date;
+// { year: 2026, month: 1, day: 19 }
+```
 
 ## Edge cases
 
-A year missing from an India year table produces no date for that holiday. Years 2028 through 2030 in the India tables are expected dates until the gazette for that year is published.
+Fixed-date holidays use `nearest-weekday`: a Saturday moves to Friday and a Sunday moves to Monday. Holidays defined as a weekday, such as Thanksgiving and Memorial Day, already fall on that weekday. Pass the array to `getHolidaysInYear` or `isHoliday`.
 
 ## Related
 
 - [`getHolidaysInYear`](../../get-holidays-in-year/get-holidays-in-year.md)
+- [`getObservedDate`](../../get-observed-date/get-observed-date.md)
+- [`indiaHolidayRules`](../../holidays/india-holiday-rules/india-holiday-rules.md)

@@ -1,6 +1,6 @@
 # `getIsoWeeksInYear`
 
-See the TSDoc on `getIsoWeeksInYear` for the contract.
+Returns the number of ISO weeks in a year.
 
 ## Import
 
@@ -8,14 +8,37 @@ See the TSDoc on `getIsoWeeksInYear` for the contract.
 import { getIsoWeeksInYear } from "@sgx4u/date-time";
 ```
 
+## Signature
+
+```ts
+function getIsoWeeksInYear(year: number): 52 | 53;
+```
+
+## Options
+
+This function has no options.
+
 ## Examples
 
-The TSDoc `@example` is the call covered by the tests.
+```ts
+import { getIsoWeeksInYear } from "@sgx4u/date-time";
+
+getIsoWeeksInYear(2020);
+// 53
+
+getIsoWeeksInYear(2021);
+// 52
+
+getIsoWeeksInYear(2026);
+// 53
+```
 
 ## Edge cases
 
-A value of the wrong type throws `TypeError`. An invalid date or option throws `RangeError`. Inputs are not mutated. A function that takes `timeZone` reads wall-clock fields in that zone, including across a daylight-saving change.
+The result is `53` when the year has an ISO week 53, and `52` otherwise. A non-integer year throws a `RangeError`.
 
 ## Related
 
-- [`toDate`](../to-date/to-date.md)
+- [`getIsoWeek`](../get-iso-week/get-iso-week.md)
+- [`getIsoWeekYear`](../get-iso-week-year/get-iso-week-year.md)
+- [`getDaysInYear`](../get-days-in-year/get-days-in-year.md)

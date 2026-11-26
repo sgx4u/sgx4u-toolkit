@@ -1,6 +1,6 @@
 # `toDate`
 
-Returns a new `Date`. A date-only string is midnight in the given time zone, not UTC.
+Returns a new `Date` for a date, a timestamp, or a date string.
 
 ## Import
 
@@ -16,9 +16,9 @@ function toDate(value: DateInput, options?: TimeZoneOptions): Date;
 
 ## Options
 
-| Name       | Type     | Default     | Meaning                                                    |
-| ---------- | -------- | ----------- | ---------------------------------------------------------- |
-| `timeZone` | `string` | System zone | IANA name or fixed offset. Used for a `YYYY-MM-DD` string. |
+| Name       | Type     | Default     | Meaning                                          |
+| ---------- | -------- | ----------- | ------------------------------------------------ |
+| `timeZone` | `string` | System zone | Zone used when `value` is a `YYYY-MM-DD` string. |
 
 ## Examples
 
@@ -26,18 +26,24 @@ function toDate(value: DateInput, options?: TimeZoneOptions): Date;
 toDate("2026-11-26", { timeZone: "Asia/Kolkata" }).toISOString();
 // "2026-11-25T18:30:00.000Z"
 
+toDate("2026-11-26", { timeZone: "UTC" }).toISOString();
+// "2026-11-26T00:00:00.000Z"
+
 toDate("2024-02-29T00:00:00+0530").toISOString();
 // "2024-02-28T18:30:00.000Z"
 
-toDate(0).toISOString();
-// "1970-01-01T00:00:00.000Z"
+toDate("2024-09-08", { timeZone: "America/Santiago" }).toISOString();
+// "2024-09-08T04:00:00.000Z"
 ```
 
 ## Edge cases
 
-The input `Date` is not mutated, and the result is a different object. `"2024-02-30"`, `Invalid Date`, and `NaN` throw `RangeError`. A boolean throws `TypeError`. In `America/Santiago`, `2024-09-08` has no midnight; the result is 01:00 after the daylight-saving gap.
+A `Date` or a millisecond timestamp is that instant, and the result is a new object. A date-time string with an offset is that exact instant. `timeZone` applies to a `YYYY-MM-DD` string, which is midnight in that zone. An invalid date throws `RangeError`. A value of another type throws `TypeError`. An unusable `timeZone` throws `RangeError`.
+
+A date-only midnight uses compatible disambiguation. A daylight-saving gap that skips midnight moves forward to the first instant that exists, which is why `2024-09-08` in `America/Santiago` is `2024-09-08T04:00:00.000Z`. A repeated midnight keeps the earlier instant.
 
 ## Related
 
-- [`createDate`](../create-date/create-date.md) builds an instant from fields.
-- [`isValidDate`](../is-valid-date/is-valid-date.md) checks a value without throwing.
+- [`parseIsoDate`](../parse-iso-date/parse-iso-date.md) parses `YYYY-MM-DD` and returns `undefined` for invalid text.
+- [`isValidDate`](../is-valid-date/is-valid-date.md) reports whether a value is a real date.
+- [`getDateParts`](../get-date-parts/get-date-parts.md) reads the wall-clock fields of the result.

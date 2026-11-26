@@ -1,6 +1,6 @@
 # `compareDates`
 
-Compares two dates for Array#sort.
+Compares two instants for `Array#sort`.
 
 ## Import
 
@@ -10,17 +10,34 @@ import { compareDates } from "@sgx4u/date-time";
 
 ## Signature
 
-See the TSDoc on `compareDates` for the parameters, defaults, and thrown errors.
+```ts
+function compareDates(first: DateInput, second: DateInput): -1 | 0 | 1;
+```
+
+## Options
+
+This function has no options.
 
 ## Examples
 
-The examples in the TSDoc are the calls covered by `compare-dates.test.ts`.
+```ts
+compareDates("2024-01-02T00:00:00Z", "2024-01-01T00:00:00Z");
+// 1
+
+compareDates("2024-06-15T11:00:00Z", "2024-06-15T12:00:00.000Z");
+// -1
+
+compareDates("2024-06-15T12:00:00.000Z", "2024-06-15T12:00:00.000Z");
+// 0
+```
 
 ## Edge cases
 
-Invalid dates throw `RangeError`. A value of the wrong type throws `TypeError`. Inputs are not mutated. Functions that take `timeZone` resolve daylight-saving gaps with the same rules as `createDate`.
+The result is `-1` when `first` is earlier, `1` when it is later, and `0` when the instants match. A value that is not a real date throws `RangeError`. A value of the wrong type throws `TypeError`. Equal instants compare as `0` even when one is a `Date` and the other is an ISO string.
 
 ## Related
 
-- [`toDate`](../to-date/to-date.md)
-- [`getDateParts`](../get-date-parts/get-date-parts.md)
+- [`isBefore`](../is-before/is-before.md) reports whether one instant is earlier.
+- [`isAfter`](../is-after/is-after.md) reports whether one instant is later.
+- [`sortDates`](../sort-dates/sort-dates.md) returns a new array in instant order.
+- [`getEarliestDate`](../get-earliest-date/get-earliest-date.md) returns the earliest instant in a list.
