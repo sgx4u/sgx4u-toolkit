@@ -54,8 +54,6 @@ const compactSymbols: Readonly<Record<DurationFieldName, string>> = {
     milliseconds: "ms",
 };
 
-const textExpression = /(?<number>\d+(?:\.\d+)?|\.\d+)\s*(?<unit>[A-Za-z]+)/g;
-
 const clockExpression =
     /^(?<negative>-)?(?:(?<hours>\d+):)?(?<minutes>\d{1,2}):(?<seconds>\d{1,2}(?:\.\d+)?)$/;
 
@@ -90,26 +88,150 @@ export function parseDurationWords(value: string): Duration | undefined {
         sign = -1;
         body = body.slice(1).trim();
     }
+    return durationFromWords(body, sign);
+}
+
+/**
+ * Reads `1h 30m` or `1.5 hours` from left to right.
+ *
+ * A character that is not part of a number and a unit makes the text invalid.
+ * The scan does not retry earlier splits, so a long digit string stays linear.
+ *
+ * @param body - The unsigned duration text.
+ * @param sign - `1` or `-1`.
+ * @returns The duration, or `undefined` when a token is missing.
+ */
+function durationFromWords(body: string, sign: number): Duration | undefined {
     const duration: Duration = {};
-    let matched = "";
-    for (const match of body.matchAll(textExpression)) {
-        const unitName = match.groups?.unit?.toLowerCase();
-        const field =
-            unitName === undefined ? undefined : unitAliases[unitName];
-        const numberText = match.groups?.number;
-        if (field === undefined || numberText === undefined) {
+    let index = 0;
+    let foundPiece = false;
+    while (index < body.length) {
+        index = skipSpaces(body, index);
+        if (index >= body.length) {
+            break;
+        }
+        const number = readDurationNumber(body, index);
+        if (number === undefined) {
             return undefined;
         }
-        duration[field] = (duration[field] ?? 0) + sign * Number(numberText);
-        matched += match[0];
+        index = skipSpaces(body, number.end);
+        const unitEnd = readLetters(body, index);
+        if (unitEnd === index) {
+            return undefined;
+        }
+        const field = unitAliases[body.slice(index, unitEnd).toLowerCase()];
+        if (field === undefined) {
+            return undefined;
+        }
+        duration[field] = (duration[field] ?? 0) + sign * number.value;
+        index = unitEnd;
+        foundPiece = true;
     }
-    if (matched.replaceAll(/\s/g, "") !== body.replaceAll(/\s/g, "")) {
-        return undefined;
-    }
-    if (Object.keys(duration).length === 0) {
+    if (!foundPiece) {
         return undefined;
     }
     return duration;
+}
+
+/**
+ * @param text - The source text.
+ * @param start - The first index to read.
+ * @returns The number and the index after it.
+ */
+function readDurationNumber(
+    text: string,
+    start: number,
+): { value: number; end: number } | undefined {
+    let index = start;
+    if (text[index] === ".") {
+        index += 1;
+        const fractionEnd = readDigits(text, index);
+        if (fractionEnd === index) {
+            return undefined;
+        }
+        return {
+            value: Number(text.slice(start, fractionEnd)),
+            end: fractionEnd,
+        };
+    }
+    const wholeEnd = readDigits(text, index);
+    if (wholeEnd === index) {
+        return undefined;
+    }
+    index = wholeEnd;
+    if (text[index] === ".") {
+        const fractionEnd = readDigits(text, index + 1);
+        if (fractionEnd > index + 1) {
+            index = fractionEnd;
+        }
+    }
+    return { value: Number(text.slice(start, index)), end: index };
+}
+
+/**
+ * @param text - The source text.
+ * @param start - The first index to read.
+ * @returns The index after the digits.
+ */
+function readDigits(text: string, start: number): number {
+    let index = start;
+    while (index < text.length && isAsciiDigit(text[index] ?? "")) {
+        index += 1;
+    }
+    return index;
+}
+
+/**
+ * @param text - The source text.
+ * @param start - The first index to read.
+ * @returns The index after the letters.
+ */
+function readLetters(text: string, start: number): number {
+    let index = start;
+    while (index < text.length && isAsciiLetter(text[index] ?? "")) {
+        index += 1;
+    }
+    return index;
+}
+
+/**
+ * @param text - The source text.
+ * @param start - The first index to skip.
+ * @returns The index of the next non-space character.
+ */
+function skipSpaces(text: string, start: number): number {
+    let index = start;
+    while (index < text.length && isDurationSpace(text[index] ?? "")) {
+        index += 1;
+    }
+    return index;
+}
+
+/**
+ * @param character - One character.
+ * @returns Whether it is `0` through `9`.
+ */
+function isAsciiDigit(character: string): boolean {
+    return character >= "0" && character <= "9";
+}
+
+/**
+ * @param character - One character.
+ * @returns Whether it is an ASCII letter.
+ */
+function isAsciiLetter(character: string): boolean {
+    return (
+        (character >= "a" && character <= "z") ||
+        (character >= "A" && character <= "Z")
+    );
+}
+
+/**
+ * @param character - One character.
+ * @returns Whether a duration token may skip it.
+ */
+function isDurationSpace(character: string): boolean {
+    return character.trim() === "";
 }
 
 /**

@@ -143,10 +143,10 @@ function parseRangePhrase(
     timeZone: string,
     preferFuture: boolean,
 ): DatedText | undefined {
-    const fromTo = /^from (.+) to (.+)$/.exec(text);
-    if (fromTo?.[1] !== undefined && fromTo[2] !== undefined) {
-        const start = parseDayPhrase(fromTo[1], now, timeZone, preferFuture);
-        const endDay = parseDayPhrase(fromTo[2], now, timeZone, preferFuture);
+    const fromTo = splitFromTo(text);
+    if (fromTo !== undefined) {
+        const start = parseDayPhrase(fromTo.start, now, timeZone, preferFuture);
+        const endDay = parseDayPhrase(fromTo.end, now, timeZone, preferFuture);
         if (start === undefined || endDay === undefined) {
             return undefined;
         }
@@ -443,25 +443,22 @@ function splitTime(text: string): {
         millisecond: number;
     };
 } {
-    const match =
-        /^(.*?)(?:\s+at)?\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm|a\.m\.|p\.m\.)?$/.exec(
-            text,
-        );
+    const clock = readTrailingClock(text);
     if (
-        match?.[2] !== undefined &&
-        (match[4] !== undefined ||
-            match[3] !== undefined ||
-            match[1]?.endsWith(" at"))
+        clock !== undefined &&
+        (clock.meridiem !== undefined ||
+            clock.minutes !== undefined ||
+            clock.dateText.endsWith(" at"))
     ) {
-        const hour = toHour(Number(match[2]), match[4]);
+        const hour = toHour(clock.hour, clock.meridiem);
         if (hour === undefined) {
             return { dateText: text };
         }
         return {
-            dateText: (match[1] ?? "").trim(),
+            dateText: clock.dateText.trim(),
             time: {
                 hour,
-                minute: Number(match[3] ?? "0"),
+                minute: Number(clock.minutes ?? "0"),
                 second: 0,
                 millisecond: 0,
             },
@@ -492,6 +489,105 @@ function splitTime(text: string): {
         };
     }
     return { dateText: text };
+}
+
+/**
+ * Splits `from Monday to Wednesday` on the last ` to `.
+ *
+ * The search is a single scan, so a long chain of ` to ` stays linear.
+ *
+ * @param text - A normalized phrase.
+ * @returns The two sides, or `undefined` when the phrase is not that shape.
+ */
+function splitFromTo(text: string): { start: string; end: string } | undefined {
+    if (!text.startsWith("from ")) {
+        return undefined;
+    }
+    const rest = text.slice("from ".length);
+    const separator = rest.lastIndexOf(" to ");
+    if (separator <= 0) {
+        return undefined;
+    }
+    const start = rest.slice(0, separator);
+    const end = rest.slice(separator + " to ".length);
+    if (end.length === 0) {
+        return undefined;
+    }
+    return { start, end };
+}
+
+/**
+ * A clock written at the end of a phrase.
+ */
+interface TrailingClock {
+    dateText: string;
+    hour: number;
+    minutes?: string;
+    meridiem?: string;
+}
+
+/**
+ * Reads a trailing `4pm`, `16:30`, or `at 4` without trying every earlier split.
+ *
+ * @param text - A normalized phrase with single spaces.
+ * @returns The date words and the clock, or `undefined` when the end is not a clock.
+ */
+function readTrailingClock(text: string): TrailingClock | undefined {
+    let cursor = text.length;
+    let meridiem: string | undefined;
+    if (text.endsWith("am") || text.endsWith("pm")) {
+        meridiem = text.slice(cursor - 2);
+        cursor -= 2;
+        if (text[cursor - 1] === " ") {
+            cursor -= 1;
+        }
+    }
+    let minutes: string | undefined;
+    if (
+        cursor >= 3 &&
+        text[cursor - 3] === ":" &&
+        isDigitCharacter(text[cursor - 2] ?? "") &&
+        isDigitCharacter(text[cursor - 1] ?? "")
+    ) {
+        minutes = text.slice(cursor - 2, cursor);
+        cursor -= 3;
+    }
+    if (cursor === 0 || !isDigitCharacter(text[cursor - 1] ?? "")) {
+        return undefined;
+    }
+    let hourStart = cursor - 1;
+    if (hourStart > 0 && isDigitCharacter(text[hourStart - 1] ?? "")) {
+        hourStart -= 1;
+    }
+    if (hourStart > 0 && isDigitCharacter(text[hourStart - 1] ?? "")) {
+        return undefined;
+    }
+    if (text[hourStart - 1] !== " ") {
+        return undefined;
+    }
+    let dateEnd = hourStart - 1;
+    if (text.slice(0, dateEnd).endsWith(" at")) {
+        dateEnd -= 3;
+    }
+    const clock: TrailingClock = {
+        dateText: text.slice(0, dateEnd),
+        hour: Number(text.slice(hourStart, cursor)),
+    };
+    if (minutes !== undefined) {
+        clock.minutes = minutes;
+    }
+    if (meridiem !== undefined) {
+        clock.meridiem = meridiem;
+    }
+    return clock;
+}
+
+/**
+ * @param character - One character.
+ * @returns Whether it is `0` through `9`.
+ */
+function isDigitCharacter(character: string): boolean {
+    return character >= "0" && character <= "9";
 }
 
 /**
