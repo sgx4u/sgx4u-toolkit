@@ -11,3 +11,17 @@ export interface MonthCalendarOptions extends TimeZoneOptions, WeekOptions {
      */
     fixedWeekCount?: boolean;
 }
+
+/**
+ * Fields for {@link createMonthCalendarGrid}.
+ */
+export interface CreateMonthCalendarGridParams extends MonthCalendarOptions {
+    /**
+     * The Gregorian year.
+     */
+    year: number;
+    /**
+     * The month, from 1 through 12.
+     */
+    month: number;
+}

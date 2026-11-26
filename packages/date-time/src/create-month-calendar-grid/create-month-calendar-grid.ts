@@ -3,18 +3,19 @@ import type {
     MonthCalendarGrid,
     MonthCalendarWeek,
 } from "../types/calendar-grid.types.js";
-import { assertInteger, assertIntegerInRange } from "../utils/assert.utils.js";
 import {
     addGregorianDays,
     daysInGregorianMonth,
-    isoWeekdayNumber,
+    ISOWeekdayNumber,
 } from "../utils/gregorian.utils.js";
 import {
     instantFromWallTime,
     resolveTimeZone,
     resolveWeekStartsOn,
 } from "../utils/time-zone.utils.js";
-import type { MonthCalendarOptions } from "./create-month-calendar-grid.types.js";
+import type { CreateMonthCalendarGridParams } from "./create-month-calendar-grid.types.js";
+
+export type { MonthCalendarOptions } from "./create-month-calendar-grid.types.js";
 
 /**
  * Builds the weeks that cover one month, for a calendar UI.
@@ -23,29 +24,40 @@ import type { MonthCalendarOptions } from "./create-month-calendar-grid.types.js
  * days from the neighboring months have `isInMonth: false`. With
  * `fixedWeekCount`, the grid always has six weeks.
  *
- * @param year - The Gregorian year.
- * @param month - The month, from 1 through 12.
- * @param options - `weekStartsOn` defaults to Monday. `fixedWeekCount` defaults to `false`.
- * @returns Four to six weeks, or exactly six when `fixedWeekCount` is `true`.
- * @throws {@link RangeError} When `month` is outside 1 through 12.
+ * @param params - `year`, `month`, and optional layout fields.
+ * @returns Four to six weeks, or exactly six when `fixedWeekCount` is `true`, or `undefined` when `year` or `month` is not usable.
+ * @throws {@link RangeError} When `weekStartsOn` is invalid or `timeZone` is unusable.
  * @example
- * createMonthCalendarGrid(2021, 2, { timeZone: "UTC", weekStartsOn: 1 }).weeks.length; // 4
+ * createMonthCalendarGrid({
+ *   year: 2021,
+ *   month: 2,
+ *   timeZone: "UTC",
+ *   weekStartsOn: 1,
+ * })?.weeks.length; // 4
  */
-export function createMonthCalendarGrid(
-    year: number,
-    month: number,
-    options?: MonthCalendarOptions,
-): MonthCalendarGrid {
-    const yearNumber = assertInteger(year, "year");
-    const monthNumber = assertIntegerInRange(month, "month", 1, 12);
-    const weekStartsOn = resolveWeekStartsOn(options?.weekStartsOn);
-    const timeZone = resolveTimeZone(options?.timeZone);
-    const firstWeekday = isoWeekdayNumber(yearNumber, monthNumber, 1);
-    const leading = (firstWeekday - weekStartsOn + 7) % 7;
+export function createMonthCalendarGrid({
+    year,
+    month,
+    weekStartsOn,
+    timeZone,
+    fixedWeekCount,
+}: CreateMonthCalendarGridParams): MonthCalendarGrid | undefined {
+    const yearNumber = readInteger(year);
+    const monthNumber = readInteger(month);
+    if (
+        yearNumber === undefined ||
+        monthNumber === undefined ||
+        monthNumber < 1 ||
+        monthNumber > 12
+    ) {
+        return undefined;
+    }
+    const weekStart = resolveWeekStartsOn(weekStartsOn);
+    const zone = resolveTimeZone(timeZone);
+    const firstWeekday = ISOWeekdayNumber(yearNumber, monthNumber, 1);
+    const leading = (firstWeekday - weekStart + 7) % 7;
     const length = daysInGregorianMonth(yearNumber, monthNumber);
-    const weekCount = options?.fixedWeekCount
-        ? 6
-        : Math.ceil((leading + length) / 7);
+    const weekCount = fixedWeekCount ? 6 : Math.ceil((leading + length) / 7);
     const gridStart = addGregorianDays(yearNumber, monthNumber, 1, -leading);
     const weeks: MonthCalendarWeek[] = [];
     for (let weekIndex = 0; weekIndex < weekCount; weekIndex += 1) {
@@ -69,7 +81,7 @@ export function createMonthCalendarGrid(
                             second: 0,
                             millisecond: 0,
                         },
-                        timeZone,
+                        zone,
                         "compatible",
                     ),
                 ),
@@ -81,4 +93,18 @@ export function createMonthCalendarGrid(
         weeks.push({ days });
     }
     return { year: yearNumber, month: monthNumber, weeks };
+}
+
+/**
+ * @param value - A candidate integer.
+ * @returns The value when it is a finite integer, otherwise `undefined`.
+ */
+function readInteger(value: unknown): number | undefined {
+    if (typeof value !== "number" || !Number.isFinite(value)) {
+        return undefined;
+    }
+    if (!Number.isInteger(value)) {
+        return undefined;
+    }
+    return value;
 }

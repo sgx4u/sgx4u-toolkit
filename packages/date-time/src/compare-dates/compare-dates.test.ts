@@ -30,17 +30,39 @@ describe("comparison and arithmetic", () => {
     it("orders instants and does not change the input", () => {
         const timeValue = original.getTime();
 
-        expect(compareDates(original, "2024-06-15T12:00:00.000Z")).toBe(0);
-        expect(compareDates("2024-06-15T11:00:00Z", original)).toBe(-1);
-        expect(isBefore("2024-06-15T11:00:00Z", original)).toBe(true);
-        expect(isAfter(original, "2024-06-15T11:00:00Z")).toBe(true);
+        expect(
+            compareDates({
+                first: original,
+                second: "2024-06-15T12:00:00.000Z",
+            }),
+        ).toBe(0);
+        expect(
+            compareDates({
+                first: "2024-06-15T11:00:00Z",
+                second: original,
+            }),
+        ).toBe(-1);
+        expect(
+            isBefore({
+                date: "2024-06-15T11:00:00Z",
+                reference: original,
+            }),
+        ).toBe(true);
+        expect(
+            isAfter({
+                date: original,
+                reference: "2024-06-15T11:00:00Z",
+            }),
+        ).toBe(true);
         expect(isSameInstant(0, "1970-01-01T00:00:00.000Z")).toBe(true);
         expect(isSameInstant(original, "2024-06-15T12:00:01.000Z")).toBe(false);
         expect(original.getTime()).toBe(timeValue);
-        expect(() => compareDates("nope", original)).toThrow(RangeError);
-        expect(() => isBefore(true as unknown as string, original)).toThrow(
-            TypeError,
-        );
+        expect(
+            compareDates({ first: "nope", second: original }),
+        ).toBeUndefined();
+        expect(
+            isBefore({ date: true as unknown as string, reference: original }),
+        ).toBe(false);
     });
 
     it("compares units in a zone, including a daylight-saving day", () => {
@@ -65,19 +87,19 @@ describe("comparison and arithmetic", () => {
         const dates = ["2024-01-02T00:00:00Z", "2024-01-01T00:00:00Z"];
 
         expect(
-            isBetween(
-                "2024-01-02T00:00:00Z",
-                "2024-01-01T00:00:00Z",
-                "2024-01-03T00:00:00Z",
-            ),
+            isBetween({
+                date: "2024-01-02T00:00:00Z",
+                start: "2024-01-01T00:00:00Z",
+                end: "2024-01-03T00:00:00Z",
+            }),
         ).toBe(true);
         expect(
-            isBetween(
-                "2024-01-01T00:00:00Z",
-                "2024-01-01T00:00:00Z",
-                "2024-01-03T00:00:00Z",
-                { includeStart: false },
-            ),
+            isBetween({
+                date: "2024-01-01T00:00:00Z",
+                start: "2024-01-01T00:00:00Z",
+                end: "2024-01-03T00:00:00Z",
+                includeStart: false,
+            }),
         ).toBe(false);
         expect(getEarliestDate([])).toBeUndefined();
         expect(getEarliestDate(dates)?.toISOString()).toBe(
@@ -88,13 +110,15 @@ describe("comparison and arithmetic", () => {
         );
         expect(dates[0]).toBe("2024-01-02T00:00:00Z");
         expect(
-            clampDate("2024-01-10T00:00:00Z", {
+            clampDate({
+                date: "2024-01-10T00:00:00Z",
                 start: "2024-01-01T00:00:00Z",
                 end: "2024-01-05T00:00:00Z",
-            }).toISOString(),
+            })?.toISOString(),
         ).toBe("2024-01-05T00:00:00.000Z");
         expect(() =>
-            clampDate("2024-01-03T00:00:00Z", {
+            clampDate({
+                date: "2024-01-03T00:00:00Z",
                 start: "2024-01-05T00:00:00Z",
                 end: "2024-01-01T00:00:00Z",
             }),
@@ -126,25 +150,25 @@ describe("comparison and arithmetic", () => {
 
     it("adds calendar units, keeps elapsed hours, and rounds", () => {
         expect(
-            addDuration(
-                "2026-01-31T00:00:00Z",
-                { months: 1 },
-                { timeZone: "UTC" },
-            ).toISOString(),
+            addDuration({
+                date: "2026-01-31T00:00:00Z",
+                duration: { months: 1 },
+                timeZone: "UTC",
+            })?.toISOString(),
         ).toBe("2026-02-28T00:00:00.000Z");
         expect(
-            addDuration(
-                "2024-03-09T14:00:00Z",
-                { days: 1 },
-                { timeZone: "America/New_York" },
-            ).toISOString(),
+            addDuration({
+                date: "2024-03-09T14:00:00Z",
+                duration: { days: 1 },
+                timeZone: "America/New_York",
+            })?.toISOString(),
         ).toBe("2024-03-10T13:00:00.000Z");
         expect(
-            addDuration(
-                "2024-03-09T14:00:00Z",
-                { hours: 24 },
-                { timeZone: "America/New_York" },
-            ).toISOString(),
+            addDuration({
+                date: "2024-03-09T14:00:00Z",
+                duration: { hours: 24 },
+                timeZone: "America/New_York",
+            })?.toISOString(),
         ).toBe("2024-03-10T14:00:00.000Z");
         expect(
             subtractDuration(
@@ -154,11 +178,12 @@ describe("comparison and arithmetic", () => {
             ).toISOString(),
         ).toBe("2026-02-28T00:00:00.000Z");
         expect(() =>
-            addDuration(
-                "2026-01-31T00:00:00Z",
-                { months: 1 },
-                { timeZone: "UTC", overflow: "reject" },
-            ),
+            addDuration({
+                date: "2026-01-31T00:00:00Z",
+                duration: { months: 1 },
+                timeZone: "UTC",
+                overflow: "reject",
+            }),
         ).toThrow(RangeError);
         expect(
             setDateParts(

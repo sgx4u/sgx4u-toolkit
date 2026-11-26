@@ -10,11 +10,11 @@ import {
 describe("time zone moves and times of day", () => {
     it("keeps a wall clock, names daylight saving, and wraps past midnight", () => {
         expect(
-            changeTimeZoneKeepingWallTime(
-                "2026-11-26T03:30:00+05:30",
-                "Asia/Kolkata",
-                "UTC",
-            ).toISOString(),
+            changeTimeZoneKeepingWallTime({
+                date: "2026-11-26T03:30:00+05:30",
+                fromTimeZone: "Asia/Kolkata",
+                toTimeZone: "UTC",
+            })?.toISOString(),
         ).toBe("2026-11-26T03:30:00.000Z");
         expect(
             getTimeZoneDifference("Asia/Kolkata", "UTC", {
@@ -32,10 +32,10 @@ describe("time zone moves and times of day", () => {
             }),
         ).toBe(true);
         expect(
-            addToTimeOfDay(
-                { hour: 23, minute: 30, second: 0, millisecond: 0 },
-                { hours: 2 },
-            ),
+            addToTimeOfDay({
+                time: { hour: 23, minute: 30, second: 0, millisecond: 0 },
+                duration: { hours: 2 },
+            }),
         ).toEqual({
             time: { hour: 1, minute: 30, second: 0, millisecond: 0 },
             dayOffset: 1,
@@ -46,5 +46,15 @@ describe("time zone moves and times of day", () => {
                 { locale: "en-US", hourCycle: "h23" },
             ),
         ).toBe("15:30");
+    });
+
+    it("returns undefined for a bad date", () => {
+        expect(
+            changeTimeZoneKeepingWallTime({
+                date: "nope",
+                fromTimeZone: "UTC",
+                toTimeZone: "Asia/Kolkata",
+            }),
+        ).toBeUndefined();
     });
 });

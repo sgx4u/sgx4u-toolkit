@@ -1,38 +1,44 @@
-import type { DateInput } from "../types/date-input.types.js";
-import { resolveDateInput } from "../utils/date-input.utils.js";
-import { typeError } from "../utils/error.utils.js";
+import { readDateInput } from "../utils/date-input.utils.js";
+import type { ClampDateParams } from "./clamp-date.types.js";
 
 /**
  * Limits a date to an inclusive range.
  *
- * @param date - The date to limit.
- * @param bounds - Inclusive `start` and `end`.
- * @returns A new `Date` inside the range. The inputs are not mutated.
- * @throws {@link TypeError} When a value has the wrong type.
- * @throws {@link RangeError} When a value is not a real date, or `start` is after `end`.
+ * @param params - `date`, inclusive `start`, and inclusive `end`.
+ * @returns A new `Date` inside the range, or `undefined` when any value is not a real date. The inputs are not mutated.
+ * @throws {@link RangeError} When `start` is after `end`.
  * @example
- * clampDate("2024-01-10T00:00:00Z", { start: "2024-01-01T00:00:00Z", end: "2024-01-05T00:00:00Z" }).toISOString(); // "2024-01-05T00:00:00.000Z"
+ * clampDate({
+ *   date: "2024-01-10T00:00:00Z",
+ *   start: "2024-01-01T00:00:00Z",
+ *   end: "2024-01-05T00:00:00Z",
+ * })?.toISOString(); // "2024-01-05T00:00:00.000Z"
  */
-export function clampDate(
-    date: DateInput,
-    bounds: { start: DateInput; end: DateInput },
-): Date {
-    if (bounds === null || typeof bounds !== "object") {
-        throw typeError("bounds", "an object with start and end", bounds);
+export function clampDate({
+    date,
+    start,
+    end,
+}: ClampDateParams): Date | undefined {
+    const instant = readDateInput(date);
+    const startDate = readDateInput(start);
+    const endDate = readDateInput(end);
+    if (
+        instant === undefined ||
+        startDate === undefined ||
+        endDate === undefined
+    ) {
+        return undefined;
     }
-    const instant = resolveDateInput(date, "date");
-    const start = resolveDateInput(bounds.start, "bounds.start");
-    const end = resolveDateInput(bounds.end, "bounds.end");
-    if (start.getTime() > end.getTime()) {
+    if (startDate.getTime() > endDate.getTime()) {
         throw new RangeError(
-            "`bounds.start` must be at or before `bounds.end`; received a start after the end.",
+            "`start` must be at or before `end`; received a start after the end.",
         );
     }
-    if (instant.getTime() < start.getTime()) {
-        return start;
+    if (instant.getTime() < startDate.getTime()) {
+        return startDate;
     }
-    if (instant.getTime() > end.getTime()) {
-        return end;
+    if (instant.getTime() > endDate.getTime()) {
+        return endDate;
     }
     return instant;
 }

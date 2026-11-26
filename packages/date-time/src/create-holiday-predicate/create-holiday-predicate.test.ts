@@ -5,7 +5,8 @@ import { unitedStatesHolidayRules } from "../holidays/united-states.js";
 
 describe("createHolidayPredicate", () => {
     it("matches Republic Day on the India calendar day", () => {
-        const isIndianHoliday = createHolidayPredicate(indiaHolidayRules, {
+        const isIndianHoliday = createHolidayPredicate({
+            rules: indiaHolidayRules,
             timeZone: "Asia/Kolkata",
         });
         expect(isIndianHoliday(new Date("2026-01-25T18:30:00Z"))).toBe(true);
@@ -17,10 +18,12 @@ describe("createHolidayPredicate", () => {
     });
 
     it("matches the observed weekday by default and can require the official date", () => {
-        const observed = createHolidayPredicate(unitedStatesHolidayRules, {
+        const observed = createHolidayPredicate({
+            rules: unitedStatesHolidayRules,
             timeZone: "UTC",
         });
-        const official = createHolidayPredicate(unitedStatesHolidayRules, {
+        const official = createHolidayPredicate({
+            rules: unitedStatesHolidayRules,
             timeZone: "UTC",
             matchObservedDate: false,
         });
@@ -31,7 +34,8 @@ describe("createHolidayPredicate", () => {
     });
 
     it("reads Independence Day from midnight Eastern Daylight Time", () => {
-        const isHoliday = createHolidayPredicate(unitedStatesHolidayRules, {
+        const isHoliday = createHolidayPredicate({
+            rules: unitedStatesHolidayRules,
             timeZone: "America/New_York",
         });
         expect(isHoliday(new Date("2024-07-04T04:00:00.000Z"))).toBe(true);
@@ -39,8 +43,10 @@ describe("createHolidayPredicate", () => {
     });
 
     it("rejects rules that are not an array", () => {
-        expect(() => createHolidayPredicate(null as never)).toThrow(TypeError);
-        expect(() => createHolidayPredicate(null as never)).toThrow(
+        expect(() => createHolidayPredicate({ rules: null as never })).toThrow(
+            TypeError,
+        );
+        expect(() => createHolidayPredicate({ rules: null as never })).toThrow(
             "`rules` must be an array of holiday rules; received null.",
         );
     });

@@ -1,10 +1,4 @@
-import type {
-    DisambiguationOptions,
-    TimeZoneOptions,
-} from "../types/options.types.js";
 import type { DatePartsInput } from "../types/time.types.js";
-import { assertInteger, assertIntegerInRange } from "../utils/assert.utils.js";
-import { typeError } from "../utils/error.utils.js";
 import { isRealGregorianDay } from "../utils/gregorian.utils.js";
 import {
     completeDateParts,
@@ -12,6 +6,7 @@ import {
     resolveDisambiguation,
     resolveTimeZone,
 } from "../utils/time-zone.utils.js";
+import type { CreateDateParams } from "./create-date.types.js";
 
 /**
  * Builds the instant for wall-clock fields in a time zone.
@@ -20,65 +15,87 @@ import {
  * The day must exist; this function does not move it into the next month.
  * A skipped or repeated time follows `disambiguation`.
  *
- * @param parts - At least the year. Other fields are optional.
- * @param options - `timeZone` defaults to the system zone. `disambiguation` defaults to `"compatible"`.
- * @returns A new `Date` at that instant.
- * @throws {@link TypeError} When `parts` is not an object, or a field has the wrong type.
- * @throws {@link RangeError} When a field is out of range, the day does not exist, the zone is unusable, or `"reject"` hits a gap or overlap.
+ * @param params - At least `year`. Other fields, `timeZone`, and `disambiguation` are optional.
+ * @returns A new `Date` at that instant, or `undefined` when the parts are not usable.
+ * @throws {@link RangeError} When `timeZone` is unusable, `disambiguation` is not a known mode, or `"reject"` hits a gap or overlap.
  * @example
- * createDate({ year: 2026, month: 11, day: 26, hour: 9 }, { timeZone: "Asia/Kolkata" }).toISOString(); // "2026-11-26T03:30:00.000Z"
+ * createDate({
+ *   year: 2026,
+ *   month: 11,
+ *   day: 26,
+ *   hour: 9,
+ *   timeZone: "Asia/Kolkata",
+ * })?.toISOString(); // "2026-11-26T03:30:00.000Z"
  */
-export function createDate(
-    parts: DatePartsInput,
-    options?: TimeZoneOptions & DisambiguationOptions,
-): Date {
-    const completed = completeValidatedParts(parts);
-    const timeZone = resolveTimeZone(options?.timeZone);
-    const disambiguation = resolveDisambiguation(options?.disambiguation);
-    return new Date(instantFromWallTime(completed, timeZone, disambiguation));
+export function createDate({
+    year,
+    month,
+    day,
+    hour,
+    minute,
+    second,
+    millisecond,
+    timeZone,
+    disambiguation,
+}: CreateDateParams): Date | undefined {
+    const completed = readValidatedParts({
+        year,
+        month,
+        day,
+        hour,
+        minute,
+        second,
+        millisecond,
+    });
+    if (completed === undefined) {
+        return undefined;
+    }
+    const zone = resolveTimeZone(timeZone);
+    const resolvedDisambiguation = resolveDisambiguation(disambiguation);
+    return new Date(
+        instantFromWallTime(completed, zone, resolvedDisambiguation),
+    );
 }
 
 /**
  * @param parts - The caller's fields.
- * @returns Every field, checked and filled in.
- * @throws {@link TypeError} When `parts` is not an object or `year` is missing.
- * @throws {@link RangeError} When a field is out of range or the day does not exist.
+ * @returns Every field, checked and filled in, or `undefined` when invalid.
  */
-function completeValidatedParts(
+function readValidatedParts(
     parts: DatePartsInput,
-): Required<DatePartsInput> {
+): Required<DatePartsInput> | undefined {
     if (parts === null || typeof parts !== "object" || Array.isArray(parts)) {
-        throw typeError("parts", "an object with a year", parts);
+        return undefined;
     }
     if (!Object.hasOwn(parts, "year")) {
-        throw typeError("parts.year", "a finite number", undefined);
+        return undefined;
     }
-    const year = assertInteger(parts.year, "parts.year");
-    const month = assertIntegerInRange(parts.month ?? 1, "parts.month", 1, 12);
-    const day = assertIntegerInRange(parts.day ?? 1, "parts.day", 1, 31);
-    const hour = assertIntegerInRange(parts.hour ?? 0, "parts.hour", 0, 23);
-    const minute = assertIntegerInRange(
-        parts.minute ?? 0,
-        "parts.minute",
-        0,
-        59,
-    );
-    const second = assertIntegerInRange(
-        parts.second ?? 0,
-        "parts.second",
-        0,
-        59,
-    );
-    const millisecond = assertIntegerInRange(
-        parts.millisecond ?? 0,
-        "parts.millisecond",
-        0,
-        999,
-    );
+    if (
+        typeof parts.year !== "number" ||
+        !Number.isFinite(parts.year) ||
+        !Number.isInteger(parts.year)
+    ) {
+        return undefined;
+    }
+    const year = parts.year;
+    if (
+        !readIntegerInRange(parts.month ?? 1, 1, 12) ||
+        !readIntegerInRange(parts.day ?? 1, 1, 31) ||
+        !readIntegerInRange(parts.hour ?? 0, 0, 23) ||
+        !readIntegerInRange(parts.minute ?? 0, 0, 59) ||
+        !readIntegerInRange(parts.second ?? 0, 0, 59) ||
+        !readIntegerInRange(parts.millisecond ?? 0, 0, 999)
+    ) {
+        return undefined;
+    }
+    const month = parts.month ?? 1;
+    const day = parts.day ?? 1;
+    const hour = parts.hour ?? 0;
+    const minute = parts.minute ?? 0;
+    const second = parts.second ?? 0;
+    const millisecond = parts.millisecond ?? 0;
     if (!isRealGregorianDay(year, month, day)) {
-        throw new RangeError(
-            `\`parts.day\` must be a real day of ${String(year)}-${String(month).padStart(2, "0")}; received ${String(day)}.`,
-        );
+        return undefined;
     }
     return completeDateParts({
         year,
@@ -89,4 +106,25 @@ function completeValidatedParts(
         second,
         millisecond,
     });
+}
+
+/**
+ * @param value - A candidate integer.
+ * @param minimum - Smallest allowed value.
+ * @param maximum - Largest allowed value.
+ * @returns `true` when `value` is an integer in the range.
+ */
+function readIntegerInRange(
+    value: unknown,
+    minimum: number,
+    maximum: number,
+): boolean {
+    if (
+        typeof value !== "number" ||
+        !Number.isFinite(value) ||
+        !Number.isInteger(value)
+    ) {
+        return false;
+    }
+    return value >= minimum && value <= maximum;
 }

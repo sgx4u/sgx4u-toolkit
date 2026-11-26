@@ -46,11 +46,11 @@ describe("business hours", () => {
             ).toISOString(),
         ).toBe("2026-11-26T09:00:00.000Z");
         expect(
-            addBusinessHours(
-                "2026-11-26T16:00:00Z",
-                { hours: 2 },
-                utc,
-            ).toISOString(),
+            addBusinessHours({
+                date: "2026-11-26T16:00:00Z",
+                duration: { hours: 2 },
+                timeZone: "UTC",
+            })?.toISOString(),
         ).toBe("2026-11-27T10:00:00.000Z");
         expect(
             differenceInBusinessHours(
@@ -60,7 +60,28 @@ describe("business hours", () => {
             ),
         ).toBe(2);
         expect(() =>
-            addBusinessHours("2026-11-26T12:00:00Z", { days: 1 }, utc),
+            addBusinessHours({
+                date: "2026-11-26T12:00:00Z",
+                duration: { days: 1 },
+                timeZone: "UTC",
+            }),
         ).toThrow(RangeError);
+    });
+
+    it("returns undefined for a bad date or duration", () => {
+        expect(
+            addBusinessHours({
+                date: "nope",
+                duration: { hours: 1 },
+                timeZone: "UTC",
+            }),
+        ).toBeUndefined();
+        expect(
+            addBusinessHours({
+                date: "2026-11-26T12:00:00Z",
+                duration: { hours: 1, extra: 1 } as never,
+                timeZone: "UTC",
+            }),
+        ).toBeUndefined();
     });
 });

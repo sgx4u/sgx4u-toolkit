@@ -1,7 +1,8 @@
 import type { Duration } from "../types/duration.types.js";
 import type { TimeOfDay } from "../types/time.types.js";
-import { assertDuration, clockMilliseconds } from "../utils/duration.utils.js";
-import { rangeError, typeError } from "../utils/error.utils.js";
+import { clockMilliseconds, readDuration } from "../utils/duration.utils.js";
+import { rangeError } from "../utils/error.utils.js";
+import type { AddToTimeOfDayParams } from "./add-to-time-of-day.types.js";
 
 const millisecondsPerDay = 86_400_000;
 
@@ -11,26 +12,28 @@ const millisecondsPerDay = 86_400_000;
  * Months and years are rejected because a time of day has no calendar date.
  * Weeks and days become part of `dayOffset`.
  *
- * @param time - The starting time.
- * @param duration - The length to add. Clock fields may be fractional in the smallest unit.
- * @returns The wrapped time and how many calendar days were crossed. Negative durations cross backward.
+ * @param params - `time` and `duration`.
+ * @returns The wrapped time and how many calendar days were crossed, or `undefined` when `time` or `duration` is not usable. Negative durations cross backward.
  * @throws {@link RangeError} When the duration contains months or years.
  * @example
- * addToTimeOfDay({ hour: 23, minute: 30, second: 0, millisecond: 0 }, { hours: 2 }); // { time: { hour: 1, minute: 30, second: 0, millisecond: 0 }, dayOffset: 1 }
+ * addToTimeOfDay({
+ *   time: { hour: 23, minute: 30, second: 0, millisecond: 0 },
+ *   duration: { hours: 2 },
+ * }); // { time: { hour: 1, minute: 30, second: 0, millisecond: 0 }, dayOffset: 1 }
  */
-export function addToTimeOfDay(
-    time: TimeOfDay,
-    duration: Duration,
-): { time: TimeOfDay; dayOffset: number } {
-    if (
-        typeof time !== "object" ||
-        time === null ||
-        !Number.isFinite(time.hour) ||
-        !Number.isFinite(time.minute)
-    ) {
-        throw typeError("time", "a time of day", time);
+export function addToTimeOfDay({
+    time,
+    duration,
+}: AddToTimeOfDayParams):
+    | { time: TimeOfDay; dayOffset: number }
+    | undefined {
+    if (!isTimeOfDayValue(time)) {
+        return undefined;
     }
-    const checked = assertDuration(duration, "duration");
+    const checked = readDuration(duration);
+    if (checked === undefined) {
+        return undefined;
+    }
     if ((checked.years ?? 0) !== 0 || (checked.months ?? 0) !== 0) {
         throw rangeError("duration", "free of months and years", duration);
     }
@@ -45,6 +48,23 @@ export function addToTimeOfDay(
     const dayOffset = Math.floor(total / millisecondsPerDay);
     const remainder = total - dayOffset * millisecondsPerDay;
     return { time: timeFromMilliseconds(remainder), dayOffset };
+}
+
+/**
+ * @param time - A candidate time of day.
+ * @returns `true` when every field is a finite number.
+ */
+function isTimeOfDayValue(time: unknown): time is TimeOfDay {
+    if (time === null || typeof time !== "object") {
+        return false;
+    }
+    const record = time as TimeOfDay;
+    return (
+        Number.isFinite(record.hour) &&
+        Number.isFinite(record.minute) &&
+        Number.isFinite(record.second) &&
+        Number.isFinite(record.millisecond)
+    );
 }
 
 /**

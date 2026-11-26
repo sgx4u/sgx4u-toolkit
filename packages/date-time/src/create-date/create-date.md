@@ -11,43 +11,39 @@ import { createDate } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function createDate(
-    parts: DatePartsInput,
-    options?: TimeZoneOptions & DisambiguationOptions,
-): Date;
+function createDate(params: CreateDateParams): Date | undefined;
 ```
 
 ## Options
 
-| Name             | Type                                               | Default        | Meaning                                  |
-| ---------------- | -------------------------------------------------- | -------------- | ---------------------------------------- |
-| `timeZone`       | `string`                                           | System zone    | IANA name or fixed offset.               |
-| `disambiguation` | `"compatible" \| "earlier" \| "later" \| "reject"` | `"compatible"` | How to treat a skipped or repeated time. |
-
-Omitted fields of `parts` default to month `1`, day `1`, and time `0`.
+| Name             | Type                                               | Required | Default        | Meaning                                  |
+| ---------------- | -------------------------------------------------- | -------- | -------------- | ---------------------------------------- |
+| `year`           | `number`                                           | yes      |                | Gregorian year.                          |
+| `month`          | `number`                                           | no       | `1`            | Month from 1 through 12.                 |
+| `day`            | `number`                                           | no       | `1`            | Day of month.                            |
+| `hour`           | `number`                                           | no       | `0`            | Hour from 0 through 23.                  |
+| `minute`         | `number`                                           | no       | `0`            | Minute from 0 through 59.              |
+| `second`         | `number`                                           | no       | `0`            | Second from 0 through 59.              |
+| `millisecond`    | `number`                                           | no       | `0`            | Millisecond from 0 through 999.          |
+| `timeZone`       | `string`                                           | no       | System zone    | IANA name or fixed offset.               |
+| `disambiguation` | `"compatible" \| "earlier" \| "later" \| "reject"` | no       | `"compatible"` | How to treat a skipped or repeated time. |
 
 ## Examples
 
 ```ts
-createDate(
-    { year: 2026, month: 11, day: 26, hour: 9 },
-    { timeZone: "Asia/Kolkata" },
-).toISOString();
+createDate({
+    year: 2026,
+    month: 11,
+    day: 26,
+    hour: 9,
+    timeZone: "Asia/Kolkata",
+})?.toISOString();
 // "2026-11-26T03:30:00.000Z"
-
-createDate({ year: 2026 }, { timeZone: "UTC" }).toISOString();
-// "2026-01-01T00:00:00.000Z"
-
-createDate(
-    { year: 2024, month: 3, day: 10, hour: 2, minute: 30 },
-    { timeZone: "America/New_York", disambiguation: "compatible" },
-).toISOString();
-// "2024-03-10T07:30:00.000Z"
 ```
 
 ## Edge cases
 
-February 30 throws `RangeError`. In `America/New_York`, `2024-03-10` 02:30 does not exist. `"compatible"` returns 03:30 EDT (`2024-03-10T07:30:00.000Z`). `"earlier"` returns 01:30 EST (`2024-03-10T06:30:00.000Z`). `"reject"` throws. On `2024-11-03`, 01:30 happens twice; `"compatible"` keeps the earlier instant and `"later"` returns `2024-11-03T06:30:00.000Z`.
+Invalid or out-of-range parts return `undefined`. An unusable `timeZone` or `disambiguation` throws `RangeError`. `"reject"` throws on a daylight-saving gap or overlap.
 
 ## Related
 

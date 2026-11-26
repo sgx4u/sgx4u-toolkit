@@ -12,56 +12,37 @@ import { addBusinessHours } from "@sgx4u/date-time";
 
 ```ts
 function addBusinessHours(
-    date: DateInput,
-    duration: Duration,
-    calendar?: BusinessCalendar,
-): Date;
+    params: AddBusinessHoursParams,
+): Date | undefined;
 ```
 
 ## Options
 
-Fields of `calendar`:
-
-| Name           | Type                                                | Default                              | Meaning                                                                      |
-| -------------- | --------------------------------------------------- | ------------------------------------ | ---------------------------------------------------------------------------- |
-| `weekendDays`  | `readonly Weekday[]`                                | `[6, 7]`                             | ISO weekdays that are closed. `6` is Saturday and `7` is Sunday.             |
-| `holidays`     | `readonly DateInput[] \| ((date: Date) => boolean)` | `[]`                                 | Closed dates, or a predicate. A list matches the calendar day in `timeZone`. |
-| `workingHours` | `readonly TimeRange[]`                              | `[{ start: "09:00", end: "17:00" }]` | Open windows on a business day. An empty list means the whole day.           |
-| `timeZone`     | `string`                                            | System zone                          | IANA name or fixed offset for the calendar and the windows.                  |
+| Name            | Type                                           | Required | Default                    | Meaning                          |
+| --------------- | ---------------------------------------------- | -------- | -------------------------- | -------------------------------- |
+| `date`          | `DateInput`                                    | yes      |                            | Start instant.                   |
+| `duration`      | `Duration`                                     | yes      |                            | Clock units only.                |
+| `workingDays`   | `readonly Weekday[]`                           | no       | `[1, 2, 3, 4, 5]`          | ISO weekdays that are open.      |
+| `businessHours` | `readonly TimeRange[]`                         | no       | `[{ start: "09:00", end: "17:00" }]` | Working windows.     |
+| `holidays`      | `readonly (ConfiguredHoliday \| DateInput)[]` | no       | `[]`                       | Closed dates in `timeZone`.      |
+| `timeZone`      | `string`                                       | no       | System zone                | IANA name or fixed offset.       |
 
 ## Examples
 
 ```ts
-addBusinessHours(
-    "2026-11-26T16:00:00Z",
-    { hours: 2 },
-    { timeZone: "UTC" },
-).toISOString();
+addBusinessHours({
+    date: "2026-11-26T16:00:00Z",
+    duration: { hours: 2 },
+    timeZone: "UTC",
+})?.toISOString();
 // "2026-11-27T10:00:00.000Z"
-
-addBusinessHours(
-    "2026-11-26T16:00:00Z",
-    { hours: 1 },
-    { timeZone: "UTC" },
-).toISOString();
-// "2026-11-26T17:00:00.000Z"
-
-addBusinessHours(
-    "2026-11-28T12:00:00Z",
-    { hours: 1 },
-    { timeZone: "UTC" },
-).toISOString();
-// "2026-11-30T10:00:00.000Z"
 ```
-
-Thursday 26 November 2026 at 16:00 has one open hour left before 17:00. The second hour starts at 09:00 on Friday.
 
 ## Edge cases
 
-Only clock units are accepted. Years, months, weeks, or days throw `RangeError`. A positive duration that starts outside open hours begins at the next opening. A negative duration begins at the end of the previous opening. 3660 consecutive days with no business day throws `RangeError`. An invalid date throws `RangeError`.
+Only clock units are accepted; calendar units throw `RangeError`. A start outside working hours begins at the next opening when the duration is positive, or at the end of the previous opening when it is negative. A bad `date` or `duration` returns `undefined`. Invalid `workingDays`, `businessHours`, or `timeZone` throws. When no business day exists within the safety cap, the call throws `RangeError`.
 
 ## Related
 
-- [`differenceInBusinessHours`](../difference-in-business-hours/difference-in-business-hours.md) measures open time between two instants.
-- [`addBusinessDays`](../add-business-days/add-business-days.md) steps by whole business days.
-- [`isWithinBusinessHours`](../is-within-business-hours/is-within-business-hours.md) reports whether an instant is inside an open window.
+- [`addBusinessDays`](../add-business-days/add-business-days.md) moves by whole business days.
+- [`differenceInBusinessHours`](../difference-in-business-hours/difference-in-business-hours.md) measures elapsed working time.
