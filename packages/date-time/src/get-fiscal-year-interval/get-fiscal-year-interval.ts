@@ -1,9 +1,4 @@
 import type { Interval } from "../types/interval.types.js";
-import type {
-    FiscalYearOptions,
-    TimeZoneOptions,
-} from "../types/options.types.js";
-import { assertInteger } from "../utils/assert.utils.js";
 import {
     fiscalStartCalendarYear,
     readFiscalSettings,
@@ -12,28 +7,32 @@ import {
     instantFromWallTime,
     resolveTimeZone,
 } from "../utils/time-zone.utils.js";
+import type { GetFiscalYearIntervalParams } from "./get-fiscal-year-interval.types.js";
 
 /**
  * Returns the half-open interval of a fiscal year.
  *
  * The end is the first instant of the next fiscal year.
  *
- * @param fiscalYear - The label, such as 2027 for an April-to-March year.
- * @param options - `fiscalYearStartMonth` is required.
- * @returns `{ start, end }` in the zone.
+ * @param params - `fiscalYearStartMonth` is required; `timeZone` defaults to the system zone.
+ * @returns `{ start, end }` in the zone, or `undefined` when `fiscalYear` is not an integer.
  * @throws {@link TypeError} When `fiscalYearStartMonth` is missing.
- * @throws {@link RangeError} When the start month is outside 1 through 12.
+ * @throws {@link RangeError} When the start month or `timeZone` is not usable.
  * @example
- * getFiscalYearInterval(2027, { fiscalYearStartMonth: 4, timeZone: "UTC" }).start.toISOString(); // "2026-04-01T00:00:00.000Z"
+ * getFiscalYearInterval({ fiscalYear: 2027, fiscalYearStartMonth: 4, timeZone: "UTC" })?.start.toISOString(); // "2026-04-01T00:00:00.000Z"
  */
 export function getFiscalYearInterval(
-    fiscalYear: number,
-    options: FiscalYearOptions & TimeZoneOptions,
-): Interval {
-    const settings = readFiscalSettings(options);
-    const year = assertInteger(fiscalYear, "fiscalYear");
-    const timeZone = resolveTimeZone(options.timeZone);
-    const startYear = fiscalStartCalendarYear(year, settings);
+    params: GetFiscalYearIntervalParams,
+): Interval | undefined {
+    const settings = readFiscalSettings(params);
+    if (
+        typeof params.fiscalYear !== "number" ||
+        !Number.isInteger(params.fiscalYear)
+    ) {
+        return undefined;
+    }
+    const timeZone = resolveTimeZone(params.timeZone);
+    const startYear = fiscalStartCalendarYear(params.fiscalYear, settings);
     const start = instantFromWallTime(
         {
             year: startYear,

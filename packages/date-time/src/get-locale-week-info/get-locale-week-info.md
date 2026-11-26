@@ -16,9 +16,7 @@ function getLocaleWeekInfo(locale?: string): LocaleWeekInfo;
 
 ## Options
 
-| Name     | Type     | Default                      | Meaning                                            |
-| -------- | -------- | ---------------------------- | -------------------------------------------------- |
-| `locale` | `string` | The runtime's default locale | A BCP 47 language tag passed as the only argument. |
+Optional positional `locale`; omit for the runtime default.
 
 ## Examples
 
@@ -37,7 +35,8 @@ getLocaleWeekInfo("en-US").weekendDays;
 
 ## Edge cases
 
-`firstDay` is an ISO weekday. When the runtime has no week data for the locale, the result is the ISO default: Monday, weekend Saturday and Sunday, and four days in the first week.
+An invalid `locale` throws.
+
 
 ## Related
 

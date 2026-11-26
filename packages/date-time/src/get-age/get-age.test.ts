@@ -11,9 +11,9 @@ import {
     getFiscalQuarter,
     getFiscalYear,
     getFiscalYearInterval,
-    getIsoWeek,
-    getIsoWeekYear,
-    getIsoWeeksInYear,
+    getISOWeek,
+    getISOWeekYear,
+    getISOWeeksInYear,
     getLocaleWeekInfo,
     getMillisecondsUntilNextUnit,
     getNextAnniversary,
@@ -56,31 +56,39 @@ describe("ages, now, and calendars", () => {
         );
         expect(duration).toEqual({ hours: 1 });
         expect(
-            addDuration("2026-01-01T00:00:00Z", duration, {
+            addDuration({
+                date: "2026-01-01T00:00:00Z",
+                duration,
                 timeZone: "UTC",
-            }).toISOString(),
+            })?.toISOString(),
         ).toBe("2026-01-01T01:00:00.000Z");
     });
 
     it("counts a leap-day birthday and the next anniversary", () => {
         expect(
-            getAge("2000-02-29", {
+            getAge({
+                birthDate: "2000-02-29",
                 now: "2021-03-01T00:00:00Z",
                 timeZone: "UTC",
             }),
         ).toBe(21);
         expect(
-            getAge("2000-02-29", {
+            getAge({
+                birthDate: "2000-02-29",
                 now: "2021-02-28T00:00:00Z",
                 timeZone: "UTC",
                 leapDayBirthdayInCommonYears: "february-28",
             }),
         ).toBe(21);
-        expect(() =>
-            getAge("2026-01-02T00:00:00Z", { now: "2026-01-01T00:00:00Z" }),
-        ).toThrow(RangeError);
         expect(
-            getAgeAsDuration("2020-01-31", {
+            getAge({
+                birthDate: "2026-01-02T00:00:00Z",
+                now: "2026-01-01T00:00:00Z",
+            }),
+        ).toBeUndefined();
+        expect(
+            getAgeAsDuration({
+                birthDate: "2020-01-31",
                 now: "2021-03-01T00:00:00Z",
                 timeZone: "UTC",
             }),
@@ -92,15 +100,17 @@ describe("ages, now, and calendars", () => {
             }).toISOString(),
         ).toBe("2021-03-01T00:00:00.000Z");
         expect(
-            getCountdownParts("2026-01-01T01:00:00Z", {
+            getCountdownParts({
+                target: "2026-01-01T01:00:00Z",
                 now: "2026-01-01T00:00:00Z",
                 largestUnit: "hour",
-            }).hours,
+            })?.hours,
         ).toBe(1);
         expect(
-            getCountdownParts("2020-01-01T00:00:00Z", {
+            getCountdownParts({
+                target: "2020-01-01T00:00:00Z",
                 now: "2026-01-01T00:00:00Z",
-            }).isComplete,
+            })?.isComplete,
         ).toBe(true);
     });
 
@@ -130,15 +140,20 @@ describe("ages, now, and calendars", () => {
     });
 
     it("reads weeks, quarters, fiscal years, and a month grid", () => {
-        expect(getDayOfYear("2024-03-01T00:00:00Z", { timeZone: "UTC" })).toBe(
-            61,
-        );
-        expect(getIsoWeek("2026-01-01T00:00:00Z", { timeZone: "UTC" })).toBe(1);
         expect(
-            getIsoWeekYear("2026-01-01T00:00:00Z", { timeZone: "UTC" }),
+            getDayOfYear({ date: "2024-03-01T00:00:00Z", timeZone: "UTC" }),
+        ).toBe(61);
+        expect(
+            getISOWeek({ date: "2026-01-01T00:00:00Z", timeZone: "UTC" }),
+        ).toBe(1);
+        expect(
+            getISOWeekYear({
+                date: "2026-01-01T00:00:00Z",
+                timeZone: "UTC",
+            }),
         ).toBe(2026);
-        expect(getIsoWeeksInYear(2020)).toBe(53);
-        expect(getIsoWeeksInYear(2021)).toBe(52);
+        expect(getISOWeeksInYear(2020)).toBe(53);
+        expect(getISOWeeksInYear(2021)).toBe(52);
         expect(
             getWeekOfYear("2026-01-01T00:00:00Z", {
                 timeZone: "UTC",
@@ -151,32 +166,37 @@ describe("ages, now, and calendars", () => {
         ).toBe(5);
         expect(getQuarter("2026-11-26T00:00:00Z", { timeZone: "UTC" })).toBe(4);
         expect(
-            getFiscalYear("2026-04-01T00:00:00Z", {
+            getFiscalYear({
+                date: "2026-04-01T00:00:00Z",
                 fiscalYearStartMonth: 4,
                 timeZone: "UTC",
             }),
         ).toBe(2027);
         expect(
-            getFiscalYear("2026-04-01T00:00:00Z", {
+            getFiscalYear({
+                date: "2026-04-01T00:00:00Z",
                 fiscalYearStartMonth: 4,
                 fiscalYearLabel: "start-year",
                 timeZone: "UTC",
             }),
         ).toBe(2026);
         expect(
-            getFiscalQuarter("2027-03-01T00:00:00Z", {
+            getFiscalQuarter({
+                date: "2027-03-01T00:00:00Z",
                 fiscalYearStartMonth: 4,
                 timeZone: "UTC",
             }),
         ).toBe(4);
         expect(
-            getFiscalYearInterval(2027, {
+            getFiscalYearInterval({
+                fiscalYear: 2027,
                 fiscalYearStartMonth: 4,
                 timeZone: "UTC",
-            }).start.toISOString(),
+            })?.start.toISOString(),
         ).toBe("2026-04-01T00:00:00.000Z");
         expect(() =>
-            getFiscalYear("2026-01-01T00:00:00Z", {
+            getFiscalYear({
+                date: "2026-01-01T00:00:00Z",
                 fiscalYearStartMonth: 13,
                 timeZone: "UTC",
             }),

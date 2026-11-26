@@ -4,7 +4,8 @@ import { getCountdownParts } from "../index.js";
 describe("getCountdownParts", () => {
     it("splits a remaining span from days by default", () => {
         expect(
-            getCountdownParts("2026-01-02T01:02:03.004Z", {
+            getCountdownParts({
+                target: "2026-01-02T01:02:03.004Z",
                 now: "2026-01-01T00:00:00Z",
             }),
         ).toEqual({
@@ -17,31 +18,36 @@ describe("getCountdownParts", () => {
             isComplete: false,
         });
         expect(
-            getCountdownParts("2026-01-01T01:00:00Z", {
+            getCountdownParts({
+                target: "2026-01-01T01:00:00Z",
                 now: "2026-01-01T00:00:00Z",
                 largestUnit: "hour",
-            }).hours,
+            })?.hours,
         ).toBe(1);
         expect(
-            getCountdownParts("2026-01-01T01:00:00Z", {
+            getCountdownParts({
+                target: "2026-01-01T01:00:00Z",
                 now: "2026-01-01T00:00:00Z",
-            }).days,
+            })?.days,
         ).toBe(0);
     });
 
     it("counts the leap day as 24 hours and rolls into the next year", () => {
         expect(
-            getCountdownParts("2024-03-01T00:00:00Z", {
+            getCountdownParts({
+                target: "2024-03-01T00:00:00Z",
                 now: "2024-02-28T00:00:00Z",
             }),
         ).toMatchObject({ days: 2, totalMilliseconds: 172_800_000 });
         expect(
-            getCountdownParts("2023-03-01T00:00:00Z", {
+            getCountdownParts({
+                target: "2023-03-01T00:00:00Z",
                 now: "2023-02-28T00:00:00Z",
             }),
         ).toMatchObject({ days: 1, totalMilliseconds: 86_400_000 });
         expect(
-            getCountdownParts("2027-01-01T01:30:00Z", {
+            getCountdownParts({
+                target: "2027-01-01T01:30:00Z",
                 now: "2026-12-31T22:00:00Z",
             }),
         ).toMatchObject({
@@ -55,7 +61,8 @@ describe("getCountdownParts", () => {
 
     it("is complete, and never negative, once the target is not after now", () => {
         expect(
-            getCountdownParts("2026-01-01T00:00:00Z", {
+            getCountdownParts({
+                target: "2026-01-01T00:00:00Z",
                 now: "2026-01-01T00:00:00Z",
             }),
         ).toEqual({
@@ -68,31 +75,32 @@ describe("getCountdownParts", () => {
             isComplete: true,
         });
         expect(
-            getCountdownParts("2020-01-01T00:00:00Z", {
+            getCountdownParts({
+                target: "2020-01-01T00:00:00Z",
                 now: "2026-01-01T00:00:00Z",
-            }).isComplete,
+            })?.isComplete,
         ).toBe(true);
     });
 
-    it("throws for an unknown largest unit or a target that is not a date", () => {
+    it("throws for an unknown largest unit", () => {
         expect(() =>
-            getCountdownParts("2026-01-01T00:00:00Z", {
+            getCountdownParts({
+                target: "2026-01-01T00:00:00Z",
                 now: "2026-01-01T00:00:00Z",
                 largestUnit: "week" as never,
             }),
         ).toThrow(RangeError);
-        expect(() =>
-            getCountdownParts("2026-01-01T00:00:00Z", {
+    });
+
+    it("returns undefined when the target is not a date", () => {
+        expect(
+            getCountdownParts({
+                target: "nope",
                 now: "2026-01-01T00:00:00Z",
-                largestUnit: "week" as never,
             }),
-        ).toThrow('"day", "hour", "minute", or "second"');
-        expect(() => getCountdownParts("nope", { now: 0 })).toThrow(RangeError);
-        expect(() => getCountdownParts("nope", { now: 0 })).toThrow(
-            '`target` must be a valid date; received "nope".',
-        );
-        expect(() => getCountdownParts(null as never, { now: 0 })).toThrow(
-            TypeError,
-        );
+        ).toBeUndefined();
+        expect(
+            getCountdownParts({ target: null as never, now: 0 }),
+        ).toBeUndefined();
     });
 });

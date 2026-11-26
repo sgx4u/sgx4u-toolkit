@@ -11,12 +11,14 @@ import { getLatestDate } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getLatestDate(dates: readonly DateInput[]): Date | undefined;
+function getLatestDate(params: GetLatestDateParams): Date | undefined;
 ```
 
 ## Options
 
-This function has no options.
+| Name    | Type                   | Required | Default | Meaning              |
+| ------- | ---------------------- | -------- | ------- | -------------------- |
+| `dates` | `readonly DateInput[]` | Yes      | —       | Dates to search.     |
 
 ## Examples
 
@@ -35,7 +37,8 @@ getLatestDate([]);
 
 ## Edge cases
 
-The input array is not reordered. An empty list returns `undefined`. A non-array, or an entry that is not a real date, throws. The returned `Date` is a new object.
+An empty list returns `undefined`. A non-array throws. A bad entry throws.
+
 
 ## Related
 

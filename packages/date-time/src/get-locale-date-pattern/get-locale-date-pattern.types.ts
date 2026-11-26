@@ -1,9 +1,9 @@
 import type { LocaleOptions } from "../types/options.types.js";
 
 /**
- * Which numeric date pattern to read.
+ * Fields for {@link getLocaleDatePattern}.
  */
-export interface LocaleDatePatternOptions extends LocaleOptions {
+export interface GetLocaleDatePatternParams extends LocaleOptions {
     /**
      * The `Intl` date style used to discover the pattern.
      *

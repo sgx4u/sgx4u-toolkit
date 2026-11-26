@@ -11,15 +11,15 @@ import { getHolidaysInYear } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getHolidaysInYear(
-    year: number,
-    rules: readonly HolidayRule[],
-): Holiday[];
+function getHolidaysInYear(params: GetHolidaysInYearParams): Holiday[] | undefined;
 ```
 
 ## Options
 
-This function has no options.
+| Name    | Type                    | Required | Default | Meaning                 |
+| ------- | ----------------------- | -------- | ------- | ----------------------- |
+| `year`  | `number`                | Yes      | —       | Gregorian year.         |
+| `rules` | `readonly HolidayRule[]`| Yes      | —       | Rules to expand.        |
 
 ## Examples
 
@@ -45,7 +45,8 @@ getHolidaysInYear(2026, [
 
 ## Edge cases
 
-Results are sorted by the observed date. A rule's `type` defaults to `"public"` and `observed` defaults to `"none"`. A `"year-table"` rule with no entry for the year is skipped. An `"intl-calendar"` rule can match twice when that calendar date occurs twice in the Gregorian year. `rules` must be an array.
+A non-integer `year` returns `undefined`. A non-array `rules` throws.
+
 
 ## Related
 

@@ -1,8 +1,7 @@
-import type { DateInput } from "../types/date-input.types.js";
-import type { TimeZoneOptions } from "../types/options.types.js";
 import type { DateParts } from "../types/time.types.js";
-import { resolveDateInput } from "../utils/date-input.utils.js";
+import { readDateInput } from "../utils/date-input.utils.js";
 import { readDateParts, resolveTimeZone } from "../utils/time-zone.utils.js";
+import type { GetDatePartsParams } from "./get-date-parts.types.js";
 
 /**
  * Returns the wall-clock fields of an instant in a time zone.
@@ -11,18 +10,20 @@ import { readDateParts, resolveTimeZone } from "../utils/time-zone.utils.js";
  * through Sunday `7`. `offsetMinutes` may include a fraction. A date-only
  * string is midnight in the zone.
  *
- * @param date - The instant to read.
- * @param options - `timeZone` defaults to the system zone.
- * @returns The fields in that zone.
- * @throws {@link TypeError} When `date` has the wrong type.
- * @throws {@link RangeError} When `date` is not a real date, or `timeZone` is not usable.
+ * @param params - `date` is the instant to read; `timeZone` defaults to the system zone.
+ * @returns The fields in that zone, or `undefined` when `date` is not usable.
+ * @throws {@link RangeError} When `timeZone` is not usable.
  * @example
- * getDateParts("2024-06-15T16:00:00.000Z", { timeZone: "America/New_York" }).hour; // 12
+ * getDateParts({ date: "2024-06-15T16:00:00.000Z", timeZone: "America/New_York" })?.hour; // 12
  */
-export function getDateParts(
-    date: DateInput,
-    options?: TimeZoneOptions,
-): DateParts {
-    const instant = resolveDateInput(date, "date", options?.timeZone);
-    return readDateParts(instant.getTime(), resolveTimeZone(options?.timeZone));
+export function getDateParts({
+    date,
+    timeZone,
+}: GetDatePartsParams): DateParts | undefined {
+    const zone = resolveTimeZone(timeZone);
+    const instant = readDateInput(date, zone);
+    if (instant === undefined) {
+        return undefined;
+    }
+    return readDateParts(instant.getTime(), zone);
 }

@@ -1,35 +1,36 @@
 import type { CalendarDate } from "../types/time.types.js";
-import { assertIntegerInRange } from "../utils/assert.utils.js";
 import { addGregorianDays } from "../utils/gregorian.utils.js";
 import { rangeError } from "../utils/error.utils.js";
-import type { EasterOptions } from "./get-easter-sunday.types.js";
+import type { GetEasterSundayParams } from "./get-easter-sunday.types.js";
 
 /**
  * Returns Easter Sunday as a Gregorian calendar date.
  *
  * Valid for years 1583 through 9999.
  *
- * @param year - The Gregorian year.
- * @param options - `tradition` defaults to `"western"`.
- * @returns The month and day of Easter Sunday.
- * @throws {@link TypeError} When `year` is not a number.
- * @throws {@link RangeError} When `year` is outside 1583 through 9999, or `tradition` is unknown.
+ * @param params - `year` is the Gregorian year; `tradition` defaults to `"western"`.
+ * @returns The month and day of Easter Sunday, or `undefined` when `year` is not in range.
+ * @throws {@link RangeError} When `tradition` is unknown.
  * @example
- * getEasterSunday(2026); // { year: 2026, month: 4, day: 5 }
+ * getEasterSunday({ year: 2026 }); // { year: 2026, month: 4, day: 5 }
  */
-export function getEasterSunday(
-    year: number,
-    options?: EasterOptions,
-): CalendarDate {
-    const yearNumber = assertIntegerInRange(year, "year", 1583, 9999);
-    const tradition = options?.tradition ?? "western";
+export function getEasterSunday({
+    year,
+    tradition = "western",
+}: GetEasterSundayParams): CalendarDate | undefined {
+    if (typeof year !== "number" || !Number.isInteger(year)) {
+        return undefined;
+    }
+    if (year < 1583 || year > 9999) {
+        return undefined;
+    }
     if (tradition !== "western" && tradition !== "orthodox") {
         throw rangeError("tradition", `"western" or "orthodox"`, tradition);
     }
     if (tradition === "orthodox") {
-        return orthodoxEaster(yearNumber);
+        return orthodoxEaster(year);
     }
-    return westernEaster(yearNumber);
+    return westernEaster(year);
 }
 
 /**

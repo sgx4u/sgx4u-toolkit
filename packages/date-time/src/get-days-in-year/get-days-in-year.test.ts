@@ -10,10 +10,8 @@ describe("getDaysInYear", () => {
         expect(getDaysInYear(0)).toBe(366);
     });
 
-    it("throws when the year is not an integer", () => {
-        expect(() => getDaysInYear(2024.5)).toThrow(RangeError);
-        expect(() => getDaysInYear(true as unknown as number)).toThrow(
-            TypeError,
-        );
+    it("returns undefined when the year is not an integer", () => {
+        expect(getDaysInYear(2024.5)).toBeUndefined();
+        expect(getDaysInYear(true as unknown as number)).toBeUndefined();
     });
 });

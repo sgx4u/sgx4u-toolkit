@@ -1,8 +1,7 @@
-import type { DateInput } from "../types/date-input.types.js";
 import type { CountdownParts } from "../types/relative-time.types.js";
-import { resolveDateInput, resolveNow } from "../utils/date-input.utils.js";
+import { readDateInput } from "../utils/date-input.utils.js";
 import { rangeError } from "../utils/error.utils.js";
-import type { CountdownOptions } from "./get-countdown-parts.types.js";
+import type { GetCountdownPartsParams } from "./get-countdown-parts.types.js";
 
 const unitMilliseconds = {
     day: 86_400_000,
@@ -20,19 +19,17 @@ const unitOrder = ["day", "hour", "minute", "second"] as const;
  * after `now`. The parts are never negative. Days are exact 24-hour
  * stretches because a countdown has no time zone.
  *
- * @param target - The instant being counted down to.
- * @param options - `largestUnit` defaults to `"day"`.
- * @returns The remaining parts and the total milliseconds.
- * @throws {@link TypeError} When `target` has the wrong type.
- * @throws {@link RangeError} When `target` is not a real date.
+ * @param params - `target` is the instant being counted down to; `largestUnit` defaults to `"day"`.
+ * @returns The remaining parts and the total milliseconds, or `undefined` when `target` or `now` is not usable.
+ * @throws {@link RangeError} When `largestUnit` is unknown.
  * @example
- * getCountdownParts("2026-01-01T01:00:00Z", { now: "2026-01-01T00:00:00Z", largestUnit: "hour" }).hours; // 1
+ * getCountdownParts({ target: "2026-01-01T01:00:00Z", now: "2026-01-01T00:00:00Z", largestUnit: "hour" })?.hours; // 1
  */
-export function getCountdownParts(
-    target: DateInput,
-    options?: CountdownOptions,
-): CountdownParts {
-    const largestUnit = options?.largestUnit ?? "day";
+export function getCountdownParts({
+    target,
+    now,
+    largestUnit = "day",
+}: GetCountdownPartsParams): CountdownParts | undefined {
     if (
         largestUnit !== "day" &&
         largestUnit !== "hour" &&
@@ -45,9 +42,13 @@ export function getCountdownParts(
             largestUnit,
         );
     }
-    const targetInstant = resolveDateInput(target, "target");
-    const now = resolveNow(options?.now);
-    const totalMilliseconds = targetInstant.getTime() - now.getTime();
+    const targetInstant = readDateInput(target);
+    const reference = readNow(now);
+    if (targetInstant === undefined || reference === undefined) {
+        return undefined;
+    }
+    const totalMilliseconds =
+        targetInstant.getTime() - reference.getTime();
     if (totalMilliseconds <= 0) {
         return {
             days: 0,
@@ -80,4 +81,15 @@ export function getCountdownParts(
         totalMilliseconds,
         isComplete: false,
     };
+}
+
+/**
+ * @param now - An optional override for the current instant.
+ * @returns The reference instant.
+ */
+function readNow(now: unknown): Date | undefined {
+    if (now === undefined) {
+        return new Date(Date.now());
+    }
+    return readDateInput(now);
 }

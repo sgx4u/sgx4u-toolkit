@@ -16,9 +16,7 @@ function getLocaleHourCycle(locale?: string): "h11" | "h12" | "h23" | "h24";
 
 ## Options
 
-| Name     | Type     | Default                      | Meaning                                            |
-| -------- | -------- | ---------------------------- | -------------------------------------------------- |
-| `locale` | `string` | The runtime's default locale | A BCP 47 language tag passed as the only argument. |
+Optional positional `locale`; omit for the runtime default.
 
 ## Examples
 
@@ -37,7 +35,8 @@ getLocaleHourCycle("de");
 
 ## Edge cases
 
-The result is one of `"h11"`, `"h12"`, `"h23"`, or `"h24"`, using the runtime's locale data. Omit `locale` to use the runtime's default locale.
+An invalid `locale` throws.
+
 
 ## Related
 

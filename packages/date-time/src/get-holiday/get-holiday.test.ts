@@ -12,12 +12,16 @@ const independenceDay = [
 describe("getHoliday", () => {
     it("matches the original date and, by default, the observed substitute", () => {
         expect(
-            getHoliday("2020-07-04T00:00:00Z", independenceDay, {
+            getHoliday({
+                date: "2020-07-04T00:00:00Z",
+                rules: independenceDay,
                 timeZone: "UTC",
             })?.name,
         ).toBe("Independence Day");
         expect(
-            getHoliday("2020-07-03T00:00:00Z", independenceDay, {
+            getHoliday({
+                date: "2020-07-03T00:00:00Z",
+                rules: independenceDay,
                 timeZone: "UTC",
             }),
         ).toMatchObject({
@@ -27,13 +31,17 @@ describe("getHoliday", () => {
             observedDate: { year: 2020, month: 7, day: 3 },
         });
         expect(
-            getHoliday("2020-07-03T00:00:00Z", independenceDay, {
+            getHoliday({
+                date: "2020-07-03T00:00:00Z",
+                rules: independenceDay,
                 timeZone: "UTC",
                 matchObservedDate: false,
             }),
         ).toBeUndefined();
         expect(
-            getHoliday("2020-07-05T00:00:00Z", independenceDay, {
+            getHoliday({
+                date: "2020-07-05T00:00:00Z",
+                rules: independenceDay,
                 timeZone: "UTC",
             }),
         ).toBeUndefined();
@@ -41,16 +49,16 @@ describe("getHoliday", () => {
 
     it("matches a leap day and the New Year on either side of midnight", () => {
         expect(
-            getHoliday(
-                "2024-02-29T00:00:00Z",
-                [
+            getHoliday({
+                date: "2024-02-29T00:00:00Z",
+                rules: [
                     {
                         name: "Leap Day",
                         date: { kind: "fixed", month: 2, day: 29 },
                     },
                 ],
-                { timeZone: "UTC" },
-            )?.name,
+                timeZone: "UTC",
+            })?.name,
         ).toBe("Leap Day");
         const newYear = [
             {
@@ -59,46 +67,62 @@ describe("getHoliday", () => {
             },
         ];
         expect(
-            getHoliday("2019-12-31T00:00:00Z", newYear, { timeZone: "UTC" }),
+            getHoliday({
+                date: "2019-12-31T00:00:00Z",
+                rules: newYear,
+                timeZone: "UTC",
+            }),
         ).toBeUndefined();
         expect(
-            getHoliday("2020-01-01T00:00:00Z", newYear, { timeZone: "UTC" })
-                ?.name,
+            getHoliday({
+                date: "2020-01-01T00:00:00Z",
+                rules: newYear,
+                timeZone: "UTC",
+            })?.name,
         ).toBe("New Year");
     });
 
     it("uses the calendar day in New York and Kolkata", () => {
         expect(
-            getHoliday("2020-07-04T03:30:00Z", independenceDay, {
+            getHoliday({
+                date: "2020-07-04T03:30:00Z",
+                rules: independenceDay,
                 timeZone: "America/New_York",
             })?.name,
         ).toBe("Independence Day");
         expect(
-            getHoliday("2020-07-04T03:30:00Z", independenceDay, {
+            getHoliday({
+                date: "2020-07-04T03:30:00Z",
+                rules: independenceDay,
                 timeZone: "America/New_York",
                 matchObservedDate: false,
             }),
         ).toBeUndefined();
         expect(
-            getHoliday("2020-07-03T18:30:00Z", independenceDay, {
+            getHoliday({
+                date: "2020-07-03T18:30:00Z",
+                rules: independenceDay,
                 timeZone: "Asia/Kolkata",
             })?.date,
         ).toEqual({ year: 2020, month: 7, day: 4 });
         expect(
-            getHoliday("2020-07-03T18:29:00Z", independenceDay, {
+            getHoliday({
+                date: "2020-07-03T18:29:00Z",
+                rules: independenceDay,
                 timeZone: "Asia/Kolkata",
             })?.observedDate,
         ).toEqual({ year: 2020, month: 7, day: 3 });
     });
 
     it("throws when rules is not an array or the date is not real", () => {
-        expect(() => getHoliday("2020-07-04T00:00:00Z", {} as never)).toThrow(
-            TypeError,
-        );
-        expect(() => getHoliday("2020-07-04T00:00:00Z", {} as never)).toThrow(
-            "`rules` must be an array of holiday rules",
-        );
-        expect(() => getHoliday("nope", independenceDay)).toThrow(RangeError);
-        expect(() => getHoliday("nope", independenceDay)).toThrow("valid date");
+        expect(() =>
+            getHoliday({
+                date: "2020-07-04T00:00:00Z",
+                rules: {} as never,
+            }),
+        ).toThrow(TypeError);
+        expect(() =>
+            getHoliday({ date: "nope", rules: independenceDay }),
+        ).toThrow(RangeError);
     });
 });

@@ -11,7 +11,7 @@ import { getDaysInYear } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getDaysInYear(year: number): 365 | 366;
+function getDaysInYear(year: number): 365 | 366 | undefined;
 ```
 
 ## Options
@@ -35,7 +35,8 @@ getDaysInYear(2000);
 
 ## Edge cases
 
-A leap year has 366 days and every other year has 365. Year 1900 is not a leap year. Year 2000 is. A non-integer year throws a `RangeError`.
+A year that is not an integer returns `undefined`.
+
 
 ## Related
 

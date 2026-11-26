@@ -1,5 +1,4 @@
 import type { TemporalInstantLike } from "../types/temporal.types.js";
-import { typeError } from "../utils/error.utils.js";
 
 /**
  * Returns a `Date` from a Temporal instant or zoned date-time.
@@ -8,22 +7,17 @@ import { typeError } from "../utils/error.utils.js";
  * package does not depend on Temporal.
  *
  * @param value - An object with `epochMilliseconds`.
- * @returns A new `Date` at that instant.
- * @throws {@link TypeError} When `epochMilliseconds` is missing or not finite.
+ * @returns A new `Date` at that instant, or `undefined` when the value is not usable.
  * @example
- * fromTemporal({ epochMilliseconds: 0 }).toISOString(); // "1970-01-01T00:00:00.000Z"
+ * fromTemporal({ epochMilliseconds: 0 })?.toISOString(); // "1970-01-01T00:00:00.000Z"
  */
-export function fromTemporal(value: TemporalInstantLike): Date {
+export function fromTemporal(value: TemporalInstantLike): Date | undefined {
     if (
         value === null ||
         typeof value !== "object" ||
         !Number.isFinite(value.epochMilliseconds)
     ) {
-        throw typeError(
-            "value",
-            "an object with a finite epochMilliseconds",
-            value,
-        );
+        return undefined;
     }
     return new Date(value.epochMilliseconds);
 }

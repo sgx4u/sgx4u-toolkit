@@ -11,21 +11,17 @@ import { getFiscalYearInterval } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getFiscalYearInterval(
-    fiscalYear: number,
-    options: FiscalYearOptions & TimeZoneOptions,
-): Interval;
+function getFiscalYearInterval(params: GetFiscalYearIntervalParams): Interval | undefined;
 ```
 
 ## Options
 
-The options argument is required.
-
-| Name                   | Type                         | Default                                 | Meaning                                                              |
-| ---------------------- | ---------------------------- | --------------------------------------- | -------------------------------------------------------------------- |
-| `fiscalYearStartMonth` | `number`                     | `required`                              | Month the fiscal year starts, from `1` through `12`.                 |
-| `fiscalYearLabel`      | `"start-year" \| "end-year"` | `"end-year"`                            | Which calendar year the `fiscalYear` argument names.                 |
-| `timeZone`             | `string`                     | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
+| Name                   | Type     | Required | Default                                 | Meaning                                          |
+| ---------------------- | -------- | -------- | --------------------------------------- | ------------------------------------------------ |
+| `fiscalYear`           | `number` | Yes      | —                                       | Fiscal year label.                               |
+| `fiscalYearStartMonth` | `number` | Yes      | —                                       | Month the fiscal year starts, from 1 through 12. |
+| `fiscalYearLabel`      | string   | No       | `"end-year"`                            | Which calendar year labels the fiscal year.      |
+| `timeZone`             | `string` | No       | The system time zone, read on each call | Zone for interval boundaries.                    |
 
 ## Examples
 
@@ -54,7 +50,8 @@ getFiscalYearInterval(2026, {
 
 ## Edge cases
 
-The end is the first instant of the next fiscal year, so the interval is half-open. With `"end-year"`, fiscal year 2027 and an April start begins on 1 April 2026. A missing start month throws a `TypeError`.
+A non-integer `fiscalYear` returns `undefined`. Missing or invalid fiscal options or `timeZone` throws.
+
 
 ## Related
 

@@ -1,4 +1,3 @@
-import { assertInteger } from "../utils/assert.utils.js";
 import { isGregorianLeapYear } from "../utils/gregorian.utils.js";
 
 /**
@@ -7,12 +6,13 @@ import { isGregorianLeapYear } from "../utils/gregorian.utils.js";
  * A leap year has 366 days. Every other year has 365.
  *
  * @param year - The Gregorian year.
- * @returns `366` in a leap year and `365` otherwise.
- * @throws {@link TypeError} When `year` is not a number.
- * @throws {@link RangeError} When `year` is not a finite integer.
+ * @returns `366` in a leap year, `365` otherwise, or `undefined` when `year` is not an integer.
  * @example
  * getDaysInYear(1900); // 365
  */
-export function getDaysInYear(year: number): 365 | 366 {
-    return isGregorianLeapYear(assertInteger(year, "year")) ? 366 : 365;
+export function getDaysInYear(year: number): 365 | 366 | undefined {
+    if (typeof year !== "number" || !Number.isInteger(year)) {
+        return undefined;
+    }
+    return isGregorianLeapYear(year) ? 366 : 365;
 }

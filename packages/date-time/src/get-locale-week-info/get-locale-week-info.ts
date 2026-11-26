@@ -1,4 +1,5 @@
 import type { LocaleWeekInfo } from "../types/calendar-grid.types.js";
+import { assertLocale } from "../utils/locale.utils.js";
 import { localeWeekInfo } from "../utils/week.utils.js";
 
 /**
@@ -9,9 +10,12 @@ import { localeWeekInfo } from "../utils/week.utils.js";
  *
  * @param locale - A BCP 47 tag. Omit it to use the runtime locale.
  * @returns The first day, weekend days, and minimum length of week 1.
+ * @throws {@link RangeError} When `locale` is not a BCP 47 language tag.
+ * @throws {@link TypeError} When `locale` is not a string.
  * @example
  * getLocaleWeekInfo("en-US").firstDay; // 7
  */
 export function getLocaleWeekInfo(locale?: string): LocaleWeekInfo {
+    assertLocale(locale);
     return localeWeekInfo(locale);
 }

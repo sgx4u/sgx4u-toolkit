@@ -11,14 +11,15 @@ import { getDateParts } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getDateParts(date: DateInput, options?: TimeZoneOptions): DateParts;
+function getDateParts(params: GetDatePartsParams): DateParts | undefined;
 ```
 
 ## Options
 
-| Name       | Type     | Default                                 | Meaning                                                              |
-| ---------- | -------- | --------------------------------------- | -------------------------------------------------------------------- |
-| `timeZone` | `string` | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
+| Name       | Type        | Required | Default                                 | Meaning                                                              |
+| ---------- | ----------- | -------- | --------------------------------------- | -------------------------------------------------------------------- |
+| `date`     | `DateInput` | Yes      | —                                       | The instant to read.                                                 |
+| `timeZone` | `string`    | No       | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
 
 ## Examples
 
@@ -46,10 +47,11 @@ getDateParts("2024-06-15T16:00:00.000Z", {
 
 ## Edge cases
 
-Months are `1` through `12`. `weekday` is the ISO number, Monday `1` through Sunday `7`. A date-only string is midnight in the zone. `offsetMinutes` can be fractional when a historical offset is not a whole minute. An unusable zone throws a `RangeError`.
+Invalid `date` returns `undefined`. An invalid `timeZone` throws.
+
 
 ## Related
 
 - [`getTimeOfDay`](../get-time-of-day/get-time-of-day.md)
-- [`getUtcOffset`](../get-utc-offset/get-utc-offset.md)
+- [`getUTCOffset`](../get-utc-offset/get-utc-offset.md)
 - [`getWallTimeStatus`](../get-wall-time-status/get-wall-time-status.md)

@@ -11,18 +11,16 @@ import { getIntervalDuration } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getIntervalDuration(
-    interval: Interval,
-    options?: IntervalDurationOptions,
-): Duration;
+function getIntervalDuration(params: GetIntervalDurationParams): Duration | undefined;
 ```
 
 ## Options
 
-| Name          | Type       | Default                                 | Meaning                                                                            |
-| ------------- | ---------- | --------------------------------------- | ---------------------------------------------------------------------------------- |
-| `largestUnit` | `TimeUnit` | `"day"`                                 | Largest unit in the result. Smaller non-zero fields are kept down to milliseconds. |
-| `timeZone`    | `string`   | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`.               |
+| Name          | Type        | Required | Default     | Meaning                                                              |
+| ------------- | ----------- | -------- | ----------- | -------------------------------------------------------------------- |
+| `interval`    | `Interval`  | Yes      | —           | Half-open interval.                                                  |
+| `largestUnit` | `TimeUnit`  | No       | `"day"`     | Largest unit in the result.                                          |
+| `timeZone`    | `string`    | No       | System zone | Zone for calendar fields.                                            |
 
 ## Examples
 
@@ -56,7 +54,8 @@ getIntervalDuration(
 
 ## Edge cases
 
-Adding the result to `start` in the same zone reaches `end` when the smallest unit is a millisecond. Zero fields are omitted. An interval whose end is before its start throws a `RangeError`. `largestUnit` must be a time unit.
+An invalid `interval` returns `undefined`. Unknown `largestUnit` or invalid `timeZone` throws.
+
 
 ## Related
 

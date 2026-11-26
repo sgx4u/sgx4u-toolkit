@@ -1,10 +1,15 @@
+import type { Interval } from "../types/interval.types.js";
 import type { TimeZoneOptions } from "../types/options.types.js";
 import type { TimeUnit } from "../types/time.types.js";
 
 /**
- * How an interval's length is broken down.
+ * Fields for {@link getIntervalDuration}.
  */
-export interface IntervalDurationOptions extends TimeZoneOptions {
+export interface GetIntervalDurationParams extends TimeZoneOptions {
+    /**
+     * The half-open interval.
+     */
+    interval: Interval;
     /**
      * The largest unit in the result.
      *

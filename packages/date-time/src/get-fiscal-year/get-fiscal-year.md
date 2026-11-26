@@ -11,21 +11,12 @@ import { getFiscalYear } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getFiscalYear(
-    date: DateInput,
-    options: FiscalYearOptions & TimeZoneOptions,
-): number;
+function getFiscalYear(params: GetFiscalYearParams): number | undefined;
 ```
 
 ## Options
 
-The options argument is required.
-
-| Name                   | Type                         | Default                                 | Meaning                                                              |
-| ---------------------- | ---------------------------- | --------------------------------------- | -------------------------------------------------------------------- |
-| `fiscalYearStartMonth` | `number`                     | `required`                              | Month the fiscal year starts, from `1` through `12`. April is `4`.   |
-| `fiscalYearLabel`      | `"start-year" \| "end-year"` | `"end-year"`                            | Which calendar year labels the fiscal year.                          |
-| `timeZone`             | `string`                     | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
+Same fields as `getFiscalQuarter`.
 
 ## Examples
 
@@ -60,7 +51,8 @@ getFiscalYear("2026-06-01T00:00:00Z", {
 
 ## Edge cases
 
-With April and the default `"end-year"` label, 1 April 2026 through 31 March 2027 is fiscal year 2027. `"start-year"` labels that span 2026. A start month of January matches the calendar year. A missing start month throws a `TypeError`.
+Invalid `date` returns `undefined`. Missing or invalid fiscal options or `timeZone` throws.
+
 
 ## Related
 

@@ -4,7 +4,8 @@ import { getDateParts } from "../index.js";
 describe("getDateParts", () => {
     it("reads wall-clock fields in the zone", () => {
         expect(
-            getDateParts("2024-06-15T16:00:00.123Z", {
+            getDateParts({
+                date: "2024-06-15T16:00:00.123Z",
                 timeZone: "America/New_York",
             }),
         ).toEqual({
@@ -21,17 +22,21 @@ describe("getDateParts", () => {
     });
 
     it("reads a date-only string as midnight in that zone", () => {
-        const parts = getDateParts("2026-11-26", { timeZone: "Asia/Kolkata" });
-
-        expect(parts.year).toBe(2026);
-        expect(parts.month).toBe(11);
-        expect(parts.day).toBe(26);
-        expect(parts.hour).toBe(0);
-        expect(parts.offsetMinutes).toBe(330);
+        const parts = getDateParts({
+            date: "2026-11-26",
+            timeZone: "Asia/Kolkata",
+        });
+        expect(parts).toBeDefined();
+        expect(parts?.year).toBe(2026);
+        expect(parts?.month).toBe(11);
+        expect(parts?.day).toBe(26);
+        expect(parts?.hour).toBe(0);
+        expect(parts?.offsetMinutes).toBe(330);
     });
 
     it("uses the system zone when timeZone is omitted", () => {
-        const parts = getDateParts("2024-06-15T00:00:00.000Z");
+        const parts = getDateParts({ date: "2024-06-15T00:00:00.000Z" });
+        expect(parts).toBeDefined();
         const systemParts = new Intl.DateTimeFormat("en-US", {
             timeZone: new Intl.DateTimeFormat().resolvedOptions().timeZone,
             hourCycle: "h23",
@@ -46,29 +51,27 @@ describe("getDateParts", () => {
                 .map((part) => [part.type, Number(part.value)]),
         );
 
-        expect(parts.year).toBe(values.get("year"));
-        expect(parts.month).toBe(values.get("month"));
-        expect(parts.day).toBe(values.get("day"));
-        expect(parts.hour).toBe(
+        expect(parts?.year).toBe(values.get("year"));
+        expect(parts?.month).toBe(values.get("month"));
+        expect(parts?.day).toBe(values.get("day"));
+        expect(parts?.hour).toBe(
             values.get("hour") === 24 ? 0 : values.get("hour"),
         );
     });
 
     it("reports a fractional offset for America/Detroit in 1904", () => {
-        const parts = getDateParts("1904-06-01T17:32:11.000Z", {
+        const parts = getDateParts({
+            date: "1904-06-01T17:32:11.000Z",
             timeZone: "America/Detroit",
         });
-
-        expect(parts.hour).toBe(12);
-        expect(parts.minute).toBe(0);
-        expect(parts.second).toBe(0);
-        expect(parts.offsetMinutes).toBeCloseTo(-332.1833333333, 6);
+        expect(parts?.hour).toBe(12);
+        expect(parts?.minute).toBe(0);
+        expect(parts?.second).toBe(0);
+        expect(parts?.offsetMinutes).toBeCloseTo(-332.1833333333, 6);
     });
 
-    it("throws for an invalid date", () => {
-        expect(() => getDateParts(Number.NaN)).toThrow(RangeError);
-        expect(() => getDateParts(true as unknown as string)).toThrow(
-            TypeError,
-        );
+    it("returns undefined for an invalid date", () => {
+        expect(getDateParts({ date: Number.NaN })).toBeUndefined();
+        expect(getDateParts({ date: true as unknown as string })).toBeUndefined();
     });
 });

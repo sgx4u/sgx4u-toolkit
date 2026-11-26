@@ -11,14 +11,15 @@ import { getEasterSunday } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getEasterSunday(year: number, options?: EasterOptions): CalendarDate;
+function getEasterSunday(params: GetEasterSundayParams): CalendarDate | undefined;
 ```
 
 ## Options
 
-| Name        | Type                      | Default     | Meaning                                                                                                             |
-| ----------- | ------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
-| `tradition` | `"western" \| "orthodox"` | `"western"` | Western Easter uses the Gregorian computus. Orthodox Easter uses the Julian computus converted to a Gregorian date. |
+| Name        | Type                      | Required | Default     | Meaning                                                                                                             |
+| ----------- | ------------------------- | -------- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
+| `year`      | `number`                  | Yes      | —           | Gregorian year from 1583 through 9999.                                                                              |
+| `tradition` | `"western" \| "orthodox"` | No       | `"western"` | Western Easter uses the Gregorian computus. Orthodox Easter uses the Julian computus converted to a Gregorian date. |
 
 ## Examples
 
@@ -37,7 +38,8 @@ getEasterSunday(2024);
 
 ## Edge cases
 
-The year must be an integer from 1583 through 9999. An unknown `tradition` throws a `RangeError`. The result is a calendar date, not an instant.
+A non-integer year or a year outside 1583 through 9999 returns `undefined`. An unknown `tradition` throws.
+
 
 ## Related
 

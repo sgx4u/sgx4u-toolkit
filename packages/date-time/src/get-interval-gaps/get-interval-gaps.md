@@ -11,15 +11,15 @@ import { getIntervalGaps } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getIntervalGaps(
-    intervals: readonly Interval[],
-    within?: Interval,
-): Interval[];
+function getIntervalGaps(params: GetIntervalGapsParams): Interval[] | undefined;
 ```
 
 ## Options
 
-This function has no options.
+| Name        | Type                  | Required | Default | Meaning                              |
+| ----------- | --------------------- | -------- | ------- | ------------------------------------ |
+| `intervals` | `readonly Interval[]` | Yes      | —       | Covered intervals.                   |
+| `within`    | `Interval`            | No       | —       | Optional window to measure inside.   |
 
 ## Examples
 
@@ -47,7 +47,8 @@ getIntervalGaps([
 
 ## Edge cases
 
-Without `within`, the result is the gaps between the sorted intervals and does not include time before the first or after the last. With `within`, the result is the part of that window the intervals do not cover. Empty gaps are omitted. Touching half-open intervals leave no gap. `intervals` must be an array, and an invalid interval throws.
+An invalid interval in the list or in `within` returns `undefined`. A non-array `intervals` throws.
+
 
 ## Related
 

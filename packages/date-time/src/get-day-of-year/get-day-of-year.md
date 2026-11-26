@@ -11,14 +11,15 @@ import { getDayOfYear } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getDayOfYear(date: DateInput, options?: TimeZoneOptions): number;
+function getDayOfYear(params: GetDayOfYearParams): number | undefined;
 ```
 
 ## Options
 
-| Name       | Type     | Default                                 | Meaning                                                              |
-| ---------- | -------- | --------------------------------------- | -------------------------------------------------------------------- |
-| `timeZone` | `string` | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
+| Name       | Type        | Required | Default                                 | Meaning                                                              |
+| ---------- | ----------- | -------- | --------------------------------------- | -------------------------------------------------------------------- |
+| `date`     | `DateInput` | Yes      | —                                       | The date to read.                                                    |
+| `timeZone` | `string`    | No       | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
 
 ## Examples
 
@@ -37,7 +38,8 @@ getDayOfYear("2023-03-01T00:00:00Z", { timeZone: "UTC" });
 
 ## Edge cases
 
-The number is the calendar day in `timeZone`, so a late UTC instant can already be the next day in a zone ahead of UTC. March 1 is day 61 in a leap year and day 60 otherwise. A value that is not a real date throws a `RangeError`.
+Invalid `date` returns `undefined`. An invalid `timeZone` throws.
+
 
 ## Related
 

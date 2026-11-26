@@ -11,15 +11,15 @@ import { getIntervalIntersection } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getIntervalIntersection(
-    first: Interval,
-    second: Interval,
-): Interval | undefined;
+function getIntervalIntersection(params: GetIntervalIntersectionParams): Interval | undefined;
 ```
 
 ## Options
 
-This function has no options.
+| Name     | Type       | Required | Default | Meaning           |
+| -------- | ---------- | -------- | ------- | ----------------- |
+| `first`  | `Interval` | Yes      | —       | First interval.   |
+| `second` | `Interval` | Yes      | —       | Second interval.  |
 
 ## Examples
 
@@ -47,7 +47,8 @@ getIntervalIntersection(
 
 ## Edge cases
 
-Intervals are half-open, so a shared endpoint is not an overlap and the result is `undefined`. An interval whose end is before its start throws a `RangeError`.
+No overlap returns `undefined`. Invalid intervals throw.
+
 
 ## Related
 

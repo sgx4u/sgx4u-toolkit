@@ -11,19 +11,17 @@ import { getHoliday } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getHoliday(
-    date: DateInput,
-    rules: readonly HolidayRule[],
-    options?: HolidayMatchOptions,
-): Holiday | undefined;
+function getHoliday(params: GetHolidayParams): Holiday | undefined;
 ```
 
 ## Options
 
-| Name                | Type      | Default                                 | Meaning                                                                                                 |
-| ------------------- | --------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `timeZone`          | `string`  | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`.                                    |
-| `matchObservedDate` | `boolean` | `true`                                  | Match the observed substitute day as well as the original date. `false` matches only the original date. |
+| Name                | Type                    | Required | Default     | Meaning                                                                                                 |
+| ------------------- | ----------------------- | -------- | ----------- | ------------------------------------------------------------------------------------------------------- |
+| `date`              | `DateInput`             | Yes      | —           | The date to test.                                                                                       |
+| `rules`             | `readonly HolidayRule[]`| Yes      | —           | Holiday rules to expand.                                                                                |
+| `timeZone`          | `string`                | No       | System zone | Calendar day for matching.                                                                              |
+| `matchObservedDate` | `boolean`               | No       | `true`      | Match the observed substitute day. When false, only the original date matches.                          |
 
 ## Examples
 
@@ -66,7 +64,8 @@ getHoliday(
 
 ## Edge cases
 
-Matching uses the calendar day in `timeZone`. The original date matches even when `matchObservedDate` is `false`. A day with no holiday returns `undefined`. `rules` must be an array. A `"year-table"` rule with no entry for that year does not match.
+Not a holiday returns `undefined`. A non-array `rules` throws. A bad `date` or invalid `timeZone` throws.
+
 
 ## Related
 

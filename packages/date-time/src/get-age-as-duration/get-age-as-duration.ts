@@ -1,17 +1,15 @@
-import type { DateInput } from "../types/date-input.types.js";
 import type { Duration } from "../types/duration.types.js";
 import {
     anniversaryDate,
     compareCalendarDates,
 } from "../utils/anniversary.utils.js";
-import { resolveDateInput, resolveNow } from "../utils/date-input.utils.js";
-import { rangeError } from "../utils/error.utils.js";
+import { readDateInput } from "../utils/date-input.utils.js";
 import {
     addGregorianMonths,
-    utcEpochMilliseconds,
+    UTCEpochMilliseconds,
 } from "../utils/gregorian.utils.js";
 import { readDateParts, resolveTimeZone } from "../utils/time-zone.utils.js";
-import type { AgeOptions } from "../get-age/get-age.types.js";
+import type { GetAgeParams } from "../get-age/get-age.types.js";
 import { readLeapDayPolicy } from "../get-age/get-age.js";
 
 /**
@@ -21,27 +19,30 @@ import { readLeapDayPolicy } from "../get-age/get-age.js";
  * the zone. A February 29 birthday follows the same common-year rule as
  * `getAge`.
  *
- * @param birthDate - The start of the age.
- * @param options - `now` defaults to the current time.
- * @returns Years, months, and days. Zero fields are omitted.
- * @throws {@link TypeError} When `birthDate` has the wrong type.
- * @throws {@link RangeError} When `birthDate` is after `now`.
+ * @param params - `birthDate` is the start; `now` defaults to the current time.
+ * @returns Years, months, and days, or `undefined` when the inputs are not usable.
+ * @throws {@link RangeError} When `leapDayBirthdayInCommonYears` is unknown, or `timeZone` is not usable.
  * @example
- * getAgeAsDuration("2020-01-31", { now: "2021-03-01T00:00:00Z", timeZone: "UTC" }); // { years: 1, months: 1, days: 1 }
+ * getAgeAsDuration({ birthDate: "2020-01-31", now: "2021-03-01T00:00:00Z", timeZone: "UTC" }); // { years: 1, months: 1, days: 1 }
  */
-export function getAgeAsDuration(
-    birthDate: DateInput,
-    options?: AgeOptions,
-): Duration {
-    const timeZone = resolveTimeZone(options?.timeZone);
-    const birth = resolveDateInput(birthDate, "birthDate", timeZone);
-    const now = resolveNow(options?.now, timeZone);
-    if (birth.getTime() > now.getTime()) {
-        throw rangeError("birthDate", "a date at or before `now`", birthDate);
+export function getAgeAsDuration({
+    birthDate,
+    now,
+    timeZone,
+    leapDayBirthdayInCommonYears,
+}: GetAgeParams): Duration | undefined {
+    const zone = resolveTimeZone(timeZone);
+    const birth = readDateInput(birthDate, zone);
+    const reference = readNow(now, zone);
+    if (birth === undefined || reference === undefined) {
+        return undefined;
     }
-    const policy = readLeapDayPolicy(options?.leapDayBirthdayInCommonYears);
-    const birthParts = readDateParts(birth.getTime(), timeZone);
-    const nowParts = readDateParts(now.getTime(), timeZone);
+    if (birth.getTime() > reference.getTime()) {
+        return undefined;
+    }
+    const policy = readLeapDayPolicy(leapDayBirthdayInCommonYears);
+    const birthParts = readDateParts(birth.getTime(), zone);
+    const nowParts = readDateParts(reference.getTime(), zone);
     let years = nowParts.year - birthParts.year;
     const anniversary = anniversaryDate(birthParts, nowParts.year, policy);
     const today = {
@@ -98,7 +99,7 @@ function dateNumber(date: {
     month: number;
     day: number;
 }): number {
-    return utcEpochMilliseconds(
+    return UTCEpochMilliseconds(
         date.year,
         date.month - 1,
         date.day,
@@ -107,4 +108,16 @@ function dateNumber(date: {
         0,
         0,
     );
+}
+
+/**
+ * @param now - An optional override for the current instant.
+ * @param timeZone - Zone for a date-only override.
+ * @returns The reference instant.
+ */
+function readNow(now: unknown, timeZone: string): Date | undefined {
+    if (now === undefined) {
+        return new Date(Date.now());
+    }
+    return readDateInput(now, timeZone);
 }

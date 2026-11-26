@@ -11,16 +11,12 @@ import { getAgeAsDuration } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getAgeAsDuration(birthDate: DateInput, options?: AgeOptions): Duration;
+function getAgeAsDuration(params: GetAgeParams): Duration | undefined;
 ```
 
 ## Options
 
-| Name                           | Type                         | Default                                 | Meaning                                                              |
-| ------------------------------ | ---------------------------- | --------------------------------------- | -------------------------------------------------------------------- |
-| `now`                          | `DateInput`                  | `Date.now()`, read on each call         | The instant to use instead of the current time.                      |
-| `timeZone`                     | `string`                     | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
-| `leapDayBirthdayInCommonYears` | `"february-28" \| "march-1"` | `"march-1"`                             | Where a February 29 birthday is reached in a common year.            |
+Uses the same fields as `getAge`.
 
 ## Examples
 
@@ -49,7 +45,8 @@ getAgeAsDuration("2000-02-29", {
 
 ## Edge cases
 
-Zero fields are omitted, so an anniversary that falls on `now` returns `{}`. A February 29 birthday follows the same common-year rule as `getAge`. A birth date after `now` throws a `RangeError`.
+Invalid inputs return `undefined`, as for `getAge`. Unknown `leapDayBirthdayInCommonYears` or an invalid `timeZone` throws.
+
 
 ## Related
 

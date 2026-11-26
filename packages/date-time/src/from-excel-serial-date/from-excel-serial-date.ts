@@ -1,5 +1,3 @@
-import type { TimeZoneOptions } from "../types/options.types.js";
-import { assertFiniteNumber } from "../utils/assert.utils.js";
 import { rangeError } from "../utils/error.utils.js";
 import { partsFromSerial } from "../utils/excel.utils.js";
 import {
@@ -7,6 +5,7 @@ import {
     resolveTimeZone,
 } from "../utils/time-zone.utils.js";
 import { readDateSystem } from "../to-excel-serial-date/to-excel-serial-date.js";
+import type { FromExcelSerialDateParams } from "./from-excel-serial-date.types.js";
 
 /**
  * Returns the date named by a spreadsheet serial number.
@@ -14,39 +13,32 @@ import { readDateSystem } from "../to-excel-serial-date/to-excel-serial-date.js"
  * In the 1900 system, serial 1 is 1900-01-01 and both 60 and 61 are
  * 1900-03-01. The fraction is the time of day in `timeZone`.
  *
- * @param serial - The serial number.
- * @param options - `dateSystem` defaults to `1900`.
- * @returns A new `Date`.
- * @throws {@link TypeError} When `serial` is not a number.
- * @throws {@link RangeError} When the serial is below the epoch.
+ * @param params - `serial` is the spreadsheet value; `dateSystem` defaults to `1900`.
+ * @returns A new `Date`, or `undefined` when `serial` is not usable.
+ * @throws {@link RangeError} When `dateSystem` is not `1900` or `1904`, or `timeZone` is not usable.
  * @example
- * fromExcelSerialDate(61, { timeZone: "UTC" }).toISOString(); // "1900-03-01T00:00:00.000Z"
+ * fromExcelSerialDate({ serial: 61, timeZone: "UTC" })?.toISOString(); // "1900-03-01T00:00:00.000Z"
  */
-export function fromExcelSerialDate(
-    serial: number,
-    options?: TimeZoneOptions & { dateSystem?: 1900 | 1904 },
-): Date {
-    const value = assertFiniteNumber(serial, "serial");
-    const dateSystem = readDateSystem(options?.dateSystem);
-    if (dateSystem === 1900 && value < 1) {
-        throw rangeError(
-            "serial",
-            "at least 1 in the 1900 date system",
-            serial,
-        );
+export function fromExcelSerialDate({
+    serial,
+    timeZone,
+    dateSystem,
+}: FromExcelSerialDateParams): Date | undefined {
+    if (typeof serial !== "number" || !Number.isFinite(serial)) {
+        return undefined;
     }
-    if (dateSystem === 1904 && value < 0) {
-        throw rangeError(
-            "serial",
-            "at least 0 in the 1904 date system",
-            serial,
-        );
+    const system = readDateSystem(dateSystem);
+    if (system === 1900 && serial < 1) {
+        return undefined;
     }
-    const parts = partsFromSerial(value, dateSystem);
+    if (system === 1904 && serial < 0) {
+        return undefined;
+    }
+    const parts = partsFromSerial(serial, system);
     return new Date(
         instantFromWallTime(
             parts,
-            resolveTimeZone(options?.timeZone),
+            resolveTimeZone(timeZone),
             "compatible",
         ),
     );

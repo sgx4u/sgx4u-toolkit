@@ -26,7 +26,9 @@ describe("holiday rules", () => {
             month: 7,
             day: 6,
         });
-        const holidays = getHolidaysInYear(2026, [
+        const holidays = getHolidaysInYear({
+            year: 2026,
+            rules: [
             {
                 name: "Good Friday",
                 date: { kind: "easter-offset", days: -2 },
@@ -35,23 +37,24 @@ describe("holiday rules", () => {
                 name: "Christmas",
                 date: { kind: "fixed", month: 12, day: 25 },
             },
-        ]);
-        expect(holidays[0]).toMatchObject({
+            ],
+        });
+        expect(holidays?.[0]).toMatchObject({
             name: "Good Friday",
             date: { year: 2026, month: 4, day: 3 },
         });
         expect(
-            getHoliday(
-                "2020-07-03T00:00:00Z",
-                [
+            getHoliday({
+                date: "2020-07-03T00:00:00Z",
+                rules: [
                     {
                         name: "Independence Day",
                         date: { kind: "fixed", month: 7, day: 4 },
                         observed: "nearest-weekday",
                     },
                 ],
-                { timeZone: "UTC" },
-            )?.name,
+                timeZone: "UTC",
+            })?.name,
         ).toBe("Independence Day");
         expect(
             isHoliday(
@@ -76,15 +79,20 @@ describe("holiday rules", () => {
         );
         expect(predicate(new Date("2026-01-25T18:30:00Z"))).toBe(true);
         expect(
-            getHolidaysInYear(2024, [
-                {
-                    name: "Diwali",
-                    date: {
-                        kind: "year-table",
-                        dates: { 2025: { year: 2025, month: 10, day: 20 } },
+            getHolidaysInYear({
+                year: 2024,
+                rules: [
+                    {
+                        name: "Diwali",
+                        date: {
+                            kind: "year-table",
+                            dates: {
+                                2025: { year: 2025, month: 10, day: 20 },
+                            },
+                        },
                     },
-                },
-            ]),
+                ],
+            }),
         ).toEqual([]);
     });
 });

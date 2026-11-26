@@ -11,16 +11,17 @@ import { getAge } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getAge(birthDate: DateInput, options?: AgeOptions): number;
+function getAge(params: GetAgeParams): number | undefined;
 ```
 
 ## Options
 
-| Name                           | Type                         | Default                                 | Meaning                                                              |
-| ------------------------------ | ---------------------------- | --------------------------------------- | -------------------------------------------------------------------- |
-| `now`                          | `DateInput`                  | `Date.now()`, read on each call         | The instant to use instead of the current time.                      |
-| `timeZone`                     | `string`                     | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
-| `leapDayBirthdayInCommonYears` | `"february-28" \| "march-1"` | `"march-1"`                             | Where a February 29 birthday is reached in a common year.            |
+| Name                           | Type                         | Required | Default                                 | Meaning                                                              |
+| ------------------------------ | ---------------------------- | -------- | --------------------------------------- | -------------------------------------------------------------------- |
+| `birthDate`                    | `DateInput`                  | Yes      | —                                       | Start of the age.                                                    |
+| `now`                          | `DateInput`                  | No       | `Date.now()`, read on each call         | The instant to use instead of the current time.                      |
+| `timeZone`                     | `string`                     | No       | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
+| `leapDayBirthdayInCommonYears` | `"february-28" \| "march-1"` | No       | `"march-1"`                             | Where a February 29 birthday is reached in a common year.            |
 
 ## Examples
 
@@ -46,7 +47,8 @@ getAge("2000-06-15", { now: "2026-06-15T00:00:00Z", timeZone: "UTC" });
 
 ## Edge cases
 
-The count uses calendar days in `timeZone`. A birth date after `now` throws a `RangeError`. A February 29 birthday is reached on March 1 in a common year unless `leapDayBirthdayInCommonYears` is `"february-28"`. The result is `0` when that anniversary has not happened yet.
+Invalid `birthDate`, `now`, or a birth after `now` returns `undefined`. Unknown `leapDayBirthdayInCommonYears` or an invalid `timeZone` throws.
+
 
 ## Related
 

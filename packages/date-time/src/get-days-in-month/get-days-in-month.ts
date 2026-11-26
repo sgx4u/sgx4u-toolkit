@@ -1,5 +1,5 @@
-import { assertInteger, assertIntegerInRange } from "../utils/assert.utils.js";
 import { daysInGregorianMonth } from "../utils/gregorian.utils.js";
+import type { GetDaysInMonthParams } from "./get-days-in-month.types.js";
 
 /**
  * Returns the number of days in a Gregorian month.
@@ -7,16 +7,23 @@ import { daysInGregorianMonth } from "../utils/gregorian.utils.js";
  * February has 29 days in a leap year and 28 otherwise. `month` is `1`
  * for January through `12` for December.
  *
- * @param year - The Gregorian year.
- * @param month - The month, from 1 through 12.
- * @returns `28`, `29`, `30`, or `31`.
- * @throws {@link TypeError} When `year` or `month` is not a number.
- * @throws {@link RangeError} When `year` is not an integer, or `month` is outside 1 through 12.
+ * @param params - `year` and `month` name the month to measure.
+ * @returns `28`, `29`, `30`, or `31`, or `undefined` when `year` or `month` is not usable.
  * @example
- * getDaysInMonth(2024, 2); // 29
+ * getDaysInMonth({ year: 2024, month: 2 }); // 29
  */
-export function getDaysInMonth(year: number, month: number): number {
-    const yearNumber = assertInteger(year, "year");
-    const monthNumber = assertIntegerInRange(month, "month", 1, 12);
-    return daysInGregorianMonth(yearNumber, monthNumber);
+export function getDaysInMonth({
+    year,
+    month,
+}: GetDaysInMonthParams): 28 | 29 | 30 | 31 | undefined {
+    if (typeof year !== "number" || !Number.isInteger(year)) {
+        return undefined;
+    }
+    if (typeof month !== "number" || !Number.isInteger(month)) {
+        return undefined;
+    }
+    if (month < 1 || month > 12) {
+        return undefined;
+    }
+    return daysInGregorianMonth(year, month);
 }

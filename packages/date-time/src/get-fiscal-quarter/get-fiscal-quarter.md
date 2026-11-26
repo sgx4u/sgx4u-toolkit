@@ -11,21 +11,17 @@ import { getFiscalQuarter } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function getFiscalQuarter(
-    date: DateInput,
-    options: FiscalYearOptions & TimeZoneOptions,
-): 1 | 2 | 3 | 4;
+function getFiscalQuarter(params: GetFiscalQuarterParams): 1 | 2 | 3 | 4 | undefined;
 ```
 
 ## Options
 
-The options argument is required.
-
-| Name                   | Type                         | Default                                 | Meaning                                                                          |
-| ---------------------- | ---------------------------- | --------------------------------------- | -------------------------------------------------------------------------------- |
-| `fiscalYearStartMonth` | `number`                     | `required`                              | Month the fiscal year starts, from `1` through `12`. April is `4`.               |
-| `fiscalYearLabel`      | `"start-year" \| "end-year"` | `"end-year"`                            | Which calendar year labels the fiscal year. The quarter does not use this label. |
-| `timeZone`             | `string`                     | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`.             |
+| Name                   | Type        | Required | Default                                 | Meaning                                                              |
+| ---------------------- | ----------- | -------- | --------------------------------------- | -------------------------------------------------------------------- |
+| `date`                 | `DateInput` | Yes      | —                                       | The date to read.                                                    |
+| `fiscalYearStartMonth` | `number`    | Yes      | —                                       | Month the fiscal year starts, from 1 through 12.                     |
+| `fiscalYearLabel`      | string      | No       | `"end-year"`                            | Which calendar year labels the fiscal year.                          |
+| `timeZone`             | `string`    | No       | The system time zone, read on each call | An IANA time zone name, `"UTC"`, or a fixed offset such as `+05:30`. |
 
 ## Examples
 
@@ -53,7 +49,8 @@ getFiscalQuarter("2026-03-31T00:00:00Z", {
 
 ## Edge cases
 
-The first quarter starts on `fiscalYearStartMonth`. A missing start month throws a `TypeError`. A start month outside 1 through 12 throws a `RangeError`. The quarter is read from the calendar day in `timeZone`.
+Invalid `date` returns `undefined`. Missing or invalid `fiscalYearStartMonth`, `fiscalYearLabel`, or `timeZone` throws.
+
 
 ## Related
 
