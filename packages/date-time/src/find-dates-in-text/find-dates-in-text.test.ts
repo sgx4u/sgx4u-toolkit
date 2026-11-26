@@ -5,7 +5,8 @@ const now = "2026-11-26T12:00:00Z";
 
 describe("findDatesInText", () => {
     it("finds tomorrow and a weekday range from the supplied now", () => {
-        const tomorrow = findDatesInText("See you tomorrow", {
+        const tomorrow = findDatesInText({
+            text: "See you tomorrow",
             now,
             timeZone: "UTC",
         });
@@ -14,7 +15,8 @@ describe("findDatesInText", () => {
         expect(tomorrow[0]?.start.toISOString()).toBe(
             "2026-11-27T00:00:00.000Z",
         );
-        const range = findDatesInText("from Monday to Wednesday", {
+        const range = findDatesInText({
+            text: "from Monday to Wednesday",
             now,
             timeZone: "UTC",
         });
@@ -23,7 +25,8 @@ describe("findDatesInText", () => {
     });
 
     it("finds leap day and New Year's Day, and prefers a future month-day by default", () => {
-        const found = findDatesInText("On 2024-02-29. On 2025-01-01.", {
+        const found = findDatesInText({
+            text: "On 2024-02-29. On 2025-01-01.",
             now: "2024-01-01T00:00:00Z",
             timeZone: "UTC",
         });
@@ -36,13 +39,15 @@ describe("findDatesInText", () => {
             "2025-01-01T00:00:00.000Z",
         ]);
         expect(
-            findDatesInText("Dec 25", {
+            findDatesInText({
+                text: "Dec 25",
                 now: "2026-12-26T00:00:00Z",
                 timeZone: "UTC",
             })[0]?.start.toISOString(),
         ).toBe("2027-12-25T00:00:00.000Z");
         expect(
-            findDatesInText("Dec 25", {
+            findDatesInText({
+                text: "Dec 25",
                 now: "2026-12-26T00:00:00Z",
                 timeZone: "UTC",
                 preferFuture: false,
@@ -51,7 +56,8 @@ describe("findDatesInText", () => {
     });
 
     it("places March 10 and March 11 at the Eastern offset around the spring-forward", () => {
-        const found = findDatesInText("Visit 2024-03-10. Leave 2024-03-11.", {
+        const found = findDatesInText({
+            text: "Visit 2024-03-10. Leave 2024-03-11.",
             now: "2024-01-01T00:00:00Z",
             timeZone: "America/New_York",
         });
@@ -63,16 +69,16 @@ describe("findDatesInText", () => {
 
     it("returns an empty list for prose without a date and rejects a non-string", () => {
         expect(
-            findDatesInText("no dates here", { now, timeZone: "UTC" }),
+            findDatesInText({ text: "no dates here", now, timeZone: "UTC" }),
         ).toEqual([]);
-        expect(() => findDatesInText(1 as unknown as string)).toThrow(
+        expect(() => findDatesInText({ text: 1 as unknown as string })).toThrow(
             TypeError,
         );
-        expect(() => findDatesInText(1 as unknown as string)).toThrow(
+        expect(() => findDatesInText({ text: 1 as unknown as string })).toThrow(
             "`text` must be a string; received 1.",
         );
         expect(() =>
-            findDatesInText("tomorrow", { now: "nope", timeZone: "UTC" }),
+            findDatesInText({ text: "tomorrow", now: "nope", timeZone: "UTC" }),
         ).toThrow(RangeError);
     });
 });

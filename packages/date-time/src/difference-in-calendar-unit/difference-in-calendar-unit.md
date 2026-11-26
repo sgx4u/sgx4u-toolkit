@@ -56,7 +56,7 @@ differenceInCalendarUnit(
 
 ## Edge cases
 
-December 31 to January 1 is one year even though one calendar day passed. A unit other than `"year"`, `"quarter"`, `"month"`, `"week"`, or `"day"` throws `RangeError`. A date that does not parse throws `RangeError`. The result is negative when `later` is before `earlier`. Weeks use `weekStartsOn`.
+December 31 to January 1 is one year even though one calendar day passed. A unit other than `"year"`, `"quarter"`, `"month"`, `"week"`, or `"day"` throws `RangeError`. A date that is not usable returns `undefined`. The result is negative when `later` is before `earlier`. Weeks use `weekStartsOn`.
 
 ## Related
 

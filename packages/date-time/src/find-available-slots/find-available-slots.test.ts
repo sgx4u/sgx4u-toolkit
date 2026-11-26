@@ -3,14 +3,12 @@ import { findAvailableSlots } from "../index.js";
 
 describe("findAvailableSlots", () => {
     it("skips a busy block and stays inside a daily window", () => {
-        const slots = findAvailableSlots(
-            [{ start: new Date(10), end: new Date(20) }],
-            {
-                within: { start: new Date(0), end: new Date(40) },
-                slotDuration: { milliseconds: 10 },
-                timeZone: "UTC",
-            },
-        );
+        const slots = findAvailableSlots({
+            busy: [{ start: new Date(10), end: new Date(20) }],
+            within: { start: new Date(0), end: new Date(40) },
+            slotDuration: { milliseconds: 10 },
+            timeZone: "UTC",
+        });
         expect(
             slots.map((slot) => [slot.start.getTime(), slot.end.getTime()]),
         ).toEqual([
@@ -18,7 +16,8 @@ describe("findAvailableSlots", () => {
             [20, 30],
             [30, 40],
         ]);
-        const windowed = findAvailableSlots([], {
+        const windowed = findAvailableSlots({
+            busy: [],
             within: {
                 start: new Date("2026-11-26T08:00:00Z"),
                 end: new Date("2026-11-26T18:00:00Z"),

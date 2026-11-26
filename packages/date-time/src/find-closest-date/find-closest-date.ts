@@ -1,5 +1,5 @@
-import type { DateInput } from "../types/date-input.types.js";
 import { closestDate } from "../utils/compare.utils.js";
+import type { FindClosestDateParams } from "./find-closest-date.types.js";
 
 /**
  * Returns the candidate nearest to a target.
@@ -8,17 +8,19 @@ import { closestDate } from "../utils/compare.utils.js";
  * instant, the first one in the list wins. An empty list returns
  * `undefined`.
  *
- * @param target - The instant to approach.
- * @param candidates - The dates to search. The array is not reordered.
+ * @param params - `target` and `candidates` are required.
  * @returns A new `Date`, or `undefined` when `candidates` is empty.
  * @throws {@link TypeError} When `candidates` is not an array.
- * @throws {@link RangeError} When a value is not a real date.
+ * @throws {@link RangeError} When `target` or a candidate is not a real date.
  * @example
- * findClosestDate("2024-01-01T12:00:00Z", ["2024-01-01T00:00:00Z", "2024-01-02T00:00:00Z"])?.toISOString(); // "2024-01-01T00:00:00.000Z"
+ * findClosestDate({
+ *   target: "2024-01-01T12:00:00Z",
+ *   candidates: ["2024-01-01T00:00:00Z", "2024-01-02T00:00:00Z"],
+ * })?.toISOString(); // "2024-01-01T00:00:00.000Z"
  */
-export function findClosestDate(
-    target: DateInput,
-    candidates: readonly DateInput[],
-): Date | undefined {
+export function findClosestDate({
+    target,
+    candidates,
+}: FindClosestDateParams): Date | undefined {
     return closestDate(target, candidates)?.date;
 }

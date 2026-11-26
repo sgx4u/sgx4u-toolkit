@@ -46,7 +46,7 @@ formatRelativeTime("2026-01-01T03:00:00Z", {
 
 ## Edge cases
 
-The text comes from `Intl.RelativeTimeFormat`. A millisecond result uses `Intl.NumberFormat`. An unknown `style` or `numeric` throws `RangeError`. A date that does not parse throws `RangeError`. `"auto"` chooses the unit from the elapsed time and does not choose weeks.
+The text comes from `Intl.RelativeTimeFormat`. A millisecond result uses `Intl.NumberFormat`. An unknown `style` or `numeric` throws `RangeError`. A date that is not usable returns `undefined`. `"auto"` chooses the unit from the elapsed time and does not choose weeks.
 
 ## Related
 

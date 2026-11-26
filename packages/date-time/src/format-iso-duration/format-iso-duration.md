@@ -1,17 +1,17 @@
-# `formatIsoDuration`
+# `formatISODuration`
 
 Formats a duration as an ISO 8601 duration.
 
 ## Import
 
 ```ts
-import { formatIsoDuration } from "@sgx4u/date-time";
+import { formatISODuration } from "@sgx4u/date-time";
 ```
 
 ## Signature
 
 ```ts
-function formatIsoDuration(duration: Duration): string;
+function formatISODuration(duration: Duration): string;
 ```
 
 ## Options
@@ -21,16 +21,16 @@ This function has no options.
 ## Examples
 
 ```ts
-formatIsoDuration({ hours: 1, minutes: 30 });
+formatISODuration({ hours: 1, minutes: 30 });
 // "PT1H30M"
 
-formatIsoDuration({});
+formatISODuration({});
 // "PT0S"
 
-formatIsoDuration({ days: -1, hours: -2 });
+formatISODuration({ days: -1, hours: -2 });
 // "-P1DT2H"
 
-formatIsoDuration({ years: 1, months: 2, days: 29 });
+formatISODuration({ years: 1, months: 2, days: 29 });
 // "P1Y2M29D"
 ```
 
@@ -40,5 +40,5 @@ A zero duration is `PT0S`. One week is `P1W`. `1` second and `250` milliseconds 
 
 ## Related
 
-- [`parseIsoDuration`](../parse-iso-duration/parse-iso-duration.md) reads an ISO 8601 duration.
+- [`parseISODuration`](../parse-iso-duration/parse-iso-duration.md) reads an ISO 8601 duration.
 - [`formatDuration`](../format-duration/format-duration.md) writes the duration for people.

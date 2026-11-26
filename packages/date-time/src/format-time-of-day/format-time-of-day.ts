@@ -1,29 +1,35 @@
-import type { TimeOfDay } from "../types/time.types.js";
-import { rangeError, typeError } from "../utils/error.utils.js";
-import type { FormatTimeOfDayOptions } from "./format-time-of-day.types.js";
+import { rangeError } from "../utils/error.utils.js";
+import type { FormatTimeOfDayParams } from "./format-time-of-day.types.js";
 
 /**
  * Formats a time of day in a locale.
  *
- * @param time - The time to format.
- * @param options - `precision` defaults to `"minute"`.
- * @returns Locale clock text.
+ * @param params - `time` is required. `precision` defaults to `"minute"`.
+ * @returns Locale clock text, or `undefined` when `time` is not usable.
  * @throws {@link RangeError} When the precision or hour cycle is unknown.
  * @example
- * formatTimeOfDay({ hour: 15, minute: 30, second: 0, millisecond: 0 }, { locale: "en-US", hourCycle: "h23" }); // "15:30"
+ * formatTimeOfDay({
+ *   time: { hour: 15, minute: 30, second: 0, millisecond: 0 },
+ *   locale: "en-US",
+ *   hourCycle: "h23",
+ * }); // "15:30"
  */
-export function formatTimeOfDay(
-    time: TimeOfDay,
-    options?: FormatTimeOfDayOptions,
-): string {
+export function formatTimeOfDay({
+    time,
+    locale,
+    precision = "minute",
+    hourCycle,
+}: FormatTimeOfDayParams): string | undefined {
     if (
         typeof time !== "object" ||
         time === null ||
-        !Number.isFinite(time.hour)
+        !Number.isFinite(time.hour) ||
+        !Number.isFinite(time.minute) ||
+        !Number.isFinite(time.second) ||
+        !Number.isFinite(time.millisecond)
     ) {
-        throw typeError("time", "a time of day", time);
+        return undefined;
     }
-    const precision = options?.precision ?? "minute";
     if (
         precision !== "minute" &&
         precision !== "second" &&
@@ -34,6 +40,9 @@ export function formatTimeOfDay(
             `"minute", "second", or "millisecond"`,
             precision,
         );
+    }
+    if (hourCycle !== undefined && hourCycle !== "h12" && hourCycle !== "h23") {
+        throw rangeError("hourCycle", `"h12" or "h23"`, hourCycle);
     }
     const instant = new Date(
         Date.UTC(
@@ -46,7 +55,7 @@ export function formatTimeOfDay(
             time.millisecond,
         ),
     );
-    return new Intl.DateTimeFormat(options?.locale, {
+    return new Intl.DateTimeFormat(locale, {
         timeZone: "UTC",
         hour: "numeric",
         minute: "2-digit",
@@ -54,8 +63,6 @@ export function formatTimeOfDay(
         ...(precision === "millisecond"
             ? { fractionalSecondDigits: 3 as const }
             : {}),
-        ...(options?.hourCycle !== undefined
-            ? { hourCycle: options.hourCycle }
-            : {}),
+        ...(hourCycle !== undefined ? { hourCycle } : {}),
     }).format(instant);
 }

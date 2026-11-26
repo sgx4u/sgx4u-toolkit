@@ -47,4 +47,4 @@ Zero is `"0s"`. A negative duration keeps the sign on each unit, so `{ hours: -1
 ## Related
 
 - [`formatDuration`](../format-duration/format-duration.md) writes localized unit names.
-- [`formatIsoDuration`](../format-iso-duration/format-iso-duration.md) writes an ISO 8601 duration.
+- [`formatISODuration`](../format-iso-duration/format-iso-duration.md) writes an ISO 8601 duration.

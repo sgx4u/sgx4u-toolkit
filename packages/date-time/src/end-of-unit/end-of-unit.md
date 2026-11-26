@@ -37,7 +37,7 @@ endOfUnit("2026-11-26T15:45:00Z", "year", { timeZone: "UTC" }).toISOString();
 
 ## Edge cases
 
-The result is one millisecond before the next unit starts. `unit` may be a time unit or `"decade"`. An unknown unit throws `RangeError`. A date that does not parse throws `RangeError`. The end is wall time in the zone, so the length of the unit in elapsed milliseconds changes across a daylight-saving transition. February's end is the 28th, or the 29th in a leap year.
+The result is one millisecond before the next unit starts. `unit` may be a time unit or `"decade"`. An unknown unit throws `RangeError`. A date that is not usable returns `undefined`. The end is wall time in the zone, so the length of the unit in elapsed milliseconds changes across a daylight-saving transition. February's end is the 28th, or the 29th in a leap year.
 
 ## Related
 

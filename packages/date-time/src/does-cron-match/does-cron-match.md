@@ -44,7 +44,7 @@ doesCronMatch("30 1 * * *", "2024-11-03T05:30:00Z", {
 
 ## Edge cases
 
-When both the day of the month and the day of the week are restricted, either field matching is enough. An expression that does not parse returns `false`. A date that does not parse throws `RangeError`. On the New York fall-back, both 01:30 instants (`2024-11-03T05:30:00Z` and `2024-11-03T06:30:00Z`) match `30 1 * * *`. The skipped 02:30 on `2024-03-10` does not match `30 2 * * *`.
+When both the day of the month and the day of the week are restricted, either field matching is enough. An expression that does not parse returns `false`. A date that is not usable returns `undefined`. On the New York fall-back, both 01:30 instants (`2024-11-03T05:30:00Z` and `2024-11-03T06:30:00Z`) match `30 1 * * *`. The skipped 02:30 on `2024-03-10` does not match `30 2 * * *`.
 
 ## Related
 

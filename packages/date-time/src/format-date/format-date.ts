@@ -1,8 +1,8 @@
-import type { DateInput } from "../types/date-input.types.js";
-import type { LocaleOptions, TimeZoneOptions } from "../types/options.types.js";
-import { resolveDateInput } from "../utils/date-input.utils.js";
+import { readDateInput } from "../utils/date-input.utils.js";
+import { typeError } from "../utils/error.utils.js";
 import { formatWithPattern } from "../utils/format-pattern.utils.js";
 import { readDateParts, resolveTimeZone } from "../utils/time-zone.utils.js";
+import type { FormatDateParams } from "./format-date.types.js";
 
 /**
  * Formats a date with Unicode CLDR field tokens.
@@ -12,27 +12,37 @@ import { readDateParts, resolveTimeZone } from "../utils/time-zone.utils.js";
  * periods, and zone names come from `Intl`. An ASCII letter run that is
  * not a supported token throws.
  *
- * @param date - The instant to format.
- * @param pattern - A pattern such as `yyyy-MM-dd HH:mm`.
- * @param options - `timeZone` defaults to the system zone. `locale` defaults to the runtime locale.
- * @returns The formatted text.
+ * @param params - `date` and `pattern` are required. `timeZone` defaults to the system zone and `locale` to the runtime locale.
+ * @returns The formatted text, or `undefined` when `date` is not usable.
  * @throws {@link TypeError} When `pattern` is not a string.
- * @throws {@link RangeError} When `date`, the zone, or a token is invalid.
+ * @throws {@link RangeError} When the zone or a token is invalid.
  * @example
- * formatDate("2026-11-25T22:00:00.000Z", "yyyy-MM-dd HH:mm", { timeZone: "Asia/Kolkata" }); // "2026-11-26 03:30"
+ * formatDate({
+ *   date: "2026-11-25T22:00:00.000Z",
+ *   pattern: "yyyy-MM-dd HH:mm",
+ *   timeZone: "Asia/Kolkata",
+ * }); // "2026-11-26 03:30"
  */
-export function formatDate(
-    date: DateInput,
-    pattern: string,
-    options?: TimeZoneOptions & LocaleOptions,
-): string {
-    const timeZone = resolveTimeZone(options?.timeZone);
-    const instant = resolveDateInput(date, "date").getTime();
+export function formatDate({
+    date,
+    pattern,
+    timeZone,
+    locale,
+}: FormatDateParams): string | undefined {
+    if (typeof pattern !== "string") {
+        throw typeError("pattern", "a string", pattern);
+    }
+    const zone = resolveTimeZone(timeZone);
+    const resolved = readDateInput(date, zone);
+    if (resolved === undefined) {
+        return undefined;
+    }
+    const instant = resolved.getTime();
     return formatWithPattern(
-        readDateParts(instant, timeZone),
+        readDateParts(instant, zone),
         pattern,
-        options?.locale,
-        timeZone,
+        locale,
+        zone,
         instant,
     );
 }

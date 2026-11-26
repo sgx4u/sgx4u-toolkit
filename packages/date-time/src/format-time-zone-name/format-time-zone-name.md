@@ -54,6 +54,6 @@ Names can change with daylight saving, so `at` selects which name is read. An un
 
 ## Related
 
-- [`formatUtcOffset`](../format-utc-offset/format-utc-offset.md) writes the offset in minutes as text.
-- [`getUtcOffset`](../get-utc-offset/get-utc-offset.md) returns the offset in minutes.
+- [`formatUTCOffset`](../format-utc-offset/format-utc-offset.md) writes the offset in minutes as text.
+- [`getUTCOffset`](../get-utc-offset/get-utc-offset.md) returns the offset in minutes.
 - [`listTimeZones`](../list-time-zones/list-time-zones.md) lists IANA time zone names.

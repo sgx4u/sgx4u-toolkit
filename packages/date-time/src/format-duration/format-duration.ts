@@ -1,8 +1,7 @@
-import type { Duration } from "../types/duration.types.js";
-import { assertDuration, durationFieldNames } from "../utils/duration.utils.js";
+import { durationFieldNames, readDuration } from "../utils/duration.utils.js";
 import { rangeError } from "../utils/error.utils.js";
 import { formatClockText } from "../utils/duration-text.utils.js";
-import type { FormatDurationOptions } from "./format-duration.types.js";
+import type { FormatDurationParams } from "./format-duration.types.js";
 
 const singularUnit: Readonly<Record<string, string>> = {
     years: "year",
@@ -23,19 +22,21 @@ const singularUnit: Readonly<Record<string, string>> = {
  * `"digital"` falls back to `formatDurationAsClock` when `DurationFormat`
  * is missing.
  *
- * @param duration - The duration to format.
- * @param options - `style` defaults to `"long"`.
- * @returns The localized text.
- * @throws {@link RangeError} When `duration` or `style` is invalid.
+ * @param params - `duration` is required. `style` defaults to `"long"`.
+ * @returns The localized text, or `undefined` when `duration` is not usable.
+ * @throws {@link RangeError} When `style` is invalid.
  * @example
- * formatDuration({ hours: 1, minutes: 30 }, { locale: "en" }); // "1 hour, 30 minutes"
+ * formatDuration({ duration: { hours: 1, minutes: 30 }, locale: "en" }); // "1 hour, 30 minutes"
  */
-export function formatDuration(
-    duration: Duration,
-    options?: FormatDurationOptions,
-): string {
-    const checked = assertDuration(duration, "duration");
-    const style = options?.style ?? "long";
+export function formatDuration({
+    duration,
+    style = "long",
+    locale,
+}: FormatDurationParams): string | undefined {
+    const checked = readDuration(duration);
+    if (checked === undefined) {
+        return undefined;
+    }
     if (
         style !== "long" &&
         style !== "short" &&
@@ -48,13 +49,12 @@ export function formatDuration(
             style,
         );
     }
-    const locale = options?.locale;
     const DurationFormat = (
         Intl as unknown as {
             DurationFormat?: new (
                 locales?: string | readonly string[],
                 formatOptions?: { style?: string },
-            ) => { format: (value: Duration) => string };
+            ) => { format: (value: typeof checked) => string };
         }
     ).DurationFormat;
     if (DurationFormat !== undefined) {

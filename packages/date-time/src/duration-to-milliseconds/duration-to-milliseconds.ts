@@ -1,21 +1,10 @@
 import type { DateInput } from "../types/date-input.types.js";
-import type { Duration } from "../types/duration.types.js";
-import type { TimeZoneOptions } from "../types/options.types.js";
 import { addDuration } from "../add-duration/add-duration.js";
-import { assertDuration } from "../utils/duration.utils.js";
+import { readDateInput } from "../utils/date-input.utils.js";
+import { readDuration } from "../utils/duration.utils.js";
 import { rangeError } from "../utils/error.utils.js";
-import { resolveDateInput } from "../utils/date-input.utils.js";
 import { resolveTimeZone } from "../utils/time-zone.utils.js";
-
-/**
- * Options for measuring a duration in milliseconds.
- */
-export interface DurationToMillisecondsOptions extends TimeZoneOptions {
-    /**
-     * The instant used when the duration contains months or years.
-     */
-    relativeTo?: DateInput;
-}
+import type { DurationToMillisecondsParams } from "./duration-to-milliseconds.types.js";
 
 /**
  * Returns the exact length of a duration in milliseconds.
@@ -23,21 +12,24 @@ export interface DurationToMillisecondsOptions extends TimeZoneOptions {
  * Without `relativeTo`, a day is 24 hours and a week is 7 days. Months or
  * years without `relativeTo` throw.
  *
- * @param duration - The duration to measure.
- * @param options - `relativeTo` is required for months or years.
- * @returns The signed length in milliseconds.
- * @throws {@link RangeError} When months or years are present without `relativeTo`.
+ * @param params - `duration` is required. `relativeTo` is required for months or years.
+ * @returns The signed length in milliseconds, or `undefined` when `duration` or `relativeTo` is not usable.
+ * @throws {@link RangeError} When months or years are present without `relativeTo`, or `timeZone` is unusable.
  * @example
- * durationToMilliseconds({ hours: 1, minutes: 30 }); // 5400000
+ * durationToMilliseconds({ duration: { hours: 1, minutes: 30 } }); // 5400000
  */
-export function durationToMilliseconds(
-    duration: Duration,
-    options?: DurationToMillisecondsOptions,
-): number {
-    const checked = assertDuration(duration, "duration");
+export function durationToMilliseconds({
+    duration,
+    relativeTo,
+    timeZone,
+}: DurationToMillisecondsParams): number | undefined {
+    const checked = readDuration(duration);
+    if (checked === undefined) {
+        return undefined;
+    }
     if (
         ((checked.years ?? 0) !== 0 || (checked.months ?? 0) !== 0) &&
-        options?.relativeTo === undefined
+        relativeTo === undefined
     ) {
         throw rangeError(
             "duration",
@@ -45,17 +37,21 @@ export function durationToMilliseconds(
             duration,
         );
     }
-    if (options?.relativeTo !== undefined) {
-        const timeZone = resolveTimeZone(options.timeZone);
-        const start = resolveDateInput(
-            options.relativeTo,
-            "relativeTo",
-            timeZone,
-        );
-        return (
-            addDuration(start, checked, { timeZone }).getTime() -
-            start.getTime()
-        );
+    if (relativeTo !== undefined) {
+        const zone = resolveTimeZone(timeZone);
+        const start = readDateInput(relativeTo, zone);
+        if (start === undefined) {
+            return undefined;
+        }
+        const end = addDuration({
+            date: start,
+            duration: checked,
+            timeZone: zone,
+        });
+        if (end === undefined) {
+            return undefined;
+        }
+        return end.getTime() - start.getTime();
     }
     return (
         (checked.weeks ?? 0) * 7 * 86_400_000 +

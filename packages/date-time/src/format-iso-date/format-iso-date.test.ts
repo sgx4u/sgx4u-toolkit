@@ -1,17 +1,17 @@
 import { describe, expect, it } from "vitest";
 import {
-    formatHttpDate,
-    formatRfc2822Date,
+    formatHTTPDate,
+    formatRFC2822Date,
     fromExcelSerialDate,
-    formatIsoDate,
-    formatIsoDateTime,
+    formatISODate,
+    formatISODateTime,
     fromJulianDate,
     fromUnixSeconds,
-    parseIsoDate,
-    parseHttpDate,
-    parseRfc2822Date,
-    parseIsoDateTime,
-    reviveIsoDateTimes,
+    parseISODate,
+    parseHTTPDate,
+    parseRFC2822Date,
+    parseISODateTime,
+    reviveISODateTimes,
     toExcelSerialDate,
     toJulianDate,
     toUnixSeconds,
@@ -20,16 +20,21 @@ import {
 describe("ISO interchange", () => {
     it("formats the zone's calendar date and offset", () => {
         expect(
-            formatIsoDate("2026-11-25T22:00:00Z", { timeZone: "Asia/Kolkata" }),
+            formatISODate({
+                date: "2026-11-25T22:00:00Z",
+                timeZone: "Asia/Kolkata",
+            }),
         ).toBe("2026-11-26");
         expect(
-            formatIsoDateTime("2026-11-25T22:00:00.000Z", {
+            formatISODateTime({
+                date: "2026-11-25T22:00:00.000Z",
                 timeZone: "Asia/Kolkata",
                 precision: "minute",
             }),
         ).toBe("2026-11-26T03:30+05:30");
         expect(
-            formatIsoDateTime("2026-11-25T22:00:00.000Z", {
+            formatISODateTime({
+                date: "2026-11-25T22:00:00.000Z",
                 timeZone: "UTC",
                 includeTimeZoneName: true,
             }),
@@ -38,30 +43,38 @@ describe("ISO interchange", () => {
 
     it("parses calendar dates, offsets, and a disagreeing zone", () => {
         expect(
-            parseIsoDate("2026-11-26", {
+            parseISODate({
+                value: "2026-11-26",
                 timeZone: "Asia/Kolkata",
             })?.toISOString(),
         ).toBe("2026-11-25T18:30:00.000Z");
-        expect(parseIsoDate("2026-02-30")).toBeUndefined();
+        expect(parseISODate({ value: "2026-02-30" })).toBeUndefined();
         expect(
-            parseIsoDateTime("2026-11-26T03:30:00+0530")?.toISOString(),
+            parseISODateTime({
+                value: "2026-11-26T03:30:00+0530",
+            })?.toISOString(),
         ).toBe("2026-11-25T22:00:00.000Z");
-        expect(parseIsoDateTime("2026-11-26T03:30:00.1239Z")?.getTime()).toBe(
-            Date.parse("2026-11-26T03:30:00.123Z"),
-        );
-        expect(parseIsoDateTime("2026-11-26T03:30:00")).toBeUndefined();
         expect(
-            parseIsoDateTime("2026-11-26T03:30:00", {
+            parseISODateTime({ value: "2026-11-26T03:30:00.1239Z" })?.getTime(),
+        ).toBe(Date.parse("2026-11-26T03:30:00.123Z"));
+        expect(
+            parseISODateTime({ value: "2026-11-26T03:30:00" }),
+        ).toBeUndefined();
+        expect(
+            parseISODateTime({
+                value: "2026-11-26T03:30:00",
                 defaultTimeZone: "Asia/Kolkata",
             })?.toISOString(),
         ).toBe("2026-11-25T22:00:00.000Z");
         expect(
-            parseIsoDateTime(
-                "2026-11-26T03:30:00+05:30[Asia/Kolkata]",
-            )?.toISOString(),
+            parseISODateTime({
+                value: "2026-11-26T03:30:00+05:30[Asia/Kolkata]",
+            })?.toISOString(),
         ).toBe("2026-11-25T22:00:00.000Z");
         expect(
-            parseIsoDateTime("2026-11-26T03:30:00+00:00[Asia/Kolkata]"),
+            parseISODateTime({
+                value: "2026-11-26T03:30:00+00:00[Asia/Kolkata]",
+            }),
         ).toBeUndefined();
     });
 
@@ -78,50 +91,58 @@ describe("ISO interchange", () => {
                 at: "2026-11-26T03:30:00+05:30",
                 day: "2026-11-26",
             }),
-            reviveIsoDateTimes,
+            reviveISODateTimes,
         ) as { at: Date; day: string };
         expect(revived.at.toISOString()).toBe("2026-11-25T22:00:00.000Z");
         expect(revived.day).toBe("2026-11-26");
     });
 
     it("formats HTTP dates and spreadsheet serials", () => {
-        expect(formatHttpDate("2026-11-26T22:00:00.000Z")).toBe(
+        expect(formatHTTPDate("2026-11-26T22:00:00.000Z")).toBe(
             "Thu, 26 Nov 2026 22:00:00 GMT",
         );
         expect(
-            parseHttpDate("Thu, 26 Nov 2026 22:00:00 GMT")?.toISOString(),
+            parseHTTPDate("Thu, 26 Nov 2026 22:00:00 GMT")?.toISOString(),
         ).toBe("2026-11-26T22:00:00.000Z");
-        expect(parseHttpDate("not a date")).toBeUndefined();
+        expect(parseHTTPDate("not a date")).toBeUndefined();
         expect(
-            toExcelSerialDate("1900-03-01T00:00:00Z", { timeZone: "UTC" }),
+            toExcelSerialDate({
+                date: "1900-03-01T00:00:00Z",
+                timeZone: "UTC",
+            }),
         ).toBe(61);
         expect(
-            toExcelSerialDate("1900-01-01T00:00:00Z", { timeZone: "UTC" }),
+            toExcelSerialDate({
+                date: "1900-01-01T00:00:00Z",
+                timeZone: "UTC",
+            }),
         ).toBe(1);
-        expect(fromExcelSerialDate(60, { timeZone: "UTC" }).toISOString()).toBe(
-            "1900-03-01T00:00:00.000Z",
-        );
-        expect(fromExcelSerialDate(61, { timeZone: "UTC" }).toISOString()).toBe(
-            "1900-03-01T00:00:00.000Z",
-        );
         expect(
-            fromExcelSerialDate(0, {
+            fromExcelSerialDate({ serial: 60, timeZone: "UTC" })?.toISOString(),
+        ).toBe("1900-03-01T00:00:00.000Z");
+        expect(
+            fromExcelSerialDate({ serial: 61, timeZone: "UTC" })?.toISOString(),
+        ).toBe("1900-03-01T00:00:00.000Z");
+        expect(
+            fromExcelSerialDate({
+                serial: 0,
                 timeZone: "UTC",
                 dateSystem: 1904,
-            }).toISOString(),
+            })?.toISOString(),
         ).toBe("1904-01-01T00:00:00.000Z");
-        expect(() => fromExcelSerialDate(0, { timeZone: "UTC" })).toThrow(
-            RangeError,
-        );
         expect(
-            formatRfc2822Date("2026-11-25T22:00:00.000Z", {
+            fromExcelSerialDate({ serial: 0, timeZone: "UTC" }),
+        ).toBeUndefined();
+        expect(
+            formatRFC2822Date({
+                date: "2026-11-25T22:00:00.000Z",
                 timeZone: "Asia/Kolkata",
             }),
         ).toBe("Thu, 26 Nov 2026 03:30:00 +0530");
         expect(
-            parseRfc2822Date("Thu, 26 Nov 2026 03:30:00 +0530")?.toISOString(),
+            parseRFC2822Date("Thu, 26 Nov 2026 03:30:00 +0530")?.toISOString(),
         ).toBe("2026-11-25T22:00:00.000Z");
-        expect(parseRfc2822Date("26 Nov 2026 03:30 EST")?.toISOString()).toBe(
+        expect(parseRFC2822Date("26 Nov 2026 03:30 EST")?.toISOString()).toBe(
             "2026-11-26T08:30:00.000Z",
         );
     });

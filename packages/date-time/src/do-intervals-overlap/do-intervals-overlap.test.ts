@@ -11,16 +11,24 @@ describe("doIntervalsOverlap", () => {
             start: new Date("2026-01-02T00:00:00Z"),
             end: new Date("2026-01-03T00:00:00Z"),
         };
-        expect(doIntervalsOverlap(first, second)).toBe(false);
+        expect(doIntervalsOverlap({ first: first, second: second })).toBe(
+            false,
+        );
         expect(
-            doIntervalsOverlap(first, second, {
+            doIntervalsOverlap({
+                first: first,
+                second: second,
                 countTouchingAsOverlap: false,
             }),
         ).toBe(false);
         expect(
-            doIntervalsOverlap(first, second, { countTouchingAsOverlap: true }),
+            doIntervalsOverlap({
+                first: first,
+                second: second,
+                countTouchingAsOverlap: true,
+            }),
         ).toBe(true);
-        expect(doIntervalsOverlap(first, first)).toBe(true);
+        expect(doIntervalsOverlap({ first: first, second: first })).toBe(true);
     });
 
     it("overlaps a leap day with March and keeps a year boundary that only touches disjoint", () => {
@@ -32,7 +40,9 @@ describe("doIntervalsOverlap", () => {
             start: new Date("2024-02-29T12:00:00Z"),
             end: new Date("2024-03-02T00:00:00Z"),
         };
-        expect(doIntervalsOverlap(leapDay, march)).toBe(true);
+        expect(doIntervalsOverlap({ first: leapDay, second: march })).toBe(
+            true,
+        );
         const lastDay = {
             start: new Date("2024-12-31T00:00:00Z"),
             end: new Date("2025-01-01T00:00:00Z"),
@@ -41,31 +51,29 @@ describe("doIntervalsOverlap", () => {
             start: new Date("2025-01-01T00:00:00Z"),
             end: new Date("2025-01-02T00:00:00Z"),
         };
-        expect(doIntervalsOverlap(lastDay, newYear)).toBe(false);
+        expect(doIntervalsOverlap({ first: lastDay, second: newYear })).toBe(
+            false,
+        );
         const empty = {
             start: new Date(0),
             end: new Date(0),
         };
-        expect(doIntervalsOverlap(empty, empty)).toBe(false);
+        expect(doIntervalsOverlap({ first: empty, second: empty })).toBe(false);
         expect(
-            doIntervalsOverlap(empty, empty, { countTouchingAsOverlap: true }),
+            doIntervalsOverlap({
+                first: empty,
+                second: empty,
+                countTouchingAsOverlap: true,
+            }),
         ).toBe(true);
     });
 
-    it("rejects an interval whose end is before its start", () => {
-        expect(() =>
-            doIntervalsOverlap(
-                { start: new Date(5), end: new Date(1) },
-                { start: new Date(0), end: new Date(2) },
-            ),
-        ).toThrow(RangeError);
-        expect(() =>
-            doIntervalsOverlap(
-                { start: new Date(5), end: new Date(1) },
-                { start: new Date(0), end: new Date(2) },
-            ),
-        ).toThrow(
-            "`first` must be an interval whose end is not before its start; received [object Object].",
-        );
+    it("returns undefined when an interval is invalid", () => {
+        expect(
+            doIntervalsOverlap({
+                first: { start: new Date(5), end: new Date(1) },
+                second: { start: new Date(0), end: new Date(2) },
+            }),
+        ).toBeUndefined();
     });
 });

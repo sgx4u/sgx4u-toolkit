@@ -24,7 +24,7 @@ Fields of `calendar`:
 
 | Name           | Type                                                | Default                              | Meaning                                                                      |
 | -------------- | --------------------------------------------------- | ------------------------------------ | ---------------------------------------------------------------------------- |
-| `weekendDays`  | `readonly Weekday[]`                                | `[6, 7]`                             | ISO weekdays that are closed. `6` is Saturday and `7` is Sunday.             |
+| `workingDays`  | `readonly Weekday[]`                                | `[6, 7]`                             | ISO weekdays that are closed. `6` is Saturday and `7` is Sunday.             |
 | `holidays`     | `readonly DateInput[] \| ((date: Date) => boolean)` | `[]`                                 | Closed dates, or a predicate. A list matches the calendar day in `timeZone`. |
 | `workingHours` | `readonly TimeRange[]`                              | `[{ start: "09:00", end: "17:00" }]` | Open windows. An empty list means the whole business day.                    |
 | `timeZone`     | `string`                                            | System zone                          | IANA name or fixed offset for the calendar and the windows.                  |

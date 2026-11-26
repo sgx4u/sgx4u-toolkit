@@ -4,9 +4,13 @@ import type { TimeZoneOptions } from "../types/options.types.js";
 import type { TimeRange } from "../types/time.types.js";
 
 /**
- * Where free slots are searched.
+ * Fields for {@link findAvailableSlots}.
  */
-export interface FindAvailableSlotsOptions extends TimeZoneOptions {
+export interface FindAvailableSlotsParams extends TimeZoneOptions {
+    /**
+     * Intervals that are already taken.
+     */
+    busy: readonly Interval[];
     /**
      * The window that may contain slots.
      */

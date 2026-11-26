@@ -46,8 +46,10 @@ describe("formatDuration", () => {
         ).toThrow(
             '`style` must be "long", "short", "narrow", or "digital"; received "wide".',
         );
-        expect(() => formatDuration(null as never)).toThrow(TypeError);
-        expect(() => formatDuration(null as never)).toThrow(
+        expect(() => formatDuration({ duration: null as never })).toThrow(
+            TypeError,
+        );
+        expect(() => formatDuration({ duration: null as never })).toThrow(
             "`duration` must be a duration object; received null.",
         );
         expect(() => formatDuration({ hours: 1, days: -1 })).toThrow(

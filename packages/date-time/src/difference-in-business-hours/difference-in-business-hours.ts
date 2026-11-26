@@ -1,10 +1,9 @@
-import type { BusinessCalendar } from "../types/business.types.js";
-import type { DateInput } from "../types/date-input.types.js";
-import { resolveDateInput } from "../utils/date-input.utils.js";
 import {
     businessHoursBetween,
     resolveBusinessCalendar,
 } from "../utils/business.utils.js";
+import { readDateInput } from "../utils/date-input.utils.js";
+import type { DifferenceInBusinessHoursParams } from "./difference-in-business-hours.types.js";
 
 /**
  * Returns the working hours between two dates.
@@ -12,23 +11,38 @@ import {
  * Only time inside working hours counts. The result is fractional and
  * negative when `later` is before `earlier`.
  *
- * @param later - The end date.
- * @param earlier - The start date.
- * @param calendar - Working hours, weekend days, holidays, and the zone.
- * @returns Signed hours.
- * @throws {@link RangeError} When 3660 consecutive days have no business day.
+ * @param params - `later` and `earlier` are the two dates, plus optional business calendar fields.
+ * @returns Signed hours, or `undefined` when either date is not usable.
+ * @throws {@link RangeError} When 3660 consecutive days have no business day, or business calendar fields are invalid.
  * @example
- * differenceInBusinessHours("2026-11-27T10:00:00Z", "2026-11-26T16:00:00Z", { timeZone: "UTC" }); // 2
+ * differenceInBusinessHours({
+ *   later: "2026-11-27T10:00:00Z",
+ *   earlier: "2026-11-26T16:00:00Z",
+ *   timeZone: "UTC",
+ * }); // 2
  */
-export function differenceInBusinessHours(
-    later: DateInput,
-    earlier: DateInput,
-    calendar?: BusinessCalendar,
-): number {
-    const resolved = resolveBusinessCalendar(calendar);
+export function differenceInBusinessHours({
+    later,
+    earlier,
+    workingDays,
+    businessHours,
+    holidays,
+    timeZone,
+}: DifferenceInBusinessHoursParams): number | undefined {
+    const resolved = resolveBusinessCalendar({
+        workingDays,
+        businessHours,
+        holidays,
+        timeZone,
+    });
+    const laterInstant = readDateInput(later, resolved.timeZone);
+    const earlierInstant = readDateInput(earlier, resolved.timeZone);
+    if (laterInstant === undefined || earlierInstant === undefined) {
+        return undefined;
+    }
     return businessHoursBetween(
-        resolveDateInput(later, "later", resolved.timeZone).getTime(),
-        resolveDateInput(earlier, "earlier", resolved.timeZone).getTime(),
+        laterInstant.getTime(),
+        earlierInstant.getTime(),
         resolved,
     );
 }

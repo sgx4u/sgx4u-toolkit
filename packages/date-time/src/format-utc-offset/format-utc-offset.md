@@ -1,19 +1,19 @@
-# `formatUtcOffset`
+# `formatUTCOffset`
 
 Formats a UTC offset in minutes.
 
 ## Import
 
 ```ts
-import { formatUtcOffset } from "@sgx4u/date-time";
+import { formatUTCOffset } from "@sgx4u/date-time";
 ```
 
 ## Signature
 
 ```ts
-function formatUtcOffset(
+function formatUTCOffset(
     offsetMinutes: number,
-    options?: FormatUtcOffsetOptions,
+    options?: FormatUTCOffsetOptions,
 ): string;
 ```
 
@@ -27,16 +27,16 @@ function formatUtcOffset(
 ## Examples
 
 ```ts
-formatUtcOffset(330);
+formatUTCOffset(330);
 // "+05:30"
 
-formatUtcOffset(0);
+formatUTCOffset(0);
 // "+00:00"
 
-formatUtcOffset(0, { useZForZero: true });
+formatUTCOffset(0, { useZForZero: true });
 // "Z"
 
-formatUtcOffset(-90, { style: "short" });
+formatUTCOffset(-90, { style: "short" });
 // "-1:30"
 ```
 
@@ -46,6 +46,6 @@ A fraction is rounded in the minutes: `-332.4` is `"-05:32"`. `basic` writes `33
 
 ## Related
 
-- [`parseUtcOffset`](../parse-utc-offset/parse-utc-offset.md) reads offset text into minutes.
-- [`getUtcOffset`](../get-utc-offset/get-utc-offset.md) returns the offset of a zone at an instant.
+- [`parseUTCOffset`](../parse-utc-offset/parse-utc-offset.md) reads offset text into minutes.
+- [`getUTCOffset`](../get-utc-offset/get-utc-offset.md) returns the offset of a zone at an instant.
 - [`formatTimeZoneName`](../format-time-zone-name/format-time-zone-name.md) returns the localized zone name.

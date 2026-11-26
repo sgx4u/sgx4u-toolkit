@@ -1,13 +1,11 @@
-import type { DateInput } from "../types/date-input.types.js";
-import type { TimeZoneOptions, WeekOptions } from "../types/options.types.js";
-import type { CalendarUnit } from "../types/time.types.js";
 import { calendarBoundariesBetween } from "../utils/arithmetic.utils.js";
-import { resolveDateInput } from "../utils/date-input.utils.js";
+import { readDateInput } from "../utils/date-input.utils.js";
 import { rangeError, typeError } from "../utils/error.utils.js";
 import {
     resolveTimeZone,
     resolveWeekStartsOn,
 } from "../utils/time-zone.utils.js";
+import type { DifferenceInCalendarUnitParams } from "./difference-in-calendar-unit.types.js";
 
 const calendarUnitNames = ["year", "quarter", "month", "week", "day"] as const;
 
@@ -16,34 +14,42 @@ const calendarUnitNames = ["year", "quarter", "month", "week", "day"] as const;
  *
  * December 31 to January 1 is one year. A week uses `weekStartsOn`.
  *
- * @param later - The end instant.
- * @param earlier - The start instant.
- * @param unit - `"year"`, `"quarter"`, `"month"`, `"week"`, or `"day"`.
- * @param options - `weekStartsOn` defaults to Monday.
- * @returns The signed number of boundaries.
- * @throws {@link TypeError} When a date or the unit has the wrong type.
- * @throws {@link RangeError} When a value is invalid.
+ * @param params - `later`, `earlier`, and `unit` are required. `weekStartsOn` defaults to Monday.
+ * @returns The signed number of boundaries, or `undefined` when either date is not usable.
+ * @throws {@link TypeError} When `unit` is not a string.
+ * @throws {@link RangeError} When `unit` is not a calendar unit, `weekStartsOn` is invalid, or `timeZone` is unusable.
  * @example
- * differenceInCalendarUnit("2027-01-01T00:00:00Z", "2026-12-31T00:00:00Z", "year", { timeZone: "UTC" }); // 1
+ * differenceInCalendarUnit({
+ *   later: "2027-01-01T00:00:00Z",
+ *   earlier: "2026-12-31T00:00:00Z",
+ *   unit: "year",
+ *   timeZone: "UTC",
+ * }); // 1
  */
-export function differenceInCalendarUnit(
-    later: DateInput,
-    earlier: DateInput,
-    unit: CalendarUnit,
-    options?: TimeZoneOptions & WeekOptions,
-): number {
+export function differenceInCalendarUnit({
+    later,
+    earlier,
+    unit,
+    timeZone,
+    weekStartsOn,
+}: DifferenceInCalendarUnitParams): number | undefined {
     if (typeof unit !== "string") {
         throw typeError("unit", "a calendar unit", unit);
     }
     if (!(calendarUnitNames as readonly string[]).includes(unit)) {
         throw rangeError("unit", "a calendar unit", unit);
     }
-    const timeZone = resolveTimeZone(options?.timeZone);
+    const zone = resolveTimeZone(timeZone);
+    const laterInstant = readDateInput(later, zone);
+    const earlierInstant = readDateInput(earlier, zone);
+    if (laterInstant === undefined || earlierInstant === undefined) {
+        return undefined;
+    }
     return calendarBoundariesBetween(
-        resolveDateInput(later, "later", timeZone).getTime(),
-        resolveDateInput(earlier, "earlier", timeZone).getTime(),
+        laterInstant.getTime(),
+        earlierInstant.getTime(),
         unit,
-        timeZone,
-        resolveWeekStartsOn(options?.weekStartsOn),
+        zone,
+        resolveWeekStartsOn(weekStartsOn),
     );
 }

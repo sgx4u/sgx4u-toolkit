@@ -10,8 +10,8 @@ describe("formatDurationCompact", () => {
                 { maximumUnitCount: 2, separator: " " },
             ),
         ).toBe("1h 30m");
-        expect(formatDurationCompact(5_400_000)).toBe("1h 30m");
-        expect(formatDurationCompact(0)).toBe("0s");
+        expect(formatDurationCompact({ duration: 5_400_000 })).toBe("1h 30m");
+        expect(formatDurationCompact({ duration: 0 })).toBe("0s");
         expect(formatDurationCompact({})).toBe("0s");
     });
 
@@ -38,6 +38,8 @@ describe("formatDurationCompact", () => {
         expect(() => formatDurationCompact({ hours: 1, days: -1 })).toThrow(
             RangeError,
         );
-        expect(() => formatDurationCompact("1" as never)).toThrow(TypeError);
+        expect(() => formatDurationCompact({ duration: "1" as never })).toThrow(
+            TypeError,
+        );
     });
 });

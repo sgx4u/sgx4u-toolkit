@@ -54,7 +54,7 @@ differenceAsDuration("2024-03-10T08:00:00Z", "2024-03-10T06:00:00Z", {
 
 ## Edge cases
 
-Zero fields are omitted. Adding the result to `earlier` with `addDuration` in the same zone returns `later` when `smallestUnit` is `"millisecond"`. `smallestUnit` larger than `largestUnit` throws `RangeError`. A date that does not parse throws `RangeError`. The New York spring-forward morning from 01:00 to 03:00 wall time is still two elapsed hours.
+Zero fields are omitted. Adding the result to `earlier` with `addDuration` in the same zone returns `later` when `smallestUnit` is `"millisecond"`. `smallestUnit` larger than `largestUnit` throws `RangeError`. A date that is not usable returns `undefined`. The New York spring-forward morning from 01:00 to 03:00 wall time is still two elapsed hours.
 
 ## Related
 

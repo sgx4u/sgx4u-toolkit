@@ -13,12 +13,14 @@ describe("relative time", () => {
             }),
         ).toEqual({ value: 3, unit: "hour" });
         expect(
-            formatRelativeTime("2026-01-04T00:00:00Z", {
+            formatRelativeTime({
+                date: "2026-01-04T00:00:00Z",
                 now: "2026-01-01T00:00:00Z",
                 locale: "en",
             }),
         ).toBe("in 3 days");
-        const yesterday = formatRelativeCalendarDay("2026-01-01T17:00:00Z", {
+        const yesterday = formatRelativeCalendarDay({
+            date: "2026-01-01T17:00:00Z",
             now: "2026-01-02T12:00:00Z",
             timeZone: "UTC",
             locale: "en",

@@ -54,7 +54,7 @@ formatDateRange("2024-12-31T00:00:00Z", "2025-01-01T00:00:00Z", {
 
 ## Edge cases
 
-`start` after `end` throws `RangeError`. A date that does not parse throws `RangeError`. The separator in `en-US` is a narrow no-break space, an en dash, and a narrow no-break space. A range that stays in one month drops the repeated month. A range that crosses a year keeps both years. In `America/New_York`, `2024-03-10T05:00:00Z` through `2024-03-11T04:00:00Z` is `Mar 10\u2009\u2013\u200911, 2024`.
+`start` after `end` throws `RangeError`. A date that is not usable returns `undefined`. The separator in `en-US` is a narrow no-break space, an en dash, and a narrow no-break space. A range that stays in one month drops the repeated month. A range that crosses a year keeps both years. In `America/New_York`, `2024-03-10T05:00:00Z` through `2024-03-11T04:00:00Z` is `Mar 10\u2009\u2013\u200911, 2024`.
 
 ## Related
 

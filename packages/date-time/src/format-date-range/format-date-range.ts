@@ -1,52 +1,63 @@
-import type { DateInput } from "../types/date-input.types.js";
-import { resolveDateInput } from "../utils/date-input.utils.js";
+import { readDateInput } from "../utils/date-input.utils.js";
 import { rangeError } from "../utils/error.utils.js";
 import { resolveTimeZone } from "../utils/time-zone.utils.js";
-import type { FormatDateWithStyleOptions } from "../format-date-with-style/format-date-with-style.types.js";
+import type { FormatDateRangeParams } from "./format-date-range.types.js";
 
 /**
  * Formats two dates as a range, collapsing shared parts.
  *
  * The text comes from `Intl.DateTimeFormat.prototype.formatRange`.
  *
- * @param start - The first instant.
- * @param end - The second instant. It must not be before `start`.
- * @param options - The same styles as `formatDateWithStyle`. `dateStyle` defaults to `"medium"`.
- * @returns The localized range.
- * @throws {@link RangeError} When `start` is after `end`, or a date is invalid.
+ * @param params - `start` and `end` are required. `dateStyle` defaults to `"medium"`.
+ * @returns The localized range, or `undefined` when either date is not usable.
+ * @throws {@link RangeError} When `start` is after `end`, or the zone is unusable.
  * @example
- * formatDateRange("2026-01-03T00:00:00Z", "2026-01-05T00:00:00Z", { timeZone: "UTC", locale: "en-US" });
+ * formatDateRange({
+ *   start: "2026-01-03T00:00:00Z",
+ *   end: "2026-01-05T00:00:00Z",
+ *   timeZone: "UTC",
+ *   locale: "en-US",
+ * });
  */
-export function formatDateRange(
-    start: DateInput,
-    end: DateInput,
-    options?: FormatDateWithStyleOptions,
-): string {
-    const timeZone = resolveTimeZone(options?.timeZone);
-    const startDate = resolveDateInput(start, "start");
-    const endDate = resolveDateInput(end, "end");
+export function formatDateRange({
+    start,
+    end,
+    timeZone,
+    locale,
+    timeStyle,
+    dateStyle,
+    calendar,
+    numberingSystem,
+    hourCycle,
+}: FormatDateRangeParams): string | undefined {
+    const zone = resolveTimeZone(timeZone);
+    const startDate = readDateInput(start, zone);
+    const endDate = readDateInput(end, zone);
+    if (startDate === undefined || endDate === undefined) {
+        return undefined;
+    }
     if (startDate.getTime() > endDate.getTime()) {
         throw rangeError("start", "a date at or before `end`", start);
     }
-    const formatOptions: Intl.DateTimeFormatOptions = { timeZone };
-    if (options?.timeStyle !== undefined) {
-        formatOptions.timeStyle = options.timeStyle;
+    const formatOptions: Intl.DateTimeFormatOptions = { timeZone: zone };
+    if (timeStyle !== undefined) {
+        formatOptions.timeStyle = timeStyle;
     }
-    if (options?.dateStyle !== undefined) {
-        formatOptions.dateStyle = options.dateStyle;
-    } else if (options?.timeStyle === undefined) {
+    if (dateStyle !== undefined) {
+        formatOptions.dateStyle = dateStyle;
+    } else if (timeStyle === undefined) {
         formatOptions.dateStyle = "medium";
     }
-    if (options?.calendar !== undefined) {
-        formatOptions.calendar = options.calendar;
+    if (calendar !== undefined) {
+        formatOptions.calendar = calendar;
     }
-    if (options?.numberingSystem !== undefined) {
-        formatOptions.numberingSystem = options.numberingSystem;
+    if (numberingSystem !== undefined) {
+        formatOptions.numberingSystem = numberingSystem;
     }
-    if (options?.hourCycle !== undefined) {
-        formatOptions.hourCycle = options.hourCycle;
+    if (hourCycle !== undefined) {
+        formatOptions.hourCycle = hourCycle;
     }
-    return new Intl.DateTimeFormat(options?.locale, formatOptions).formatRange(
+    return new Intl.DateTimeFormat(locale, formatOptions).formatRange(
         startDate,
         endDate,
     );

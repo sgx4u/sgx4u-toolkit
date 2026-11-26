@@ -24,3 +24,13 @@ export interface FormatTimeZoneNameOptions extends LocaleOptions {
      */
     at?: DateInput;
 }
+
+/**
+ * Fields for {@link formatTimeZoneName}.
+ */
+export interface FormatTimeZoneNameParams extends FormatTimeZoneNameOptions {
+    /**
+     * An IANA name or a fixed offset.
+     */
+    timeZone: string;
+}

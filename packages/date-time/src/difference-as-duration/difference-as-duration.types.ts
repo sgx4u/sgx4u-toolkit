@@ -1,3 +1,4 @@
+import type { DateInput } from "../types/date-input.types.js";
 import type { TimeZoneOptions } from "../types/options.types.js";
 import type { TimeUnit } from "../types/time.types.js";
 
@@ -18,4 +19,18 @@ export interface DifferenceAsDurationOptions extends TimeZoneOptions {
      * @defaultValue `"millisecond"`
      */
     smallestUnit?: TimeUnit;
+}
+
+/**
+ * Fields for {@link differenceAsDuration}.
+ */
+export interface DifferenceAsDurationParams extends DifferenceAsDurationOptions {
+    /**
+     * The end instant.
+     */
+    later: DateInput;
+    /**
+     * The start instant.
+     */
+    earlier: DateInput;
 }

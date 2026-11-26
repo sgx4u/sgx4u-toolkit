@@ -11,22 +11,19 @@ import { differenceInUnit } from "@sgx4u/date-time";
 ## Signature
 
 ```ts
-function differenceInUnit(
-    later: DateInput,
-    earlier: DateInput,
-    unit: TimeUnit,
-    options?: DifferenceInUnitOptions,
-): number;
+function differenceInUnit(params: DifferenceInUnitParams): number | undefined;
 ```
 
 ## Options
 
-| Name       | Type                                         | Default      | Meaning                                   |
-| ---------- | -------------------------------------------- | ------------ | ----------------------------------------- |
-| `timeZone` | `string`                                     | System zone  | Zone used for calendar units.             |
-| `rounding` | `"truncate" \| "floor" \| "ceil" \| "round"` | `"truncate"` | How a fractional unit becomes an integer. |
+| Name       | Type                                         | Required | Default      | Meaning                                   |
+| ---------- | -------------------------------------------- | -------- | ------------ | ----------------------------------------- |
+| `later`    | `DateInput`                                  | yes      |              | End instant.                              |
+| `earlier`  | `DateInput`                                  | yes      |              | Start instant.                            |
+| `unit`     | `TimeUnit`                                   | yes      |              | Unit to count.                            |
+| `timeZone` | `string`                                     | no       | System zone  | Zone used for calendar units.             |
+| `rounding` | `"truncate" \| "floor" \| "ceil" \| "round"` | no       | `"truncate"` | How a fractional unit becomes an integer. |
 
-`"truncate"` moves toward zero. `"round"` at a half moves away from zero.
 
 ## Examples
 
@@ -55,7 +52,7 @@ differenceInUnit("2025-02-28T00:00:00Z", "2024-02-29T00:00:00Z", "year", {
 
 ## Edge cases
 
-Calendar units use the largest count that, added to `earlier`, does not pass `later`. Clock units divide the elapsed milliseconds. The result is negative when `later` is before `earlier`. An unknown `rounding` throws `RangeError`. A date that does not parse throws `RangeError`. 28 February 2024 to 1 March 2024 is two calendar days because 2024 is a leap year.
+A date that is not usable returns `undefined`. Calendar units use the largest count that, added to `earlier`, does not pass `later`. Clock units divide the elapsed milliseconds. The result is negative when `later` is before `earlier`. An unknown `rounding` An unknown `unit`, `rounding`, or `timeZone` throws `RangeError`. 28 February 2024 to 1 March 2024 is two calendar days because 2024 is a leap year.
 
 ## Related
 

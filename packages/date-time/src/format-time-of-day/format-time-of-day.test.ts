@@ -6,10 +6,18 @@ const afternoon = { hour: 15, minute: 30, second: 4, millisecond: 7 };
 describe("formatTimeOfDay", () => {
     it("formats to the minute and follows the locale hour cycle", () => {
         expect(
-            formatTimeOfDay(afternoon, { locale: "en-US", hourCycle: "h23" }),
+            formatTimeOfDay({
+                time: afternoon,
+                locale: "en-US",
+                hourCycle: "h23",
+            }),
         ).toBe("15:30");
-        expect(formatTimeOfDay(afternoon, { locale: "en-US" })).toBe("3:30 PM");
-        expect(formatTimeOfDay(afternoon, { locale: "en-GB" })).toBe("15:30");
+        expect(formatTimeOfDay({ time: afternoon, locale: "en-US" })).toBe(
+            "3:30 PM",
+        );
+        expect(formatTimeOfDay({ time: afternoon, locale: "en-GB" })).toBe(
+            "15:30",
+        );
     });
 
     it("shows seconds or milliseconds when precision asks for them", () => {
@@ -39,32 +47,39 @@ describe("formatTimeOfDay", () => {
 
     it("defaults precision to the minute", () => {
         expect(
-            formatTimeOfDay(afternoon, {
+            formatTimeOfDay({
+                time: afternoon,
                 locale: "en-US",
                 hourCycle: "h23",
                 precision: "minute",
             }),
         ).toBe(
-            formatTimeOfDay(afternoon, { locale: "en-US", hourCycle: "h23" }),
+            formatTimeOfDay({
+                time: afternoon,
+                locale: "en-US",
+                hourCycle: "h23",
+            }),
         );
     });
 
     it("throws for a value that is not a time or an unknown precision", () => {
-        expect(() => formatTimeOfDay(null as never)).toThrow(TypeError);
-        expect(() => formatTimeOfDay(null as never)).toThrow(
+        expect(() => formatTimeOfDay({ time: null as never })).toThrow(
+            TypeError,
+        );
+        expect(() => formatTimeOfDay({ time: null as never })).toThrow(
             "`time` must be a time of day; received null.",
         );
         expect(() =>
-            formatTimeOfDay(afternoon, { precision: "hour" as never }),
+            formatTimeOfDay({ time: afternoon, precision: "hour" as never }),
         ).toThrow(RangeError);
         expect(() =>
-            formatTimeOfDay(afternoon, { precision: "hour" as never }),
+            formatTimeOfDay({ time: afternoon, precision: "hour" as never }),
         ).toThrow('"minute", "second", or "millisecond"');
         expect(() =>
-            formatTimeOfDay(afternoon, { hourCycle: "h99" as never }),
+            formatTimeOfDay({ time: afternoon, hourCycle: "h99" as never }),
         ).toThrow(RangeError);
         expect(() =>
-            formatTimeOfDay(afternoon, { hourCycle: "h99" as never }),
+            formatTimeOfDay({ time: afternoon, hourCycle: "h99" as never }),
         ).toThrow("hourCycle");
     });
 });

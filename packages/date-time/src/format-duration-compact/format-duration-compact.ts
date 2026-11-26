@@ -1,31 +1,30 @@
-import type { Duration } from "../types/duration.types.js";
-import { assertInteger } from "../utils/assert.utils.js";
-import { assertFiniteNumber } from "../utils/assert.utils.js";
-import { assertDuration } from "../utils/duration.utils.js";
+import { readDuration } from "../utils/duration.utils.js";
 import { rangeError } from "../utils/error.utils.js";
 import { formatCompactText } from "../utils/duration-text.utils.js";
-import type { FormatDurationCompactOptions } from "./format-duration-compact.types.js";
+import type { FormatDurationCompactParams } from "./format-duration-compact.types.js";
 
 /**
  * Formats a duration with compact unit symbols such as `1h 30m`.
  *
  * Zero is `0s`.
  *
- * @param duration - A duration or a millisecond count.
- * @param options - `maximumUnitCount` defaults to `2` and `separator` to a space.
- * @returns The compact text.
+ * @param params - `duration` is required. `maximumUnitCount` defaults to `2` and `separator` to a space.
+ * @returns The compact text, or `undefined` when `duration` or `maximumUnitCount` is not usable.
  * @throws {@link RangeError} When `maximumUnitCount` is not a positive integer.
  * @example
- * formatDurationCompact({ hours: 1, minutes: 30 }); // "1h 30m"
+ * formatDurationCompact({ duration: { hours: 1, minutes: 30 } }); // "1h 30m"
  */
-export function formatDurationCompact(
-    duration: Duration | number,
-    options?: FormatDurationCompactOptions,
-): string {
-    const maximumUnitCount = assertInteger(
-        options?.maximumUnitCount ?? 2,
-        "maximumUnitCount",
-    );
+export function formatDurationCompact({
+    duration,
+    maximumUnitCount = 2,
+    separator = " ",
+}: FormatDurationCompactParams): string | undefined {
+    if (
+        typeof maximumUnitCount !== "number" ||
+        !Number.isInteger(maximumUnitCount)
+    ) {
+        return undefined;
+    }
     if (maximumUnitCount < 1) {
         throw rangeError(
             "maximumUnitCount",
@@ -35,11 +34,12 @@ export function formatDurationCompact(
     }
     const value =
         typeof duration === "number"
-            ? assertFiniteNumber(duration, "duration")
-            : assertDuration(duration, "duration");
-    return formatCompactText(
-        value,
-        maximumUnitCount,
-        options?.separator ?? " ",
-    );
+            ? Number.isFinite(duration)
+                ? duration
+                : undefined
+            : readDuration(duration);
+    if (value === undefined) {
+        return undefined;
+    }
+    return formatCompactText(value, maximumUnitCount, separator);
 }

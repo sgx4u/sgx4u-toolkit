@@ -48,10 +48,10 @@ formatDate("2026-11-26T00:00:00.000Z", "XXX", { timeZone: "UTC" });
 
 ## Edge cases
 
-Quoted text is literal and `''` is one quote. An unsupported ASCII letter run throws `RangeError`. `XXX` is `Z` when the offset is zero. Month and weekday names come from `Intl`. Numeric fields use Latin digits. A date that does not parse throws `RangeError`.
+Quoted text is literal and `''` is one quote. An unsupported ASCII letter run throws `RangeError`. `XXX` is `Z` when the offset is zero. Month and weekday names come from `Intl`. Numeric fields use Latin digits. A date that is not usable returns `undefined`.
 
 ## Related
 
-- [`formatIsoDate`](../format-iso-date/format-iso-date.md) writes `YYYY-MM-DD` in the zone.
+- [`formatISODate`](../format-iso-date/format-iso-date.md) writes `YYYY-MM-DD` in the zone.
 - [`formatDateWithStyle`](../format-date-with-style/format-date-with-style.md) uses `Intl` date and time styles.
 - [`getDateParts`](../get-date-parts/get-date-parts.md) reads the fields the pattern uses.

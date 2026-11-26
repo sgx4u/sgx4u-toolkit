@@ -7,14 +7,16 @@ describe("formatDateRange", () => {
     it("collapses a medium range in the same month", () => {
         const options = { timeZone: "UTC", locale: "en-US" };
         expect(
-            formatDateRange(
-                "2026-01-03T00:00:00Z",
-                "2026-01-05T00:00:00Z",
+            formatDateRange({
+                start: "2026-01-03T00:00:00Z",
+                end: "2026-01-05T00:00:00Z",
                 options,
-            ),
+            }),
         ).toBe(`Jan 3${dash}5, 2026`);
         expect(
-            formatDateRange("2026-01-03T00:00:00Z", "2026-01-05T00:00:00Z", {
+            formatDateRange({
+                start: "2026-01-03T00:00:00Z",
+                end: "2026-01-05T00:00:00Z",
                 ...options,
                 dateStyle: "medium",
             }),
@@ -23,13 +25,17 @@ describe("formatDateRange", () => {
 
     it("keeps both months for a leap day and both years at New Year", () => {
         expect(
-            formatDateRange("2024-02-29T00:00:00Z", "2024-03-01T00:00:00Z", {
+            formatDateRange({
+                start: "2024-02-29T00:00:00Z",
+                end: "2024-03-01T00:00:00Z",
                 timeZone: "UTC",
                 locale: "en-US",
             }),
         ).toBe(`Feb 29${dash}Mar 1, 2024`);
         expect(
-            formatDateRange("2024-12-31T00:00:00Z", "2025-01-01T00:00:00Z", {
+            formatDateRange({
+                start: "2024-12-31T00:00:00Z",
+                end: "2025-01-01T00:00:00Z",
                 timeZone: "UTC",
                 locale: "en-US",
             }),
@@ -38,7 +44,9 @@ describe("formatDateRange", () => {
 
     it("formats the Eastern calendar days on either side of the spring-forward", () => {
         expect(
-            formatDateRange("2024-03-10T05:00:00Z", "2024-03-11T04:00:00Z", {
+            formatDateRange({
+                start: "2024-03-10T05:00:00Z",
+                end: "2024-03-11T04:00:00Z",
                 timeZone: "America/New_York",
                 locale: "en-US",
             }),
@@ -47,19 +55,25 @@ describe("formatDateRange", () => {
 
     it("rejects a start that is after the end", () => {
         expect(() =>
-            formatDateRange("2026-01-05T00:00:00Z", "2026-01-03T00:00:00Z", {
+            formatDateRange({
+                start: "2026-01-05T00:00:00Z",
+                end: "2026-01-03T00:00:00Z",
                 timeZone: "UTC",
             }),
         ).toThrow(RangeError);
         expect(() =>
-            formatDateRange("2026-01-05T00:00:00Z", "2026-01-03T00:00:00Z", {
+            formatDateRange({
+                start: "2026-01-05T00:00:00Z",
+                end: "2026-01-03T00:00:00Z",
                 timeZone: "UTC",
             }),
         ).toThrow(
             '`start` must be a date at or before `end`; received "2026-01-05T00:00:00Z".',
         );
         expect(() =>
-            formatDateRange("nope", "2026-01-03T00:00:00Z", {
+            formatDateRange({
+                start: "nope",
+                end: "2026-01-03T00:00:00Z",
                 timeZone: "UTC",
             }),
         ).toThrow(RangeError);

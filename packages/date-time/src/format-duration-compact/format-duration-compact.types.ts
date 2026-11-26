@@ -1,3 +1,5 @@
+import type { Duration } from "../types/duration.types.js";
+
 /**
  * How many compact units to print.
  */
@@ -14,4 +16,14 @@ export interface FormatDurationCompactOptions {
      * @defaultValue `" "`
      */
     separator?: string;
+}
+
+/**
+ * Fields for {@link formatDurationCompact}.
+ */
+export interface FormatDurationCompactParams extends FormatDurationCompactOptions {
+    /**
+     * A duration or a millisecond count.
+     */
+    duration: Duration | number;
 }

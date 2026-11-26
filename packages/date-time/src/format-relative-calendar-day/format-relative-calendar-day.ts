@@ -1,9 +1,8 @@
-import type { DateInput } from "../types/date-input.types.js";
-import { resolveDateInput, resolveNow } from "../utils/date-input.utils.js";
+import { calendarBoundariesBetween } from "../utils/arithmetic.utils.js";
+import { readDateInput, resolveNow } from "../utils/date-input.utils.js";
 import { rangeError } from "../utils/error.utils.js";
 import { resolveTimeZone } from "../utils/time-zone.utils.js";
-import { calendarBoundariesBetween } from "../utils/arithmetic.utils.js";
-import type { FormatRelativeCalendarDayOptions } from "./format-relative-calendar-day.types.js";
+import type { FormatRelativeCalendarDayParams } from "./format-relative-calendar-day.types.js";
 
 /**
  * Formats a date as a nearby day plus a time, then as a full date.
@@ -13,50 +12,65 @@ import type { FormatRelativeCalendarDayOptions } from "./format-relative-calenda
  * weekday name and the time. Anything further away uses a medium date and
  * the time.
  *
- * @param date - The date to describe.
- * @param options - `timeStyle` defaults to `"short"`.
- * @returns The localized text.
- * @throws {@link RangeError} When `date` or `timeStyle` is invalid.
+ * @param params - `date` is required. `timeStyle` defaults to `"short"`.
+ * @returns The localized text, or `undefined` when `date` or `now` is not usable.
+ * @throws {@link RangeError} When `timeStyle` or `timeZone` is invalid.
  * @example
- * formatRelativeCalendarDay("2026-01-01T17:00:00Z", { now: "2026-01-02T12:00:00Z", timeZone: "UTC", locale: "en" }); // "Yesterday at 5:00 PM"
+ * formatRelativeCalendarDay({
+ *   date: "2026-01-01T17:00:00Z",
+ *   now: "2026-01-02T12:00:00Z",
+ *   timeZone: "UTC",
+ *   locale: "en",
+ * }); // "Yesterday at 5:00 PM"
  */
-export function formatRelativeCalendarDay(
-    date: DateInput,
-    options?: FormatRelativeCalendarDayOptions,
-): string {
-    const timeStyle = options?.timeStyle ?? "short";
+export function formatRelativeCalendarDay({
+    date,
+    now,
+    timeZone,
+    locale,
+    timeStyle = "short",
+}: FormatRelativeCalendarDayParams): string | undefined {
     if (timeStyle !== "short" && timeStyle !== "medium") {
         throw rangeError("timeStyle", `"short" or "medium"`, timeStyle);
     }
-    const timeZone = resolveTimeZone(options?.timeZone);
-    const instant = resolveDateInput(date, "date", timeZone);
-    const now = resolveNow(options?.now, timeZone);
+    const zone = resolveTimeZone(timeZone);
+    const instant = readDateInput(date, zone);
+    if (instant === undefined) {
+        return undefined;
+    }
+    const reference =
+        now === undefined
+            ? resolveNow(undefined, zone)
+            : readDateInput(now, zone);
+    if (reference === undefined) {
+        return undefined;
+    }
     const dayDifference = calendarBoundariesBetween(
         instant.getTime(),
-        now.getTime(),
+        reference.getTime(),
         "day",
-        timeZone,
+        zone,
         1,
     );
-    const time = new Intl.DateTimeFormat(options?.locale, {
-        timeZone,
+    const time = new Intl.DateTimeFormat(locale, {
+        timeZone: zone,
         timeStyle,
     }).format(instant);
     if (dayDifference >= -1 && dayDifference <= 1) {
-        const dayWord = new Intl.RelativeTimeFormat(options?.locale, {
+        const dayWord = new Intl.RelativeTimeFormat(locale, {
             numeric: "auto",
         }).format(dayDifference, "day");
         return `${capitalize(dayWord)} at ${time}`;
     }
     if (dayDifference >= -6 && dayDifference <= 6) {
-        const weekday = new Intl.DateTimeFormat(options?.locale, {
-            timeZone,
+        const weekday = new Intl.DateTimeFormat(locale, {
+            timeZone: zone,
             weekday: "long",
         }).format(instant);
         return `${weekday} at ${time}`;
     }
-    return new Intl.DateTimeFormat(options?.locale, {
-        timeZone,
+    return new Intl.DateTimeFormat(locale, {
+        timeZone: zone,
         dateStyle: "medium",
         timeStyle,
     }).format(instant);

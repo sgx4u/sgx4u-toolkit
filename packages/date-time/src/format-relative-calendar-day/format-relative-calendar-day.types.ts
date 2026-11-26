@@ -1,3 +1,4 @@
+import type { DateInput } from "../types/date-input.types.js";
 import type {
     LocaleOptions,
     NowOptions,
@@ -15,4 +16,14 @@ export interface FormatRelativeCalendarDayOptions
      * @defaultValue `"short"`
      */
     timeStyle?: "short" | "medium";
+}
+
+/**
+ * Fields for {@link formatRelativeCalendarDay}.
+ */
+export interface FormatRelativeCalendarDayParams extends FormatRelativeCalendarDayOptions {
+    /**
+     * The date to describe.
+     */
+    date: DateInput;
 }

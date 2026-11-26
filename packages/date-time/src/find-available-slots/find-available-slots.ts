@@ -4,11 +4,11 @@ import { addDuration } from "../add-duration/add-duration.js";
 import { compareTimesOfDay } from "../compare-times-of-day/compare-times-of-day.js";
 import { doIntervalsOverlap } from "../do-intervals-overlap/do-intervals-overlap.js";
 import { parseTimeOfDay } from "../parse-time-of-day/parse-time-of-day.js";
-import { assertDuration } from "../utils/duration.utils.js";
-import { rangeError, typeError } from "../utils/error.utils.js";
-import { mergeIntervalList, readInterval } from "../utils/interval.utils.js";
+import { readDuration } from "../utils/duration.utils.js";
+import { rangeError } from "../utils/error.utils.js";
+import { isIntervalValue, mergeIntervalList } from "../utils/interval.utils.js";
 import { readDateParts, resolveTimeZone } from "../utils/time-zone.utils.js";
-import type { FindAvailableSlotsOptions } from "./find-available-slots.types.js";
+import type { FindAvailableSlotsParams } from "./find-available-slots.types.js";
 
 const maximumSlotCount = 100_000;
 
@@ -19,37 +19,60 @@ const maximumSlotCount = 100_000;
  * multiple of `step` and must fit entirely in free time. `dailyWindow`
  * keeps only slots that stay inside that clock range.
  *
- * @param busy - Intervals that are already taken.
- * @param options - `within` and `slotDuration` are required. `step` defaults to `slotDuration`.
- * @returns The free slots, oldest first.
- * @throws {@link RangeError} When the step does not move forward or the result would exceed 100000 slots.
+ * @param params - `busy`, `within`, and `slotDuration` are required. `step` defaults to `slotDuration`.
+ * @returns The free slots, oldest first, or `undefined` when input is not usable.
+ * @throws {@link RangeError} When the step does not move forward or the result would exceed 100000 slots, or `timeZone` is unusable.
  * @example
- * findAvailableSlots([{ start: new Date(10), end: new Date(20) }], { within: { start: new Date(0), end: new Date(40) }, slotDuration: { milliseconds: 10 }, timeZone: "UTC" }).length; // 3
+ * findAvailableSlots({
+ *   busy: [{ start: new Date(10), end: new Date(20) }],
+ *   within: { start: new Date(0), end: new Date(40) },
+ *   slotDuration: { milliseconds: 10 },
+ *   timeZone: "UTC",
+ * })?.length; // 3
  */
-export function findAvailableSlots(
-    busy: readonly Interval[],
-    options: FindAvailableSlotsOptions,
-): Interval[] {
+export function findAvailableSlots({
+    busy,
+    within,
+    slotDuration,
+    step,
+    dailyWindow,
+    timeZone,
+}: FindAvailableSlotsParams): Interval[] | undefined {
     if (!Array.isArray(busy)) {
-        throw typeError("busy", "an array of intervals", busy);
+        return undefined;
     }
-    const within = readInterval(options.within, "within");
-    const slotDuration = assertDuration(options.slotDuration, "slotDuration");
-    const step = assertDuration(options.step ?? options.slotDuration, "step");
-    const timeZone = resolveTimeZone(options.timeZone);
+    if (!isIntervalValue(within)) {
+        return undefined;
+    }
+    const checkedSlotDuration = readDuration(slotDuration);
+    if (checkedSlotDuration === undefined) {
+        return undefined;
+    }
+    const checkedStep = readDuration(step ?? slotDuration);
+    if (checkedStep === undefined) {
+        return undefined;
+    }
+    const zone = resolveTimeZone(timeZone);
     const window =
-        options.dailyWindow === undefined
-            ? undefined
-            : readWindow(options.dailyWindow);
+        dailyWindow === undefined ? undefined : readWindow(dailyWindow);
+    if (dailyWindow !== undefined && window === undefined) {
+        return undefined;
+    }
     const merged = mergeIntervalList(busy, true);
     const slots: Interval[] = [];
     let cursor = within.start.getTime();
     const end = within.end.getTime();
     while (cursor < end) {
-        const slotEnd = addDuration(new Date(cursor), slotDuration, {
-            timeZone,
-        }).getTime();
-        if (slotEnd <= cursor) {
+        const slotEnd = addDuration({
+            date: new Date(cursor),
+            duration: checkedSlotDuration,
+            timeZone: zone,
+        });
+        if (slotEnd === undefined) {
+            return undefined;
+        }
+        const slotEndTime = slotEnd.getTime();
+        if (slotEndTime <= cursor) {
             throw rangeError(
                 "slotDuration",
                 "a duration that moves time forward",
@@ -57,27 +80,29 @@ export function findAvailableSlots(
             );
         }
         if (
-            slotEnd <= end &&
-            isFree(cursor, slotEnd, merged) &&
-            fitsWindow(cursor, slotEnd, window, timeZone)
+            slotEndTime <= end &&
+            isFree(cursor, slotEndTime, merged) &&
+            fitsWindow(cursor, slotEndTime, window, zone)
         ) {
-            slots.push({ start: new Date(cursor), end: new Date(slotEnd) });
+            slots.push({ start: new Date(cursor), end: new Date(slotEndTime) });
             if (slots.length > maximumSlotCount) {
-                throw rangeError(
-                    "within",
-                    "at most 100000 slots",
-                    options.within,
-                );
+                throw rangeError("within", "at most 100000 slots", within);
             }
         }
-        const next = addDuration(new Date(cursor), step, {
-            timeZone,
-        }).getTime();
+        const nextDate = addDuration({
+            date: new Date(cursor),
+            duration: checkedStep,
+            timeZone: zone,
+        });
+        if (nextDate === undefined) {
+            return undefined;
+        }
+        const next = nextDate.getTime();
         if (next <= cursor) {
             throw rangeError(
                 "step",
                 "a duration that moves time forward",
-                step,
+                step ?? slotDuration,
             );
         }
         cursor = next;
@@ -97,7 +122,10 @@ function isFree(
     busy: readonly Interval[],
 ): boolean {
     const slot = { start: new Date(start), end: new Date(end) };
-    return !busy.some((interval) => doIntervalsOverlap(slot, interval));
+    return !busy.some(
+        (interval) =>
+            doIntervalsOverlap({ first: slot, second: interval }) === true,
+    );
 }
 
 /**
@@ -124,20 +152,42 @@ function fitsWindow(
         startParts.year === endParts.year &&
         startParts.month === endParts.month &&
         startParts.day === endParts.day;
-    const daytime = compareTimesOfDay(window.end, window.start) > 0;
+    const daytime =
+        compareTimesOfDay({
+            first: window.end,
+            second: window.start,
+        }) === 1;
     if (daytime) {
         return (
             sameDay &&
-            compareTimesOfDay(startTime, window.start) >= 0 &&
-            compareTimesOfDay(endTime, window.end) <= 0
+            (compareTimesOfDay({
+                first: startTime,
+                second: window.start,
+            }) ?? -1) >= 0 &&
+            (compareTimesOfDay({
+                first: endTime,
+                second: window.end,
+            }) ?? 1) <= 0
         );
     }
     const startsInside =
-        compareTimesOfDay(startTime, window.start) >= 0 ||
-        compareTimesOfDay(startTime, window.end) < 0;
+        (compareTimesOfDay({
+            first: startTime,
+            second: window.start,
+        }) ?? -1) >= 0 ||
+        (compareTimesOfDay({
+            first: startTime,
+            second: window.end,
+        }) ?? 1) < 0;
     const endsInside =
-        compareTimesOfDay(endTime, window.start) >= 0 ||
-        compareTimesOfDay(endTime, window.end) <= 0;
+        (compareTimesOfDay({
+            first: endTime,
+            second: window.start,
+        }) ?? -1) >= 0 ||
+        (compareTimesOfDay({
+            first: endTime,
+            second: window.end,
+        }) ?? 1) <= 0;
     return startsInside && endsInside;
 }
 
@@ -163,7 +213,9 @@ function clock(parts: {
  * @param range - A daily window.
  * @returns Parsed bounds.
  */
-function readWindow(range: TimeRange): { start: TimeOfDay; end: TimeOfDay } {
+function readWindow(
+    range: TimeRange,
+): { start: TimeOfDay; end: TimeOfDay } | undefined {
     const start = parseTimeOfDay(
         typeof range.start === "string"
             ? range.start
@@ -173,7 +225,7 @@ function readWindow(range: TimeRange): { start: TimeOfDay; end: TimeOfDay } {
         typeof range.end === "string" ? range.end : formatBound(range.end),
     );
     if (start === undefined || end === undefined) {
-        throw rangeError("dailyWindow", "a time range", range);
+        return undefined;
     }
     return { start, end };
 }

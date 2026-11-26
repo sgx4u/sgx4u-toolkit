@@ -1,3 +1,4 @@
+import type { DateInput } from "../types/date-input.types.js";
 import type { LocaleOptions, TimeZoneOptions } from "../types/options.types.js";
 
 /**
@@ -27,4 +28,14 @@ export interface FormatDateWithStyleOptions
      * The hour cycle passed to `Intl`.
      */
     hourCycle?: "h11" | "h12" | "h23" | "h24";
+}
+
+/**
+ * Fields for {@link formatDateWithStyle}.
+ */
+export interface FormatDateWithStyleParams extends FormatDateWithStyleOptions {
+    /**
+     * The instant to format.
+     */
+    date: DateInput;
 }

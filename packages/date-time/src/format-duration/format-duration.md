@@ -48,4 +48,4 @@ An unknown `style` throws `RangeError`. A value that is not a duration throws `T
 
 - [`formatDurationCompact`](../format-duration-compact/format-duration-compact.md) writes symbols such as `1h 30m`.
 - [`formatDurationAsClock`](../format-duration-as-clock/format-duration-as-clock.md) writes `H:mm:ss`.
-- [`formatIsoDuration`](../format-iso-duration/format-iso-duration.md) writes an ISO 8601 duration.
+- [`formatISODuration`](../format-iso-duration/format-iso-duration.md) writes an ISO 8601 duration.

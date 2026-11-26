@@ -1,11 +1,27 @@
+import type { Interval } from "../types/interval.types.js";
+
 /**
- * Whether intervals that only touch count as overlapping.
+ * How touching endpoints are counted.
  */
 export interface DoIntervalsOverlapOptions {
     /**
-     * Whether `[a, b)` and `[b, c)` overlap.
+     * When `true`, an endpoint touch counts as overlap.
      *
      * @defaultValue `false`
      */
     countTouchingAsOverlap?: boolean;
+}
+
+/**
+ * Fields for {@link doIntervalsOverlap}.
+ */
+export interface DoIntervalsOverlapParams extends DoIntervalsOverlapOptions {
+    /**
+     * The first interval.
+     */
+    first: Interval;
+    /**
+     * The second interval.
+     */
+    second: Interval;
 }

@@ -1,7 +1,7 @@
 import type { Interval } from "../types/interval.types.js";
-import { assertInteger } from "../utils/assert.utils.js";
 import { rangeError } from "../utils/error.utils.js";
-import { readInterval } from "../utils/interval.utils.js";
+import { isIntervalValue } from "../utils/interval.utils.js";
+import type { DivideIntervalParams } from "./divide-interval.types.js";
 
 /**
  * Splits an interval into equal parts.
@@ -9,30 +9,35 @@ import { readInterval } from "../utils/interval.utils.js";
  * Part lengths differ by at most one millisecond. The parts are in order
  * and cover the whole interval.
  *
- * @param interval - The interval to divide.
- * @param partCount - How many parts to make. It must be a positive integer.
- * @returns The parts.
- * @throws {@link TypeError} When `partCount` is not a number.
- * @throws {@link RangeError} When `partCount` is not a positive integer or the interval is invalid.
+ * @param params - `interval` and `partCount` are required.
+ * @returns The parts, or `undefined` when the interval or `partCount` is not usable.
+ * @throws {@link RangeError} When `partCount` is not a positive integer.
  * @example
- * divideInterval({ start: new Date(0), end: new Date(10) }, 2).map((part) => part.end.getTime()); // [5, 10]
+ * divideInterval({
+ *   interval: { start: new Date(0), end: new Date(10) },
+ *   partCount: 2,
+ * })?.map((part) => part.end.getTime()); // [5, 10]
  */
-export function divideInterval(
-    interval: Interval,
-    partCount: number,
-): Interval[] {
-    const checked = readInterval(interval);
-    const count = assertInteger(partCount, "partCount");
-    if (count < 1) {
+export function divideInterval({
+    interval,
+    partCount,
+}: DivideIntervalParams): Interval[] | undefined {
+    if (!isIntervalValue(interval)) {
+        return undefined;
+    }
+    if (typeof partCount !== "number" || !Number.isInteger(partCount)) {
+        return undefined;
+    }
+    if (partCount < 1) {
         throw rangeError("partCount", "a positive integer", partCount);
     }
-    const start = checked.start.getTime();
-    const length = checked.end.getTime() - start;
-    const base = Math.floor(length / count);
-    const remainder = length - base * count;
+    const start = interval.start.getTime();
+    const length = interval.end.getTime() - start;
+    const base = Math.floor(length / partCount);
+    const remainder = length - base * partCount;
     const parts: Interval[] = [];
     let cursor = start;
-    for (let index = 0; index < count; index += 1) {
+    for (let index = 0; index < partCount; index += 1) {
         const size = base + (index < remainder ? 1 : 0);
         const next = cursor + size;
         parts.push({ start: new Date(cursor), end: new Date(next) });

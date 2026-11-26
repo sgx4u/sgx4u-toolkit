@@ -54,7 +54,7 @@ formatDateWithStyle("2024-03-10T06:30:00Z", {
 
 ## Edge cases
 
-When only `timeStyle` is set, the date is omitted. A date that does not parse throws `RangeError`. An unusable zone throws `RangeError`. `2024-02-29T00:00:00Z` in UTC with `en-US` and a medium date is `"Feb 29, 2024"`.
+When only `timeStyle` is set, the date is omitted. A date that is not usable returns `undefined`. An unusable zone throws `RangeError`. `2024-02-29T00:00:00Z` in UTC with `en-US` and a medium date is `"Feb 29, 2024"`.
 
 ## Related
 
