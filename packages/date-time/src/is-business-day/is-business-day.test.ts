@@ -39,10 +39,10 @@ describe("isBusinessDay", () => {
         expect(() => isBusinessDay("nope", { timeZone: "UTC" })).toThrow(
             "`date`",
         );
-        expect(() => isBusinessDay(null, { timeZone: "UTC" })).toThrow(
+        expect(() => isBusinessDay(null as never, { timeZone: "UTC" })).toThrow(
             TypeError,
         );
-        expect(() => isBusinessDay(null, { timeZone: "UTC" })).toThrow(
+        expect(() => isBusinessDay(null as never, { timeZone: "UTC" })).toThrow(
             "`date`",
         );
     });

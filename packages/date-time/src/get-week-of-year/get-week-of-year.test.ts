@@ -47,13 +47,13 @@ describe("getWeekOfYear", () => {
         expect(() => getWeekOfYear("nope", { timeZone: "UTC" })).toThrow(
             "`date`",
         );
-        expect(() => getWeekOfYear(null, { timeZone: "UTC" })).toThrow(
+        expect(() => getWeekOfYear(null as never, { timeZone: "UTC" })).toThrow(
             TypeError,
         );
         expect(() =>
             getWeekOfYear("2026-01-01T00:00:00Z", {
                 timeZone: "UTC",
-                weekStartsOn: 0,
+                weekStartsOn: 0 as never,
             }),
         ).toThrow("`weekStartsOn`");
     });

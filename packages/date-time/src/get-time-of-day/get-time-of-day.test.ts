@@ -29,10 +29,12 @@ describe("getTimeOfDay", () => {
         expect(() => getTimeOfDay("nope", { timeZone: "UTC" })).toThrow(
             "`date`",
         );
-        expect(() => getTimeOfDay(null, { timeZone: "UTC" })).toThrow(
+        expect(() => getTimeOfDay(null as never, { timeZone: "UTC" })).toThrow(
             TypeError,
         );
-        expect(() => getTimeOfDay(null, { timeZone: "UTC" })).toThrow("`date`");
+        expect(() => getTimeOfDay(null as never, { timeZone: "UTC" })).toThrow(
+            "`date`",
+        );
         expect(() =>
             getTimeOfDay("2026-11-26T00:00:00Z", { timeZone: "Mars/Base" }),
         ).toThrow("`timeZone`");

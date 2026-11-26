@@ -40,8 +40,12 @@ describe("getPreviousBusinessDay", () => {
     it("rejects a date that is not real", () => {
         expect(() => getPreviousBusinessDay("nope", utc)).toThrow(RangeError);
         expect(() => getPreviousBusinessDay("nope", utc)).toThrow("`date`");
-        expect(() => getPreviousBusinessDay(null, utc)).toThrow(TypeError);
-        expect(() => getPreviousBusinessDay(null, utc)).toThrow("`date`");
+        expect(() => getPreviousBusinessDay(null as never, utc)).toThrow(
+            TypeError,
+        );
+        expect(() => getPreviousBusinessDay(null as never, utc)).toThrow(
+            "`date`",
+        );
     });
 
     it("uses the system zone and a Saturday-Sunday weekend", () => {

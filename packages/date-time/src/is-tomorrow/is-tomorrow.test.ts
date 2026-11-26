@@ -33,12 +33,12 @@ describe("isTomorrow", () => {
         expect(() => isTomorrow("nope", { now, timeZone: "UTC" })).toThrow(
             "`date`",
         );
-        expect(() => isTomorrow(null, { now, timeZone: "UTC" })).toThrow(
-            TypeError,
-        );
-        expect(() => isTomorrow(null, { now, timeZone: "UTC" })).toThrow(
-            "`date`",
-        );
+        expect(() =>
+            isTomorrow(null as never, { now, timeZone: "UTC" }),
+        ).toThrow(TypeError);
+        expect(() =>
+            isTomorrow(null as never, { now, timeZone: "UTC" }),
+        ).toThrow("`date`");
         expect(() =>
             isTomorrow("2026-11-27T00:00:00Z", {
                 now: "nope",

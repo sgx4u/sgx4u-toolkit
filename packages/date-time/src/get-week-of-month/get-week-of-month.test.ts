@@ -33,16 +33,16 @@ describe("getWeekOfMonth", () => {
         expect(() => getWeekOfMonth("nope", { timeZone: "UTC" })).toThrow(
             "`date`",
         );
-        expect(() => getWeekOfMonth(null, { timeZone: "UTC" })).toThrow(
-            TypeError,
-        );
-        expect(() => getWeekOfMonth(null, { timeZone: "UTC" })).toThrow(
-            "`date`",
-        );
+        expect(() =>
+            getWeekOfMonth(null as never, { timeZone: "UTC" }),
+        ).toThrow(TypeError);
+        expect(() =>
+            getWeekOfMonth(null as never, { timeZone: "UTC" }),
+        ).toThrow("`date`");
         expect(() =>
             getWeekOfMonth("2026-11-26T00:00:00Z", {
                 timeZone: "UTC",
-                weekStartsOn: 0,
+                weekStartsOn: 0 as never,
             }),
         ).toThrow("`weekStartsOn`");
         expect(() =>

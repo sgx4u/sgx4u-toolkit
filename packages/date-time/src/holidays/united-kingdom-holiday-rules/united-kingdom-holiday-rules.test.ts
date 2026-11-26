@@ -74,10 +74,10 @@ describe("unitedKingdomHolidayRules", () => {
             getHolidaysInYear(2026.5, unitedKingdomHolidayRules),
         ).toThrow("`year`");
         expect(() =>
-            getHolidaysInYear("2026", unitedKingdomHolidayRules),
+            getHolidaysInYear("2026" as never, unitedKingdomHolidayRules),
         ).toThrow(TypeError);
         expect(() =>
-            getHolidaysInYear("2026", unitedKingdomHolidayRules),
+            getHolidaysInYear("2026" as never, unitedKingdomHolidayRules),
         ).toThrow("`year`");
     });
 

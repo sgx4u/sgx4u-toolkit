@@ -43,10 +43,10 @@ describe("getPreviousTimeZoneTransition", () => {
             getPreviousTimeZoneTransition("2026-01-15T00:00:00Z", "Mars/Base"),
         ).toThrow("`timeZone`");
         expect(() =>
-            getPreviousTimeZoneTransition("2026-01-15T00:00:00Z", 5),
+            getPreviousTimeZoneTransition("2026-01-15T00:00:00Z", 5 as never),
         ).toThrow(TypeError);
         expect(() =>
-            getPreviousTimeZoneTransition("2026-01-15T00:00:00Z", 5),
+            getPreviousTimeZoneTransition("2026-01-15T00:00:00Z", 5 as never),
         ).toThrow("`timeZone`");
         expect(() =>
             getPreviousTimeZoneTransition("nope", "America/New_York"),

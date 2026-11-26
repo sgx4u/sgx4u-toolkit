@@ -64,8 +64,12 @@ describe("getTimeZoneTransitions", () => {
         expect(() => getTimeZoneTransitions(springDay, "Mars/Base")).toThrow(
             "`timeZone`",
         );
-        expect(() => getTimeZoneTransitions(null, "UTC")).toThrow(TypeError);
-        expect(() => getTimeZoneTransitions(null, "UTC")).toThrow("`interval`");
+        expect(() => getTimeZoneTransitions(null as never, "UTC")).toThrow(
+            TypeError,
+        );
+        expect(() => getTimeZoneTransitions(null as never, "UTC")).toThrow(
+            "`interval`",
+        );
     });
 
     it("includes a span of exactly 50 years", () => {

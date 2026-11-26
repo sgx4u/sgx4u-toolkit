@@ -66,10 +66,14 @@ describe("getNextOpeningTime", () => {
             getNextOpeningTime("nope", thursdayHours, { timeZone: "UTC" }),
         ).toThrow("`date`");
         expect(() =>
-            getNextOpeningTime(null, thursdayHours, { timeZone: "UTC" }),
+            getNextOpeningTime(null as never, thursdayHours, {
+                timeZone: "UTC",
+            }),
         ).toThrow(TypeError);
         expect(() =>
-            getNextOpeningTime(null, thursdayHours, { timeZone: "UTC" }),
+            getNextOpeningTime(null as never, thursdayHours, {
+                timeZone: "UTC",
+            }),
         ).toThrow("`date`");
         expect(() =>
             getNextOpeningTime(

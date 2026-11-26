@@ -2,13 +2,15 @@ import { describe, expect, it } from "vitest";
 import { toTemporalInstant } from "../index.js";
 
 interface TemporalHost {
-    Temporal?: {
-        Instant?: {
-            fromEpochMilliseconds: (milliseconds: number) => {
-                epochMilliseconds: number;
-            };
-        };
-    };
+    Temporal?:
+        | {
+              Instant?: {
+                  fromEpochMilliseconds: (milliseconds: number) => {
+                      epochMilliseconds: number;
+                  };
+              };
+          }
+        | undefined;
 }
 
 describe("toTemporalInstant", () => {

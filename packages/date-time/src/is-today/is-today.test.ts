@@ -35,10 +35,12 @@ describe("isToday", () => {
         expect(() => isToday("nope", { now, timeZone: "UTC" })).toThrow(
             "`date`",
         );
-        expect(() => isToday(null, { now, timeZone: "UTC" })).toThrow(
+        expect(() => isToday(null as never, { now, timeZone: "UTC" })).toThrow(
             TypeError,
         );
-        expect(() => isToday(null, { now, timeZone: "UTC" })).toThrow("`date`");
+        expect(() => isToday(null as never, { now, timeZone: "UTC" })).toThrow(
+            "`date`",
+        );
         expect(() =>
             isToday("2026-11-26T00:00:00Z", { now: "nope", timeZone: "UTC" }),
         ).toThrow("`now`");

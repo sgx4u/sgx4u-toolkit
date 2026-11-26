@@ -18,8 +18,8 @@ describe("isPast", () => {
     it("rejects a date that is not real", () => {
         expect(() => isPast("nope", { now })).toThrow(RangeError);
         expect(() => isPast("nope", { now })).toThrow("`date`");
-        expect(() => isPast(null, { now })).toThrow(TypeError);
-        expect(() => isPast(null, { now })).toThrow("`date`");
+        expect(() => isPast(null as never, { now })).toThrow(TypeError);
+        expect(() => isPast(null as never, { now })).toThrow("`date`");
         expect(() => isPast("2020-01-01T00:00:00Z", { now: "nope" })).toThrow(
             "`now`",
         );

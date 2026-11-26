@@ -26,8 +26,12 @@ describe("getQuarter", () => {
             RangeError,
         );
         expect(() => getQuarter("nope", { timeZone: "UTC" })).toThrow("`date`");
-        expect(() => getQuarter(null, { timeZone: "UTC" })).toThrow(TypeError);
-        expect(() => getQuarter(null, { timeZone: "UTC" })).toThrow("`date`");
+        expect(() => getQuarter(null as never, { timeZone: "UTC" })).toThrow(
+            TypeError,
+        );
+        expect(() => getQuarter(null as never, { timeZone: "UTC" })).toThrow(
+            "`date`",
+        );
         expect(() =>
             getQuarter("2026-11-26T00:00:00Z", { timeZone: "Mars/Base" }),
         ).toThrow("`timeZone`");

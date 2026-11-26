@@ -46,19 +46,23 @@ describe("getRelativeTimeParts", () => {
         expect(() =>
             getRelativeTimeParts("2026-01-01T00:00:00Z", {
                 now,
-                unit: "fortnight",
+                unit: "fortnight" as never,
             }),
         ).toThrow(RangeError);
         expect(() =>
             getRelativeTimeParts("2026-01-01T00:00:00Z", {
                 now,
-                unit: "fortnight",
+                unit: "fortnight" as never,
             }),
         ).toThrow("`unit`");
         expect(() => getRelativeTimeParts("nope", { now })).toThrow(RangeError);
         expect(() => getRelativeTimeParts("nope", { now })).toThrow("`date`");
-        expect(() => getRelativeTimeParts(null, { now })).toThrow(TypeError);
-        expect(() => getRelativeTimeParts(null, { now })).toThrow("`date`");
+        expect(() => getRelativeTimeParts(null as never, { now })).toThrow(
+            TypeError,
+        );
+        expect(() => getRelativeTimeParts(null as never, { now })).toThrow(
+            "`date`",
+        );
         expect(() =>
             getRelativeTimeParts("2026-01-01T03:00:00Z", { now: "nope" }),
         ).toThrow("`now`");

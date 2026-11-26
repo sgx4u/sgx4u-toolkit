@@ -18,8 +18,8 @@ describe("isFuture", () => {
     it("rejects a date that is not real", () => {
         expect(() => isFuture("nope", { now })).toThrow(RangeError);
         expect(() => isFuture("nope", { now })).toThrow("`date`");
-        expect(() => isFuture(null, { now })).toThrow(TypeError);
-        expect(() => isFuture(null, { now })).toThrow("`date`");
+        expect(() => isFuture(null as never, { now })).toThrow(TypeError);
+        expect(() => isFuture(null as never, { now })).toThrow("`date`");
         expect(() => isFuture("2027-01-01T00:00:00Z", { now: "nope" })).toThrow(
             "`now`",
         );

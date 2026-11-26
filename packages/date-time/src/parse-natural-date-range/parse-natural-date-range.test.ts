@@ -3,7 +3,14 @@ import { parseNaturalDateRange } from "../natural-language.js";
 
 const now = { now: "2026-11-26T12:00:00Z", timeZone: "UTC" };
 
-function ends(text: string, options = now): string[] | undefined {
+function ends(
+    text: string,
+    options: {
+        now: string;
+        timeZone: string;
+        preferFuture?: boolean;
+    } = now,
+): string[] | undefined {
     const range = parseNaturalDateRange(text, options);
     if (range === undefined) {
         return undefined;

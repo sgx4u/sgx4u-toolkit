@@ -53,10 +53,14 @@ describe("isHoliday", () => {
 
     it("rejects rules that are not an array and a date that is not real", () => {
         expect(() =>
-            isHoliday("2026-07-04T00:00:00Z", null, { timeZone: "UTC" }),
+            isHoliday("2026-07-04T00:00:00Z", null as never, {
+                timeZone: "UTC",
+            }),
         ).toThrow(TypeError);
         expect(() =>
-            isHoliday("2026-07-04T00:00:00Z", null, { timeZone: "UTC" }),
+            isHoliday("2026-07-04T00:00:00Z", null as never, {
+                timeZone: "UTC",
+            }),
         ).toThrow("`rules`");
         expect(() =>
             isHoliday("nope", unitedStatesHolidayRules, { timeZone: "UTC" }),

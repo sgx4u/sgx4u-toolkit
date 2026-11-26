@@ -52,10 +52,10 @@ describe("getPreviousRecurrenceOccurrence", () => {
             getPreviousRecurrenceOccurrence(daily, { now: "nope" }),
         ).toThrow("`now`");
         expect(() =>
-            getPreviousRecurrenceOccurrence(daily, { now: null }),
+            getPreviousRecurrenceOccurrence(daily, { now: null as never }),
         ).toThrow(TypeError);
         expect(() =>
-            getPreviousRecurrenceOccurrence(daily, { now: null }),
+            getPreviousRecurrenceOccurrence(daily, { now: null as never }),
         ).toThrow("`now`");
     });
 

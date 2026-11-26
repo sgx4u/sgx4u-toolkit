@@ -69,13 +69,13 @@ describe("getPreviousCronRuns", () => {
         expect(() =>
             getPreviousCronRuns("0 9 * * *", {
                 now: "2026-11-26T10:00:00Z",
-                count: "1",
+                count: "1" as never,
             }),
         ).toThrow(TypeError);
         expect(() =>
             getPreviousCronRuns("0 9 * * *", {
                 now: "2026-11-26T10:00:00Z",
-                count: "1",
+                count: "1" as never,
             }),
         ).toThrow("`count`");
     });

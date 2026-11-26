@@ -57,12 +57,12 @@ describe("getNextRecurrenceOccurrence", () => {
         expect(() =>
             getNextRecurrenceOccurrence(daily, { now: "nope" }),
         ).toThrow("`now`");
-        expect(() => getNextRecurrenceOccurrence(daily, { now: null })).toThrow(
-            TypeError,
-        );
-        expect(() => getNextRecurrenceOccurrence(daily, { now: null })).toThrow(
-            "`now`",
-        );
+        expect(() =>
+            getNextRecurrenceOccurrence(daily, { now: null as never }),
+        ).toThrow(TypeError);
+        expect(() =>
+            getNextRecurrenceOccurrence(daily, { now: null as never }),
+        ).toThrow("`now`");
     });
 
     it("excludes now and evaluates a floating rule in UTC", () => {

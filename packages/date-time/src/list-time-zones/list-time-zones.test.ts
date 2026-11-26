@@ -13,7 +13,7 @@ describe("listTimeZones", () => {
 
     it("returns an empty list when the runtime cannot enumerate zones", () => {
         const intl = Intl as unknown as {
-            supportedValuesOf?: (key: "timeZone") => string[];
+            supportedValuesOf?: ((key: "timeZone") => string[]) | undefined;
         };
         const original = intl.supportedValuesOf;
 

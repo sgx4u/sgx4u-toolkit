@@ -35,16 +35,22 @@ describe("getWeekdayNames", () => {
     });
 
     it("rejects an unknown width or a week start outside 1 through 7", () => {
-        expect(() => getWeekdayNames({ width: "wide" })).toThrow(RangeError);
-        expect(() => getWeekdayNames({ width: "wide" })).toThrow("`width`");
-        expect(() => getWeekdayNames({ startsOn: 0 })).toThrow(RangeError);
-        expect(() => getWeekdayNames({ startsOn: 0 })).toThrow(
+        expect(() => getWeekdayNames({ width: "wide" as never })).toThrow(
+            RangeError,
+        );
+        expect(() => getWeekdayNames({ width: "wide" as never })).toThrow(
+            "`width`",
+        );
+        expect(() => getWeekdayNames({ startsOn: 0 as never })).toThrow(
+            RangeError,
+        );
+        expect(() => getWeekdayNames({ startsOn: 0 as never })).toThrow(
             "`weekStartsOn`",
         );
-        expect(() => getWeekdayNames({ startsOn: "Monday" })).toThrow(
+        expect(() => getWeekdayNames({ startsOn: "Monday" as never })).toThrow(
             TypeError,
         );
-        expect(() => getWeekdayNames({ startsOn: "Monday" })).toThrow(
+        expect(() => getWeekdayNames({ startsOn: "Monday" as never })).toThrow(
             "`weekStartsOn`",
         );
     });

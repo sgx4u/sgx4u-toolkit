@@ -28,13 +28,13 @@ describe("isValidCronExpression", () => {
     it("returns false for text that is not a schedule and throws for a bad option", () => {
         expect(() => isValidCronExpression("not a cron")).not.toThrow();
         expect(isValidCronExpression("not a cron")).toBe(false);
-        expect(() => isValidCronExpression(5)).toThrow(TypeError);
-        expect(() => isValidCronExpression(5)).toThrow("`expression`");
+        expect(() => isValidCronExpression(5 as never)).toThrow(TypeError);
+        expect(() => isValidCronExpression(5 as never)).toThrow("`expression`");
         expect(() =>
-            isValidCronExpression("0 9 * * *", { seconds: "always" }),
+            isValidCronExpression("0 9 * * *", { seconds: "always" as never }),
         ).toThrow(RangeError);
         expect(() =>
-            isValidCronExpression("0 9 * * *", { seconds: "always" }),
+            isValidCronExpression("0 9 * * *", { seconds: "always" as never }),
         ).toThrow("`seconds`");
     });
 

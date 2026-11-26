@@ -44,10 +44,14 @@ describe("isDaylightSavingTime", () => {
             isDaylightSavingTime("nope", { timeZone: "America/New_York" }),
         ).toThrow("`date`");
         expect(() =>
-            isDaylightSavingTime(null, { timeZone: "America/New_York" }),
+            isDaylightSavingTime(null as never, {
+                timeZone: "America/New_York",
+            }),
         ).toThrow(TypeError);
         expect(() =>
-            isDaylightSavingTime(null, { timeZone: "America/New_York" }),
+            isDaylightSavingTime(null as never, {
+                timeZone: "America/New_York",
+            }),
         ).toThrow("`date`");
         expect(() =>
             isDaylightSavingTime("2026-07-15T00:00:00Z", {

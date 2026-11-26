@@ -47,8 +47,10 @@ describe("getTimeZoneDifference", () => {
                 at: "2026-01-15T00:00:00Z",
             }),
         ).toThrow("`secondTimeZone`");
-        expect(() => getTimeZoneDifference(5, "UTC")).toThrow(TypeError);
-        expect(() => getTimeZoneDifference(5, "UTC")).toThrow(
+        expect(() => getTimeZoneDifference(5 as never, "UTC")).toThrow(
+            TypeError,
+        );
+        expect(() => getTimeZoneDifference(5 as never, "UTC")).toThrow(
             "`firstTimeZone`",
         );
         expect(() =>

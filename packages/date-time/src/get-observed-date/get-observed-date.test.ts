@@ -47,19 +47,19 @@ describe("getObservedDate", () => {
     });
 
     it("rejects an unknown policy or a date that is not a calendar date", () => {
-        expect(() => getObservedDate(independenceDay, "weekend")).toThrow(
-            RangeError,
-        );
-        expect(() => getObservedDate(independenceDay, "weekend")).toThrow(
-            "`policy`",
-        );
+        expect(() =>
+            getObservedDate(independenceDay, "weekend" as never),
+        ).toThrow(RangeError);
+        expect(() =>
+            getObservedDate(independenceDay, "weekend" as never),
+        ).toThrow("`policy`");
         expect(() =>
             getObservedDate({ year: 2026, month: 7, day: 4.5 }, "none"),
         ).toThrow(TypeError);
         expect(() =>
             getObservedDate({ year: 2026, month: 7, day: 4.5 }, "none"),
         ).toThrow("`date`");
-        expect(() => getObservedDate(null, "none")).toThrow("`date`");
+        expect(() => getObservedDate(null as never, "none")).toThrow("`date`");
     });
 
     it("treats Saturday and Sunday as the weekend unless weekendDays says otherwise", () => {
