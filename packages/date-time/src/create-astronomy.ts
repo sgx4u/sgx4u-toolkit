@@ -26,7 +26,7 @@ export interface AstronomyInstance<Config extends DateTimeConfig> {
  * @param config - Defaults for every call. Omit it to keep the built-in defaults.
  * @returns Sunrise and moon-phase functions with those defaults applied.
  * @throws {@link TypeError} When a config field has the wrong type.
- * @throws {@link RangeError} When a zone, locale, or coordinate is unusable.
+ * @throws {@link RangeError} When a zone, locale, weekday, or other setting is unusable.
  * @example
  * const astronomy = createAstronomy({ timeZone: "UTC" });
  * astronomy.getSunTimes({

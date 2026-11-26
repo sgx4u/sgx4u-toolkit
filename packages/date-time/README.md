@@ -353,7 +353,7 @@ Invalid dates, durations, and unparseable text return `undefined`. `is*`, `does*
 - `changeTimeZoneKeepingWallTime` — RangeError When a zone is unknown, `disambiguation` is not a known mode, or `"reject"` hits a gap or overlap.
 - `clampDate` — RangeError When `start` is after `end`.
 - `compareDurations` — RangeError When a calendar unit has no `relativeTo`, or `timeZone` is unusable.
-- `createAstronomy` — TypeError When a config field has the wrong type. RangeError When a zone, locale, or coordinate is unusable.
+- `createAstronomy` — TypeError When a config field has the wrong type. RangeError When a zone, locale, weekday, or other setting is unusable.
 - `createCron` — TypeError When a config field has the wrong type. RangeError When a zone, locale, weekday, or other setting is unusable.
 - `createDate` — RangeError When `timeZone` is unusable, `disambiguation` is not a known mode, or `"reject"` hits a gap or overlap.
 - `createDateTime` — TypeError When a config field has the wrong type. RangeError When a zone, locale, weekday, or other setting is unusable.
