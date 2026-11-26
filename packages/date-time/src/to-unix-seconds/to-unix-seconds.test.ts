@@ -32,11 +32,9 @@ describe("toUnixSeconds", () => {
     });
 
     it("throws when the date is not real", () => {
-        expect(() => toUnixSeconds("2024-02-30")).toThrow(RangeError);
+        expect(toUnixSeconds("2024-02-30")).toBeUndefined();
         expect(() => toUnixSeconds(new Date(Number.NaN))).toThrow(RangeError);
-        expect(() => toUnixSeconds(Number.NaN)).toThrow(RangeError);
-        expect(() => toUnixSeconds(null as unknown as number)).toThrow(
-            TypeError,
-        );
+        expect(toUnixSeconds(Number.NaN)).toBeUndefined();
+        expect(toUnixSeconds(null as unknown as number)).toBeUndefined();
     });
 });

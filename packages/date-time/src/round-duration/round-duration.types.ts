@@ -1,11 +1,16 @@
 import type { DateInput } from "../types/date-input.types.js";
+import type { Duration } from "../types/duration.types.js";
 import type { TimeZoneOptions } from "../types/options.types.js";
 import type { TimeUnit } from "../types/time.types.js";
 
 /**
- * How a duration is rounded.
+ * Fields for {@link roundDuration}.
  */
-export interface RoundDurationOptions extends TimeZoneOptions {
+export interface RoundDurationParams extends TimeZoneOptions {
+    /**
+     * The duration to round.
+     */
+    duration: Duration;
     /**
      * The unit the result is rounded to.
      */

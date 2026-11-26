@@ -1,4 +1,5 @@
 import type { RecurrenceRule } from "../types/recurrence.types.js";
+import { typeError } from "../utils/error.utils.js";
 import { parseRecurrenceText } from "../utils/recurrence.utils.js";
 
 /**
@@ -14,6 +15,11 @@ import { parseRecurrenceText } from "../utils/recurrence.utils.js";
  * @example
  * parseRecurrenceRule("DTSTART:20261126T090000Z\nRRULE:FREQ=DAILY")?.frequency; // "daily"
  */
-export function parseRecurrenceRule(value: string): RecurrenceRule | undefined {
+export function parseRecurrenceRule(
+    value: string,
+): RecurrenceRule | undefined {
+    if (typeof value !== "string") {
+        throw typeError("value", "a string", value);
+    }
     return parseRecurrenceText(value);
 }

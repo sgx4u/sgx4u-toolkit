@@ -1,7 +1,13 @@
+import type { DateInput } from "../types/date-input.types.js";
+
 /**
- * Which way a date list is ordered.
+ * Fields for {@link sortDates}.
  */
-export interface SortDatesOptions {
+export interface SortDatesParams {
+    /**
+     * The dates to sort.
+     */
+    dates: readonly DateInput[];
     /**
      * Oldest first, or newest first.
      *

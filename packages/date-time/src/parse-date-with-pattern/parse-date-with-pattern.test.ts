@@ -11,17 +11,17 @@ describe("parseDateWithPattern", () => {
         const instant = new Date("2026-11-26T03:30:15.250Z");
         const text = formatDate(instant, pattern, { timeZone: "UTC" });
         expect(
-            parseDateWithPattern(text, pattern, {
+            parseDateWithPattern({ value: text, pattern: pattern, ...{
                 timeZone: "UTC",
-            })?.toISOString(),
+            } })?.toISOString(),
         ).toBe(instant.toISOString());
         expect(matchesDatePattern("2026-11-26", "yyyy-MM-dd")).toBe(true);
         expect(
-            parseDateWithPattern("2026-02-30", "yyyy-MM-dd", {
+            parseDateWithPattern({ value: "2026-02-30", pattern: "yyyy-MM-dd", ...{
                 timeZone: "UTC",
-            }),
+            } }),
         ).toBeUndefined();
-        expect(() => parseDateWithPattern("2026", "QQQQQ")).toThrow(RangeError);
+        expect(() => parseDateWithPattern({ value: "2026", pattern: "QQQQQ" })).toThrow(RangeError);
         expect(
             parseDateWithPattern("November 26, 2026", "MMMM d, yyyy", {
                 timeZone: "UTC",
@@ -29,18 +29,18 @@ describe("parseDateWithPattern", () => {
             })?.toISOString(),
         ).toBe("2026-11-26T00:00:00.000Z");
         expect(
-            parseDateWithPattern("Thursday", "EEEE", {
+            parseDateWithPattern({ value: "Thursday", pattern: "EEEE", ...{
                 timeZone: "UTC",
                 locale: "en-US",
                 referenceDate: "2026-11-26T00:00:00Z",
-            })?.toISOString(),
+            } })?.toISOString(),
         ).toBe("2026-11-26T00:00:00.000Z");
         expect(
-            parseDateWithPattern("3:30 PM", "h:mm a", {
+            parseDateWithPattern({ value: "3:30 PM", pattern: "h:mm a", ...{
                 timeZone: "UTC",
                 locale: "en-US",
                 referenceDate: "2026-11-26T00:00:00Z",
-            })?.toISOString(),
+            } })?.toISOString(),
         ).toBe("2026-11-26T15:30:00.000Z");
     });
 });

@@ -6,10 +6,18 @@ import type {
 import type { DateInput } from "../types/date-input.types.js";
 
 /**
- * How a patterned date is completed and placed on the timeline.
+ * Fields for {@link parseDateWithPattern}.
  */
-export interface ParseDateWithPatternOptions
+export interface ParseDateWithPatternParams
     extends TimeZoneOptions, LocaleOptions, DisambiguationOptions {
+    /**
+     * The text to parse.
+     */
+    value: string;
+    /**
+     * The CLDR-style pattern.
+     */
+    pattern: string;
     /**
      * Fields missing from the pattern come from this instant. Omitted time
      * fields become zero when the pattern contains a date field.

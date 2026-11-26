@@ -1,5 +1,5 @@
 import { typeError } from "../utils/error.utils.js";
-import { parseHttpDateText } from "../utils/http-date.utils.js";
+import { parseHTTPDateText } from "../utils/http-date.utils.js";
 
 /**
  * Parses an HTTP date in IMF-fixdate, RFC 850, or asctime form.
@@ -11,12 +11,12 @@ import { parseHttpDateText } from "../utils/http-date.utils.js";
  * @returns A new `Date`, or `undefined` when the text does not match.
  * @throws {@link TypeError} When `value` is not a string.
  * @example
- * parseHttpDate("Thu, 26 Nov 2026 22:00:00 GMT")?.toISOString(); // "2026-11-26T22:00:00.000Z"
+ * parseHTTPDate("Thu, 26 Nov 2026 22:00:00 GMT")?.toISOString(); // "2026-11-26T22:00:00.000Z"
  */
-export function parseHttpDate(value: string): Date | undefined {
+export function parseHTTPDate(value: string): Date | undefined {
     if (typeof value !== "string") {
         throw typeError("value", "a string", value);
     }
-    const instant = parseHttpDateText(value, Date.now());
+    const instant = parseHTTPDateText(value, Date.now());
     return instant === undefined ? undefined : new Date(instant);
 }

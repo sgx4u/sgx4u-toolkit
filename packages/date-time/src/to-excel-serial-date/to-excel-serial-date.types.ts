@@ -1,3 +1,4 @@
+import type { DateInput } from "../types/date-input.types.js";
 import type { TimeZoneOptions } from "../types/options.types.js";
 
 /**
@@ -10,4 +11,14 @@ export interface ExcelDateOptions extends TimeZoneOptions {
      * @defaultValue `1900`
      */
     dateSystem?: 1900 | 1904;
+}
+
+/**
+ * Fields for {@link toExcelSerialDate}.
+ */
+export interface ToExcelSerialDateParams extends ExcelDateOptions {
+    /**
+     * The instant to convert.
+     */
+    date: DateInput;
 }

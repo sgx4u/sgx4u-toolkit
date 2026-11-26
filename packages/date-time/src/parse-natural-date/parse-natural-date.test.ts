@@ -22,11 +22,11 @@ describe("natural language", () => {
             "2026-12-25T00:00:00.000Z",
         );
         expect(
-            parseNaturalDate("Dec 25", {
+            parseNaturalDate({ text: "Dec 25", ...{
                 ...now,
                 preferFuture: false,
                 now: "2026-12-26T00:00:00Z",
-            })?.toISOString(),
+            } })?.toISOString(),
         ).toBe("2026-12-25T00:00:00.000Z");
         expect(parseNaturalDate("not a date", now)).toBeUndefined();
         expect(

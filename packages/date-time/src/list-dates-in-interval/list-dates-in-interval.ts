@@ -1,8 +1,7 @@
-import type { Interval } from "../types/interval.types.js";
 import type { TimeUnit } from "../types/time.types.js";
 import { addDuration } from "../add-duration/add-duration.js";
 import { startOfInstant } from "../utils/arithmetic.utils.js";
-import { assertDuration } from "../utils/duration.utils.js";
+import { readDuration } from "../utils/duration.utils.js";
 import { rangeError } from "../utils/error.utils.js";
 import { readInterval } from "../utils/interval.utils.js";
 import {
@@ -10,7 +9,7 @@ import {
     resolveWeekStartsOn,
 } from "../utils/time-zone.utils.js";
 import { assertTimeUnit } from "../utils/unit.utils.js";
-import type { ListDatesInIntervalOptions } from "./list-dates-in-interval.types.js";
+import type { ListDatesInIntervalParams } from "./list-dates-in-interval.types.js";
 
 const maximumResultCount = 100_000;
 
@@ -32,36 +31,52 @@ const oneUnit: Readonly<Record<TimeUnit, Record<string, number>>> = {
  * The start is included and the end is excluded. With `alignToUnit`, the
  * first date is the first unit start at or after `start`.
  *
- * @param interval - The half-open interval.
- * @param options - `step` defaults to one day.
- * @returns A new array of dates.
- * @throws {@link RangeError} When the result would exceed 100000 dates.
+ * @param params - `start` and `end` bound the interval. `step` defaults to one day.
+ * @returns A new array of dates, or `undefined` when `step` is not usable or a step does not advance time.
+ * @throws {@link RangeError} When the result would exceed 100000 dates, `alignToUnit` is unknown, or `weekStartsOn` or `timeZone` is invalid.
  * @example
- * listDatesInInterval({ start: new Date("2026-01-01T00:00:00Z"), end: new Date("2026-01-03T00:00:00Z") }, { timeZone: "UTC" }).length; // 2
+ * listDatesInInterval({ start: new Date("2026-01-01T00:00:00Z"), end: new Date("2026-01-03T00:00:00Z"), timeZone: "UTC" })?.length; // 2
  */
-export function listDatesInInterval(
-    interval: Interval,
-    options?: ListDatesInIntervalOptions,
-): Date[] {
-    const checked = readInterval(interval);
-    const step = assertDuration(options?.step ?? { days: 1 }, "step");
-    const timeZone = resolveTimeZone(options?.timeZone);
-    const weekStartsOn = resolveWeekStartsOn(options?.weekStartsOn);
-    let cursor = checked.start.getTime();
-    if (options?.alignToUnit !== undefined) {
-        const unit = assertTimeUnit(options.alignToUnit, "alignToUnit");
-        cursor = firstUnitStartAtOrAfter(cursor, unit, timeZone, weekStartsOn);
+export function listDatesInInterval({
+    start,
+    end,
+    step: stepInput,
+    timeZone,
+    weekStartsOn,
+    alignToUnit,
+}: ListDatesInIntervalParams): Date[] | undefined {
+    const checked = readInterval({ start, end });
+    const step = readDuration(stepInput ?? { days: 1 });
+    if (step === undefined) {
+        return undefined;
     }
-    const end = checked.end.getTime();
+    const zone = resolveTimeZone(timeZone);
+    const weekStart = resolveWeekStartsOn(weekStartsOn);
+    let cursor = checked.start.getTime();
+    if (alignToUnit !== undefined) {
+        const unit = assertTimeUnit(alignToUnit, "alignToUnit");
+        cursor = firstUnitStartAtOrAfter(cursor, unit, zone, weekStart);
+    }
+    const intervalEnd = checked.end.getTime();
     const dates: Date[] = [];
-    while (cursor < end) {
+    while (cursor < intervalEnd) {
         dates.push(new Date(cursor));
         if (dates.length > maximumResultCount) {
-            throw rangeError("interval", "at most 100000 dates", interval);
+            throw rangeError(
+                "interval",
+                "at most 100000 dates",
+                { start, end },
+            );
         }
-        const next = addDuration(new Date(cursor), step, {
-            timeZone,
-        }).getTime();
+        const nextDate = addDuration({
+            date: new Date(cursor),
+            duration: step,
+            timeZone: zone,
+        });
+        if (nextDate === undefined) {
+            return undefined;
+        }
+        const next = nextDate.getTime();
         if (next <= cursor) {
             throw rangeError(
                 "step",
@@ -96,7 +111,10 @@ function firstUnitStartAtOrAfter(
     if (aligned >= epochMilliseconds) {
         return aligned;
     }
-    return addDuration(new Date(aligned), oneUnit[unit], {
+    const nextDate = addDuration({
+        date: new Date(aligned),
+        duration: oneUnit[unit],
         timeZone,
-    }).getTime();
+    });
+    return nextDate?.getTime() ?? epochMilliseconds;
 }

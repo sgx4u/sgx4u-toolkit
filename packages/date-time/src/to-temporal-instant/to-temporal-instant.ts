@@ -1,6 +1,6 @@
 import type { DateInput } from "../types/date-input.types.js";
 import type { TemporalInstant } from "../types/temporal.types.js";
-import { resolveDateInput } from "../utils/date-input.utils.js";
+import { readDateInput } from "../utils/date-input.utils.js";
 
 /**
  * Returns a Temporal instant for a date.
@@ -10,13 +10,14 @@ import { resolveDateInput } from "../utils/date-input.utils.js";
  * so the package compiles without Temporal's types.
  *
  * @param date - The instant to convert.
- * @returns The Temporal instant.
+ * @returns The Temporal instant, or `undefined` when `date` is not a real date.
  * @throws {@link TypeError} When `Temporal` is not on the global object.
- * @throws {@link RangeError} When `date` is not a real date.
  * @example
- * toTemporalInstant(0).epochMilliseconds; // 0, when Temporal is present
+ * toTemporalInstant(0)?.epochMilliseconds; // 0, when Temporal is present
  */
-export function toTemporalInstant(date: DateInput): TemporalInstant {
+export function toTemporalInstant(
+    date: DateInput,
+): TemporalInstant | undefined {
     const temporal = (
         globalThis as {
             Temporal?: {
@@ -33,7 +34,9 @@ export function toTemporalInstant(date: DateInput): TemporalInstant {
             "`Temporal` is not available on the global object; received undefined.",
         );
     }
-    return temporal.Instant.fromEpochMilliseconds(
-        resolveDateInput(date, "date").getTime(),
-    );
+    const resolved = readDateInput(date);
+    if (resolved === undefined) {
+        return undefined;
+    }
+    return temporal.Instant.fromEpochMilliseconds(resolved.getTime());
 }

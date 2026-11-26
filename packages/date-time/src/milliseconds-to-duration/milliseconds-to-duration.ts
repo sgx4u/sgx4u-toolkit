@@ -1,7 +1,6 @@
 import type { Duration } from "../types/duration.types.js";
-import { assertFiniteNumber } from "../utils/assert.utils.js";
 import { rangeError } from "../utils/error.utils.js";
-import type { MillisecondsToDurationOptions } from "./milliseconds-to-duration.types.js";
+import type { MillisecondsToDurationParams } from "./milliseconds-to-duration.types.js";
 
 const unitSizes: Readonly<Record<string, number>> = {
     week: 7 * 86_400_000,
@@ -33,25 +32,28 @@ const order = [
 /**
  * Splits a millisecond length into duration fields.
  *
- * @param milliseconds - The signed length.
- * @param options - `largestUnit` defaults to `"day"` and `smallestUnit` to `"millisecond"`.
- * @returns The duration. Zero fields are omitted.
- * @throws {@link TypeError} When `milliseconds` is not a number.
+ * @param params - `milliseconds` is required. `largestUnit` defaults to `"day"` and `smallestUnit` to `"millisecond"`.
+ * @returns The duration. Zero fields are omitted, or `undefined` when `milliseconds` is not a finite number.
  * @throws {@link RangeError} When a unit is unknown or `smallestUnit` is larger than `largestUnit`.
  * @example
- * millisecondsToDuration(5_400_000); // { hours: 1, minutes: 30 }
+ * millisecondsToDuration({ milliseconds: 5_400_000 }); // { hours: 1, minutes: 30 }
  */
-export function millisecondsToDuration(
-    milliseconds: number,
-    options?: MillisecondsToDurationOptions,
-): Duration {
-    const value = assertFiniteNumber(milliseconds, "milliseconds");
-    const largest = options?.largestUnit ?? "day";
-    const smallest = options?.smallestUnit ?? "millisecond";
+export function millisecondsToDuration({
+    milliseconds,
+    largestUnit: largest = "day",
+    smallestUnit: smallest = "millisecond",
+}: MillisecondsToDurationParams): Duration | undefined {
+    if (typeof milliseconds !== "number" || !Number.isFinite(milliseconds)) {
+        return undefined;
+    }
     const largestIndex = order.indexOf(largest);
     const smallestIndex = order.indexOf(smallest);
     if (largestIndex < 0) {
-        throw rangeError("largestUnit", "week, day, or a clock unit", largest);
+        throw rangeError(
+            "largestUnit",
+            "week, day, or a clock unit",
+            largest,
+        );
     }
     if (smallestIndex < 0) {
         throw rangeError("smallestUnit", "a clock unit", smallest);
@@ -63,8 +65,8 @@ export function millisecondsToDuration(
             smallest,
         );
     }
-    const sign = value < 0 ? -1 : 1;
-    let remaining = Math.abs(value);
+    const sign = milliseconds < 0 ? -1 : 1;
+    let remaining = Math.abs(milliseconds);
     const duration: Duration = {};
     for (let index = largestIndex; index <= smallestIndex; index += 1) {
         const unit = order[index];

@@ -1,9 +1,8 @@
-import type { DateInput } from "../types/date-input.types.js";
-import { resolveDateInput } from "../utils/date-input.utils.js";
+import { readDateInput } from "../utils/date-input.utils.js";
 import { rangeError } from "../utils/error.utils.js";
 import { serialFromParts } from "../utils/excel.utils.js";
 import { readDateParts, resolveTimeZone } from "../utils/time-zone.utils.js";
-import type { ExcelDateOptions } from "./to-excel-serial-date.types.js";
+import type { ToExcelSerialDateParams } from "./to-excel-serial-date.types.js";
 
 /**
  * Returns the spreadsheet serial number of a date.
@@ -12,23 +11,24 @@ import type { ExcelDateOptions } from "./to-excel-serial-date.types.js";
  * time of day. The 1900 system never returns 60 and returns 61 for
  * 1900-03-01. A date before the epoch throws.
  *
- * @param date - The instant to convert.
- * @param options - `dateSystem` defaults to `1900`.
- * @returns The serial number.
- * @throws {@link RangeError} When the date is before the epoch or `dateSystem` is not 1900 or 1904.
+ * @param params - `date` is required. `dateSystem` defaults to `1900`.
+ * @returns The serial number, or `undefined` when `date` is not a real date.
+ * @throws {@link RangeError} When the date is before the epoch, `dateSystem` is not 1900 or 1904, or `timeZone` is invalid.
  * @example
- * toExcelSerialDate("1900-03-01T00:00:00Z", { timeZone: "UTC" }); // 61
+ * toExcelSerialDate({ date: "1900-03-01T00:00:00Z", timeZone: "UTC" }); // 61
  */
-export function toExcelSerialDate(
-    date: DateInput,
-    options?: ExcelDateOptions,
-): number {
-    const dateSystem = readDateSystem(options?.dateSystem);
-    const timeZone = resolveTimeZone(options?.timeZone);
-    const parts = readDateParts(
-        resolveDateInput(date, "date", timeZone).getTime(),
-        timeZone,
-    );
+export function toExcelSerialDate({
+    date,
+    timeZone,
+    dateSystem: dateSystemInput,
+}: ToExcelSerialDateParams): number | undefined {
+    const dateSystem = readDateSystem(dateSystemInput);
+    const zone = resolveTimeZone(timeZone);
+    const resolved = readDateInput(date, zone);
+    if (resolved === undefined) {
+        return undefined;
+    }
+    const parts = readDateParts(resolved.getTime(), zone);
     const serial = serialFromParts(parts, dateSystem);
     if (dateSystem === 1900 && serial < 1) {
         throw rangeError("date", "a date on or after 1900-01-01", date);

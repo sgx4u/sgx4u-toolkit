@@ -5,15 +5,15 @@ const utc = { timeZone: "UTC" };
 
 describe("toExcelSerialDate", () => {
     it("uses the 1900 system by default and never returns 60", () => {
-        expect(toExcelSerialDate("1900-01-01T00:00:00Z", utc)).toBe(1);
-        expect(toExcelSerialDate("1900-01-01T12:00:00Z", utc)).toBe(1.5);
-        expect(toExcelSerialDate("1900-02-28T00:00:00Z", utc)).toBe(59);
-        expect(toExcelSerialDate("1900-03-01T00:00:00Z", utc)).toBe(61);
-        expect(toExcelSerialDate("2024-02-28T00:00:00Z", utc)).toBe(45_350);
-        expect(toExcelSerialDate("2024-02-29T00:00:00Z", utc)).toBe(45_351);
-        expect(toExcelSerialDate("2024-02-29T12:00:00Z", utc)).toBe(45_351.5);
-        expect(toExcelSerialDate("2024-03-01T00:00:00Z", utc)).toBe(45_352);
-        expect(toExcelSerialDate("9999-12-31T00:00:00Z", utc)).toBe(2_958_465);
+        expect(toExcelSerialDate({ date: "1900-01-01T00:00:00Z", ...utc })).toBe(1);
+        expect(toExcelSerialDate({ date: "1900-01-01T12:00:00Z", ...utc })).toBe(1.5);
+        expect(toExcelSerialDate({ date: "1900-02-28T00:00:00Z", ...utc })).toBe(59);
+        expect(toExcelSerialDate({ date: "1900-03-01T00:00:00Z", ...utc })).toBe(61);
+        expect(toExcelSerialDate({ date: "2024-02-28T00:00:00Z", ...utc })).toBe(45_350);
+        expect(toExcelSerialDate({ date: "2024-02-29T00:00:00Z", ...utc })).toBe(45_351);
+        expect(toExcelSerialDate({ date: "2024-02-29T12:00:00Z", ...utc })).toBe(45_351.5);
+        expect(toExcelSerialDate({ date: "2024-03-01T00:00:00Z", ...utc })).toBe(45_352);
+        expect(toExcelSerialDate({ date: "9999-12-31T00:00:00Z", ...utc })).toBe(2_958_465);
 
         const aroundTheFictionalDay = [
             "1900-02-27T00:00:00Z",
@@ -21,11 +21,11 @@ describe("toExcelSerialDate", () => {
             "1900-03-01T00:00:00Z",
             "1900-03-02T00:00:00Z",
             "2024-02-29T00:00:00Z",
-        ].map((date) => toExcelSerialDate(date, utc));
+        ].map((date) => toExcelSerialDate({ date: date, ...utc }));
         expect(aroundTheFictionalDay).not.toContain(60);
         expect(
-            toExcelSerialDate("1900-03-01T00:00:00Z", utc) -
-                toExcelSerialDate("1900-02-28T00:00:00Z", utc),
+            toExcelSerialDate({ date: "1900-03-01T00:00:00Z", ...utc }) -
+                toExcelSerialDate({ date: "1900-02-28T00:00:00Z", ...utc }),
         ).toBe(2);
     });
 
@@ -54,7 +54,7 @@ describe("toExcelSerialDate", () => {
                 dateSystem: 1904,
             }),
         ).toBe(60);
-        expect(() => toExcelSerialDate("1899-12-31T00:00:00Z", utc)).toThrow(
+        expect(() => toExcelSerialDate({ date: "1899-12-31T00:00:00Z", ...utc })).toThrow(
             RangeError,
         );
         expect(() =>
@@ -81,7 +81,7 @@ describe("toExcelSerialDate", () => {
             45_305 + dayFraction(23),
         );
         expect(toExcelSerialDate("2024-07-15T04:00:00Z", newYork)).toBe(45_488);
-        expect(toExcelSerialDate("2024-07-15T04:00:00Z", utc)).toBe(
+        expect(toExcelSerialDate({ date: "2024-07-15T04:00:00Z", ...utc })).toBe(
             45_488 + dayFraction(4),
         );
         expect(toExcelSerialDate("2024-03-10T06:30:00Z", newYork)).toBe(
@@ -102,11 +102,11 @@ describe("toExcelSerialDate", () => {
     });
 
     it("throws when the date is invalid", () => {
-        expect(() => toExcelSerialDate("2024-02-30", utc)).toThrow(RangeError);
-        expect(() => toExcelSerialDate(new Date(Number.NaN), utc)).toThrow(
+        expect(() => toExcelSerialDate({ date: "2024-02-30", ...utc })).toThrow(RangeError);
+        expect(() => toExcelSerialDate({ date: new Date(Number.NaN), ...utc })).toThrow(
             RangeError,
         );
-        expect(() => toExcelSerialDate(null as unknown as string, utc)).toThrow(
+        expect(() => toExcelSerialDate({ date: null as unknown as string, ...utc })).toThrow(
             TypeError,
         );
         expect(() =>

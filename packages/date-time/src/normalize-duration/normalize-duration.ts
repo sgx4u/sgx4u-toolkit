@@ -3,12 +3,12 @@ import {
     addDurationToInstant,
     durationBetweenInstants,
 } from "../utils/arithmetic.utils.js";
-import { resolveDateInput } from "../utils/date-input.utils.js";
-import { assertDuration, durationFieldNames } from "../utils/duration.utils.js";
+import { readDateInput } from "../utils/date-input.utils.js";
+import { durationFieldNames, readDuration } from "../utils/duration.utils.js";
 import { rangeError } from "../utils/error.utils.js";
 import { resolveTimeZone } from "../utils/time-zone.utils.js";
 import { isTimeUnit } from "../utils/unit.utils.js";
-import type { NormalizeDurationOptions } from "./normalize-duration.types.js";
+import type { NormalizeDurationParams } from "./normalize-duration.types.js";
 
 const carryInto: Readonly<
     Record<string, { unit: keyof Duration; size: number }>
@@ -39,41 +39,43 @@ const rank: Readonly<Record<string, number>> = {
  * With `relativeTo`, the duration is added to that instant and read back, so
  * months and years balance on the calendar in the zone.
  *
- * @param duration - The duration to balance.
- * @param options - `largestUnit` defaults to `"day"`.
- * @returns A new duration. Zero fields are omitted.
- * @throws {@link RangeError} When `duration` or `largestUnit` is invalid.
+ * @param params - `duration` is required. `largestUnit` defaults to `"day"`.
+ * @returns A new duration. Zero fields are omitted, or `undefined` when `duration` or `relativeTo` is not usable.
+ * @throws {@link RangeError} When `largestUnit` is unknown or `timeZone` is invalid.
  * @example
- * normalizeDuration({ minutes: 90 }); // { hours: 1, minutes: 30 }
+ * normalizeDuration({ duration: { minutes: 90 } }); // { hours: 1, minutes: 30 }
  */
-export function normalizeDuration(
-    duration: Duration,
-    options?: NormalizeDurationOptions,
-): Duration {
-    const checked = assertDuration(duration, "duration");
-    const largestUnit = options?.largestUnit ?? "day";
-    if (!isTimeUnit(largestUnit)) {
-        throw rangeError("largestUnit", "a time unit", largestUnit);
+export function normalizeDuration({
+    duration,
+    largestUnit: largestUnitInput = "day",
+    relativeTo,
+    timeZone,
+}: NormalizeDurationParams): Duration | undefined {
+    const checked = readDuration(duration);
+    if (checked === undefined) {
+        return undefined;
     }
-    if (options?.relativeTo !== undefined) {
-        const timeZone = resolveTimeZone(options.timeZone);
-        const start = resolveDateInput(
-            options.relativeTo,
-            "relativeTo",
-            timeZone,
-        ).getTime();
+    if (!isTimeUnit(largestUnitInput)) {
+        throw rangeError("largestUnit", "a time unit", largestUnitInput);
+    }
+    if (relativeTo !== undefined) {
+        const zone = resolveTimeZone(timeZone);
+        const start = readDateInput(relativeTo, zone);
+        if (start === undefined) {
+            return undefined;
+        }
         const end = addDurationToInstant(
-            start,
+            start.getTime(),
             checked,
-            timeZone,
+            zone,
             "compatible",
             "constrain",
         );
         return durationBetweenInstants(
             end,
-            start,
-            timeZone,
-            largestUnit,
+            start.getTime(),
+            zone,
+            largestUnitInput,
             "millisecond",
         );
     }
@@ -81,7 +83,7 @@ export function normalizeDuration(
     for (const fieldName of durationFieldNames) {
         balanced[fieldName] = checked[fieldName] ?? 0;
     }
-    const largestRank = rank[largestUnit] ?? 4;
+    const largestRank = rank[largestUnitInput] ?? 4;
     const steps = ["milliseconds", "seconds", "minutes", "hours"] as const;
     for (const fieldName of steps) {
         const carry = carryInto[fieldName];

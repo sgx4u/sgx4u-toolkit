@@ -20,40 +20,19 @@ describe("listRecurrenceOccurrences", () => {
 
         expect(
             iso(
-                listRecurrenceOccurrences(rule, {
-                    between: {
-                        start: new Date("2026-11-26T00:00:00Z"),
-                        end: new Date("2026-11-30T00:00:00Z"),
-                    },
-                }),
+                listRecurrenceOccurrences({ rule: rule, start: new Date("2026-11-26T00:00:00Z"), end: new Date("2026-11-30T00:00:00Z"), }),
             ),
         ).toEqual(["2026-11-26T09:00:00.000Z", "2026-11-27T09:00:00.000Z"]);
         expect(
-            listRecurrenceOccurrences(rule, {
-                between: {
-                    start: new Date("2026-11-26T09:00:00Z"),
-                    end: new Date("2026-11-26T09:00:00Z"),
-                },
-            }),
+            listRecurrenceOccurrences({ rule: rule, start: new Date("2026-11-26T09:00:00Z"), end: new Date("2026-11-26T09:00:00Z"), }),
         ).toEqual([]);
         expect(
             iso(
-                listRecurrenceOccurrences(rule, {
-                    between: {
-                        start: new Date("2026-11-27T09:00:00Z"),
-                        end: new Date("2026-11-27T09:00:00.001Z"),
-                    },
-                }),
+                listRecurrenceOccurrences({ rule: rule, start: new Date("2026-11-27T09:00:00Z"), end: new Date("2026-11-27T09:00:00.001Z"), }),
             ),
         ).toEqual(["2026-11-27T09:00:00.000Z"]);
         expect(
-            listRecurrenceOccurrences(rule, {
-                between: {
-                    start: new Date("2026-11-26T09:00:00Z"),
-                    end: new Date("2026-11-26T09:00:00Z"),
-                },
-                limit: 5,
-            }),
+            listRecurrenceOccurrences({ rule: rule, start: new Date("2026-11-26T09:00:00Z"), end: new Date("2026-11-26T09:00:00Z"),, limit: 5, }),
         ).toEqual([]);
     });
 
@@ -180,12 +159,7 @@ describe("listRecurrenceOccurrences", () => {
 
         expect(
             iso(
-                listRecurrenceOccurrences(rule, {
-                    between: {
-                        start: new Date("2026-11-26T00:00:00Z"),
-                        end: new Date("2026-11-30T00:00:00Z"),
-                    },
-                }),
+                listRecurrenceOccurrences({ rule: rule, start: new Date("2026-11-26T00:00:00Z"), end: new Date("2026-11-30T00:00:00Z"), }),
             ),
         ).toEqual([
             "2026-11-26T09:00:00.000Z",
@@ -214,12 +188,7 @@ describe("listRecurrenceOccurrences", () => {
             listRecurrenceOccurrences(rule, { between, limit: 1.5 }),
         ).toThrow(RangeError);
         expect(() =>
-            listRecurrenceOccurrences(rule, {
-                between: {
-                    start: new Date("2026-12-01T00:00:00Z"),
-                    end: new Date("2026-11-01T00:00:00Z"),
-                },
-            }),
+            listRecurrenceOccurrences({ rule: rule, start: new Date("2026-12-01T00:00:00Z"), end: new Date("2026-11-01T00:00:00Z"), }),
         ).toThrow(RangeError);
         expect(() =>
             listRecurrenceOccurrences(

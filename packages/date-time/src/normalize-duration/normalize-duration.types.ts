@@ -1,5 +1,6 @@
 import type { TimeZoneOptions } from "../types/options.types.js";
 import type { DateInput } from "../types/date-input.types.js";
+import type { Duration } from "../types/duration.types.js";
 import type { TimeUnit } from "../types/time.types.js";
 
 /**
@@ -18,4 +19,14 @@ export interface NormalizeDurationOptions extends TimeZoneOptions {
      * 24 hours and months and years are left unchanged.
      */
     relativeTo?: DateInput;
+}
+
+/**
+ * Fields for {@link normalizeDuration}.
+ */
+export interface NormalizeDurationParams extends NormalizeDurationOptions {
+    /**
+     * The duration to balance.
+     */
+    duration: Duration;
 }

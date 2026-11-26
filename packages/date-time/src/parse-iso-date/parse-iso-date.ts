@@ -1,4 +1,5 @@
 import type { TimeZoneOptions } from "../types/options.types.js";
+import { typeError } from "../utils/error.utils.js";
 import {
     instantFromWallTime,
     resolveTimeZone,
@@ -6,27 +7,34 @@ import {
 import { parseCalendarText } from "../utils/iso.utils.js";
 
 /**
+ * Fields for {@link parseISODate}.
+ */
+export interface ParseISODateParams extends TimeZoneOptions {
+    /**
+     * The candidate text.
+     */
+    value: string;
+}
+
+/**
  * Parses `YYYY-MM-DD` as midnight in a time zone.
  *
  * An impossible day, such as February 30, returns `undefined`. The
  * function does not throw for text that does not match.
  *
- * @param value - The candidate text.
- * @param options - `timeZone` defaults to the system zone.
+ * @param params - `value` is required. `timeZone` defaults to the system zone.
  * @returns A new `Date`, or `undefined` when the text is not a real calendar date.
  * @throws {@link TypeError} When `value` is not a string.
  * @throws {@link RangeError} When `timeZone` is not usable.
  * @example
- * parseIsoDate("2026-11-26", { timeZone: "Asia/Kolkata" })?.toISOString(); // "2026-11-25T18:30:00.000Z"
+ * parseISODate({ value: "2026-11-26", timeZone: "Asia/Kolkata" })?.toISOString(); // "2026-11-25T18:30:00.000Z"
  */
-export function parseIsoDate(
-    value: string,
-    options?: TimeZoneOptions,
-): Date | undefined {
+export function parseISODate({
+    value,
+    timeZone,
+}: ParseISODateParams): Date | undefined {
     if (typeof value !== "string") {
-        throw new TypeError(
-            `\`value\` must be a string; received ${typeof value}.`,
-        );
+        throw typeError("value", "a string", value);
     }
     const calendar = parseCalendarText(value);
     if (calendar === undefined) {
@@ -41,7 +49,7 @@ export function parseIsoDate(
                 second: 0,
                 millisecond: 0,
             },
-            resolveTimeZone(options?.timeZone),
+            resolveTimeZone(timeZone),
             "compatible",
         ),
     );

@@ -1,9 +1,19 @@
+import type { DateInput } from "../types/date-input.types.js";
 import type { TimeZoneOptions } from "../types/options.types.js";
+import type { TimeUnit } from "../types/time.types.js";
 
 /**
- * How an instant is rounded to a unit step.
+ * Fields for {@link roundToUnit}.
  */
-export interface RoundToUnitOptions extends TimeZoneOptions {
+export interface RoundToUnitParams extends TimeZoneOptions {
+    /**
+     * The instant to round.
+     */
+    date: DateInput;
+    /**
+     * The unit to round to.
+     */
+    unit: TimeUnit | "decade";
     /**
      * How many units form one step. For minutes, `15` rounds to the quarter hour.
      *

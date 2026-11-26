@@ -44,6 +44,6 @@ A date-only midnight uses compatible disambiguation. A daylight-saving gap that 
 
 ## Related
 
-- [`parseIsoDate`](../parse-iso-date/parse-iso-date.md) parses `YYYY-MM-DD` and returns `undefined` for invalid text.
+- [`parseISODate`](../parse-iso-date/parse-iso-date.md) parses `YYYY-MM-DD` and returns `undefined` for invalid text.
 - [`isValidDate`](../is-valid-date/is-valid-date.md) reports whether a value is a real date.
 - [`getDateParts`](../get-date-parts/get-date-parts.md) reads the wall-clock fields of the result.

@@ -1,17 +1,17 @@
-# `parseIsoDate`
+# `parseISODate`
 
 Parses `YYYY-MM-DD` as midnight in a time zone.
 
 ## Import
 
 ```ts
-import { parseIsoDate } from "@sgx4u/date-time";
+import { parseISODate } from "@sgx4u/date-time";
 ```
 
 ## Signature
 
 ```ts
-function parseIsoDate(
+function parseISODate(
     value: string,
     options?: TimeZoneOptions,
 ): Date | undefined;
@@ -26,16 +26,16 @@ function parseIsoDate(
 ## Examples
 
 ```ts
-parseIsoDate("2026-11-26", { timeZone: "UTC" })?.toISOString();
+parseISODate("2026-11-26", { timeZone: "UTC" })?.toISOString();
 // "2026-11-26T00:00:00.000Z"
 
-parseIsoDate("2026-11-26", { timeZone: "Asia/Kolkata" })?.toISOString();
+parseISODate("2026-11-26", { timeZone: "Asia/Kolkata" })?.toISOString();
 // "2026-11-25T18:30:00.000Z"
 
-parseIsoDate("2024-07-15", { timeZone: "America/New_York" })?.toISOString();
+parseISODate("2024-07-15", { timeZone: "America/New_York" })?.toISOString();
 // "2024-07-15T04:00:00.000Z"
 
-parseIsoDate("2024-02-30", { timeZone: "UTC" });
+parseISODate("2024-02-30", { timeZone: "UTC" });
 // undefined
 ```
 
@@ -47,6 +47,6 @@ Midnight uses compatible disambiguation. A daylight-saving gap that skips midnig
 
 ## Related
 
-- [`formatIsoDate`](../format-iso-date/format-iso-date.md) writes `YYYY-MM-DD` in a zone.
-- [`parseIsoDateTime`](../parse-iso-date-time/parse-iso-date-time.md) reads a date-time with an offset.
+- [`formatISODate`](../format-iso-date/format-iso-date.md) writes `YYYY-MM-DD` in a zone.
+- [`parseISODateTime`](../parse-iso-date-time/parse-iso-date-time.md) reads a date-time with an offset.
 - [`toDate`](../to-date/to-date.md) accepts a date-only string or an instant.

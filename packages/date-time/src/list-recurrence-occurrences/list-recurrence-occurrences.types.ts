@@ -1,13 +1,22 @@
-import type { Interval } from "../types/interval.types.js";
+import type { DateInput } from "../types/date-input.types.js";
+import type { RecurrenceRule } from "../types/recurrence.types.js";
 
 /**
- * Which occurrences to list.
+ * Fields for {@link listRecurrenceOccurrences}.
  */
-export interface ListRecurrenceOccurrencesOptions {
+export interface ListRecurrenceOccurrencesParams {
     /**
-     * The half-open interval the occurrences must fall in.
+     * The recurrence rule.
      */
-    between: Interval;
+    rule: RecurrenceRule;
+    /**
+     * The inclusive start of the half-open search window.
+     */
+    start: DateInput;
+    /**
+     * The exclusive end of the half-open search window.
+     */
+    end: DateInput;
     /**
      * The most occurrences that may be returned.
      *

@@ -1,19 +1,19 @@
-# `parseIsoDateTime`
+# `parseISODateTime`
 
 Parses an ISO 8601, RFC 3339, or RFC 9557 date-time.
 
 ## Import
 
 ```ts
-import { parseIsoDateTime } from "@sgx4u/date-time";
+import { parseISODateTime } from "@sgx4u/date-time";
 ```
 
 ## Signature
 
 ```ts
-function parseIsoDateTime(
+function parseISODateTime(
     value: string,
-    options?: ParseIsoDateTimeOptions,
+    options?: ParseISODateTimeOptions,
 ): Date | undefined;
 ```
 
@@ -27,16 +27,16 @@ function parseIsoDateTime(
 ## Examples
 
 ```ts
-parseIsoDateTime("2026-11-26T03:30:00+05:30")?.toISOString();
+parseISODateTime("2026-11-26T03:30:00+05:30")?.toISOString();
 // "2026-11-25T22:00:00.000Z"
 
-parseIsoDateTime("2026-11-26T00:00:00.123456Z")?.toISOString();
+parseISODateTime("2026-11-26T00:00:00.123456Z")?.toISOString();
 // "2026-11-26T00:00:00.123Z"
 
-parseIsoDateTime("2026-11-26T03:30:00");
+parseISODateTime("2026-11-26T03:30:00");
 // undefined
 
-parseIsoDateTime("2024-03-10T02:30:00", {
+parseISODateTime("2024-03-10T02:30:00", {
     defaultTimeZone: "America/New_York",
 })?.toISOString();
 // "2024-03-10T07:30:00.000Z"
@@ -50,6 +50,6 @@ Text that does not match returns `undefined`. That includes an impossible day, a
 
 ## Related
 
-- [`parseIsoDate`](../parse-iso-date/parse-iso-date.md) reads a calendar date as midnight.
-- [`formatIsoDateTime`](../format-iso-date-time/format-iso-date-time.md) writes an ISO date-time with a numeric offset.
-- [`reviveIsoDateTimes`](../revive-iso-date-times/revive-iso-date-times.md) converts the same offset form inside `JSON.parse`.
+- [`parseISODate`](../parse-iso-date/parse-iso-date.md) reads a calendar date as midnight.
+- [`formatISODateTime`](../format-iso-date-time/format-iso-date-time.md) writes an ISO date-time with a numeric offset.
+- [`reviveISODateTimes`](../revive-iso-date-times/revive-iso-date-times.md) converts the same offset form inside `JSON.parse`.

@@ -2,10 +2,10 @@ import type { Duration } from "../types/duration.types.js";
 import type { TimeUnit } from "../types/time.types.js";
 import { durationToMilliseconds } from "../duration-to-milliseconds/duration-to-milliseconds.js";
 import { millisecondsToDuration } from "../milliseconds-to-duration/milliseconds-to-duration.js";
-import { assertDuration } from "../utils/duration.utils.js";
+import { readDuration } from "../utils/duration.utils.js";
 import { rangeError } from "../utils/error.utils.js";
 import { assertTimeUnit } from "../utils/unit.utils.js";
-import type { RoundDurationOptions } from "./round-duration.types.js";
+import type { RoundDurationParams } from "./round-duration.types.js";
 
 const unitMilliseconds: Readonly<Record<string, number>> = {
     week: 7 * 86_400_000,
@@ -22,32 +22,35 @@ const unitMilliseconds: Readonly<Record<string, number>> = {
  * Clock units and weeks use fixed lengths. Months and years use the length
  * of one unit starting at `relativeTo`.
  *
- * @param duration - The duration to round.
- * @param options - `smallestUnit` is required. `mode` defaults to `"nearest"`.
- * @returns A new duration in whole units of `smallestUnit`.
- * @throws {@link RangeError} When a calendar unit has no `relativeTo`.
+ * @param params - `duration` and `smallestUnit` are required. `mode` defaults to `"nearest"`.
+ * @returns A new duration in whole units of `smallestUnit`, or `undefined` when `duration` is not usable.
+ * @throws {@link RangeError} When a calendar unit has no `relativeTo`, `mode` is unknown, or `smallestUnit` is unknown.
  * @example
- * roundDuration({ minutes: 90 }, { smallestUnit: "hour" }); // { hours: 2 }
+ * roundDuration({ duration: { minutes: 90 }, smallestUnit: "hour" }); // { hours: 2 }
  */
-export function roundDuration(
-    duration: Duration,
-    options: RoundDurationOptions,
-): Duration {
-    const checked = assertDuration(duration, "duration");
-    const unit = assertTimeUnit(options?.smallestUnit, "smallestUnit");
-    const mode = options.mode ?? "nearest";
+export function roundDuration({
+    duration,
+    smallestUnit: smallestUnitInput,
+    mode = "nearest",
+    timeZone,
+    relativeTo,
+}: RoundDurationParams): Duration | undefined {
+    const checked = readDuration(duration);
+    if (checked === undefined) {
+        return undefined;
+    }
+    const unit = assertTimeUnit(smallestUnitInput, "smallestUnit");
     if (mode !== "nearest" && mode !== "down" && mode !== "up") {
         throw rangeError("mode", `"nearest", "down", or "up"`, mode);
     }
     const length = durationToMilliseconds(checked, {
-        ...(options.timeZone !== undefined
-            ? { timeZone: options.timeZone }
-            : {}),
-        ...(options.relativeTo !== undefined
-            ? { relativeTo: options.relativeTo }
-            : {}),
+        ...(timeZone !== undefined ? { timeZone } : {}),
+        ...(relativeTo !== undefined ? { relativeTo } : {}),
     });
-    const size = lengthOfOneUnit(unit, options);
+    const size = lengthOfOneUnit(unit, {
+        ...(timeZone !== undefined ? { timeZone } : {}),
+        ...(relativeTo !== undefined ? { relativeTo } : {}),
+    });
     const rounded = roundToSize(length, size, mode);
     const count = rounded / size;
     if (count === 0) {
@@ -62,26 +65,30 @@ export function roundDuration(
     if (unit === "quarter") {
         return { months: count * 3 };
     }
-    return millisecondsToDuration(rounded, {
-        largestUnit: unit === "week" ? "week" : unit,
-        smallestUnit: unit === "week" || unit === "day" ? "millisecond" : unit,
-    });
+    return (
+        millisecondsToDuration({
+            milliseconds: rounded,
+            largestUnit: unit === "week" ? "week" : unit,
+            smallestUnit:
+                unit === "week" || unit === "day" ? "millisecond" : unit,
+        }) ?? {}
+    );
 }
 
 /**
  * @param unit - The unit being rounded to.
- * @param options - Supplies `relativeTo` for calendar units.
+ * @param params - Supplies `relativeTo` for calendar units.
  * @returns The millisecond length of one unit.
  */
 function lengthOfOneUnit(
     unit: TimeUnit,
-    options: RoundDurationOptions,
+    params: Pick<RoundDurationParams, "relativeTo" | "timeZone">,
 ): number {
     const fixed = unitMilliseconds[unit];
     if (fixed !== undefined) {
         return fixed;
     }
-    if (options.relativeTo === undefined) {
+    if (params.relativeTo === undefined) {
         throw rangeError(
             "smallestUnit",
             "a clock unit, or pass `relativeTo` for a calendar unit",
@@ -96,9 +103,9 @@ function lengthOfOneUnit(
               : { months: 1 };
     return Math.abs(
         durationToMilliseconds(sample, {
-            relativeTo: options.relativeTo,
-            ...(options.timeZone !== undefined
-                ? { timeZone: options.timeZone }
+            relativeTo: params.relativeTo,
+            ...(params.timeZone !== undefined
+                ? { timeZone: params.timeZone }
                 : {}),
         }),
     );

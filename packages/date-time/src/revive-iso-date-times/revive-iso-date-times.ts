@@ -1,6 +1,6 @@
 import { isRealDate } from "../utils/date-input.utils.js";
 import { parseStrictDateString } from "../utils/date-string.utils.js";
-import { utcEpochMilliseconds } from "../utils/gregorian.utils.js";
+import { UTCEpochMilliseconds } from "../utils/gregorian.utils.js";
 
 /**
  * A `JSON.parse` reviver that turns strict ISO date-times into dates.
@@ -12,9 +12,9 @@ import { utcEpochMilliseconds } from "../utils/gregorian.utils.js";
  * @param value - The value at that key.
  * @returns A `Date` when `value` is a strict offset date-time, otherwise `value`.
  * @example
- * JSON.parse("\\"2026-11-26T03:30:00+05:30\\"", reviveIsoDateTimes); // a Date at 2026-11-25T22:00:00.000Z
+ * JSON.parse("\\"2026-11-26T03:30:00+05:30\\"", reviveISODateTimes); // a Date at 2026-11-25T22:00:00.000Z
  */
-export function reviveIsoDateTimes(_key: string, value: unknown): unknown {
+export function reviveISODateTimes(_key: string, value: unknown): unknown {
     if (typeof value !== "string") {
         return value;
     }
@@ -25,7 +25,7 @@ export function reviveIsoDateTimes(_key: string, value: unknown): unknown {
     if (!value.includes("T") && !value.includes("t")) {
         return value;
     }
-    const utc = utcEpochMilliseconds(
+    const utc = UTCEpochMilliseconds(
         parsed.year,
         parsed.month - 1,
         parsed.day,

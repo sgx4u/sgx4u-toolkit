@@ -41,4 +41,4 @@ The list is whatever the runtime reports. An older runtime without that data ret
 
 - [`isValidTimeZone`](../is-valid-time-zone/is-valid-time-zone.md)
 - [`getLocalTimeZone`](../get-local-time-zone/get-local-time-zone.md)
-- [`getUtcOffset`](../get-utc-offset/get-utc-offset.md)
+- [`getUTCOffset`](../get-utc-offset/get-utc-offset.md)

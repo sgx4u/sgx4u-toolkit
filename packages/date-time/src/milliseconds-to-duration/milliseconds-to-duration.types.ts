@@ -17,3 +17,14 @@ export interface MillisecondsToDurationOptions {
      */
     smallestUnit?: ClockUnit;
 }
+
+/**
+ * Fields for {@link millisecondsToDuration}.
+ */
+export interface MillisecondsToDurationParams
+    extends MillisecondsToDurationOptions {
+    /**
+     * The signed length in milliseconds.
+     */
+    milliseconds: number;
+}

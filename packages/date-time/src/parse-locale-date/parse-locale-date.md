@@ -59,4 +59,4 @@ The result is midnight in `timeZone`, using compatible disambiguation. A dayligh
 
 - [`getLocaleDatePattern`](../get-locale-date-pattern/get-locale-date-pattern.md) returns the pattern this parser follows.
 - [`parseDateWithPattern`](../parse-date-with-pattern/parse-date-with-pattern.md) parses an explicit pattern.
-- [`parseIsoDate`](../parse-iso-date/parse-iso-date.md) parses `YYYY-MM-DD`.
+- [`parseISODate`](../parse-iso-date/parse-iso-date.md) parses `YYYY-MM-DD`.

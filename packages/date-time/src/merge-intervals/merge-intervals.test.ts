@@ -13,7 +13,7 @@ describe("intervals", () => {
     it("merges touching intervals and subtracts a cut", () => {
         const first = createInterval(0, 10);
         const second = createInterval(10, 20);
-        const merged = mergeIntervals([second, first]);
+        const merged = mergeIntervals({ intervals: [second, first] });
         expect(merged).toHaveLength(1);
         expect(merged[0]?.start.getTime()).toBe(0);
         expect(merged[0]?.end.getTime()).toBe(20);

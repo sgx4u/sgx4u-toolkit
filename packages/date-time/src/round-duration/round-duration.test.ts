@@ -9,20 +9,25 @@ import {
 describe("duration rounding and interval stepping", () => {
     it("rounds 90 minutes to 2 hours and splits ten milliseconds into three pieces", () => {
         expect(
-            roundDuration({ minutes: 90 }, { smallestUnit: "hour" }),
+            roundDuration({
+                duration: { minutes: 90 },
+                smallestUnit: "hour",
+            }),
         ).toEqual({
             hours: 2,
         });
         expect(
-            roundDuration(
-                { minutes: 20 },
-                { smallestUnit: "hour", mode: "down" },
-            ),
+            roundDuration({
+                duration: { minutes: 20 },
+                smallestUnit: "hour",
+                mode: "down",
+            }),
         ).toEqual({});
-        const pieces = splitInterval(
-            { start: new Date(0), end: new Date(10) },
-            { milliseconds: 4 },
-        );
+        const pieces = splitInterval({
+            start: new Date(0),
+            end: new Date(10),
+            step: { milliseconds: 4 },
+        });
         expect(pieces).toEqual([
             { start: new Date(0), end: new Date(4) },
             { start: new Date(4), end: new Date(8) },
@@ -35,19 +40,18 @@ describe("duration rounding and interval stepping", () => {
             }),
         ).toEqual({ hours: 1, minutes: 30 });
         expect(
-            listDatesInInterval(
-                {
-                    start: new Date("2026-01-01T00:00:00Z"),
-                    end: new Date("2026-01-03T00:00:00Z"),
-                },
-                { timeZone: "UTC" },
-            ).map((date) => date.toISOString()),
+            listDatesInInterval({
+                start: new Date("2026-01-01T00:00:00Z"),
+                end: new Date("2026-01-03T00:00:00Z"),
+                timeZone: "UTC",
+            })?.map((date) => date.toISOString()),
         ).toEqual(["2026-01-01T00:00:00.000Z", "2026-01-02T00:00:00.000Z"]);
         expect(() =>
-            splitInterval(
-                { start: new Date(0), end: new Date(10) },
-                { milliseconds: 0 },
-            ),
+            splitInterval({
+                start: new Date(0),
+                end: new Date(10),
+                step: { milliseconds: 0 },
+            }),
         ).toThrow(RangeError);
     });
 });

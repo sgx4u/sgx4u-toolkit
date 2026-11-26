@@ -1,7 +1,13 @@
+import type { Interval } from "../types/interval.types.js";
+
 /**
- * Whether touching intervals are joined.
+ * Fields for {@link mergeIntervals}.
  */
-export interface MergeIntervalsOptions {
+export interface MergeIntervalsParams {
+    /**
+     * The intervals to combine.
+     */
+    intervals: readonly Interval[];
     /**
      * Whether `[a, b)` and `[b, c)` become one interval.
      *

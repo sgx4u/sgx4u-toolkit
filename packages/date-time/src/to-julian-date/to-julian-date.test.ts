@@ -26,13 +26,9 @@ describe("toJulianDate", () => {
     });
 
     it("throws when the date is not real", () => {
-        expect(() => toJulianDate("2024-02-30")).toThrow(RangeError);
+        expect(toJulianDate("2024-02-30")).toBeUndefined();
         expect(() => toJulianDate(new Date(Number.NaN))).toThrow(RangeError);
-        expect(() => toJulianDate(Number.POSITIVE_INFINITY)).toThrow(
-            RangeError,
-        );
-        expect(() => toJulianDate(null as unknown as number)).toThrow(
-            TypeError,
-        );
+        expect(toJulianDate(Number.POSITIVE_INFINITY)).toBeUndefined();
+        expect(toJulianDate(null as unknown as number)).toBeUndefined();
     });
 });

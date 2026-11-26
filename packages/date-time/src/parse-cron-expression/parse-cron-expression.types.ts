@@ -1,7 +1,11 @@
 /**
- * Whether the expression includes a seconds field.
+ * Fields for {@link parseCronExpression}.
  */
-export interface ParseCronExpressionOptions {
+export interface ParseCronExpressionParams {
+    /**
+     * The cron text.
+     */
+    expression: string;
     /**
      * `"optional"` accepts five or six fields. `"required"` accepts six.
      * `"none"` accepts five.

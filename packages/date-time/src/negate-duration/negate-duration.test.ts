@@ -32,11 +32,9 @@ describe("negateDuration", () => {
     });
 
     it("throws when the value is not a single-sign duration", () => {
-        expect(() => negateDuration({ days: 1, hours: -1 })).toThrow(
-            RangeError,
-        );
-        expect(() => negateDuration({ days: 1.5 })).toThrow(RangeError);
-        expect(() => negateDuration({ hours: Number.NaN })).toThrow(RangeError);
+        expect(negateDuration({ days: 1, hours: -1 })).toBeUndefined();
+        expect(negateDuration({ days: 1.5 })).toBeUndefined();
+        expect(negateDuration({ hours: Number.NaN })).toBeUndefined();
         expect(() =>
             negateDuration(null as unknown as { hours: number }),
         ).toThrow(TypeError);

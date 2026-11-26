@@ -27,12 +27,11 @@ describe("recurrence", () => {
             "Every 2 weeks on Monday and Friday",
         );
         expect(
-            listRecurrenceOccurrences(rule, {
-                between: {
+            listRecurrenceOccurrences({ rule: rule, 
                     start: new Date("2026-11-26T00:00:00Z"),
                     end: new Date("2026-12-12T00:00:00Z"),
-                },
-            }).map((date) => date.toISOString()),
+                
+             }).map((date) => date.toISOString()),
         ).toEqual([
             "2026-11-27T09:00:00.000Z",
             "2026-12-07T09:00:00.000Z",

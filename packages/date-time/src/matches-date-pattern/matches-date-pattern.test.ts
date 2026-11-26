@@ -3,41 +3,41 @@ import { matchesDatePattern } from "../index.js";
 
 describe("matchesDatePattern", () => {
     it("accepts a real calendar date and rejects an impossible one", () => {
-        expect(matchesDatePattern("2026-11-26", "yyyy-MM-dd")).toBe(true);
-        expect(matchesDatePattern("2024-02-29", "yyyy-MM-dd")).toBe(true);
-        expect(matchesDatePattern("2023-02-29", "yyyy-MM-dd")).toBe(false);
-        expect(matchesDatePattern("1900-02-29", "yyyy-MM-dd")).toBe(false);
-        expect(matchesDatePattern("2024-02-30", "yyyy-MM-dd")).toBe(false);
-        expect(matchesDatePattern("2024-04-31", "yyyy-MM-dd")).toBe(false);
-        expect(matchesDatePattern("2026-01-31", "yyyy-MM-dd")).toBe(true);
-        expect(matchesDatePattern("2026-04-30", "yyyy-MM-dd")).toBe(true);
-        expect(matchesDatePattern("0000-02-29", "yyyy-MM-dd")).toBe(true);
-        expect(matchesDatePattern("0000-02-30", "yyyy-MM-dd")).toBe(false);
-        expect(matchesDatePattern("9999-12-31", "yyyy-MM-dd")).toBe(true);
-        expect(matchesDatePattern("9999-13-01", "yyyy-MM-dd")).toBe(false);
-        expect(matchesDatePattern("", "yyyy-MM-dd")).toBe(false);
-        expect(matchesDatePattern("2026-11-26 ", "yyyy-MM-dd")).toBe(false);
-        expect(matchesDatePattern("2026", "yyyy")).toBe(true);
+        expect(matchesDatePattern({ value: "2026-11-26", pattern: "yyyy-MM-dd" })).toBe(true);
+        expect(matchesDatePattern({ value: "2024-02-29", pattern: "yyyy-MM-dd" })).toBe(true);
+        expect(matchesDatePattern({ value: "2023-02-29", pattern: "yyyy-MM-dd" })).toBe(false);
+        expect(matchesDatePattern({ value: "1900-02-29", pattern: "yyyy-MM-dd" })).toBe(false);
+        expect(matchesDatePattern({ value: "2024-02-30", pattern: "yyyy-MM-dd" })).toBe(false);
+        expect(matchesDatePattern({ value: "2024-04-31", pattern: "yyyy-MM-dd" })).toBe(false);
+        expect(matchesDatePattern({ value: "2026-01-31", pattern: "yyyy-MM-dd" })).toBe(true);
+        expect(matchesDatePattern({ value: "2026-04-30", pattern: "yyyy-MM-dd" })).toBe(true);
+        expect(matchesDatePattern({ value: "0000-02-29", pattern: "yyyy-MM-dd" })).toBe(true);
+        expect(matchesDatePattern({ value: "0000-02-30", pattern: "yyyy-MM-dd" })).toBe(false);
+        expect(matchesDatePattern({ value: "9999-12-31", pattern: "yyyy-MM-dd" })).toBe(true);
+        expect(matchesDatePattern({ value: "9999-13-01", pattern: "yyyy-MM-dd" })).toBe(false);
+        expect(matchesDatePattern({ value: "", pattern: "yyyy-MM-dd" })).toBe(false);
+        expect(matchesDatePattern({ value: "2026-11-26 ", pattern: "yyyy-MM-dd" })).toBe(false);
+        expect(matchesDatePattern({ value: "2026", pattern: "yyyy" })).toBe(true);
     });
 
     it("matches a localized month name", () => {
         expect(
-            matchesDatePattern("November 26, 2026", "MMMM d, yyyy", {
+            ({ value: "November 26, 2026", pattern: "MMMM d, yyyy", {
                 locale: "en-US",
             }),
         ).toBe(true);
         expect(
-            matchesDatePattern("February 29, 2024", "MMMM d, yyyy", {
+            ({ value: "February 29, 2024", pattern: "MMMM d, yyyy", {
                 locale: "en-US",
             }),
         ).toBe(true);
         expect(
-            matchesDatePattern("February 29, 2023", "MMMM d, yyyy", {
+            ({ value: "February 29, 2023", pattern: "MMMM d, yyyy", {
                 locale: "en-US",
             }),
         ).toBe(false);
         expect(
-            matchesDatePattern("26 novembre 2026", "d MMMM yyyy", {
+            ({ value: "26 novembre 2026", pattern: "d MMMM yyyy", {
                 locale: "fr-FR",
             }),
         ).toBe(true);
@@ -45,11 +45,11 @@ describe("matchesDatePattern", () => {
 
     it("throws when an argument is not a string or the pattern is unknown", () => {
         expect(() =>
-            matchesDatePattern(20261126 as unknown as string, "yyyy-MM-dd"),
+            matchesDatePattern({ value: 20261126 as unknown as string, pattern: "yyyy-MM-dd" }),
         ).toThrow(TypeError);
         expect(() =>
-            matchesDatePattern("2026-11-26", null as unknown as string),
+            matchesDatePattern({ value: "2026-11-26", pattern: null as unknown as string }),
         ).toThrow(TypeError);
-        expect(() => matchesDatePattern("2026", "QQQQQ")).toThrow(RangeError);
+        expect(() => matchesDatePattern({ value: "2026", pattern: "QQQQQ" })).toThrow(RangeError);
     });
 });

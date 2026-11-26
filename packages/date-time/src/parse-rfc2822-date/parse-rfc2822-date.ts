@@ -1,5 +1,5 @@
 import { typeError } from "../utils/error.utils.js";
-import { parseRfc2822Text } from "../utils/rfc2822.utils.js";
+import { parseRFC2822Text } from "../utils/rfc2822.utils.js";
 
 /**
  * Parses an email date header.
@@ -12,12 +12,12 @@ import { parseRfc2822Text } from "../utils/rfc2822.utils.js";
  * @returns A new `Date`, or `undefined` when the text does not match.
  * @throws {@link TypeError} When `value` is not a string.
  * @example
- * parseRfc2822Date("Thu, 26 Nov 2026 03:30:00 +0530")?.toISOString(); // "2026-11-25T22:00:00.000Z"
+ * parseRFC2822Date("Thu, 26 Nov 2026 03:30:00 +0530")?.toISOString(); // "2026-11-25T22:00:00.000Z"
  */
-export function parseRfc2822Date(value: string): Date | undefined {
+export function parseRFC2822Date(value: string): Date | undefined {
     if (typeof value !== "string") {
         throw typeError("value", "a string", value);
     }
-    const instant = parseRfc2822Text(value);
+    const instant = parseRFC2822Text(value);
     return instant === undefined ? undefined : new Date(instant);
 }

@@ -4,19 +4,19 @@ import { startOfUnit } from "../index.js";
 describe("startOfUnit", () => {
     it("aligns to the unit and moves a skipped midnight forward", () => {
         expect(
-            startOfUnit("2026-11-26T15:45:00Z", "day", {
+            startOfUnit({ date: "2026-11-26T15:45:00Z", unit: "day", ...{
                 timeZone: "UTC",
-            }).toISOString(),
+            } }).toISOString(),
         ).toBe("2026-11-26T00:00:00.000Z");
         expect(
-            startOfUnit("2024-09-08T12:00:00Z", "day", {
+            startOfUnit({ date: "2024-09-08T12:00:00Z", unit: "day", ...{
                 timeZone: "America/Santiago",
-            }).toISOString(),
+            } }).toISOString(),
         ).toBe("2024-09-08T04:00:00.000Z");
         expect(
-            startOfUnit("2026-11-26T00:00:00Z", "decade", {
+            startOfUnit({ date: "2026-11-26T00:00:00Z", unit: "decade", ...{
                 timeZone: "UTC",
-            }).toISOString(),
+            } }).toISOString(),
         ).toBe("2020-01-01T00:00:00.000Z");
     });
 });

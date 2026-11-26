@@ -121,7 +121,7 @@ describe("parseNaturalDateRange", () => {
             parseNaturalDateRange(null as unknown as string, now),
         ).toThrow("`text` must be a string; received null.");
         expect(() =>
-            parseNaturalDateRange("next week", { timeZone: "Mars/Base" }),
+            parseNaturalDateRange({ text: "next week", ...{ timeZone: "Mars/Base" } }),
         ).toThrow(RangeError);
     });
 });

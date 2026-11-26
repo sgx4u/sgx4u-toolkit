@@ -3,10 +3,10 @@ import {
     formatDuration,
     formatDurationAsClock,
     formatDurationCompact,
-    formatIsoDuration,
+    formatISODuration,
     isValidDuration,
     parseDurationText,
-    parseIsoDuration,
+    parseISODuration,
 } from "../index.js";
 
 describe("duration text", () => {
@@ -19,11 +19,11 @@ describe("duration text", () => {
             seconds: 0,
         });
         expect(parseDurationText("nope")).toBeUndefined();
-        expect(parseIsoDuration("PT1H30M")).toEqual({ hours: 1, minutes: 30 });
-        expect(parseIsoDuration("P")).toBeUndefined();
-        expect(formatIsoDuration({ hours: 1, minutes: 30 })).toBe("PT1H30M");
+        expect(parseISODuration("PT1H30M")).toEqual({ hours: 1, minutes: 30 });
+        expect(parseISODuration("P")).toBeUndefined();
+        expect(formatISODuration({ hours: 1, minutes: 30 })).toBe("PT1H30M");
         expect(
-            parseIsoDuration(formatIsoDuration({ hours: 1, minutes: 30 })),
+            parseISODuration(formatISODuration({ hours: 1, minutes: 30 })),
         ).toEqual({
             hours: 1,
             minutes: 30,

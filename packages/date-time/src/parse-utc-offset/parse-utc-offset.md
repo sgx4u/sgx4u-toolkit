@@ -1,17 +1,17 @@
-# `parseUtcOffset`
+# `parseUTCOffset`
 
 Parses a UTC offset into minutes east of UTC.
 
 ## Import
 
 ```ts
-import { parseUtcOffset } from "@sgx4u/date-time";
+import { parseUTCOffset } from "@sgx4u/date-time";
 ```
 
 ## Signature
 
 ```ts
-function parseUtcOffset(value: string): number | undefined;
+function parseUTCOffset(value: string): number | undefined;
 ```
 
 ## Options
@@ -21,16 +21,16 @@ This function has no options.
 ## Examples
 
 ```ts
-parseUtcOffset("Z");
+parseUTCOffset("Z");
 // 0
 
-parseUtcOffset("+05:30");
+parseUTCOffset("+05:30");
 // 330
 
-parseUtcOffset("+05");
+parseUTCOffset("+05");
 // 300
 
-parseUtcOffset("-08:00");
+parseUTCOffset("-08:00");
 // -480
 ```
 
@@ -40,5 +40,5 @@ Text that does not match returns `undefined`. Accepted forms are `Z`, `z`, `±HH
 
 ## Related
 
-- [`formatUtcOffset`](../format-utc-offset/format-utc-offset.md) writes minutes as offset text.
-- [`getUtcOffset`](../get-utc-offset/get-utc-offset.md) reads the offset of an instant in a zone.
+- [`formatUTCOffset`](../format-utc-offset/format-utc-offset.md) writes minutes as offset text.
+- [`getUTCOffset`](../get-utc-offset/get-utc-offset.md) reads the offset of an instant in a zone.

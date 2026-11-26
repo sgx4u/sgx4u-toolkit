@@ -3,24 +3,24 @@ import { millisecondsToDuration } from "../index.js";
 
 describe("millisecondsToDuration", () => {
     it("splits a length into days and clock fields by default", () => {
-        expect(millisecondsToDuration(5_400_000)).toEqual({
+        expect(millisecondsToDuration({ milliseconds: { milliseconds: 5_400_000 } })).toEqual({
             hours: 1,
             minutes: 30,
         });
-        expect(millisecondsToDuration(90_061_001)).toEqual({
+        expect(millisecondsToDuration({ milliseconds: { milliseconds: 90_061_001 } })).toEqual({
             days: 1,
             hours: 1,
             minutes: 1,
             seconds: 1,
             milliseconds: 1,
         });
-        expect(millisecondsToDuration(86_400_000)).toEqual({ days: 1 });
-        expect(millisecondsToDuration(0)).toEqual({});
-        expect(millisecondsToDuration(-5_400_000)).toEqual({
+        expect(millisecondsToDuration({ milliseconds: { milliseconds: 86_400_000 } })).toEqual({ days: 1 });
+        expect(millisecondsToDuration({ milliseconds: { milliseconds: 0 } })).toEqual({});
+        expect(millisecondsToDuration({ milliseconds: { milliseconds: -5_400_000 } })).toEqual({
             hours: -1,
             minutes: -30,
         });
-        expect(millisecondsToDuration(1_500.5)).toEqual({
+        expect(millisecondsToDuration({ milliseconds: { milliseconds: 1_500.5 } })).toEqual({
             seconds: 1,
             milliseconds: 500.5,
         });
@@ -70,12 +70,12 @@ describe("millisecondsToDuration", () => {
                 smallestUnit: "year" as "second",
             }),
         ).toThrow(RangeError);
-        expect(() => millisecondsToDuration(Number.NaN)).toThrow(RangeError);
-        expect(() => millisecondsToDuration(Number.POSITIVE_INFINITY)).toThrow(
+        expect(() => millisecondsToDuration({ milliseconds: { milliseconds: Number.NaN } })).toThrow(RangeError);
+        expect(() => millisecondsToDuration({ milliseconds: { milliseconds: Number.POSITIVE_INFINITY } })).toThrow(
             RangeError,
         );
         expect(() =>
-            millisecondsToDuration("1000" as unknown as number),
+            millisecondsToDuration({ milliseconds: { milliseconds: "1000" as unknown as number } }),
         ).toThrow(TypeError);
     });
 });

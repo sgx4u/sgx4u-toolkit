@@ -5,10 +5,10 @@ import {
     addDuration,
     compareDates,
     formatDate,
-    formatIsoDuration,
+    formatISODuration,
     mergeIntervals,
     parseDateWithPattern,
-    parseIsoDuration,
+    parseISODuration,
     sortDates,
     subtractDuration,
 } from "../index.js";
@@ -43,11 +43,16 @@ describe("property tests", () => {
                 clockDuration,
                 fc.constantFrom(...zones),
                 (date, duration, timeZone) => {
-                    const forward = addDuration(date, duration, { timeZone });
-                    const back = subtractDuration(forward, duration, {
+                    const forward = addDuration({ date, duration, timeZone });
+                    if (forward === undefined) {
+                        return;
+                    }
+                    const back = subtractDuration({
+                        date: forward,
+                        duration,
                         timeZone,
                     });
-                    expect(back.getTime()).toBe(date.getTime());
+                    expect(back?.getTime()).toBe(date.getTime());
                 },
             ),
             { numRuns: 40 },
@@ -59,20 +64,35 @@ describe("property tests", () => {
             fc.property(
                 fc.array(finiteInstant, { minLength: 0, maxLength: 12 }),
                 (dates) => {
-                    const sorted = sortDates(dates);
+                    const sorted = sortDates({ dates });
+                    if (sorted === undefined) {
+                        return;
+                    }
                     for (let index = 1; index < sorted.length; index += 1) {
                         const previous = sorted[index - 1];
                         const current = sorted[index];
                         if (previous !== undefined && current !== undefined) {
-                            expect(compareDates(previous, current)).not.toBe(1);
+                            expect(
+                                compareDates({
+                                    first: previous,
+                                    second: current,
+                                }),
+                            ).not.toBe(1);
                         }
                     }
                     if (dates.length >= 2) {
                         const first = dates[0];
                         const second = dates[1];
                         if (first !== undefined && second !== undefined) {
-                            expect(compareDates(first, second)).toBe(
-                                -compareDates(second, first) || 0,
+                            expect(
+                                compareDates({ first, second }),
+                            ).toBe(
+                                -(
+                                    compareDates({
+                                        first: second,
+                                        second: first,
+                                    }) ?? 0
+                                ) || 0,
                             );
                         }
                     }
@@ -96,7 +116,7 @@ describe("property tests", () => {
                     seconds: Math.abs(duration.seconds),
                     milliseconds: Math.abs(duration.milliseconds),
                 };
-                expect(parseIsoDuration(formatIsoDuration(positive))).toEqual(
+                expect(parseISODuration(formatISODuration(positive))).toEqual(
                     omitZero(positive),
                 );
             }),
@@ -105,9 +125,18 @@ describe("property tests", () => {
         fc.assert(
             fc.property(finiteInstant, (date) => {
                 const pattern = "yyyy-MM-dd HH:mm:ss.SSS";
-                const text = formatDate(date, pattern, { timeZone: "UTC" });
+                const text = formatDate({
+                    date,
+                    pattern,
+                    timeZone: "UTC",
+                });
+                if (text === undefined) {
+                    return;
+                }
                 expect(
-                    parseDateWithPattern(text, pattern, {
+                    parseDateWithPattern({
+                        value: text,
+                        pattern,
                         timeZone: "UTC",
                     })?.getTime(),
                 ).toBe(date.getTime());
@@ -131,7 +160,10 @@ describe("property tests", () => {
                     { maxLength: 8 },
                 ),
                 (intervals) => {
-                    const merged = mergeIntervals(intervals);
+                    const merged = mergeIntervals({ intervals });
+                    if (merged === undefined) {
+                        return;
+                    }
                     for (let index = 1; index < merged.length; index += 1) {
                         const previous = merged[index - 1];
                         const current = merged[index];
@@ -156,7 +188,14 @@ describe("property tests", () => {
                     const zoned = Temporal.Instant.fromEpochMilliseconds(
                         date.getTime(),
                     ).toZonedDateTimeISO(timeZone);
-                    const moved = addDuration(date, { days: 1 }, { timeZone });
+                    const moved = addDuration({
+                        date,
+                        duration: { days: 1 },
+                        timeZone,
+                    });
+                    if (moved === undefined) {
+                        return;
+                    }
                     const temporalMoved = zoned.add({
                         days: 1,
                     }).epochMilliseconds;

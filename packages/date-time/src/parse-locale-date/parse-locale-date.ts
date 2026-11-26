@@ -6,6 +6,17 @@ import {
 } from "../utils/time-zone.utils.js";
 import { isRealGregorianDay } from "../utils/gregorian.utils.js";
 import { typeError } from "../utils/error.utils.js";
+import { assertLocale } from "../utils/locale.utils.js";
+
+/**
+ * Fields for {@link parseLocaleDate}.
+ */
+export interface ParseLocaleDateParams extends TimeZoneOptions, LocaleOptions {
+    /**
+     * The candidate text.
+     */
+    value: string;
+}
 
 /**
  * Parses a numeric date written the way the locale writes it.
@@ -14,23 +25,27 @@ import { typeError } from "../utils/error.utils.js";
  * two digits. The result is midnight in `timeZone`. An impossible day
  * returns `undefined`.
  *
- * @param value - The candidate text.
- * @param options - `locale` defaults to the runtime locale.
+ * @param params - `value` is required. `locale` defaults to the runtime locale.
  * @returns A new `Date`, or `undefined` when the text does not match.
  * @throws {@link TypeError} When `value` is not a string.
+ * @throws {@link RangeError} When `locale` or `timeZone` is invalid.
  * @example
- * parseLocaleDate("11/26/2026", { locale: "en-US", timeZone: "UTC" })?.toISOString(); // "2026-11-26T00:00:00.000Z"
+ * parseLocaleDate({ value: "11/26/2026", locale: "en-US", timeZone: "UTC" })?.toISOString(); // "2026-11-26T00:00:00.000Z"
  */
-export function parseLocaleDate(
-    value: string,
-    options?: TimeZoneOptions & LocaleOptions,
-): Date | undefined {
+export function parseLocaleDate({
+    value,
+    timeZone,
+    locale,
+}: ParseLocaleDateParams): Date | undefined {
     if (typeof value !== "string") {
         throw typeError("value", "a string", value);
     }
+    if (locale !== undefined) {
+        assertLocale(locale);
+    }
     const pattern = getLocaleDatePattern({
         style: "short",
-        ...(options?.locale !== undefined ? { locale: options.locale } : {}),
+        ...(locale !== undefined ? { locale } : {}),
     });
     const fields = readNumericDate(value, pattern);
     if (
@@ -42,7 +57,7 @@ export function parseLocaleDate(
     return new Date(
         instantFromWallTime(
             { ...fields, hour: 0, minute: 0, second: 0, millisecond: 0 },
-            resolveTimeZone(options?.timeZone),
+            resolveTimeZone(timeZone),
             "compatible",
         ),
     );

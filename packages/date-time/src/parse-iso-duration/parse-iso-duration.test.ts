@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { parseIsoDuration } from "../index.js";
+import { parseISODuration } from "../index.js";
 
-describe("parseIsoDuration", () => {
+describe("parseISODuration", () => {
     it("parses date, time, week, and negative durations", () => {
-        expect(parseIsoDuration("PT1H30M")).toEqual({
+        expect(parseISODuration("PT1H30M")).toEqual({
             hours: 1,
             minutes: 30,
         });
-        expect(parseIsoDuration("P1Y2M3DT4H5M6.5S")).toEqual({
+        expect(parseISODuration("P1Y2M3DT4H5M6.5S")).toEqual({
             years: 1,
             months: 2,
             days: 3,
@@ -15,16 +15,16 @@ describe("parseIsoDuration", () => {
             minutes: 5,
             seconds: 6.5,
         });
-        expect(parseIsoDuration("P1W")).toEqual({ weeks: 1 });
-        expect(parseIsoDuration("-PT1H")).toEqual({ hours: -1 });
-        expect(parseIsoDuration("-P1D")).toEqual({ days: -1 });
-        expect(parseIsoDuration("PT1.5H")).toEqual({ hours: 1.5 });
-        expect(parseIsoDuration("P1YT1.5H")).toEqual({
+        expect(parseISODuration("P1W")).toEqual({ weeks: 1 });
+        expect(parseISODuration("-PT1H")).toEqual({ hours: -1 });
+        expect(parseISODuration("-P1D")).toEqual({ days: -1 });
+        expect(parseISODuration("PT1.5H")).toEqual({ hours: 1.5 });
+        expect(parseISODuration("P1YT1.5H")).toEqual({
             years: 1,
             hours: 1.5,
         });
-        expect(parseIsoDuration("PT0S")).toEqual({ seconds: 0 });
-        expect(parseIsoDuration("P0D")).toEqual({ days: 0 });
+        expect(parseISODuration("PT0S")).toEqual({ seconds: 0 });
+        expect(parseISODuration("P0D")).toEqual({ days: 0 });
     });
 
     it("returns undefined when the text is not an ISO duration", () => {
@@ -44,15 +44,15 @@ describe("parseIsoDuration", () => {
         ];
 
         for (const value of rejected) {
-            expect(parseIsoDuration(value)).toBeUndefined();
+            expect(parseISODuration(value)).toBeUndefined();
         }
     });
 
     it("throws TypeError when the text is not a string", () => {
-        expect(() => parseIsoDuration(undefined as unknown as string)).toThrow(
+        expect(() => parseISODuration(undefined as unknown as string)).toThrow(
             TypeError,
         );
-        expect(() => parseIsoDuration(60 as unknown as string)).toThrow(
+        expect(() => parseISODuration(60 as unknown as string)).toThrow(
             "`value` must be a string; received 60.",
         );
     });

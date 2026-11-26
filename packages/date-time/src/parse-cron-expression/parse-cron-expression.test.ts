@@ -10,9 +10,9 @@ import {
 
 describe("cron", () => {
     it("parses a weekday schedule and finds the next and previous run", () => {
-        expect(parseCronExpression("@reboot")).toBeUndefined();
+        expect(parseCronExpression({ expression: "@reboot" })).toBeUndefined();
         expect(isValidCronExpression("@daily")).toBe(true);
-        expect(parseCronExpression("0 9 * * 1-5")?.hours).toEqual([9]);
+        expect(parseCronExpression({ expression: "0 9 * * 1-5" })?.hours).toEqual([9]);
         expect(
             parseCronExpression("0 9 * * 1-5", { seconds: "required" }),
         ).toBeUndefined();

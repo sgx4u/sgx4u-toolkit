@@ -40,6 +40,6 @@ Text that does not match returns `undefined`, including an empty string and a ph
 
 ## Related
 
-- [`parseIsoDuration`](../parse-iso-duration/parse-iso-duration.md) reads an ISO 8601 duration.
+- [`parseISODuration`](../parse-iso-duration/parse-iso-duration.md) reads an ISO 8601 duration.
 - [`formatDuration`](../format-duration/format-duration.md) writes a duration as words.
 - [`formatDurationCompact`](../format-duration-compact/format-duration-compact.md) writes compact unit symbols.
