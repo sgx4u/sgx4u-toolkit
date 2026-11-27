@@ -1,0 +1,20 @@
+import type { PackageIdentifier } from "./package-identifier.types.js";
+
+/**
+ * Returns the public name of this package.
+ *
+ * Call this when a caller needs the scoped name as a value, for example a
+ * log line or a registry lookup. This stub keeps the new package
+ * typechecking, tested, and packable. Replace the function, this type, the
+ * test, and `package-identifier.md` before the first release.
+ *
+ * @returns The scoped name `@sgx4u/object`.
+ * @remarks The stub takes no input and does not throw. Document parameters
+ * with `@param` and thrown errors with `@throws` when the replacement has
+ * them. The usage guide next to this file is for callers.
+ * @example
+ * packageIdentifier()
+ */
+export function packageIdentifier(): PackageIdentifier {
+    return "@sgx4u/object";
+}
