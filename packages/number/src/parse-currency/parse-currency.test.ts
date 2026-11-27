@@ -24,6 +24,8 @@ describe("parseCurrency", () => {
                 currency: "USD",
             }),
         ).toBe(1234.5);
+        expect(parseCurrency({ value: "₹1,000", locale: "en-IN" })).toBe(1000);
+        expect(parseCurrency({ value: "1,000₹", locale: "en-IN" })).toBe(1000);
         expect(() => parseCurrency({ value: "1", currency: "US" })).toThrow(
             RangeError,
         );

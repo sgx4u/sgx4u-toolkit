@@ -96,7 +96,7 @@ export function parseCurrencyText(
             text = text.split(token).join("");
         }
     } else {
-        text = text.replace(/^[^\d+\-.,\s]+/, "").replace(/[^\d]+$/, "");
+        text = stripLooseAffixes(text);
     }
     return parseLocaleNumberText(text, locale);
 }
@@ -228,6 +228,53 @@ function stripGroup(text: string, group: string): string {
         stripped = stripped.replace(/[\s\u00a0\u202f]/g, "");
     }
     return stripped;
+}
+
+/**
+ * Removes one leading symbol run and one trailing non-digit run.
+ *
+ * Used when no currency code was passed, so a mark such as `₹` can be
+ * dropped before locale parsing. The scan is linear. Digits include
+ * non-Latin decimal digits.
+ */
+function stripLooseAffixes(text: string): string {
+    let start = 0;
+    while (start < text.length && isLeadingSymbol(text.charAt(start))) {
+        start += 1;
+    }
+    let end = text.length;
+    while (end > start && !isDecimalDigit(text.charAt(end - 1))) {
+        end -= 1;
+    }
+    if (start === 0 && end === text.length) {
+        return text;
+    }
+    return text.slice(start, end);
+}
+
+/**
+ * Whether `character` is a currency mark rather than part of the number.
+ */
+function isLeadingSymbol(character: string): boolean {
+    if (isDecimalDigit(character)) {
+        return false;
+    }
+    if (
+        character === "+" ||
+        character === "-" ||
+        character === "." ||
+        character === ","
+    ) {
+        return false;
+    }
+    return character.trim().length > 0;
+}
+
+/**
+ * Whether `character` is a decimal digit in any numbering system.
+ */
+function isDecimalDigit(character: string): boolean {
+    return /^\p{Nd}$/u.test(character);
 }
 
 function currencyTokens(
