@@ -5,9 +5,15 @@ import type { UserConfig } from "tsdown";
  * tsdown config for this package.
  *
  * The binding is annotated so `isolatedDeclarations` can type the default
- * export. Universal and edge libraries keep the neutral platform. A Node
- * library sets `platform` to `"node"`.
+ * export. The root entry and the two subpaths each emit ESM, CommonJS, and
+ * both declaration files. Universal libraries keep the neutral platform.
  */
-const libraryConfig: UserConfig = defineLibraryConfig();
+const libraryConfig: UserConfig = defineLibraryConfig({
+    entry: {
+        index: "src/index.ts",
+        "json-patch": "src/json-patch.ts",
+        hash: "src/hash.ts",
+    },
+});
 
 export default libraryConfig;
