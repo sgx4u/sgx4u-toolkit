@@ -10,9 +10,19 @@ export type { ArrayPatch, KeyedArrayDiff } from "./types/patch.types.js";
 export type { HistogramBin, WindowAggregate } from "./types/aggregate.types.js";
 export type { ArrayConfig } from "./types/config.types.js";
 
+export { chunk } from "./chunk/chunk.js";
+export type { ChunkParams } from "./chunk/chunk.types.js";
+export { chunkBy } from "./chunk-by/chunk-by.js";
+export type { ChunkByParams } from "./chunk-by/chunk-by.types.js";
 export { compact } from "./compact/compact.js";
 export type { Falsy } from "./compact/compact.types.js";
 export { compactNullish } from "./compact-nullish/compact-nullish.js";
+export { countBy } from "./count-by/count-by.js";
+export type { CountByParams } from "./count-by/count-by.types.js";
+export { countOccurrences } from "./count-occurrences/count-occurrences.js";
+export type { CountOccurrencesParams } from "./count-occurrences/count-occurrences.types.js";
+export { createWindows } from "./create-windows/create-windows.js";
+export type { CreateWindowsParams } from "./create-windows/create-windows.types.js";
 export type {
     ArrayMultisetDiff,
     DiffArraysParams,
@@ -54,15 +64,25 @@ export type {
 export type {
     WindowAggregateName,
     GetWindowAggregatesParams,
+export { groupBy } from "./group-by/group-by.js";
+export type { GroupByParams } from "./group-by/group-by.types.js";
+export { groupByKeys } from "./group-by-keys/group-by-keys.js";
+export type { GroupByKeysParams } from "./group-by-keys/group-by-keys.types.js";
 export { hasAtLeast } from "./has-at-least/has-at-least.js";
 export type { HasAtLeastParams } from "./has-at-least/has-at-least.types.js";
+export { indexBy } from "./index-by/index-by.js";
 export type {
     IndexByConflict,
     IndexByParams,
+} from "./index-by/index-by.types.js";
 export { isArrayLike } from "./is-array-like/is-array-like.js";
 export { isEmptyArray } from "./is-empty-array/is-empty-array.js";
 export { isNonEmptyArray } from "./is-non-empty-array/is-non-empty-array.js";
 export { isTypedArray } from "./is-typed-array/is-typed-array.js";
+export { partition } from "./partition/partition.js";
+export type { PartitionParams } from "./partition/partition.types.js";
+export { partitionBy } from "./partition-by/partition-by.js";
+export type { PartitionByParams } from "./partition-by/partition-by.types.js";
 export { rejectItems } from "./reject-items/reject-items.js";
 export type { RejectItemsParams } from "./reject-items/reject-items.types.js";
 export { sliceArray } from "./slice-array/slice-array.js";
