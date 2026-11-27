@@ -4,6 +4,14 @@
  * This module only re-exports. Import one name and a bundler can drop the rest.
  */
 
+export { allPass } from "./all-pass/all-pass.js";
+export { anyPass } from "./any-pass/any-pass.js";
+export { exactlyOnePass } from "./exactly-one-pass/exactly-one-pass.js";
+export { impliesPass } from "./implies-pass/implies-pass.js";
+export type { ImpliesPassInput } from "./implies-pass/implies-pass.types.js";
+export { negate } from "./negate/negate.js";
+export { nonePass } from "./none-pass/none-pass.js";
+
 export { all } from "./all/all.js";
 export { any } from "./any/any.js";
 export { areEqual } from "./are-equal/are-equal.js";
@@ -29,6 +37,7 @@ export { isTruthy } from "./is-truthy/is-truthy.js";
 export { listBooleanLocales } from "./list-boolean-locales/list-boolean-locales.js";
 export { parseBoolean } from "./parse-boolean/parse-boolean.js";
 
+export type { Predicate } from "./types/predicate.types.js";
 export type {
     BooleanCapitalization,
     BooleanFormatStyle,
