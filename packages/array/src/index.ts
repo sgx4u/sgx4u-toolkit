@@ -39,6 +39,8 @@ export type { DropLastWhileParams } from "./drop-last-while/drop-last-while.type
 export { dropWhile } from "./drop-while/drop-while.js";
 export type { DropWhileParams } from "./drop-while/drop-while.types.js";
 export { ensureArray } from "./ensure-array/ensure-array.js";
+export { fillRange } from "./fill-range/fill-range.js";
+export type { FillRangeParams } from "./fill-range/fill-range.types.js";
 export { findDuplicateIndexes } from "./find-duplicate-indexes/find-duplicate-indexes.js";
 export type { FindDuplicateIndexesParams } from "./find-duplicate-indexes/find-duplicate-indexes.types.js";
 export { findDuplicateItems } from "./find-duplicate-items/find-duplicate-items.js";
@@ -101,8 +103,14 @@ export type {
     IndexByConflict,
     IndexByParams,
 } from "./index-by/index-by.types.js";
+export { insertItem } from "./insert-item/insert-item.js";
+export type { InsertItemParams } from "./insert-item/insert-item.types.js";
+export { insertItems } from "./insert-items/insert-items.js";
+export type { InsertItemsParams } from "./insert-items/insert-items.types.js";
 export { insertSorted } from "./insert-sorted/insert-sorted.js";
 export type { InsertSortedParams } from "./insert-sorted/insert-sorted.types.js";
+export { intersperse } from "./intersperse/intersperse.js";
+export type { IntersperseParams } from "./intersperse/intersperse.types.js";
 export { isArrayLike } from "./is-array-like/is-array-like.js";
 export { isDisjoint } from "./is-disjoint/is-disjoint.js";
 export type { IsDisjointParams } from "./is-disjoint/is-disjoint.types.js";
@@ -123,12 +131,30 @@ export { isUnique } from "./is-unique/is-unique.js";
 export type { IsUniqueParams } from "./is-unique/is-unique.types.js";
 export { mergeSorted } from "./merge-sorted/merge-sorted.js";
 export type { MergeSortedParams } from "./merge-sorted/merge-sorted.types.js";
+export { moveItem } from "./move-item/move-item.js";
+export type { MoveItemParams } from "./move-item/move-item.types.js";
+export { padArrayEnd } from "./pad-array-end/pad-array-end.js";
+export type { PadArrayEndParams } from "./pad-array-end/pad-array-end.types.js";
+export { padArrayStart } from "./pad-array-start/pad-array-start.js";
+export type { PadArrayStartParams } from "./pad-array-start/pad-array-start.types.js";
 export { partition } from "./partition/partition.js";
 export type { PartitionParams } from "./partition/partition.types.js";
 export { partitionBy } from "./partition-by/partition-by.js";
 export type { PartitionByParams } from "./partition-by/partition-by.types.js";
 export { rejectItems } from "./reject-items/reject-items.js";
 export type { RejectItemsParams } from "./reject-items/reject-items.types.js";
+export { removeAt } from "./remove-at/remove-at.js";
+export type { RemoveAtParams } from "./remove-at/remove-at.types.js";
+export { removeAtIndexes } from "./remove-at-indexes/remove-at-indexes.js";
+export type { RemoveAtIndexesParams } from "./remove-at-indexes/remove-at-indexes.types.js";
+export { removeItems } from "./remove-items/remove-items.js";
+export type { RemoveItemsParams } from "./remove-items/remove-items.types.js";
+export { replaceItem } from "./replace-item/replace-item.js";
+export type { ReplaceItemParams } from "./replace-item/replace-item.types.js";
+export { rotateItems } from "./rotate-items/rotate-items.js";
+export type { RotateItemsParams } from "./rotate-items/rotate-items.types.js";
+export { setAt } from "./set-at/set-at.js";
+export type { SetAtParams } from "./set-at/set-at.types.js";
 export { sliceArray } from "./slice-array/slice-array.js";
 export type { SliceArrayParams } from "./slice-array/slice-array.types.js";
 export { sortBy } from "./sort-by/sort-by.js";
@@ -139,6 +165,8 @@ export { splitAt } from "./split-at/split-at.js";
 export type { SplitAtParams } from "./split-at/split-at.types.js";
 export { splitWhen } from "./split-when/split-when.js";
 export type { SplitWhenParams } from "./split-when/split-when.types.js";
+export { swapItems } from "./swap-items/swap-items.js";
+export type { SwapItemsParams } from "./swap-items/swap-items.types.js";
 export { take } from "./take/take.js";
 export type { TakeParams } from "./take/take.types.js";
 export { takeLast } from "./take-last/take-last.js";
@@ -148,8 +176,14 @@ export type { TakeLastWhileParams } from "./take-last-while/take-last-while.type
 export { takeWhile } from "./take-while/take-while.js";
 export type { TakeWhileParams } from "./take-while/take-while.types.js";
 export { toArray } from "./to-array/to-array.js";
+export { toggleItem } from "./toggle-item/toggle-item.js";
 export type {
     TogglePlacement,
     ToggleItemParams,
+} from "./toggle-item/toggle-item.types.js";
+export { updateAt } from "./update-at/update-at.js";
+export type { UpdateAtParams } from "./update-at/update-at.types.js";
+export { updateWhere } from "./update-where/update-where.js";
+export type { UpdateWhereParams } from "./update-where/update-where.types.js";
 export { withoutValues } from "./without-values/without-values.js";
 export type { WithoutValuesParams } from "./without-values/without-values.types.js";
