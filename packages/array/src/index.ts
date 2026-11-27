@@ -100,6 +100,10 @@ export { getMin } from "./get-min/get-min.js";
 export type { GetMinParams } from "./get-min/get-min.types.js";
 export { getMode } from "./get-mode/get-mode.js";
 export type { GetModeParams } from "./get-mode/get-mode.types.js";
+export { getOffsetItems } from "./get-offset-items/get-offset-items.js";
+export type { GetOffsetItemsParams } from "./get-offset-items/get-offset-items.types.js";
+export { getPageItems } from "./get-page-items/get-page-items.js";
+export type { GetPageItemsParams } from "./get-page-items/get-page-items.types.js";
 export { getPercentile } from "./get-percentile/get-percentile.js";
 export type {
     PercentileMethod,
@@ -187,6 +191,8 @@ export { padArrayEnd } from "./pad-array-end/pad-array-end.js";
 export type { PadArrayEndParams } from "./pad-array-end/pad-array-end.types.js";
 export { padArrayStart } from "./pad-array-start/pad-array-start.js";
 export type { PadArrayStartParams } from "./pad-array-start/pad-array-start.types.js";
+export { paginate } from "./paginate/paginate.js";
+export type { PaginateParams } from "./paginate/paginate.types.js";
 export { partition } from "./partition/partition.js";
 export type { PartitionParams } from "./partition/partition.types.js";
 export { partitionBy } from "./partition-by/partition-by.js";
