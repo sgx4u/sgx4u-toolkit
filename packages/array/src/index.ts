@@ -10,6 +10,8 @@ export type { ArrayPatch, KeyedArrayDiff } from "./types/patch.types.js";
 export type { HistogramBin, WindowAggregate } from "./types/aggregate.types.js";
 export type { ArrayConfig } from "./types/config.types.js";
 
+export { applyArrayPatch } from "./apply-array-patch/apply-array-patch.js";
+export type { ApplyArrayPatchParams } from "./apply-array-patch/apply-array-patch.types.js";
 export { binarySearch } from "./binary-search/binary-search.js";
 export type { BinarySearchParams } from "./binary-search/binary-search.types.js";
 export { binItems } from "./bin-items/bin-items.js";
@@ -37,9 +39,15 @@ export { createWindows } from "./create-windows/create-windows.js";
 export type { CreateWindowsParams } from "./create-windows/create-windows.types.js";
 export { cycleItems } from "./cycle-items/cycle-items.js";
 export type { CycleItemsParams } from "./cycle-items/cycle-items.types.js";
+export { diffArrays } from "./diff-arrays/diff-arrays.js";
 export type {
     ArrayMultisetDiff,
     DiffArraysParams,
+} from "./diff-arrays/diff-arrays.types.js";
+export { diffArraysByKey } from "./diff-arrays-by-key/diff-arrays-by-key.js";
+export type { DiffArraysByKeyParams } from "./diff-arrays-by-key/diff-arrays-by-key.types.js";
+export { diffArraySequence } from "./diff-array-sequence/diff-array-sequence.js";
+export type { DiffArraySequenceParams } from "./diff-array-sequence/diff-array-sequence.types.js";
 export { drop } from "./drop/drop.js";
 export type { DropParams } from "./drop/drop.types.js";
 export { dropLast } from "./drop-last/drop-last.js";
@@ -90,6 +98,12 @@ export type { GetLastParams } from "./get-last/get-last.types.js";
 export { getLastIndexOf } from "./get-last-index-of/get-last-index-of.js";
 export type { GetLastIndexOfParams } from "./get-last-index-of/get-last-index-of.types.js";
 export { getLength } from "./get-length/get-length.js";
+export { getLongestCommonPrefix } from "./get-longest-common-prefix/get-longest-common-prefix.js";
+export type { GetLongestCommonPrefixParams } from "./get-longest-common-prefix/get-longest-common-prefix.types.js";
+export { getLongestCommonSubsequence } from "./get-longest-common-subsequence/get-longest-common-subsequence.js";
+export type { GetLongestCommonSubsequenceParams } from "./get-longest-common-subsequence/get-longest-common-subsequence.types.js";
+export { getLongestCommonSuffix } from "./get-longest-common-suffix/get-longest-common-suffix.js";
+export type { GetLongestCommonSuffixParams } from "./get-longest-common-suffix/get-longest-common-suffix.types.js";
 export { getMax } from "./get-max/get-max.js";
 export type { GetMaxParams } from "./get-max/get-max.types.js";
 export { getMean } from "./get-mean/get-mean.js";
