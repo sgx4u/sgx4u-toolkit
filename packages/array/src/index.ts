@@ -10,6 +10,8 @@ export type { ArrayPatch, KeyedArrayDiff } from "./types/patch.types.js";
 export type { HistogramBin, WindowAggregate } from "./types/aggregate.types.js";
 export type { ArrayConfig } from "./types/config.types.js";
 
+export { binarySearch } from "./binary-search/binary-search.js";
+export type { BinarySearchParams } from "./binary-search/binary-search.types.js";
 export { chunk } from "./chunk/chunk.js";
 export type { ChunkParams } from "./chunk/chunk.types.js";
 export { chunkBy } from "./chunk-by/chunk-by.js";
@@ -21,6 +23,8 @@ export { countBy } from "./count-by/count-by.js";
 export type { CountByParams } from "./count-by/count-by.types.js";
 export { countOccurrences } from "./count-occurrences/count-occurrences.js";
 export type { CountOccurrencesParams } from "./count-occurrences/count-occurrences.types.js";
+export { createComparator } from "./create-comparator/create-comparator.js";
+export type { CreateComparatorParams } from "./create-comparator/create-comparator.types.js";
 export { createWindows } from "./create-windows/create-windows.js";
 export type { CreateWindowsParams } from "./create-windows/create-windows.types.js";
 export type {
@@ -65,6 +69,10 @@ export { getLength } from "./get-length/get-length.js";
 export type {
     PercentileMethod,
     GetPercentileParams,
+export { getSortedInsertIndex } from "./get-sorted-insert-index/get-sorted-insert-index.js";
+export type { GetSortedInsertIndexParams } from "./get-sorted-insert-index/get-sorted-insert-index.types.js";
+export { getSortedLastInsertIndex } from "./get-sorted-last-insert-index/get-sorted-last-insert-index.js";
+export type { GetSortedLastInsertIndexParams } from "./get-sorted-last-insert-index/get-sorted-last-insert-index.types.js";
 export { getSymmetricDifference } from "./get-symmetric-difference/get-symmetric-difference.js";
 export type { GetSymmetricDifferenceParams } from "./get-symmetric-difference/get-symmetric-difference.types.js";
 export { getTail } from "./get-tail/get-tail.js";
@@ -77,6 +85,8 @@ export type {
 } from "./get-unique-items/get-unique-items.types.js";
 export { getUniqueItemsBy } from "./get-unique-items-by/get-unique-items-by.js";
 export type { GetUniqueItemsByParams } from "./get-unique-items-by/get-unique-items-by.types.js";
+export { getUniqueSorted } from "./get-unique-sorted/get-unique-sorted.js";
+export type { GetUniqueSortedParams } from "./get-unique-sorted/get-unique-sorted.types.js";
 export type {
     WindowAggregateName,
     GetWindowAggregatesParams,
@@ -91,6 +101,8 @@ export type {
     IndexByConflict,
     IndexByParams,
 } from "./index-by/index-by.types.js";
+export { insertSorted } from "./insert-sorted/insert-sorted.js";
+export type { InsertSortedParams } from "./insert-sorted/insert-sorted.types.js";
 export { isArrayLike } from "./is-array-like/is-array-like.js";
 export { isDisjoint } from "./is-disjoint/is-disjoint.js";
 export type { IsDisjointParams } from "./is-disjoint/is-disjoint.types.js";
@@ -100,6 +112,8 @@ export type { IsEqualArrayParams } from "./is-equal-array/is-equal-array.types.j
 export { isNonEmptyArray } from "./is-non-empty-array/is-non-empty-array.js";
 export { isPermutationOf } from "./is-permutation-of/is-permutation-of.js";
 export type { IsPermutationOfParams } from "./is-permutation-of/is-permutation-of.types.js";
+export { isSorted } from "./is-sorted/is-sorted.js";
+export type { IsSortedParams } from "./is-sorted/is-sorted.types.js";
 export { isSubset } from "./is-subset/is-subset.js";
 export type { IsSubsetParams } from "./is-subset/is-subset.types.js";
 export { isSuperset } from "./is-superset/is-superset.js";
@@ -107,6 +121,8 @@ export type { IsSupersetParams } from "./is-superset/is-superset.types.js";
 export { isTypedArray } from "./is-typed-array/is-typed-array.js";
 export { isUnique } from "./is-unique/is-unique.js";
 export type { IsUniqueParams } from "./is-unique/is-unique.types.js";
+export { mergeSorted } from "./merge-sorted/merge-sorted.js";
+export type { MergeSortedParams } from "./merge-sorted/merge-sorted.types.js";
 export { partition } from "./partition/partition.js";
 export type { PartitionParams } from "./partition/partition.types.js";
 export { partitionBy } from "./partition-by/partition-by.js";
@@ -115,6 +131,10 @@ export { rejectItems } from "./reject-items/reject-items.js";
 export type { RejectItemsParams } from "./reject-items/reject-items.types.js";
 export { sliceArray } from "./slice-array/slice-array.js";
 export type { SliceArrayParams } from "./slice-array/slice-array.types.js";
+export { sortBy } from "./sort-by/sort-by.js";
+export type { SortByParams } from "./sort-by/sort-by.types.js";
+export { sortNatural } from "./sort-natural/sort-natural.js";
+export type { SortNaturalParams } from "./sort-natural/sort-natural.types.js";
 export { splitAt } from "./split-at/split-at.js";
 export type { SplitAtParams } from "./split-at/split-at.types.js";
 export { splitWhen } from "./split-when/split-when.js";
