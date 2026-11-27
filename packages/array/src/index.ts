@@ -27,8 +27,14 @@ export { countOccurrences } from "./count-occurrences/count-occurrences.js";
 export type { CountOccurrencesParams } from "./count-occurrences/count-occurrences.types.js";
 export { createComparator } from "./create-comparator/create-comparator.js";
 export type { CreateComparatorParams } from "./create-comparator/create-comparator.types.js";
+export { createRange } from "./create-range/create-range.js";
+export type { CreateRangeParams } from "./create-range/create-range.types.js";
+export { createTimes } from "./create-times/create-times.js";
+export type { CreateTimesParams } from "./create-times/create-times.types.js";
 export { createWindows } from "./create-windows/create-windows.js";
 export type { CreateWindowsParams } from "./create-windows/create-windows.types.js";
+export { cycleItems } from "./cycle-items/cycle-items.js";
+export type { CycleItemsParams } from "./cycle-items/cycle-items.types.js";
 export type {
     ArrayMultisetDiff,
     DiffArraysParams,
@@ -161,6 +167,10 @@ export { removeAtIndexes } from "./remove-at-indexes/remove-at-indexes.js";
 export type { RemoveAtIndexesParams } from "./remove-at-indexes/remove-at-indexes.types.js";
 export { removeItems } from "./remove-items/remove-items.js";
 export type { RemoveItemsParams } from "./remove-items/remove-items.types.js";
+export { repeatArray } from "./repeat-array/repeat-array.js";
+export type { RepeatArrayParams } from "./repeat-array/repeat-array.types.js";
+export { repeatItem } from "./repeat-item/repeat-item.js";
+export type { RepeatItemParams } from "./repeat-item/repeat-item.types.js";
 export { replaceItem } from "./replace-item/replace-item.js";
 export type { ReplaceItemParams } from "./replace-item/replace-item.types.js";
 export { rotateItems } from "./rotate-items/rotate-items.js";
