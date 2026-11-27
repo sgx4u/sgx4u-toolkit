@@ -29,6 +29,8 @@ export { countBy } from "./count-by/count-by.js";
 export type { CountByParams } from "./count-by/count-by.types.js";
 export { countOccurrences } from "./count-occurrences/count-occurrences.js";
 export type { CountOccurrencesParams } from "./count-occurrences/count-occurrences.types.js";
+export { createArray } from "./create-array/create-array.js";
+export type { ArrayToolkit } from "./create-array/create-array.js";
 export { createComparator } from "./create-comparator/create-comparator.js";
 export type { CreateComparatorParams } from "./create-comparator/create-comparator.types.js";
 export { createRange } from "./create-range/create-range.js";
