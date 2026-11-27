@@ -12,6 +12,8 @@ export type { ArrayConfig } from "./types/config.types.js";
 
 export { binarySearch } from "./binary-search/binary-search.js";
 export type { BinarySearchParams } from "./binary-search/binary-search.types.js";
+export { binItems } from "./bin-items/bin-items.js";
+export type { BinItemsParams } from "./bin-items/bin-items.types.js";
 export { chunk } from "./chunk/chunk.js";
 export type { ChunkParams } from "./chunk/chunk.types.js";
 export { chunkBy } from "./chunk-by/chunk-by.js";
@@ -63,13 +65,19 @@ export { flattenTree } from "./flatten-tree/flatten-tree.js";
 export type { FlattenTreeParams } from "./flatten-tree/flatten-tree.types.js";
 export { getAt } from "./get-at/get-at.js";
 export type { GetAtParams } from "./get-at/get-at.types.js";
+export { getBestItem } from "./get-best-item/get-best-item.js";
+export type { GetBestItemParams } from "./get-best-item/get-best-item.types.js";
 export { getDifference } from "./get-difference/get-difference.js";
 export type { GetDifferenceParams } from "./get-difference/get-difference.types.js";
+export { getExtent } from "./get-extent/get-extent.js";
+export type { Extent, GetExtentParams } from "./get-extent/get-extent.types.js";
 export { getFirst } from "./get-first/get-first.js";
 export type { GetFirstParams } from "./get-first/get-first.types.js";
+export { getFrequencies } from "./get-frequencies/get-frequencies.js";
 export type {
     FrequencyEntry,
     GetFrequenciesParams,
+} from "./get-frequencies/get-frequencies.types.js";
 export { getIndexOf } from "./get-index-of/get-index-of.js";
 export type { GetIndexOfParams } from "./get-index-of/get-index-of.types.js";
 export { getInitial } from "./get-initial/get-initial.js";
@@ -82,13 +90,33 @@ export type { GetLastParams } from "./get-last/get-last.types.js";
 export { getLastIndexOf } from "./get-last-index-of/get-last-index-of.js";
 export type { GetLastIndexOfParams } from "./get-last-index-of/get-last-index-of.types.js";
 export { getLength } from "./get-length/get-length.js";
+export { getMax } from "./get-max/get-max.js";
+export type { GetMaxParams } from "./get-max/get-max.types.js";
+export { getMean } from "./get-mean/get-mean.js";
+export type { GetMeanParams } from "./get-mean/get-mean.types.js";
+export { getMedian } from "./get-median/get-median.js";
+export type { GetMedianParams } from "./get-median/get-median.types.js";
+export { getMin } from "./get-min/get-min.js";
+export type { GetMinParams } from "./get-min/get-min.types.js";
+export { getMode } from "./get-mode/get-mode.js";
+export type { GetModeParams } from "./get-mode/get-mode.types.js";
+export { getPercentile } from "./get-percentile/get-percentile.js";
 export type {
     PercentileMethod,
     GetPercentileParams,
+} from "./get-percentile/get-percentile.types.js";
+export { getProduct } from "./get-product/get-product.js";
+export type { GetProductParams } from "./get-product/get-product.types.js";
+export { getRunningTotals } from "./get-running-totals/get-running-totals.js";
+export type { GetRunningTotalsParams } from "./get-running-totals/get-running-totals.types.js";
 export { getSortedInsertIndex } from "./get-sorted-insert-index/get-sorted-insert-index.js";
 export type { GetSortedInsertIndexParams } from "./get-sorted-insert-index/get-sorted-insert-index.types.js";
 export { getSortedLastInsertIndex } from "./get-sorted-last-insert-index/get-sorted-last-insert-index.js";
 export type { GetSortedLastInsertIndexParams } from "./get-sorted-last-insert-index/get-sorted-last-insert-index.types.js";
+export { getStandardDeviation } from "./get-standard-deviation/get-standard-deviation.js";
+export type { GetStandardDeviationParams } from "./get-standard-deviation/get-standard-deviation.types.js";
+export { getSum } from "./get-sum/get-sum.js";
+export type { GetSumParams } from "./get-sum/get-sum.types.js";
 export { getSymmetricDifference } from "./get-symmetric-difference/get-symmetric-difference.js";
 export type { GetSymmetricDifferenceParams } from "./get-symmetric-difference/get-symmetric-difference.types.js";
 export { getTail } from "./get-tail/get-tail.js";
@@ -103,9 +131,13 @@ export { getUniqueItemsBy } from "./get-unique-items-by/get-unique-items-by.js";
 export type { GetUniqueItemsByParams } from "./get-unique-items-by/get-unique-items-by.types.js";
 export { getUniqueSorted } from "./get-unique-sorted/get-unique-sorted.js";
 export type { GetUniqueSortedParams } from "./get-unique-sorted/get-unique-sorted.types.js";
+export { getVariance } from "./get-variance/get-variance.js";
+export type { GetVarianceParams } from "./get-variance/get-variance.types.js";
+export { getWindowAggregates } from "./get-window-aggregates/get-window-aggregates.js";
 export type {
     WindowAggregateName,
     GetWindowAggregatesParams,
+} from "./get-window-aggregates/get-window-aggregates.types.js";
 export { groupBy } from "./group-by/group-by.js";
 export type { GroupByParams } from "./group-by/group-by.types.js";
 export { groupByKeys } from "./group-by-keys/group-by-keys.js";
