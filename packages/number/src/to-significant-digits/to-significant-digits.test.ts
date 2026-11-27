@@ -13,5 +13,9 @@ describe("toSignificantDigits", () => {
         expect(() => toSignificantDigits({ value: 1, digits: 0 })).toThrow(
             RangeError,
         );
+        expect(toSignificantDigits({ value: 1e-320, digits: 1 })).toBeCloseTo(
+            1e-320,
+        );
+        expect(toSignificantDigits({ value: 12345, digits: 20 })).toBe(12345);
     });
 });

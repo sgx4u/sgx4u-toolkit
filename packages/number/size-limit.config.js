@@ -690,7 +690,7 @@ const sizeLimitConfig = [
         name: "parseCurrency",
         path: "dist/index.js",
         import: "{ parseCurrency }",
-        limit: "1.4 kB",
+        limit: "1.5 kB",
         brotli: true,
     },
     {

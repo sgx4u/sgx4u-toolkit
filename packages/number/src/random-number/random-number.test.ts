@@ -20,5 +20,14 @@ describe("randomNumber", () => {
         expect(() =>
             randomNumber({ lower: 1, upper: 1, random: () => 0 }),
         ).toThrow(RangeError);
+        const upper = 1 + 2 * Number.EPSILON;
+        const nearUpper = randomNumber({
+            lower: 1,
+            upper,
+            includeUpper: false,
+            random: () => 1 - Number.EPSILON,
+        });
+        expect(nearUpper).toBeGreaterThan(1);
+        expect(nearUpper).toBeLessThan(upper);
     });
 });

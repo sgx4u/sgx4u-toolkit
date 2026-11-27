@@ -22,7 +22,8 @@ getMaximum([3, 1, 2]);
 
 ## Edge cases
 
-- Invalid input returns `undefined` or `false`, and does not throw, unless this guide says otherwise.
+- An empty list or any non-finite value returns `undefined`.
+- `0` is greater than `-0`, matching `Math.max`.
 
 ## Related
 

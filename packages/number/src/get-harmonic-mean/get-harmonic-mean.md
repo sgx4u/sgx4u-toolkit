@@ -22,7 +22,7 @@ getHarmonicMean([1, 2]);
 
 ## Edge cases
 
-- Invalid input returns `undefined` or `false`, and does not throw, unless this guide says otherwise.
+- An empty list, a zero, a non-finite value, or a set whose reciprocals cancel to zero returns `undefined`.
 
 ## Related
 

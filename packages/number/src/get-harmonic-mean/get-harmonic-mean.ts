@@ -1,5 +1,5 @@
 /**
- * Returns the harmonic mean. An empty list or a zero value returns `undefined`.
+ * Returns the harmonic mean. An empty list, a zero, or a set whose reciprocals cancel returns `undefined`.
  *
  * @example
  * getHarmonicMean([1, 2]);
@@ -15,5 +15,6 @@ export function getHarmonicMean(values: readonly number[]): number | undefined {
         }
         reciprocalTotal += 1 / value;
     }
-    return values.length / reciprocalTotal;
+    const mean = values.length / reciprocalTotal;
+    return Number.isFinite(mean) ? mean : undefined;
 }

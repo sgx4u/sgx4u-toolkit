@@ -81,7 +81,8 @@ export function randomRealBetween(
     }
     const result = lower + sample * (upper - lower);
     if (!includeUpper && result >= upper) {
-        return Math.min(lower, nextLower(upper));
+        const belowUpper = nextLower(upper);
+        return belowUpper >= lower ? belowUpper : lower;
     }
     if (includeUpper && result > upper) {
         return upper;

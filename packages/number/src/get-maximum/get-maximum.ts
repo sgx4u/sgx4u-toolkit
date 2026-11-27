@@ -16,7 +16,7 @@ export function getMaximum(values: readonly number[]): number | undefined {
         if (!Number.isFinite(value)) {
             return undefined;
         }
-        if (value > maximum) {
+        if (value > maximum || (Object.is(maximum, -0) && value === 0)) {
             maximum = value;
         }
     }

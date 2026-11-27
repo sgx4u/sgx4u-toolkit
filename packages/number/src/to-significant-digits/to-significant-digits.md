@@ -26,7 +26,10 @@ toSignificantDigits({ value: 12345, digits: 2 });
 
 ## Edge cases
 
-- Invalid input returns `undefined` or `false`, and does not throw, unless this guide says otherwise.
+- A non-finite value returns `undefined`.
+- `digits` must be a positive integer. Any other `digits` throws `RangeError`.
+- More than 17 significant digits cannot change a double, so the finite value is returned unchanged.
+- A tiny magnitude such as `1e-320` is rounded without throwing.
 
 ## Related
 

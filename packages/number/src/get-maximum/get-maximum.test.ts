@@ -6,5 +6,7 @@ describe("getMaximum", () => {
         expect(getMaximum([3, 1, 2])).toBe(3);
         expect(getMaximum([])).toBeUndefined();
         expect(getMaximum([Number.POSITIVE_INFINITY])).toBeUndefined();
+        expect(Object.is(getMaximum([-0, 0]), 0)).toBe(true);
+        expect(Object.is(getMaximum([0, -0]), 0)).toBe(true);
     });
 });

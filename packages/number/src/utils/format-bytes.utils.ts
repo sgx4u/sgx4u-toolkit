@@ -87,7 +87,8 @@ export function formatByteSize(parameters: {
         : standard === "IEC"
           ? iecSymbols[index]
           : siSymbols[index];
-    if (unitName !== undefined) {
+    const useInternationalUnit = !(bits && standard === "IEC");
+    if (useInternationalUnit && unitName !== undefined) {
         const localized = tryUnitFormat({
             value: signedScaled,
             unit: unitName,

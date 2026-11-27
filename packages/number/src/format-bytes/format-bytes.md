@@ -29,7 +29,9 @@ formatBytes({ value: 1340 });
 
 ## Edge cases
 
-- Invalid input returns `undefined` or `false`, and does not throw, unless this guide says otherwise.
+- A non-finite value returns `undefined`.
+- IEC byte units use kibibyte names when `Intl` has them, and `KiB` otherwise.
+- IEC bit counts use the `Kibit` symbol. `Intl` has no kibibit unit, so the SI `kilobit` name is not used for a 1024 scale.
 
 ## Related
 
