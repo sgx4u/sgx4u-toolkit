@@ -1,3 +1,4 @@
+import { localeLowerCase } from "./locale-case.utils.js";
 import { matchesLenientYesOrNo } from "./lenient-yes-no.utils.js";
 import type { ResolvedParseSettings } from "./resolve-parse-settings.utils.js";
 
@@ -90,7 +91,7 @@ function localizedFold(
         return comparable;
     }
     if (settings.locale !== undefined) {
-        return comparable.toLocaleLowerCase(settings.locale);
+        return localeLowerCase(comparable, settings.locale);
     }
     return comparable.toLowerCase();
 }

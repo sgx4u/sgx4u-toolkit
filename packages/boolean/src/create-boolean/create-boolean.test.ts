@@ -94,6 +94,29 @@ describe("overrides", () => {
         expect(booleans.parseBoolean({ value: "yss", lenient: true })).toBe(
             true,
         );
+        const french = createBoolean({
+            locale: "fr",
+            trim: true,
+            fallback: false,
+        });
+        expect(
+            french.parseBoolean({
+                value: "oui",
+                locale: undefined,
+            } as unknown as Parameters<typeof french.parseBoolean>[0]),
+        ).toBe(true);
+        expect(
+            french.parseBoolean({
+                value: "  oui  ",
+                trim: undefined,
+            } as unknown as Parameters<typeof french.parseBoolean>[0]),
+        ).toBe(true);
+        expect(
+            french.parseBoolean({
+                value: "maybe",
+                fallback: undefined,
+            } as unknown as Parameters<typeof french.parseBoolean>[0]),
+        ).toBe(false);
     });
 });
 

@@ -280,6 +280,15 @@ describe("locales", () => {
         expect(parseBoolean({ value: "oui", locale: "xx" })).toBeUndefined();
         expect(parseBoolean({ value: "yes", locale: "xx" })).toBe(true);
         expect(parseBoolean({ value: "yes", locale: "" })).toBe(true);
+        expect(parseBoolean({ value: "maybe", locale: "" })).toBeUndefined();
+        expect(parseBoolean({ value: "oui", locale: "fr_FR" })).toBeUndefined();
+        expect(parseBoolean({ value: "yes", locale: "en_US" })).toBe(true);
+    });
+
+    it("reads Norwegian Bokmål from the no tag", () => {
+        expect(parseBoolean({ value: "ja", locale: "no" })).toBe(true);
+        expect(parseBoolean({ value: "nei", locale: "no-NO" })).toBe(false);
+        expect(parseBoolean({ value: "nei", locale: "nb" })).toBe(false);
     });
 });
 

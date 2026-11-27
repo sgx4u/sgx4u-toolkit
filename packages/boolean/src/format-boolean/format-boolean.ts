@@ -8,6 +8,7 @@ import type {
 import { resolveFormatOptions } from "../utils/assert-format-options.utils.js";
 import { describeReceived } from "../utils/describe-received.utils.js";
 import { languageSubtag } from "../utils/language-subtag.utils.js";
+import { localeUpperCase } from "../utils/locale-case.utils.js";
 
 /**
  * Turns a primitive boolean into a word.
@@ -78,7 +79,7 @@ function wordsForStyle(
  *
  * @param word - The spelling from the style table or the locale table.
  * @param capitalization - `lower`, `sentence`, or `upper`.
- * @param locale - Passed to `toLocaleUpperCase`.
+ * @param locale - Passed to locale uppercasing. An unusable tag uses `toUpperCase()`.
  * @returns The word to return.
  */
 function applyCapitalization(
@@ -90,13 +91,13 @@ function applyCapitalization(
         return word;
     }
     if (capitalization === "upper") {
-        return word.toLocaleUpperCase(locale);
+        return localeUpperCase(word, locale);
     }
     const characters = Array.from(word);
     const firstCharacter = characters[0];
     if (firstCharacter === undefined) {
         return word;
     }
-    characters[0] = firstCharacter.toLocaleUpperCase(locale);
+    characters[0] = localeUpperCase(firstCharacter, locale);
     return characters.join("");
 }

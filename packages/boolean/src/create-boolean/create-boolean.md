@@ -33,7 +33,7 @@ function createBoolean<Config extends BooleanConfig = BooleanConfig>(
 | `formatStyle`          | `BooleanFormatStyle`    | `"true-false"`                              |
 | `formatCapitalization` | `BooleanCapitalization` | `"lower"`                                   |
 
-The word lists are copied. Mutating the caller's array later does not change the instance. `isParseableBoolean` does not use `fallback`. `getBooleanWords` uses `locale` when a call omits it. `formatBoolean` uses `locale`, `formatStyle`, and `formatCapitalization`. Logic functions and predicate combinators are present and ignore the config.
+The word lists are copied. Mutating the caller's array later does not change the instance. A field set to `undefined` on one call is treated as omitted, so the stored default stays. `isParseableBoolean` does not use `fallback`. `getBooleanWords` uses `locale` when a call omits it. `formatBoolean` uses `locale`, `formatStyle`, and `formatCapitalization`. Logic functions and predicate combinators are present and ignore the config.
 
 When `fallback` is set on the config, `instance.parseBoolean(value)` is typed as `boolean`.
 

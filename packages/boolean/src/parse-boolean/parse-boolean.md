@@ -42,6 +42,8 @@ Default English tokens, after trim and `toLowerCase()`:
 | `true`  | `true`, `t`, `yes`, `y`, `on`, `1`, `enable`, `enabled`    |
 | `false` | `false`, `f`, `no`, `n`, `off`, `0`, `disable`, `disabled` |
 
+`no` uses the Norwegian Bokmål words stored as `nb`. A structurally invalid `locale`, such as `""` or `fr_FR`, adds no words and does not throw.
+
 `lenient` runs only after those lists miss. It accepts English `yes` or `no` with exactly one character replaced by a QWERTY neighbor. `yss` matches `yes` because `s` is next to `e`. `mo` matches `no` because `m` is next to `n`. An extra letter, a missing letter, or a swap does not match. Locale words, `true` / `false`, `on` / `off`, and custom words are not typo-matched.
 
 An object is the options form only when it has an own `value` property. Other objects are values and are not tokens.

@@ -6,6 +6,7 @@ import { localeWordsByLanguage } from "../data/locale-words.data.js";
 import type { WordListMode } from "../types/parse-options.types.js";
 import { describeReceived } from "./describe-received.utils.js";
 import { languageSubtag } from "./language-subtag.utils.js";
+import { localeLowerCase } from "./locale-case.utils.js";
 
 /**
  * Option bag before validation. Absent fields use the parse defaults.
@@ -224,7 +225,7 @@ function foldLocalized(
         return trimmed;
     }
     if (locale !== undefined) {
-        return trimmed.toLocaleLowerCase(locale);
+        return localeLowerCase(trimmed, locale);
     }
     return trimmed.toLowerCase();
 }

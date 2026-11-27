@@ -80,7 +80,7 @@ french.formatBoolean({ value: false }); // "non"
 
 `wordListMode: "extend"` adds `truthyWords` and `falsyWords` to the English tokens and, when `locale` is set, that language's yes and no words. `"replace"` uses only the custom lists. Primitive booleans and `0` / `1` stay accepted in both modes.
 
-`locale` is a BCP 47 tag. The language subtag is used (`hi-IN` selects `hi`). Locale words are yes and no, not translations of the identifiers `true` and `false`. An unknown language adds no words. Pass `wahr` / `falsch` through `truthyWords` / `falsyWords` when you need them.
+`locale` is a BCP 47 tag. The language subtag is used (`hi-IN` selects `hi`). `no` selects the Norwegian Bokmål words stored under `nb`. Locale words are yes and no, not translations of the identifiers `true` and `false`. An unknown language adds no words. A structurally invalid tag, such as `""` or `fr_FR`, does the same and does not throw. Pass `wahr` / `falsch` through `truthyWords` / `falsyWords` when you need them.
 
 `lenient: true` accepts English `yes` or `no` with one character replaced by a neighboring key. It does not typo-match other words. `"yss"` is `true`. `"mo"` is `false`. `"yess"`, `"yep"`, and `"tue"` are unrecognized.
 

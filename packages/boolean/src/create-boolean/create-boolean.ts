@@ -213,7 +213,8 @@ export function createBoolean<Config extends BooleanConfig = BooleanConfig>(
 /**
  * Copies the stored options and lets keys on this call replace them.
  *
- * The stored object and its word arrays are not written to.
+ * The stored object and its word arrays are not written to. A key whose
+ * value is `undefined` is omitted, so a hole keeps the stored default.
  *
  * @param request - The call split into a value and the keys it set.
  * @param boundOptions - Defaults captured when the instance was created.
@@ -225,7 +226,11 @@ function mergeParseOptions(
 ): RawParseOptions {
     const merged: RawParseOptions = { ...boundOptions };
     for (const key of request.providedKeys) {
-        merged[key] = request.options[key];
+        const value = request.options[key];
+        if (value === undefined) {
+            continue;
+        }
+        merged[key] = value;
     }
     return merged;
 }

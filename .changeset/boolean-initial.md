@@ -8,7 +8,7 @@ Added: `isBoolean` reports whether a value is a primitive boolean. Boxed boolean
 
 Added: `isTruthy` and `isFalsy` report JavaScript truthiness. They always return a boolean.
 
-Added: `parseBoolean` recognizes primitive booleans, the numbers `0` and `1`, English tokens, and locale yes/no words. Unrecognized values return `undefined`, or `fallback` when one is set.
+Added: `parseBoolean` recognizes primitive booleans, the numbers `0` and `1`, English tokens, and locale yes/no words. `no` uses the Norwegian Bokmål words. A structurally invalid `locale` adds no words and does not throw. Unrecognized values return `undefined`, or `fallback` when one is set.
 
 Added: `isParseableBoolean` reports whether `parseBoolean` would return a boolean for the same value, ignoring `fallback`.
 

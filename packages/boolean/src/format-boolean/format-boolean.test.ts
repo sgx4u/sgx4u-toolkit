@@ -63,6 +63,24 @@ describe("styles", () => {
             formatBoolean({ value: true, style: "yes-no", locale: "xx" }),
         ).toBe("yes");
         expect(
+            formatBoolean({ value: false, style: "yes-no", locale: "no" }),
+        ).toBe("nei");
+        expect(
+            formatBoolean({
+                value: true,
+                style: "yes-no",
+                locale: "en_US",
+                capitalization: "upper",
+            }),
+        ).toBe("YES");
+        expect(
+            formatBoolean({
+                value: true,
+                locale: "",
+                capitalization: "sentence",
+            }),
+        ).toBe("True");
+        expect(
             formatBoolean({ value: true, style: "on-off", locale: "fr" }),
         ).toBe("on");
     });
