@@ -17,5 +17,27 @@ describe("toSignificantDigits", () => {
             1e-320,
         );
         expect(toSignificantDigits({ value: 12345, digits: 20 })).toBe(12345);
+        expect(
+            toSignificantDigits({ value: -12345, digits: 2, mode: "ceil" }),
+        ).toBe(-12000);
+        expect(
+            toSignificantDigits({ value: -12345, digits: 2, mode: "floor" }),
+        ).toBe(-13000);
+        expect(
+            toSignificantDigits({ value: 12345, digits: 2, mode: "ceil" }),
+        ).toBe(13000);
+        expect(
+            toSignificantDigits({ value: -1.25, digits: 2, mode: "halfCeil" }),
+        ).toBe(-1.2);
+        expect(
+            toSignificantDigits({ value: -1.25, digits: 2, mode: "halfFloor" }),
+        ).toBe(-1.3);
+        expect(
+            toSignificantDigits({
+                value: -1.25,
+                digits: 2,
+                mode: "halfExpand",
+            }),
+        ).toBe(-1.3);
     });
 });

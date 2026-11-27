@@ -36,26 +36,25 @@ export function toSignificantDigits(parameters: {
     const absolute = Math.abs(value);
     const power = Math.floor(Math.log10(absolute));
     let exponent = Number.isFinite(power) ? power : 0;
-    let normalized = absolute / 10 ** exponent;
-    if (!Number.isFinite(normalized) || normalized === 0) {
+    let magnitude = absolute / 10 ** exponent;
+    if (!Number.isFinite(magnitude) || magnitude === 0) {
         return value;
     }
-    if (normalized >= 10) {
-        normalized /= 10;
+    if (magnitude >= 10) {
+        magnitude /= 10;
         exponent += 1;
-    } else if (normalized < 1) {
-        normalized *= 10;
+    } else if (magnitude < 1) {
+        magnitude *= 10;
         exponent -= 1;
     }
     const rounded = roundNumber({
-        value: normalized,
+        value: value < 0 ? -magnitude : magnitude,
         precision: digits - 1,
         mode,
     });
     if (rounded === undefined) {
         return undefined;
     }
-    const signed = value < 0 ? -rounded : rounded;
-    const result = signed * 10 ** exponent;
+    const result = rounded * 10 ** exponent;
     return Number.isFinite(result) ? result : undefined;
 }
