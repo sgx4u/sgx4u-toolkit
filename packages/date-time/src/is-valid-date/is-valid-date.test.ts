@@ -1,6 +1,19 @@
 import { describe, expect, it } from "vitest";
 import { isValidDate, type DateInput } from "../index.js";
 
+/**
+ * A Date-shaped object whose prototype is not this realm's Date.
+ *
+ * @param timeValue - The time value `getTime` returns.
+ * @returns An object `Object.prototype.toString` reports as a Date.
+ */
+function otherRealmDate(timeValue: number): Date {
+    const date = Object.create(null) as Date;
+    Object.defineProperty(date, Symbol.toStringTag, { value: "Date" });
+    date.getTime = () => timeValue;
+    return date;
+}
+
 const maximumTimeValue = 8_640_000_000_000_000;
 
 const validCalendarDates = [
@@ -64,6 +77,9 @@ const validDateTimes = [
     "2024-02-29T00:00:00+00:00",
     "2024-02-29T00:00:00-00:00",
     "2024-02-29T00:00:00+05:30",
+    "2024-02-29T00:00:00+0530",
+    "2024-02-29T00:00:00-0800",
+    "2024-02-29T00:00:00+0000",
     "2024-02-29T00:00:00-08:00",
     "2024-02-29T00:00:00+14:00",
     "2024-02-29T00:00:00+23:59",
@@ -81,7 +97,7 @@ const invalidDateTimes = [
     "2024-02-29T23:59:59.1234Z",
     "2024-02-29T00:00:00",
     "2024-02-29 00:00:00Z",
-    "2024-02-29T00:00:00+0530",
+    "2024-02-29T00:00:00+05",
     "2024-02-29T00:00:00+24:00",
     "2024-02-29T00:00:00+00:60",
     "2024-02-29T00:00.123Z",
@@ -127,6 +143,11 @@ describe("isValidDate", () => {
         it("accepts a Date whose string already overflowed into a real instant", () => {
             expect(isValidDate("2024-02-30")).toBe(false);
             expect(isValidDate(new Date("2024-02-30"))).toBe(true);
+        });
+
+        it("accepts a Date created in another realm", () => {
+            expect(isValidDate(otherRealmDate(0))).toBe(true);
+            expect(isValidDate(otherRealmDate(Number.NaN))).toBe(false);
         });
 
         it("accepts a Date subclass with a finite time value", () => {
