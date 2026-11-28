@@ -7,6 +7,19 @@ import type { ViteUserConfig } from "vitest/config";
  * The binding is annotated so `isolatedDeclarations` can type the default
  * export. The preset runs tests on Node and includes every test file under `src`.
  */
-const vitestConfig: ViteUserConfig = definePackageVitestConfig();
+const vitestConfig: ViteUserConfig = definePackageVitestConfig({
+    test: {
+        coverage: {
+            provider: "v8",
+            include: ["src/**/*.ts"],
+            exclude: ["src/**/*.test.ts", "src/**/*.types.ts", "src/**/*.md"],
+            reporter: ["text", "json-summary"],
+            thresholds: {
+                lines: 90,
+                branches: 84,
+            },
+        },
+    },
+});
 
 export default vitestConfig;

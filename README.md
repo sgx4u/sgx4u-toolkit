@@ -68,7 +68,10 @@ The root workspace package is `@sgx4u/toolkit`. It is private and has no `versio
 
 Libraries live in `packages/<name>`.
 
-- [`@sgx4u/date-time`](./packages/date-time/README.md) reports whether a value is a real date.
+- [`@sgx4u/array`](./packages/array/README.md) copies, groups, sorts, diffs, and samples arrays without mutating them.
+- [`@sgx4u/boolean`](./packages/boolean/README.md) parses, formats, and combines boolean values.
+- [`@sgx4u/date-time`](./packages/date-time/README.md) creates, compares, formats, and parses dates, durations, intervals, and calendars.
+- [`@sgx4u/number`](./packages/number/README.md) checks, parses, rounds, formats, and compares numbers.
 - [`@sgx4u/object`](./packages/object/README.md) updates, compares, and copies objects without mutating the input.
 - 💠 Run `pnpm exec turbo gen package`. The generator asks for the package name, the kind, the runtime, and the owner. It writes the package files for that runtime, including the TypeScript, build, and test config. Each function is a folder under `src` with `<name>.ts`, `<name>.types.ts`, `<name>.test.ts`, and `<name>.md`. `src/index.ts` re-exports the function and its public types. Replace the scaffold, and describe the library in its README, before the first release.
 

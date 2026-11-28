@@ -1,0 +1,67 @@
+# `getTimeZoneTransitions`
+
+Returns every offset change inside an interval.
+
+## Import
+
+```ts
+import { getTimeZoneTransitions } from "@sgx4u/date-time";
+```
+
+## Signature
+
+```ts
+function getTimeZoneTransitions(
+    params: GetTimeZoneTransitionsParams,
+): TimeZoneTransition[];
+```
+
+## Parameters
+
+| Name       | Type       | Required | Default | Meaning                         |
+| ---------- | ---------- | -------- | ------- | ------------------------------- |
+| `interval` | `Interval` | yes      |         | The half-open interval to scan. |
+| `timeZone` | `string`   | yes      |         | An IANA name or a fixed offset. |
+
+## Examples
+
+```ts
+import { getTimeZoneTransitions } from "@sgx4u/date-time";
+
+getTimeZoneTransitions({
+    interval: {
+        start: new Date("2024-03-10T00:00:00Z"),
+        end: new Date("2024-03-11T00:00:00Z"),
+    },
+    timeZone: "America/New_York",
+})[0]?.instant.toISOString();
+// "2024-03-10T07:00:00.000Z"
+
+getTimeZoneTransitions({
+    interval: {
+        start: new Date("2024-01-01T00:00:00Z"),
+        end: new Date("2025-01-01T00:00:00Z"),
+    },
+    timeZone: "America/New_York",
+}).length;
+// 2
+
+getTimeZoneTransitions({
+    interval: {
+        start: new Date("2024-01-01T00:00:00Z"),
+        end: new Date("2025-01-01T00:00:00Z"),
+    },
+    timeZone: "UTC",
+}).length;
+// 0
+```
+
+## Edge cases
+
+Transitions are oldest first. The interval is half-open. A fixed offset contributes nothing. An interval longer than 50 years throws a `RangeError`, as does an unknown zone.
+
+## Related
+
+- [`getNextTimeZoneTransition`](../get-next-time-zone-transition/get-next-time-zone-transition.md)
+- [`getPreviousTimeZoneTransition`](../get-previous-time-zone-transition/get-previous-time-zone-transition.md)
+- [`getWallTimeStatus`](../get-wall-time-status/get-wall-time-status.md)
