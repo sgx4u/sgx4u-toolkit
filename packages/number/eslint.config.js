@@ -1,0 +1,12 @@
+import { definePackageConfig } from "@sgx4u/eslint-config";
+
+/**
+ * Lint config for this package.
+ *
+ * `runtime` selects the globals and the import bans. `rootDir` is this
+ * file's directory, which becomes `parserOptions.tsconfigRootDir`.
+ */
+export default definePackageConfig({
+    runtime: "universal",
+    rootDir: import.meta.dirname,
+});
