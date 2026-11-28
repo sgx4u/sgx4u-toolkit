@@ -286,7 +286,7 @@ export function createString(config: StringConfig = {}): StringLibrary {
         countBytes,
         countLines,
         countOccurrences: bindFunction(countOccurrences, defaults, ["locale"]),
-        countSentences,
+        countSentences: bindFunction(countSentences, defaults, ["locale"]),
         countWords: bindFunction(countWords, defaults, ["locale"]),
         decodeBase64,
         decodeBase64URL,

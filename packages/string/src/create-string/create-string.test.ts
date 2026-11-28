@@ -85,6 +85,17 @@ describe("createString", () => {
         );
     });
 
+    it("counts sentences with the same locale as splitSentences", () => {
+        const strings = createString({ locale: "th" });
+        const text = "หนึ่ง. สอง.";
+        expect(strings.countSentences(text)).toBe(
+            strings.splitSentences(text)?.length,
+        );
+        expect(strings.countSentences({ value: text, locale: "en" })).toBe(
+            strings.splitSentences({ value: text, locale: "en" })?.length,
+        );
+    });
+
     it("keeps two instances independent", () => {
         const turkish = createString({ locale: "tr-TR" });
         const english = createString({ locale: "en" });
