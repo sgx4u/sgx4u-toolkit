@@ -80,5 +80,6 @@ test("the repository versions can be read without publishing", () => {
     assert.equal(versions.get("@sgx4u/date-time"), "0.0.0");
     assert.equal(versions.get("@sgx4u/number"), "0.0.0");
     assert.equal(versions.get("@sgx4u/object"), "0.0.0");
-    assert.equal(versions.size, 5);
+    assert.equal(versions.get("@sgx4u/string"), "0.0.0");
+    assert.equal(versions.size, 6);
 });

@@ -16,7 +16,7 @@ catalog:
     "@size-limit/preset-small-lib": ^14.3.0
     "@turbo/gen": ^2.11.13
     "@types/node": ^26.6.8
-    "@vitest/coverage-v8": ^5.1.1
+    "@vitest/coverage-v8": ^5.1.2
     eslint: ^10.15.0
     eslint-config-prettier: ^10.1.8
     eslint-plugin-turbo: ^2.11.13
@@ -34,7 +34,7 @@ catalog:
     turbo: ^2.11.13
     typescript: ~6.0.3
     typescript-eslint: ^8.74.0
-    vitest: ^5.1.1
+    vitest: ^5.1.2
 
 # This catalog pin is newer than pnpm's release-age window. The exclusion is
 # this exact version, so the next pin waits out the window again.
