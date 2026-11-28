@@ -239,10 +239,14 @@ export function adjacentOccurrence(
     );
     const start = direction > 0 ? now : horizon;
     const end = direction > 0 ? horizon : now + (includeNow ? 1 : 0);
+    // The first later occurrence is enough. Periods after it sort later.
+    const stopAtInstant =
+        direction > 0 ? now + (includeNow ? 0 : 1) : undefined;
     const found = generateOccurrences(
         rule,
         Math.max(start, end),
         rule.count ?? 10_000,
+        stopAtInstant,
     ).filter((date) => {
         const time = date.getTime();
         if (direction > 0) {
@@ -278,12 +282,15 @@ export function describeRecurrence(rule: RecurrenceRule): string {
  * @param rule - The rule.
  * @param untilEpoch - Stop once candidates pass this instant.
  * @param maximum - The most occurrences to generate.
+ * @param stopAtInstant - Stop once an occurrence at or after this instant
+ * is recorded. Additional dates are still included.
  * @returns Occurrences from the start through `until`, oldest first.
  */
 function generateOccurrences(
     rule: RecurrenceRule,
     untilEpoch: number,
     maximum: number,
+    stopAtInstant?: number,
 ): Date[] {
     const timeZone = rule.timeZone ?? "UTC";
     const interval = rule.interval ?? 1;
@@ -291,9 +298,10 @@ function generateOccurrences(
     const excluded = new Set(
         (rule.excludedDates ?? []).map((date) => date.getTime()),
     );
+    let recordedStopInstant = false;
     for (
         let index = 0;
-        index < 20_000 && occurrences.length < maximum;
+        index < 20_000 && occurrences.length < maximum && !recordedStopInstant;
         index += 1
     ) {
         const period = movePeriod(
@@ -331,6 +339,10 @@ function generateOccurrences(
         }
         for (const candidate of candidates) {
             occurrences.push(candidate);
+            if (stopAtInstant !== undefined && candidate >= stopAtInstant) {
+                recordedStopInstant = true;
+                break;
+            }
             if (rule.count !== undefined && occurrences.length >= rule.count) {
                 break;
             }
