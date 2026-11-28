@@ -103,6 +103,72 @@
     },
     "size-limit": [
         {
+            "name": "isBlank",
+            "path": "dist/index.js",
+            "import": "{ isBlank }",
+            "limit": "1 kB"
+        },
+        {
+            "name": "toCamelCase",
+            "path": "dist/index.js",
+            "import": "{ toCamelCase }",
+            "limit": "2 kB"
+        },
+        {
+            "name": "truncate",
+            "path": "dist/index.js",
+            "import": "{ truncate }",
+            "limit": "2 kB"
+        },
+        {
+            "name": "wrapText",
+            "path": "dist/index.js",
+            "import": "{ wrapText }",
+            "limit": "2 kB"
+        },
+        {
+            "name": "getDisplayWidth",
+            "path": "dist/index.js",
+            "import": "{ getDisplayWidth }",
+            "limit": "2.5 kB"
+        },
+        {
+            "name": "truncateToDisplayWidth",
+            "path": "dist/index.js",
+            "import": "{ truncateToDisplayWidth }",
+            "limit": "2.5 kB"
+        },
+        {
+            "name": "slugify",
+            "path": "dist/index.js",
+            "import": "{ slugify }",
+            "limit": "2 kB"
+        },
+        {
+            "name": "isEmail",
+            "path": "dist/index.js",
+            "import": "{ isEmail }",
+            "limit": "1.5 kB"
+        },
+        {
+            "name": "isURL",
+            "path": "dist/index.js",
+            "import": "{ isURL }",
+            "limit": "1.5 kB"
+        },
+        {
+            "name": "pluralize",
+            "path": "dist/index.js",
+            "import": "{ pluralize }",
+            "limit": "2.5 kB"
+        },
+        {
+            "name": "createString",
+            "path": "dist/index.js",
+            "import": "{ createString }",
+            "limit": "24 kB"
+        },
+        {
             "name": "Root entry",
             "path": "dist/index.js",
             "limit": "28 kB"
@@ -115,7 +181,7 @@
         {
             "name": "html entities",
             "path": "dist/html-entities.js",
-            "limit": "12 kB"
+            "limit": "12.1 kB"
         },
         {
             "name": "locale validators",

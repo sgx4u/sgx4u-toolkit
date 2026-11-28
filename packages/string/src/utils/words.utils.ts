@@ -17,7 +17,7 @@ const emojiExpression = /\p{Extended_Pictographic}|\p{Regional_Indicator}/u;
  */
 export interface WordSplitOptions {
     /** Locale used for grapheme boundaries. */
-    locale?: LocaleArgument;
+    locale?: LocaleArgument | undefined;
     /**
      * When `true`, a letter and a neighboring digit stay together, and a
      * separator between those runs is dropped. A digit followed by an
