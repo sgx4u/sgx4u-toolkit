@@ -8,6 +8,17 @@ import type { UserConfig } from "tsdown";
  * export. Universal and edge libraries keep the neutral platform. A Node
  * library sets `platform` to `"node"`.
  */
-const libraryConfig: UserConfig = defineLibraryConfig();
+const libraryConfig: UserConfig = defineLibraryConfig({
+    entry: {
+        index: "src/index.ts",
+        recurrence: "src/recurrence.ts",
+        cron: "src/cron.ts",
+        "natural-language": "src/natural-language.ts",
+        astronomy: "src/astronomy.ts",
+        "holidays/india": "src/holidays/india.ts",
+        "holidays/united-states": "src/holidays/united-states.ts",
+        "holidays/united-kingdom": "src/holidays/united-kingdom.ts",
+    },
+});
 
 export default libraryConfig;
