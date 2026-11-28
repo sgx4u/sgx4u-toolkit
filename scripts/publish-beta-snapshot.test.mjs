@@ -75,8 +75,9 @@ test("the repository versions can be read without publishing", () => {
     }
     assert.equal(versions.has("@sgx4u/eslint-config"), false);
     assert.equal(versions.has("@sgx4u/tsconfig"), false);
+    assert.equal(versions.get("@sgx4u/array"), "0.0.0");
     assert.equal(versions.get("@sgx4u/boolean"), "0.0.0");
     assert.equal(versions.get("@sgx4u/date-time"), "0.0.0");
     assert.equal(versions.get("@sgx4u/number"), "0.0.0");
-    assert.equal(versions.size, 3);
+    assert.equal(versions.size, 4);
 });

@@ -1,0 +1,9 @@
+{
+    "extends": "@sgx4u/tsconfig/library.json",
+    "compilerOptions": {
+        "outDir": "dist",
+        "noEmit": true,
+        "lib": ["ES2024", "DOM"]
+    },
+    "include": ["src/**/*.ts", "*.config.ts"]
+}

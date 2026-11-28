@@ -68,6 +68,7 @@ The root workspace package is `@sgx4u/toolkit`. It is private and has no `versio
 
 Libraries live in `packages/<name>`.
 
+- [`@sgx4u/array`](./packages/array/README.md) copies, groups, sorts, diffs, and samples arrays without mutating them.
 - [`@sgx4u/boolean`](./packages/boolean/README.md) parses, formats, and combines boolean values.
 - [`@sgx4u/date-time`](./packages/date-time/README.md) creates, compares, formats, and parses dates, durations, intervals, and calendars.
 - [`@sgx4u/number`](./packages/number/README.md) checks, parses, rounds, formats, and compares numbers.
