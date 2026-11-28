@@ -24,3 +24,24 @@ describe("isEmptyString", () => {
         }
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(isEmptyString(null as never)).toBe(false);
+    });
+    it("accepts an empty string", () => {
+        expect(typeof isEmptyString("")).toBe("boolean");
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(typeof isEmptyString("👨‍👩‍👧")).toBe("boolean");
+    });
+    it("accepts a combining mark", () => {
+        expect(typeof isEmptyString("e\u0301")).toBe("boolean");
+    });
+    it("accepts Arabic text", () => {
+        expect(typeof isEmptyString("مرحبا")).toBe("boolean");
+    });
+    it("accepts CJK text", () => {
+        expect(typeof isEmptyString("你好")).toBe("boolean");
+    });
+});

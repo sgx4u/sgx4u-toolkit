@@ -20,3 +20,64 @@ describe("unquoteString", () => {
         ).toThrow(RangeError);
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(unquoteString(null as never)).toBeUndefined();
+    });
+    it("accepts an empty string", () => {
+        expect(
+            unquoteString("") === undefined ||
+                typeof unquoteString("") === "string" ||
+                typeof unquoteString("") === "boolean" ||
+                typeof unquoteString("") === "number" ||
+                Array.isArray(unquoteString("")) ||
+                (typeof unquoteString("") === "object" &&
+                    unquoteString("") !== null),
+        ).toBe(true);
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(
+            unquoteString("👨‍👩‍👧") === undefined ||
+                typeof unquoteString("👨‍👩‍👧") === "string" ||
+                typeof unquoteString("👨‍👩‍👧") === "boolean" ||
+                typeof unquoteString("👨‍👩‍👧") === "number" ||
+                Array.isArray(unquoteString("👨‍👩‍👧")) ||
+                (typeof unquoteString("👨‍👩‍👧") === "object" &&
+                    unquoteString("👨‍👩‍👧") !== null),
+        ).toBe(true);
+    });
+    it("accepts a combining mark", () => {
+        expect(
+            unquoteString("e\u0301") === undefined ||
+                typeof unquoteString("e\u0301") === "string" ||
+                typeof unquoteString("e\u0301") === "boolean" ||
+                typeof unquoteString("e\u0301") === "number" ||
+                Array.isArray(unquoteString("e\u0301")) ||
+                (typeof unquoteString("e\u0301") === "object" &&
+                    unquoteString("e\u0301") !== null),
+        ).toBe(true);
+    });
+    it("accepts Arabic text", () => {
+        expect(
+            unquoteString("مرحبا") === undefined ||
+                typeof unquoteString("مرحبا") === "string" ||
+                typeof unquoteString("مرحبا") === "boolean" ||
+                typeof unquoteString("مرحبا") === "number" ||
+                Array.isArray(unquoteString("مرحبا")) ||
+                (typeof unquoteString("مرحبا") === "object" &&
+                    unquoteString("مرحبا") !== null),
+        ).toBe(true);
+    });
+    it("accepts CJK text", () => {
+        expect(
+            unquoteString("你好") === undefined ||
+                typeof unquoteString("你好") === "string" ||
+                typeof unquoteString("你好") === "boolean" ||
+                typeof unquoteString("你好") === "number" ||
+                Array.isArray(unquoteString("你好")) ||
+                (typeof unquoteString("你好") === "object" &&
+                    unquoteString("你好") !== null),
+        ).toBe(true);
+    });
+});

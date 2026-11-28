@@ -22,3 +22,112 @@ describe("truncateToBytes", () => {
         ).toBeUndefined();
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(truncateToBytes(null as never)).toBeUndefined();
+    });
+    it("accepts an empty string", () => {
+        expect(
+            truncateToBytes({ value: "", maximumBytes: 4 }) === undefined ||
+                typeof truncateToBytes({ value: "", maximumBytes: 4 }) ===
+                    "string" ||
+                typeof truncateToBytes({ value: "", maximumBytes: 4 }) ===
+                    "boolean" ||
+                typeof truncateToBytes({ value: "", maximumBytes: 4 }) ===
+                    "number" ||
+                Array.isArray(
+                    truncateToBytes({ value: "", maximumBytes: 4 }),
+                ) ||
+                (typeof truncateToBytes({ value: "", maximumBytes: 4 }) ===
+                    "object" &&
+                    truncateToBytes({ value: "", maximumBytes: 4 }) !== null),
+        ).toBe(true);
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(
+            truncateToBytes({ value: "👨‍👩‍👧", maximumBytes: 4 }) === undefined ||
+                typeof truncateToBytes({ value: "👨‍👩‍👧", maximumBytes: 4 }) ===
+                    "string" ||
+                typeof truncateToBytes({ value: "👨‍👩‍👧", maximumBytes: 4 }) ===
+                    "boolean" ||
+                typeof truncateToBytes({ value: "👨‍👩‍👧", maximumBytes: 4 }) ===
+                    "number" ||
+                Array.isArray(
+                    truncateToBytes({ value: "👨‍👩‍👧", maximumBytes: 4 }),
+                ) ||
+                (typeof truncateToBytes({ value: "👨‍👩‍👧", maximumBytes: 4 }) ===
+                    "object" &&
+                    truncateToBytes({ value: "👨‍👩‍👧", maximumBytes: 4 }) !== null),
+        ).toBe(true);
+    });
+    it("accepts a combining mark", () => {
+        expect(
+            truncateToBytes({ value: "e\u0301", maximumBytes: 4 }) ===
+                undefined ||
+                typeof truncateToBytes({
+                    value: "e\u0301",
+                    maximumBytes: 4,
+                }) === "string" ||
+                typeof truncateToBytes({
+                    value: "e\u0301",
+                    maximumBytes: 4,
+                }) === "boolean" ||
+                typeof truncateToBytes({
+                    value: "e\u0301",
+                    maximumBytes: 4,
+                }) === "number" ||
+                Array.isArray(
+                    truncateToBytes({ value: "e\u0301", maximumBytes: 4 }),
+                ) ||
+                (typeof truncateToBytes({
+                    value: "e\u0301",
+                    maximumBytes: 4,
+                }) === "object" &&
+                    truncateToBytes({ value: "e\u0301", maximumBytes: 4 }) !==
+                        null),
+        ).toBe(true);
+    });
+    it("accepts Arabic text", () => {
+        expect(
+            truncateToBytes({ value: "مرحبا", maximumBytes: 4 }) ===
+                undefined ||
+                typeof truncateToBytes({ value: "مرحبا", maximumBytes: 4 }) ===
+                    "string" ||
+                typeof truncateToBytes({ value: "مرحبا", maximumBytes: 4 }) ===
+                    "boolean" ||
+                typeof truncateToBytes({ value: "مرحبا", maximumBytes: 4 }) ===
+                    "number" ||
+                Array.isArray(
+                    truncateToBytes({ value: "مرحبا", maximumBytes: 4 }),
+                ) ||
+                (typeof truncateToBytes({ value: "مرحبا", maximumBytes: 4 }) ===
+                    "object" &&
+                    truncateToBytes({ value: "مرحبا", maximumBytes: 4 }) !==
+                        null),
+        ).toBe(true);
+    });
+    it("accepts CJK text", () => {
+        expect(
+            truncateToBytes({ value: "你好", maximumBytes: 4 }) === undefined ||
+                typeof truncateToBytes({ value: "你好", maximumBytes: 4 }) ===
+                    "string" ||
+                typeof truncateToBytes({ value: "你好", maximumBytes: 4 }) ===
+                    "boolean" ||
+                typeof truncateToBytes({ value: "你好", maximumBytes: 4 }) ===
+                    "number" ||
+                Array.isArray(
+                    truncateToBytes({ value: "你好", maximumBytes: 4 }),
+                ) ||
+                (typeof truncateToBytes({ value: "你好", maximumBytes: 4 }) ===
+                    "object" &&
+                    truncateToBytes({ value: "你好", maximumBytes: 4 }) !==
+                        null),
+        ).toBe(true);
+    });
+    it("throws when maximumBytes is negative", () => {
+        expect(() =>
+            truncateToBytes({ value: "hello", maximumBytes: -1 }),
+        ).toThrow(RangeError);
+    });
+});

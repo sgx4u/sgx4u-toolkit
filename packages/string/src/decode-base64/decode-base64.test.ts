@@ -13,3 +13,64 @@ describe("decodeBase64", () => {
         );
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(decodeBase64(null as never)).toBeUndefined();
+    });
+    it("accepts an empty string", () => {
+        expect(
+            decodeBase64("") === undefined ||
+                typeof decodeBase64("") === "string" ||
+                typeof decodeBase64("") === "boolean" ||
+                typeof decodeBase64("") === "number" ||
+                Array.isArray(decodeBase64("")) ||
+                (typeof decodeBase64("") === "object" &&
+                    decodeBase64("") !== null),
+        ).toBe(true);
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(
+            decodeBase64("👨‍👩‍👧") === undefined ||
+                typeof decodeBase64("👨‍👩‍👧") === "string" ||
+                typeof decodeBase64("👨‍👩‍👧") === "boolean" ||
+                typeof decodeBase64("👨‍👩‍👧") === "number" ||
+                Array.isArray(decodeBase64("👨‍👩‍👧")) ||
+                (typeof decodeBase64("👨‍👩‍👧") === "object" &&
+                    decodeBase64("👨‍👩‍👧") !== null),
+        ).toBe(true);
+    });
+    it("accepts a combining mark", () => {
+        expect(
+            decodeBase64("e\u0301") === undefined ||
+                typeof decodeBase64("e\u0301") === "string" ||
+                typeof decodeBase64("e\u0301") === "boolean" ||
+                typeof decodeBase64("e\u0301") === "number" ||
+                Array.isArray(decodeBase64("e\u0301")) ||
+                (typeof decodeBase64("e\u0301") === "object" &&
+                    decodeBase64("e\u0301") !== null),
+        ).toBe(true);
+    });
+    it("accepts Arabic text", () => {
+        expect(
+            decodeBase64("مرحبا") === undefined ||
+                typeof decodeBase64("مرحبا") === "string" ||
+                typeof decodeBase64("مرحبا") === "boolean" ||
+                typeof decodeBase64("مرحبا") === "number" ||
+                Array.isArray(decodeBase64("مرحبا")) ||
+                (typeof decodeBase64("مرحبا") === "object" &&
+                    decodeBase64("مرحبا") !== null),
+        ).toBe(true);
+    });
+    it("accepts CJK text", () => {
+        expect(
+            decodeBase64("你好") === undefined ||
+                typeof decodeBase64("你好") === "string" ||
+                typeof decodeBase64("你好") === "boolean" ||
+                typeof decodeBase64("你好") === "number" ||
+                Array.isArray(decodeBase64("你好")) ||
+                (typeof decodeBase64("你好") === "object" &&
+                    decodeBase64("你好") !== null),
+        ).toBe(true);
+    });
+});

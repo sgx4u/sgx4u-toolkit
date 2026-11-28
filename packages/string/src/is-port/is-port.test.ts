@@ -9,3 +9,24 @@ describe("isPort", () => {
         expect(isPort(null)).toBe(false);
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(isPort(null as never)).toBe(false);
+    });
+    it("accepts an empty string", () => {
+        expect(typeof isPort("")).toBe("boolean");
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(typeof isPort("👨‍👩‍👧")).toBe("boolean");
+    });
+    it("accepts a combining mark", () => {
+        expect(typeof isPort("e\u0301")).toBe("boolean");
+    });
+    it("accepts Arabic text", () => {
+        expect(typeof isPort("مرحبا")).toBe("boolean");
+    });
+    it("accepts CJK text", () => {
+        expect(typeof isPort("你好")).toBe("boolean");
+    });
+});

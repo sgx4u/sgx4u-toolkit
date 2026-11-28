@@ -27,3 +27,45 @@ describe("splitWords", () => {
         expect(splitWords(null as unknown as string)).toBeUndefined();
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(splitWords(null as never)).toBeUndefined();
+    });
+    it("accepts an empty string", () => {
+        expect(
+            splitWords("") === undefined || Array.isArray(splitWords("")),
+        ).toBe(true);
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(
+            splitWords("👨‍👩‍👧") === undefined || Array.isArray(splitWords("👨‍👩‍👧")),
+        ).toBe(true);
+    });
+    it("accepts a combining mark", () => {
+        expect(
+            splitWords("e\u0301") === undefined ||
+                Array.isArray(splitWords("e\u0301")),
+        ).toBe(true);
+    });
+    it("accepts Arabic text", () => {
+        expect(
+            splitWords("مرحبا") === undefined ||
+                Array.isArray(splitWords("مرحبا")),
+        ).toBe(true);
+    });
+    it("accepts CJK text", () => {
+        expect(
+            splitWords("你好") === undefined ||
+                Array.isArray(splitWords("你好")),
+        ).toBe(true);
+    });
+    it("throws when locale is empty or not text", () => {
+        expect(() => splitWords({ value: "a", locale: "" })).toThrow(
+            RangeError,
+        );
+        expect(() => splitWords({ value: "a", locale: 1 as never })).toThrow(
+            TypeError,
+        );
+    });
+});

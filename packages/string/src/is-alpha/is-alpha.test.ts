@@ -36,3 +36,30 @@ describe("isAlpha", () => {
         ).toThrow(TypeError);
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(isAlpha(null as never)).toBe(false);
+    });
+    it("accepts an empty string", () => {
+        expect(typeof isAlpha("")).toBe("boolean");
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(typeof isAlpha("👨‍👩‍👧")).toBe("boolean");
+    });
+    it("accepts a combining mark", () => {
+        expect(typeof isAlpha("e\u0301")).toBe("boolean");
+    });
+    it("accepts Arabic text", () => {
+        expect(typeof isAlpha("مرحبا")).toBe("boolean");
+    });
+    it("accepts CJK text", () => {
+        expect(typeof isAlpha("你好")).toBe("boolean");
+    });
+    it("throws when locale is empty or not text", () => {
+        expect(() => isAlpha({ value: "a", locale: "" })).toThrow(RangeError);
+        expect(() => isAlpha({ value: "a", locale: 1 as never })).toThrow(
+            TypeError,
+        );
+    });
+});

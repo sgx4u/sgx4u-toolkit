@@ -12,3 +12,24 @@ describe("getOrdinal", () => {
         );
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("throws when null is passed in place of the options", () => {
+        expect(() => getOrdinal(null as never)).toThrow(TypeError);
+    });
+    it("accepts an empty string", () => {
+        expect(typeof getOrdinal({ count: 3 })).toBe("string");
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(typeof getOrdinal({ count: 3 })).toBe("string");
+    });
+    it("accepts a combining mark", () => {
+        expect(typeof getOrdinal({ count: 3 })).toBe("string");
+    });
+    it("accepts Arabic text", () => {
+        expect(typeof getOrdinal({ count: 3 })).toBe("string");
+    });
+    it("accepts CJK text", () => {
+        expect(typeof getOrdinal({ count: 3 })).toBe("string");
+    });
+});

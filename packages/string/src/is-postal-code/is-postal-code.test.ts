@@ -21,3 +21,34 @@ describe("isPostalCode", () => {
         );
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(isPostalCode(null as never)).toBe(false);
+    });
+    it("accepts an empty string", () => {
+        expect(typeof isPostalCode({ value: "", country: "US" })).toBe(
+            "boolean",
+        );
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(typeof isPostalCode({ value: "👨‍👩‍👧", country: "US" })).toBe(
+            "boolean",
+        );
+    });
+    it("accepts a combining mark", () => {
+        expect(typeof isPostalCode({ value: "e\u0301", country: "US" })).toBe(
+            "boolean",
+        );
+    });
+    it("accepts Arabic text", () => {
+        expect(typeof isPostalCode({ value: "مرحبا", country: "US" })).toBe(
+            "boolean",
+        );
+    });
+    it("accepts CJK text", () => {
+        expect(typeof isPostalCode({ value: "你好", country: "US" })).toBe(
+            "boolean",
+        );
+    });
+});

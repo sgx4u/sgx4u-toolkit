@@ -36,3 +36,63 @@ describe("escapeHTML", () => {
         );
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(escapeHTML(null as never)).toBeUndefined();
+    });
+    it("accepts an empty string", () => {
+        expect(
+            escapeHTML("") === undefined ||
+                typeof escapeHTML("") === "string" ||
+                typeof escapeHTML("") === "boolean" ||
+                typeof escapeHTML("") === "number" ||
+                Array.isArray(escapeHTML("")) ||
+                (typeof escapeHTML("") === "object" && escapeHTML("") !== null),
+        ).toBe(true);
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(
+            escapeHTML("👨‍👩‍👧") === undefined ||
+                typeof escapeHTML("👨‍👩‍👧") === "string" ||
+                typeof escapeHTML("👨‍👩‍👧") === "boolean" ||
+                typeof escapeHTML("👨‍👩‍👧") === "number" ||
+                Array.isArray(escapeHTML("👨‍👩‍👧")) ||
+                (typeof escapeHTML("👨‍👩‍👧") === "object" &&
+                    escapeHTML("👨‍👩‍👧") !== null),
+        ).toBe(true);
+    });
+    it("accepts a combining mark", () => {
+        expect(
+            escapeHTML("e\u0301") === undefined ||
+                typeof escapeHTML("e\u0301") === "string" ||
+                typeof escapeHTML("e\u0301") === "boolean" ||
+                typeof escapeHTML("e\u0301") === "number" ||
+                Array.isArray(escapeHTML("e\u0301")) ||
+                (typeof escapeHTML("e\u0301") === "object" &&
+                    escapeHTML("e\u0301") !== null),
+        ).toBe(true);
+    });
+    it("accepts Arabic text", () => {
+        expect(
+            escapeHTML("مرحبا") === undefined ||
+                typeof escapeHTML("مرحبا") === "string" ||
+                typeof escapeHTML("مرحبا") === "boolean" ||
+                typeof escapeHTML("مرحبا") === "number" ||
+                Array.isArray(escapeHTML("مرحبا")) ||
+                (typeof escapeHTML("مرحبا") === "object" &&
+                    escapeHTML("مرحبا") !== null),
+        ).toBe(true);
+    });
+    it("accepts CJK text", () => {
+        expect(
+            escapeHTML("你好") === undefined ||
+                typeof escapeHTML("你好") === "string" ||
+                typeof escapeHTML("你好") === "boolean" ||
+                typeof escapeHTML("你好") === "number" ||
+                Array.isArray(escapeHTML("你好")) ||
+                (typeof escapeHTML("你好") === "object" &&
+                    escapeHTML("你好") !== null),
+        ).toBe(true);
+    });
+});

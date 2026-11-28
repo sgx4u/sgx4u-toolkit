@@ -11,3 +11,24 @@ describe("isLowerCase", () => {
         expect(isLowerCase(null)).toBe(false);
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(isLowerCase(null as never)).toBe(false);
+    });
+    it("accepts an empty string", () => {
+        expect(typeof isLowerCase("")).toBe("boolean");
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(typeof isLowerCase("👨‍👩‍👧")).toBe("boolean");
+    });
+    it("accepts a combining mark", () => {
+        expect(typeof isLowerCase("e\u0301")).toBe("boolean");
+    });
+    it("accepts Arabic text", () => {
+        expect(typeof isLowerCase("مرحبا")).toBe("boolean");
+    });
+    it("accepts CJK text", () => {
+        expect(typeof isLowerCase("你好")).toBe("boolean");
+    });
+});

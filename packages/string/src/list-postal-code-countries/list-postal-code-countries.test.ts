@@ -10,3 +10,9 @@ describe("listPostalCodeCountries", () => {
         expect(countries).toEqual([...countries].sort());
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns a list", () => {
+        expect(Array.isArray(listPostalCodeCountries())).toBe(true);
+    });
+});

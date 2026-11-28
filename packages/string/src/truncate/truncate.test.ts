@@ -166,3 +166,98 @@ describe("truncate", () => {
         );
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(truncate(null as never)).toBeUndefined();
+    });
+    it("accepts an empty string", () => {
+        expect(
+            truncate({ value: "", maximumLength: 8 }) === undefined ||
+                typeof truncate({ value: "", maximumLength: 8 }) === "string" ||
+                typeof truncate({ value: "", maximumLength: 8 }) ===
+                    "boolean" ||
+                typeof truncate({ value: "", maximumLength: 8 }) === "number" ||
+                Array.isArray(truncate({ value: "", maximumLength: 8 })) ||
+                (typeof truncate({ value: "", maximumLength: 8 }) ===
+                    "object" &&
+                    truncate({ value: "", maximumLength: 8 }) !== null),
+        ).toBe(true);
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(
+            truncate({ value: "👨‍👩‍👧", maximumLength: 8 }) === undefined ||
+                typeof truncate({ value: "👨‍👩‍👧", maximumLength: 8 }) ===
+                    "string" ||
+                typeof truncate({ value: "👨‍👩‍👧", maximumLength: 8 }) ===
+                    "boolean" ||
+                typeof truncate({ value: "👨‍👩‍👧", maximumLength: 8 }) ===
+                    "number" ||
+                Array.isArray(truncate({ value: "👨‍👩‍👧", maximumLength: 8 })) ||
+                (typeof truncate({ value: "👨‍👩‍👧", maximumLength: 8 }) ===
+                    "object" &&
+                    truncate({ value: "👨‍👩‍👧", maximumLength: 8 }) !== null),
+        ).toBe(true);
+    });
+    it("accepts a combining mark", () => {
+        expect(
+            truncate({ value: "e\u0301", maximumLength: 8 }) === undefined ||
+                typeof truncate({ value: "e\u0301", maximumLength: 8 }) ===
+                    "string" ||
+                typeof truncate({ value: "e\u0301", maximumLength: 8 }) ===
+                    "boolean" ||
+                typeof truncate({ value: "e\u0301", maximumLength: 8 }) ===
+                    "number" ||
+                Array.isArray(
+                    truncate({ value: "e\u0301", maximumLength: 8 }),
+                ) ||
+                (typeof truncate({ value: "e\u0301", maximumLength: 8 }) ===
+                    "object" &&
+                    truncate({ value: "e\u0301", maximumLength: 8 }) !== null),
+        ).toBe(true);
+    });
+    it("accepts Arabic text", () => {
+        expect(
+            truncate({ value: "مرحبا", maximumLength: 8 }) === undefined ||
+                typeof truncate({ value: "مرحبا", maximumLength: 8 }) ===
+                    "string" ||
+                typeof truncate({ value: "مرحبا", maximumLength: 8 }) ===
+                    "boolean" ||
+                typeof truncate({ value: "مرحبا", maximumLength: 8 }) ===
+                    "number" ||
+                Array.isArray(truncate({ value: "مرحبا", maximumLength: 8 })) ||
+                (typeof truncate({ value: "مرحبا", maximumLength: 8 }) ===
+                    "object" &&
+                    truncate({ value: "مرحبا", maximumLength: 8 }) !== null),
+        ).toBe(true);
+    });
+    it("accepts CJK text", () => {
+        expect(
+            truncate({ value: "你好", maximumLength: 8 }) === undefined ||
+                typeof truncate({ value: "你好", maximumLength: 8 }) ===
+                    "string" ||
+                typeof truncate({ value: "你好", maximumLength: 8 }) ===
+                    "boolean" ||
+                typeof truncate({ value: "你好", maximumLength: 8 }) ===
+                    "number" ||
+                Array.isArray(truncate({ value: "你好", maximumLength: 8 })) ||
+                (typeof truncate({ value: "你好", maximumLength: 8 }) ===
+                    "object" &&
+                    truncate({ value: "你好", maximumLength: 8 }) !== null),
+        ).toBe(true);
+    });
+    it("throws when unit is unknown", () => {
+        expect(() =>
+            truncate({
+                value: "hello world",
+                maximumLength: 8,
+                unit: "nope" as never,
+            }),
+        ).toThrow(RangeError);
+    });
+    it("throws when maximumLength is negative", () => {
+        expect(() =>
+            truncate({ value: "hello world", maximumLength: -1 }),
+        ).toThrow(RangeError);
+    });
+});

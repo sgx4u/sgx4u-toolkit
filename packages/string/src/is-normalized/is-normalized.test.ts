@@ -21,3 +21,24 @@ describe("isNormalized", () => {
         ).toThrow(TypeError);
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(isNormalized(null as never)).toBe(false);
+    });
+    it("accepts an empty string", () => {
+        expect(typeof isNormalized("")).toBe("boolean");
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(typeof isNormalized("👨‍👩‍👧")).toBe("boolean");
+    });
+    it("accepts a combining mark", () => {
+        expect(typeof isNormalized("e\u0301")).toBe("boolean");
+    });
+    it("accepts Arabic text", () => {
+        expect(typeof isNormalized("مرحبا")).toBe("boolean");
+    });
+    it("accepts CJK text", () => {
+        expect(typeof isNormalized("你好")).toBe("boolean");
+    });
+});

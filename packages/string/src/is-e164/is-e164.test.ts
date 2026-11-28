@@ -7,3 +7,24 @@ describe("isE164", () => {
         expect(isE164(null)).toBe(false);
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(isE164(null as never)).toBe(false);
+    });
+    it("accepts an empty string", () => {
+        expect(typeof isE164("")).toBe("boolean");
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(typeof isE164("👨‍👩‍👧")).toBe("boolean");
+    });
+    it("accepts a combining mark", () => {
+        expect(typeof isE164("e\u0301")).toBe("boolean");
+    });
+    it("accepts Arabic text", () => {
+        expect(typeof isE164("مرحبا")).toBe("boolean");
+    });
+    it("accepts CJK text", () => {
+        expect(typeof isE164("你好")).toBe("boolean");
+    });
+});

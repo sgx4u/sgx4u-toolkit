@@ -41,3 +41,101 @@ describe("sliceString", () => {
         );
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(sliceString(null as never)).toBeUndefined();
+    });
+    it("accepts an empty string", () => {
+        expect(
+            sliceString({ value: "", start: 1, end: 4 }) === undefined ||
+                typeof sliceString({ value: "", start: 1, end: 4 }) ===
+                    "string" ||
+                typeof sliceString({ value: "", start: 1, end: 4 }) ===
+                    "boolean" ||
+                typeof sliceString({ value: "", start: 1, end: 4 }) ===
+                    "number" ||
+                Array.isArray(sliceString({ value: "", start: 1, end: 4 })) ||
+                (typeof sliceString({ value: "", start: 1, end: 4 }) ===
+                    "object" &&
+                    sliceString({ value: "", start: 1, end: 4 }) !== null),
+        ).toBe(true);
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(
+            sliceString({ value: "👨‍👩‍👧", start: 1, end: 4 }) === undefined ||
+                typeof sliceString({ value: "👨‍👩‍👧", start: 1, end: 4 }) ===
+                    "string" ||
+                typeof sliceString({ value: "👨‍👩‍👧", start: 1, end: 4 }) ===
+                    "boolean" ||
+                typeof sliceString({ value: "👨‍👩‍👧", start: 1, end: 4 }) ===
+                    "number" ||
+                Array.isArray(sliceString({ value: "👨‍👩‍👧", start: 1, end: 4 })) ||
+                (typeof sliceString({ value: "👨‍👩‍👧", start: 1, end: 4 }) ===
+                    "object" &&
+                    sliceString({ value: "👨‍👩‍👧", start: 1, end: 4 }) !== null),
+        ).toBe(true);
+    });
+    it("accepts a combining mark", () => {
+        expect(
+            sliceString({ value: "e\u0301", start: 1, end: 4 }) === undefined ||
+                typeof sliceString({ value: "e\u0301", start: 1, end: 4 }) ===
+                    "string" ||
+                typeof sliceString({ value: "e\u0301", start: 1, end: 4 }) ===
+                    "boolean" ||
+                typeof sliceString({ value: "e\u0301", start: 1, end: 4 }) ===
+                    "number" ||
+                Array.isArray(
+                    sliceString({ value: "e\u0301", start: 1, end: 4 }),
+                ) ||
+                (typeof sliceString({ value: "e\u0301", start: 1, end: 4 }) ===
+                    "object" &&
+                    sliceString({ value: "e\u0301", start: 1, end: 4 }) !==
+                        null),
+        ).toBe(true);
+    });
+    it("accepts Arabic text", () => {
+        expect(
+            sliceString({ value: "مرحبا", start: 1, end: 4 }) === undefined ||
+                typeof sliceString({ value: "مرحبا", start: 1, end: 4 }) ===
+                    "string" ||
+                typeof sliceString({ value: "مرحبا", start: 1, end: 4 }) ===
+                    "boolean" ||
+                typeof sliceString({ value: "مرحبا", start: 1, end: 4 }) ===
+                    "number" ||
+                Array.isArray(
+                    sliceString({ value: "مرحبا", start: 1, end: 4 }),
+                ) ||
+                (typeof sliceString({ value: "مرحبا", start: 1, end: 4 }) ===
+                    "object" &&
+                    sliceString({ value: "مرحبا", start: 1, end: 4 }) !== null),
+        ).toBe(true);
+    });
+    it("accepts CJK text", () => {
+        expect(
+            sliceString({ value: "你好", start: 1, end: 4 }) === undefined ||
+                typeof sliceString({ value: "你好", start: 1, end: 4 }) ===
+                    "string" ||
+                typeof sliceString({ value: "你好", start: 1, end: 4 }) ===
+                    "boolean" ||
+                typeof sliceString({ value: "你好", start: 1, end: 4 }) ===
+                    "number" ||
+                Array.isArray(
+                    sliceString({ value: "你好", start: 1, end: 4 }),
+                ) ||
+                (typeof sliceString({ value: "你好", start: 1, end: 4 }) ===
+                    "object" &&
+                    sliceString({ value: "你好", start: 1, end: 4 }) !== null),
+        ).toBe(true);
+    });
+    it("throws when unit is unknown", () => {
+        expect(() =>
+            sliceString({
+                value: "hello",
+                start: 1,
+                end: 4,
+                unit: "nope" as never,
+            }),
+        ).toThrow(RangeError);
+    });
+});

@@ -19,3 +19,32 @@ describe("singularize", () => {
         );
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(singularize(null as never)).toBeUndefined();
+    });
+    it("accepts an empty string", () => {
+        expect(typeof singularize("")).toBe("string");
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(typeof singularize("👨‍👩‍👧")).toBe("string");
+    });
+    it("accepts a combining mark", () => {
+        expect(typeof singularize("e\u0301")).toBe("string");
+    });
+    it("accepts Arabic text", () => {
+        expect(typeof singularize("مرحبا")).toBe("string");
+    });
+    it("accepts CJK text", () => {
+        expect(typeof singularize("你好")).toBe("string");
+    });
+    it("throws when locale is empty or not text", () => {
+        expect(() => singularize({ value: "a", locale: "" })).toThrow(
+            RangeError,
+        );
+        expect(() => singularize({ value: "a", locale: 1 as never })).toThrow(
+            TypeError,
+        );
+    });
+});

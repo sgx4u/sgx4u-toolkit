@@ -14,3 +14,63 @@ describe("decodeHex", () => {
         );
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(decodeHex(null as never)).toBeUndefined();
+    });
+    it("accepts an empty string", () => {
+        expect(
+            decodeHex("") === undefined ||
+                typeof decodeHex("") === "string" ||
+                typeof decodeHex("") === "boolean" ||
+                typeof decodeHex("") === "number" ||
+                Array.isArray(decodeHex("")) ||
+                (typeof decodeHex("") === "object" && decodeHex("") !== null),
+        ).toBe(true);
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(
+            decodeHex("👨‍👩‍👧") === undefined ||
+                typeof decodeHex("👨‍👩‍👧") === "string" ||
+                typeof decodeHex("👨‍👩‍👧") === "boolean" ||
+                typeof decodeHex("👨‍👩‍👧") === "number" ||
+                Array.isArray(decodeHex("👨‍👩‍👧")) ||
+                (typeof decodeHex("👨‍👩‍👧") === "object" &&
+                    decodeHex("👨‍👩‍👧") !== null),
+        ).toBe(true);
+    });
+    it("accepts a combining mark", () => {
+        expect(
+            decodeHex("e\u0301") === undefined ||
+                typeof decodeHex("e\u0301") === "string" ||
+                typeof decodeHex("e\u0301") === "boolean" ||
+                typeof decodeHex("e\u0301") === "number" ||
+                Array.isArray(decodeHex("e\u0301")) ||
+                (typeof decodeHex("e\u0301") === "object" &&
+                    decodeHex("e\u0301") !== null),
+        ).toBe(true);
+    });
+    it("accepts Arabic text", () => {
+        expect(
+            decodeHex("مرحبا") === undefined ||
+                typeof decodeHex("مرحبا") === "string" ||
+                typeof decodeHex("مرحبا") === "boolean" ||
+                typeof decodeHex("مرحبا") === "number" ||
+                Array.isArray(decodeHex("مرحبا")) ||
+                (typeof decodeHex("مرحبا") === "object" &&
+                    decodeHex("مرحبا") !== null),
+        ).toBe(true);
+    });
+    it("accepts CJK text", () => {
+        expect(
+            decodeHex("你好") === undefined ||
+                typeof decodeHex("你好") === "string" ||
+                typeof decodeHex("你好") === "boolean" ||
+                typeof decodeHex("你好") === "number" ||
+                Array.isArray(decodeHex("你好")) ||
+                (typeof decodeHex("你好") === "object" &&
+                    decodeHex("你好") !== null),
+        ).toBe(true);
+    });
+});

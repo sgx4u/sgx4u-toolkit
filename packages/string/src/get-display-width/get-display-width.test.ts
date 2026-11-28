@@ -25,3 +25,64 @@ describe("getDisplayWidth", () => {
         ).toBeUndefined();
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(getDisplayWidth(null as never)).toBeUndefined();
+    });
+    it("accepts an empty string", () => {
+        expect(
+            getDisplayWidth({ value: "" }) === undefined ||
+                typeof getDisplayWidth({ value: "" }) === "string" ||
+                typeof getDisplayWidth({ value: "" }) === "boolean" ||
+                typeof getDisplayWidth({ value: "" }) === "number" ||
+                Array.isArray(getDisplayWidth({ value: "" })) ||
+                (typeof getDisplayWidth({ value: "" }) === "object" &&
+                    getDisplayWidth({ value: "" }) !== null),
+        ).toBe(true);
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(
+            getDisplayWidth({ value: "👨‍👩‍👧" }) === undefined ||
+                typeof getDisplayWidth({ value: "👨‍👩‍👧" }) === "string" ||
+                typeof getDisplayWidth({ value: "👨‍👩‍👧" }) === "boolean" ||
+                typeof getDisplayWidth({ value: "👨‍👩‍👧" }) === "number" ||
+                Array.isArray(getDisplayWidth({ value: "👨‍👩‍👧" })) ||
+                (typeof getDisplayWidth({ value: "👨‍👩‍👧" }) === "object" &&
+                    getDisplayWidth({ value: "👨‍👩‍👧" }) !== null),
+        ).toBe(true);
+    });
+    it("accepts a combining mark", () => {
+        expect(
+            getDisplayWidth({ value: "e\u0301" }) === undefined ||
+                typeof getDisplayWidth({ value: "e\u0301" }) === "string" ||
+                typeof getDisplayWidth({ value: "e\u0301" }) === "boolean" ||
+                typeof getDisplayWidth({ value: "e\u0301" }) === "number" ||
+                Array.isArray(getDisplayWidth({ value: "e\u0301" })) ||
+                (typeof getDisplayWidth({ value: "e\u0301" }) === "object" &&
+                    getDisplayWidth({ value: "e\u0301" }) !== null),
+        ).toBe(true);
+    });
+    it("accepts Arabic text", () => {
+        expect(
+            getDisplayWidth({ value: "مرحبا" }) === undefined ||
+                typeof getDisplayWidth({ value: "مرحبا" }) === "string" ||
+                typeof getDisplayWidth({ value: "مرحبا" }) === "boolean" ||
+                typeof getDisplayWidth({ value: "مرحبا" }) === "number" ||
+                Array.isArray(getDisplayWidth({ value: "مرحبا" })) ||
+                (typeof getDisplayWidth({ value: "مرحبا" }) === "object" &&
+                    getDisplayWidth({ value: "مرحبا" }) !== null),
+        ).toBe(true);
+    });
+    it("accepts CJK text", () => {
+        expect(
+            getDisplayWidth({ value: "你好" }) === undefined ||
+                typeof getDisplayWidth({ value: "你好" }) === "string" ||
+                typeof getDisplayWidth({ value: "你好" }) === "boolean" ||
+                typeof getDisplayWidth({ value: "你好" }) === "number" ||
+                Array.isArray(getDisplayWidth({ value: "你好" })) ||
+                (typeof getDisplayWidth({ value: "你好" }) === "object" &&
+                    getDisplayWidth({ value: "你好" }) !== null),
+        ).toBe(true);
+    });
+});

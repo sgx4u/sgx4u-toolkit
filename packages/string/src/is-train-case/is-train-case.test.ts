@@ -10,3 +10,24 @@ describe("isTrainCase", () => {
         expect(isTrainCase(null)).toBe(false);
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(isTrainCase(null as never)).toBe(false);
+    });
+    it("accepts an empty string", () => {
+        expect(typeof isTrainCase("")).toBe("boolean");
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(typeof isTrainCase("👨‍👩‍👧")).toBe("boolean");
+    });
+    it("accepts a combining mark", () => {
+        expect(typeof isTrainCase("e\u0301")).toBe("boolean");
+    });
+    it("accepts Arabic text", () => {
+        expect(typeof isTrainCase("مرحبا")).toBe("boolean");
+    });
+    it("accepts CJK text", () => {
+        expect(typeof isTrainCase("你好")).toBe("boolean");
+    });
+});

@@ -19,3 +19,24 @@ describe("isEmail", () => {
         expect(isEmail(null)).toBe(false);
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(isEmail(null as never)).toBe(false);
+    });
+    it("accepts an empty string", () => {
+        expect(typeof isEmail("")).toBe("boolean");
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(typeof isEmail("👨‍👩‍👧")).toBe("boolean");
+    });
+    it("accepts a combining mark", () => {
+        expect(typeof isEmail("e\u0301")).toBe("boolean");
+    });
+    it("accepts Arabic text", () => {
+        expect(typeof isEmail("مرحبا")).toBe("boolean");
+    });
+    it("accepts CJK text", () => {
+        expect(typeof isEmail("你好")).toBe("boolean");
+    });
+});

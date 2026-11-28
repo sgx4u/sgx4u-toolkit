@@ -8,3 +8,15 @@ describe("fromUTF8Bytes", () => {
         expect(fromUTF8Bytes("hi")).toBeUndefined();
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(fromUTF8Bytes(null as never)).toBeUndefined();
+    });
+    it("decodes UTF-8 bytes and rejects a bad byte", () => {
+        expect(typeof fromUTF8Bytes(new TextEncoder().encode("é"))).toBe(
+            "string",
+        );
+        expect(fromUTF8Bytes(new Uint8Array([0xff]))).toBeUndefined();
+    });
+});

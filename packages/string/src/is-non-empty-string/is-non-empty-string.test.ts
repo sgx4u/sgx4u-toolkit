@@ -25,3 +25,24 @@ describe("isNonEmptyString", () => {
         }
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(isNonEmptyString(null as never)).toBe(false);
+    });
+    it("accepts an empty string", () => {
+        expect(typeof isNonEmptyString("")).toBe("boolean");
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(typeof isNonEmptyString("👨‍👩‍👧")).toBe("boolean");
+    });
+    it("accepts a combining mark", () => {
+        expect(typeof isNonEmptyString("e\u0301")).toBe("boolean");
+    });
+    it("accepts Arabic text", () => {
+        expect(typeof isNonEmptyString("مرحبا")).toBe("boolean");
+    });
+    it("accepts CJK text", () => {
+        expect(typeof isNonEmptyString("你好")).toBe("boolean");
+    });
+});

@@ -67,3 +67,34 @@ describe("slugify", () => {
         );
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(slugify(null as never)).toBeUndefined();
+    });
+    it("accepts an empty string", () => {
+        expect(typeof slugify("")).toBe("string");
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(typeof slugify("👨‍👩‍👧")).toBe("string");
+    });
+    it("accepts a combining mark", () => {
+        expect(typeof slugify("e\u0301")).toBe("string");
+    });
+    it("accepts Arabic text", () => {
+        expect(typeof slugify("مرحبا")).toBe("string");
+    });
+    it("accepts CJK text", () => {
+        expect(typeof slugify("你好")).toBe("string");
+    });
+    it("throws when maximumLength is negative", () => {
+        expect(() => slugify({ value: "a", maximumLength: -1 })).toThrow(
+            RangeError,
+        );
+    });
+    it("throws when separator is empty", () => {
+        expect(() => slugify({ value: "a", separator: "" })).toThrow(
+            RangeError,
+        );
+    });
+});

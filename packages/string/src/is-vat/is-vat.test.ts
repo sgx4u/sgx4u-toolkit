@@ -24,3 +24,24 @@ describe("isVAT", () => {
         expect(() => isVAT({ value: "1", country: "ZZ" })).toThrow(RangeError);
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(isVAT(null as never)).toBe(false);
+    });
+    it("accepts an empty string", () => {
+        expect(typeof isVAT("")).toBe("boolean");
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(typeof isVAT("👨‍👩‍👧")).toBe("boolean");
+    });
+    it("accepts a combining mark", () => {
+        expect(typeof isVAT("e\u0301")).toBe("boolean");
+    });
+    it("accepts Arabic text", () => {
+        expect(typeof isVAT("مرحبا")).toBe("boolean");
+    });
+    it("accepts CJK text", () => {
+        expect(typeof isVAT("你好")).toBe("boolean");
+    });
+});

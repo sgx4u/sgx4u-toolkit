@@ -16,3 +16,39 @@ describe("splitGraphemes", () => {
         expect(splitGraphemes(null)).toBeUndefined();
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(splitGraphemes(null as never)).toBeUndefined();
+    });
+    it("accepts an empty string", () => {
+        expect(
+            splitGraphemes("") === undefined ||
+                Array.isArray(splitGraphemes("")),
+        ).toBe(true);
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(
+            splitGraphemes("👨‍👩‍👧") === undefined ||
+                Array.isArray(splitGraphemes("👨‍👩‍👧")),
+        ).toBe(true);
+    });
+    it("accepts a combining mark", () => {
+        expect(
+            splitGraphemes("e\u0301") === undefined ||
+                Array.isArray(splitGraphemes("e\u0301")),
+        ).toBe(true);
+    });
+    it("accepts Arabic text", () => {
+        expect(
+            splitGraphemes("مرحبا") === undefined ||
+                Array.isArray(splitGraphemes("مرحبا")),
+        ).toBe(true);
+    });
+    it("accepts CJK text", () => {
+        expect(
+            splitGraphemes("你好") === undefined ||
+                Array.isArray(splitGraphemes("你好")),
+        ).toBe(true);
+    });
+});

@@ -10,3 +10,24 @@ describe("isUpperCase", () => {
         expect(isUpperCase(1)).toBe(false);
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(isUpperCase(null as never)).toBe(false);
+    });
+    it("accepts an empty string", () => {
+        expect(typeof isUpperCase("")).toBe("boolean");
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(typeof isUpperCase("👨‍👩‍👧")).toBe("boolean");
+    });
+    it("accepts a combining mark", () => {
+        expect(typeof isUpperCase("e\u0301")).toBe("boolean");
+    });
+    it("accepts Arabic text", () => {
+        expect(typeof isUpperCase("مرحبا")).toBe("boolean");
+    });
+    it("accepts CJK text", () => {
+        expect(typeof isUpperCase("你好")).toBe("boolean");
+    });
+});

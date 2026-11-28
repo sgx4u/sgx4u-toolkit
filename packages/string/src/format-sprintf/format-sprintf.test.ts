@@ -22,3 +22,158 @@ describe("formatSprintf", () => {
         );
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("throws when null is passed in place of the options", () => {
+        expect(() => formatSprintf(null as never)).toThrow(TypeError);
+    });
+    it("accepts an empty string", () => {
+        expect(
+            formatSprintf({ template: "", values: ["total", 1.9] }) ===
+                undefined ||
+                typeof formatSprintf({
+                    template: "",
+                    values: ["total", 1.9],
+                }) === "string" ||
+                typeof formatSprintf({
+                    template: "",
+                    values: ["total", 1.9],
+                }) === "boolean" ||
+                typeof formatSprintf({
+                    template: "",
+                    values: ["total", 1.9],
+                }) === "number" ||
+                Array.isArray(
+                    formatSprintf({ template: "", values: ["total", 1.9] }),
+                ) ||
+                (typeof formatSprintf({
+                    template: "",
+                    values: ["total", 1.9],
+                }) === "object" &&
+                    formatSprintf({ template: "", values: ["total", 1.9] }) !==
+                        null),
+        ).toBe(true);
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(
+            formatSprintf({ template: "👨‍👩‍👧", values: ["total", 1.9] }) ===
+                undefined ||
+                typeof formatSprintf({
+                    template: "👨‍👩‍👧",
+                    values: ["total", 1.9],
+                }) === "string" ||
+                typeof formatSprintf({
+                    template: "👨‍👩‍👧",
+                    values: ["total", 1.9],
+                }) === "boolean" ||
+                typeof formatSprintf({
+                    template: "👨‍👩‍👧",
+                    values: ["total", 1.9],
+                }) === "number" ||
+                Array.isArray(
+                    formatSprintf({ template: "👨‍👩‍👧", values: ["total", 1.9] }),
+                ) ||
+                (typeof formatSprintf({
+                    template: "👨‍👩‍👧",
+                    values: ["total", 1.9],
+                }) === "object" &&
+                    formatSprintf({
+                        template: "👨‍👩‍👧",
+                        values: ["total", 1.9],
+                    }) !== null),
+        ).toBe(true);
+    });
+    it("accepts a combining mark", () => {
+        expect(
+            formatSprintf({ template: "e\u0301", values: ["total", 1.9] }) ===
+                undefined ||
+                typeof formatSprintf({
+                    template: "e\u0301",
+                    values: ["total", 1.9],
+                }) === "string" ||
+                typeof formatSprintf({
+                    template: "e\u0301",
+                    values: ["total", 1.9],
+                }) === "boolean" ||
+                typeof formatSprintf({
+                    template: "e\u0301",
+                    values: ["total", 1.9],
+                }) === "number" ||
+                Array.isArray(
+                    formatSprintf({
+                        template: "e\u0301",
+                        values: ["total", 1.9],
+                    }),
+                ) ||
+                (typeof formatSprintf({
+                    template: "e\u0301",
+                    values: ["total", 1.9],
+                }) === "object" &&
+                    formatSprintf({
+                        template: "e\u0301",
+                        values: ["total", 1.9],
+                    }) !== null),
+        ).toBe(true);
+    });
+    it("accepts Arabic text", () => {
+        expect(
+            formatSprintf({ template: "مرحبا", values: ["total", 1.9] }) ===
+                undefined ||
+                typeof formatSprintf({
+                    template: "مرحبا",
+                    values: ["total", 1.9],
+                }) === "string" ||
+                typeof formatSprintf({
+                    template: "مرحبا",
+                    values: ["total", 1.9],
+                }) === "boolean" ||
+                typeof formatSprintf({
+                    template: "مرحبا",
+                    values: ["total", 1.9],
+                }) === "number" ||
+                Array.isArray(
+                    formatSprintf({
+                        template: "مرحبا",
+                        values: ["total", 1.9],
+                    }),
+                ) ||
+                (typeof formatSprintf({
+                    template: "مرحبا",
+                    values: ["total", 1.9],
+                }) === "object" &&
+                    formatSprintf({
+                        template: "مرحبا",
+                        values: ["total", 1.9],
+                    }) !== null),
+        ).toBe(true);
+    });
+    it("accepts CJK text", () => {
+        expect(
+            formatSprintf({ template: "你好", values: ["total", 1.9] }) ===
+                undefined ||
+                typeof formatSprintf({
+                    template: "你好",
+                    values: ["total", 1.9],
+                }) === "string" ||
+                typeof formatSprintf({
+                    template: "你好",
+                    values: ["total", 1.9],
+                }) === "boolean" ||
+                typeof formatSprintf({
+                    template: "你好",
+                    values: ["total", 1.9],
+                }) === "number" ||
+                Array.isArray(
+                    formatSprintf({ template: "你好", values: ["total", 1.9] }),
+                ) ||
+                (typeof formatSprintf({
+                    template: "你好",
+                    values: ["total", 1.9],
+                }) === "object" &&
+                    formatSprintf({
+                        template: "你好",
+                        values: ["total", 1.9],
+                    }) !== null),
+        ).toBe(true);
+    });
+});

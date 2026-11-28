@@ -80,3 +80,30 @@ describe("pluralize", () => {
         expect(isPlural(1 as never)).toBe(false);
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(pluralize(null as never)).toBeUndefined();
+    });
+    it("accepts an empty string", () => {
+        expect(typeof pluralize("")).toBe("string");
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(typeof pluralize("👨‍👩‍👧")).toBe("string");
+    });
+    it("accepts a combining mark", () => {
+        expect(typeof pluralize("e\u0301")).toBe("string");
+    });
+    it("accepts Arabic text", () => {
+        expect(typeof pluralize("مرحبا")).toBe("string");
+    });
+    it("accepts CJK text", () => {
+        expect(typeof pluralize("你好")).toBe("string");
+    });
+    it("throws when locale is empty or not text", () => {
+        expect(() => pluralize({ value: "a", locale: "" })).toThrow(RangeError);
+        expect(() => pluralize({ value: "a", locale: 1 as never })).toThrow(
+            TypeError,
+        );
+    });
+});

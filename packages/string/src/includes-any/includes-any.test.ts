@@ -11,3 +11,46 @@ describe("includesAny", () => {
         ).toBe(false);
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(includesAny(null as never)).toBe(false);
+    });
+    it("accepts an empty string", () => {
+        expect(typeof includesAny({ value: "", searches: ["x", "ell"] })).toBe(
+            "boolean",
+        );
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(
+            typeof includesAny({ value: "👨‍👩‍👧", searches: ["x", "ell"] }),
+        ).toBe("boolean");
+    });
+    it("accepts a combining mark", () => {
+        expect(
+            typeof includesAny({ value: "e\u0301", searches: ["x", "ell"] }),
+        ).toBe("boolean");
+    });
+    it("accepts Arabic text", () => {
+        expect(
+            typeof includesAny({ value: "مرحبا", searches: ["x", "ell"] }),
+        ).toBe("boolean");
+    });
+    it("accepts CJK text", () => {
+        expect(
+            typeof includesAny({ value: "你好", searches: ["x", "ell"] }),
+        ).toBe("boolean");
+    });
+    it("throws when locale is empty or not text", () => {
+        expect(() =>
+            includesAny({ value: "hello", searches: ["x", "ell"], locale: "" }),
+        ).toThrow(RangeError);
+        expect(() =>
+            includesAny({
+                value: "hello",
+                searches: ["x", "ell"],
+                locale: 1 as never,
+            }),
+        ).toThrow(TypeError);
+    });
+});

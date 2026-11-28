@@ -10,3 +10,24 @@ describe("isConstantCase", () => {
         expect(isConstantCase(null)).toBe(false);
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(isConstantCase(null as never)).toBe(false);
+    });
+    it("accepts an empty string", () => {
+        expect(typeof isConstantCase("")).toBe("boolean");
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(typeof isConstantCase("👨‍👩‍👧")).toBe("boolean");
+    });
+    it("accepts a combining mark", () => {
+        expect(typeof isConstantCase("e\u0301")).toBe("boolean");
+    });
+    it("accepts Arabic text", () => {
+        expect(typeof isConstantCase("مرحبا")).toBe("boolean");
+    });
+    it("accepts CJK text", () => {
+        expect(typeof isConstantCase("你好")).toBe("boolean");
+    });
+});

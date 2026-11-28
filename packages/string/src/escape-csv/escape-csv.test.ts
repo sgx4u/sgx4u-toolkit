@@ -8,3 +8,24 @@ describe("escapeCSV", () => {
         expect(escapeCSV(null as unknown as string)).toBeUndefined();
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(escapeCSV(null as never)).toBeUndefined();
+    });
+    it("accepts an empty string", () => {
+        expect(typeof escapeCSV("")).toBe("string");
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(typeof escapeCSV("👨‍👩‍👧")).toBe("string");
+    });
+    it("accepts a combining mark", () => {
+        expect(typeof escapeCSV("e\u0301")).toBe("string");
+    });
+    it("accepts Arabic text", () => {
+        expect(typeof escapeCSV("مرحبا")).toBe("string");
+    });
+    it("accepts CJK text", () => {
+        expect(typeof escapeCSV("你好")).toBe("string");
+    });
+});

@@ -20,3 +20,24 @@ describe("isURL", () => {
         expect(isURL(null)).toBe(false);
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(isURL(null as never)).toBe(false);
+    });
+    it("accepts an empty string", () => {
+        expect(typeof isURL("")).toBe("boolean");
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(typeof isURL("👨‍👩‍👧")).toBe("boolean");
+    });
+    it("accepts a combining mark", () => {
+        expect(typeof isURL("e\u0301")).toBe("boolean");
+    });
+    it("accepts Arabic text", () => {
+        expect(typeof isURL("مرحبا")).toBe("boolean");
+    });
+    it("accepts CJK text", () => {
+        expect(typeof isURL("你好")).toBe("boolean");
+    });
+});

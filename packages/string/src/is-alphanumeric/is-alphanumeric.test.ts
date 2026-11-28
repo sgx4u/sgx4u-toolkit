@@ -13,3 +13,32 @@ describe("isAlphanumeric", () => {
         expect(isAlphanumeric(null)).toBe(false);
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(isAlphanumeric(null as never)).toBe(false);
+    });
+    it("accepts an empty string", () => {
+        expect(typeof isAlphanumeric("")).toBe("boolean");
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(typeof isAlphanumeric("👨‍👩‍👧")).toBe("boolean");
+    });
+    it("accepts a combining mark", () => {
+        expect(typeof isAlphanumeric("e\u0301")).toBe("boolean");
+    });
+    it("accepts Arabic text", () => {
+        expect(typeof isAlphanumeric("مرحبا")).toBe("boolean");
+    });
+    it("accepts CJK text", () => {
+        expect(typeof isAlphanumeric("你好")).toBe("boolean");
+    });
+    it("throws when locale is empty or not text", () => {
+        expect(() => isAlphanumeric({ value: "a", locale: "" })).toThrow(
+            RangeError,
+        );
+        expect(() =>
+            isAlphanumeric({ value: "a", locale: 1 as never }),
+        ).toThrow(TypeError);
+    });
+});

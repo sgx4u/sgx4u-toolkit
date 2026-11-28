@@ -10,4 +10,68 @@ describe("createString", () => {
         expect(other.toLowerCase("I")).toBe("i");
         expect(() => createString({ typo: true } as never)).toThrow(RangeError);
     });
+
+    it("lets one call override truncation, slug, mask, and case defaults", () => {
+        const strings = createString({
+            locale: "en",
+            truncationOmission: "...",
+            truncationLocation: "end",
+            slugifySeparator: "_",
+            slugifyLowerCase: false,
+            maskCharacter: "#",
+            unmaskedStartLength: 1,
+            unmaskedEndLength: 1,
+            keepConsecutiveUppercase: true,
+            templatePattern: "double-curly",
+            wordsPerMinute: 100,
+        });
+        expect(strings.truncate({ value: "hello", maximumLength: 4 })).toBe(
+            "h...",
+        );
+        expect(
+            strings.truncate({
+                value: "hello",
+                maximumLength: 4,
+                omission: "…",
+            }),
+        ).toBe("hel…");
+        expect(strings.slugify("Hello World")).toBe("Hello_World");
+        expect(
+            strings.slugify({
+                value: "Hello World",
+                separator: "-",
+                lowerCase: true,
+            }),
+        ).toBe("hello-world");
+        expect(strings.maskString("secret")).toBe("s####t");
+        expect(strings.toPascalCase("XMLHttpRequest")).toBe("XMLHttpRequest");
+        expect(
+            strings.toPascalCase({
+                value: "XMLHttpRequest",
+                keepConsecutiveUppercase: false,
+            }),
+        ).toBe("XmlHttpRequest");
+        expect(strings.getReadingTime("one two")).toEqual({
+            words: 2,
+            minutes: 0.02,
+        });
+    });
+
+    it("keeps two instances independent", () => {
+        const turkish = createString({ locale: "tr-TR" });
+        const english = createString({ locale: "en" });
+        expect(turkish.toLowerCase("I")).toBe("ı");
+        expect(english.toLowerCase("I")).toBe("i");
+    });
+
+    it("throws for an empty locale, a bad unit, and a bad reading speed", () => {
+        expect(() => createString({ locale: "" })).toThrow(RangeError);
+        expect(() => createString({ locale: [] })).toThrow(RangeError);
+        expect(() => createString({ locale: 1 as never })).toThrow(TypeError);
+        expect(() => createString({ unit: "nope" as never })).toThrow(
+            RangeError,
+        );
+        expect(() => createString({ wordsPerMinute: 0 })).toThrow(RangeError);
+        expect(() => createString(null as never)).toThrow(TypeError);
+    });
 });

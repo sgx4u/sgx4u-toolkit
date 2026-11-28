@@ -58,3 +58,24 @@ describe("toFilename", () => {
         expect(toFilename({ value: 1 as never })).toBeUndefined();
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(toFilename(null as never)).toBeUndefined();
+    });
+    it("accepts an empty string", () => {
+        expect(typeof toFilename("")).toBe("string");
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(typeof toFilename("👨‍👩‍👧")).toBe("string");
+    });
+    it("accepts a combining mark", () => {
+        expect(typeof toFilename("e\u0301")).toBe("string");
+    });
+    it("accepts Arabic text", () => {
+        expect(typeof toFilename("مرحبا")).toBe("string");
+    });
+    it("accepts CJK text", () => {
+        expect(typeof toFilename("你好")).toBe("string");
+    });
+});

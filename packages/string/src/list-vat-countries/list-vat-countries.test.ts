@@ -12,3 +12,9 @@ describe("listVATCountries", () => {
         expect(countries).toContain("XI");
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns a list", () => {
+        expect(Array.isArray(listVATCountries())).toBe(true);
+    });
+});

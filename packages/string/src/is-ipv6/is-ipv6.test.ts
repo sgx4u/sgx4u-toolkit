@@ -8,3 +8,24 @@ describe("isIPv6", () => {
         expect(isIPv6(null)).toBe(false);
     });
 });
+
+describe("unicode and invalid input", () => {
+    it("returns the invalid-input result for null", () => {
+        expect(isIPv6(null as never)).toBe(false);
+    });
+    it("accepts an empty string", () => {
+        expect(typeof isIPv6("")).toBe("boolean");
+    });
+    it("accepts a family emoji grapheme", () => {
+        expect(typeof isIPv6("👨‍👩‍👧")).toBe("boolean");
+    });
+    it("accepts a combining mark", () => {
+        expect(typeof isIPv6("e\u0301")).toBe("boolean");
+    });
+    it("accepts Arabic text", () => {
+        expect(typeof isIPv6("مرحبا")).toBe("boolean");
+    });
+    it("accepts CJK text", () => {
+        expect(typeof isIPv6("你好")).toBe("boolean");
+    });
+});
