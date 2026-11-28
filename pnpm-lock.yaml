@@ -31,7 +31,7 @@ catalogs:
       specifier: ^26.6.8
       version: 26.6.8
     '@vitest/coverage-v8':
-      specifier: 5.1.1
+      specifier: ^5.1.1
       version: 5.1.1
     eslint:
       specifier: ^10.15.0
@@ -69,6 +69,9 @@ catalogs:
     size-limit:
       specifier: ^14.3.0
       version: 14.3.0
+    temporal-polyfill:
+      specifier: ^1.0.8
+      version: 1.0.8
     tsdown:
       specifier: ^0.23.7
       version: 0.23.7
@@ -136,6 +139,51 @@ importers:
         version: 6.0.3
 
   packages/array:
+    devDependencies:
+      '@arethetypeswrong/cli':
+        specifier: 'catalog:'
+        version: 0.18.5
+      '@sgx4u/eslint-config':
+        specifier: workspace:*
+        version: link:../config/eslint-config
+      '@sgx4u/tsconfig':
+        specifier: workspace:*
+        version: link:../config/tsconfig
+      '@sgx4u/tsdown-config':
+        specifier: workspace:*
+        version: link:../config/tsdown-config
+      '@sgx4u/vitest-config':
+        specifier: workspace:*
+        version: link:../config/vitest-config
+      '@size-limit/preset-small-lib':
+        specifier: 'catalog:'
+        version: 14.3.0(size-limit@14.3.0)
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 5.1.1(vitest@5.1.1)
+      eslint:
+        specifier: 'catalog:'
+        version: 10.15.0(jiti@2.7.0)(supports-color@7.2.0)
+      fast-check:
+        specifier: 'catalog:'
+        version: 4.11.0
+      publint:
+        specifier: 'catalog:'
+        version: 0.3.25
+      size-limit:
+        specifier: 'catalog:'
+        version: 14.3.0
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.23.7(@arethetypeswrong/core@0.18.5)(publint@0.3.25)(typescript@6.0.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+      vitest:
+        specifier: 'catalog:'
+        version: 5.1.1(@types/node@26.6.8)(@vitest/coverage-v8@5.1.1)(vite@8.3.8(@types/node@26.6.8)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.1))
+
+  packages/boolean:
     devDependencies:
       '@arethetypeswrong/cli':
         specifier: 'catalog:'
@@ -291,12 +339,72 @@ importers:
       '@sgx4u/vitest-config':
         specifier: workspace:*
         version: link:../config/vitest-config
+      '@size-limit/preset-small-lib':
+        specifier: 'catalog:'
+        version: 14.3.0(size-limit@14.3.0)
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 5.1.1(vitest@5.1.1)
       eslint:
         specifier: 'catalog:'
         version: 10.15.0(jiti@2.7.0)(supports-color@7.2.0)
+      fast-check:
+        specifier: 'catalog:'
+        version: 4.11.0
       publint:
         specifier: 'catalog:'
         version: 0.3.25
+      size-limit:
+        specifier: 'catalog:'
+        version: 14.3.0
+      temporal-polyfill:
+        specifier: 'catalog:'
+        version: 1.0.8
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.23.7(@arethetypeswrong/core@0.18.5)(publint@0.3.25)(typescript@6.0.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+      vitest:
+        specifier: 'catalog:'
+        version: 5.1.1(@types/node@26.6.8)(@vitest/coverage-v8@5.1.1)(vite@8.3.8(@types/node@26.6.8)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.1))
+
+  packages/number:
+    devDependencies:
+      '@arethetypeswrong/cli':
+        specifier: 'catalog:'
+        version: 0.18.5
+      '@sgx4u/eslint-config':
+        specifier: workspace:*
+        version: link:../config/eslint-config
+      '@sgx4u/tsconfig':
+        specifier: workspace:*
+        version: link:../config/tsconfig
+      '@sgx4u/tsdown-config':
+        specifier: workspace:*
+        version: link:../config/tsdown-config
+      '@sgx4u/vitest-config':
+        specifier: workspace:*
+        version: link:../config/vitest-config
+      '@size-limit/preset-small-lib':
+        specifier: 'catalog:'
+        version: 14.3.0(size-limit@14.3.0)
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 5.1.1(vitest@5.1.1)
+      eslint:
+        specifier: 'catalog:'
+        version: 10.15.0(jiti@2.7.0)(supports-color@7.2.0)
+      fast-check:
+        specifier: 'catalog:'
+        version: 4.11.0
+      publint:
+        specifier: 'catalog:'
+        version: 0.3.25
+      size-limit:
+        specifier: 'catalog:'
+        version: 14.3.0
       tsdown:
         specifier: 'catalog:'
         version: 0.23.7(@arethetypeswrong/core@0.18.5)(publint@0.3.25)(typescript@6.0.3)
@@ -1795,8 +1903,8 @@ packages:
   jju@1.4.0:
     resolution: {integrity: sha512-8wb9Yw966OSxApiCt0K3yNJL8pnNeIv+OEq2YMidz4FKP6nonSRoOXc80iXY4JaN2FC11B9qsNmDsm+ZOfMROA==}
 
-  js-tokens@10.0.2:
-    resolution: {integrity: sha512-DXL98F5NsFBwDz7kcb4UUlrg9ePDgBCPjK4inUYi5gahxsTrKNW8Oh6F3WAuh7hntbP41EL/DkUYccRsDfLQLQ==}
+  js-tokens@10.0.1:
+    resolution: {integrity: sha512-XMt+uh+yEs6srFvEb/pEe4IMvbtoXVdNxF7lZFU+I9sdWI641L97L+gXQMTGm1x3RjPUVizNVjHueclXr0U7sw==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -2302,6 +2410,15 @@ packages:
   supports-hyperlinks@3.2.0:
     resolution: {integrity: sha512-zFObLMyZeEwzAoKCyu1B91U79K2t7ApXuQfo8OuxwXLDgcKxuwM+YvcbIhm6QWqz7mHUH1TVytR1PwVVjEuMig==}
     engines: {node: '>=14.18'}
+
+  temporal-polyfill@1.0.8:
+    resolution: {integrity: sha512-RCCGa0GddT099XG49ijdD0tDf86L8vfuZun1+JyJiO4Y2NP9PACQsG0OnvNPXwVLisdvhr/zqL2nhKQmXXx08A==}
+
+  temporal-spec@1.0.1:
+    resolution: {integrity: sha512-wxVoanmDeavXie1vu2JaQ3WIc3JZnWAOYFBsJyATaVsXsycKYUflGsyBmrRSnoCpZJpwPyr38VpgSUlQ8CbFxg==}
+
+  temporal-utils@1.0.4:
+    resolution: {integrity: sha512-4mAcgbWlaxe+gn23gk8g0iHxCVGVOhKzSCfF5HM3lfvH8BdT+/pBmH/R/E4CrIse+koUgs8ThkPzCLnui6Fi8w==}
 
   thenify-all@1.6.0:
     resolution: {integrity: sha512-RNxQH/qI8/t3thXJDwcstUO4zeqo64+Uy/+sNVRBx4Xn2OX+OZ9oP+iJnNFqplFra2ZUVeKCSa2oVWi3T4uVmA==}
@@ -3559,7 +3676,7 @@ snapshots:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       estree-walker: 3.0.3
-      js-tokens: 10.0.2
+      js-tokens: 10.0.1
 
   balanced-match@4.0.4: {}
 
@@ -3931,7 +4048,7 @@ snapshots:
 
   jju@1.4.0: {}
 
-  js-tokens@10.0.2: {}
+  js-tokens@10.0.1: {}
 
   js-tokens@4.0.0: {}
 
@@ -4381,6 +4498,15 @@ snapshots:
     dependencies:
       has-flag: 4.0.0
       supports-color: 7.2.0
+
+  temporal-polyfill@1.0.8:
+    dependencies:
+      temporal-spec: 1.0.1
+      temporal-utils: 1.0.4
+
+  temporal-spec@1.0.1: {}
+
+  temporal-utils@1.0.4: {}
 
   thenify-all@1.6.0:
     dependencies:

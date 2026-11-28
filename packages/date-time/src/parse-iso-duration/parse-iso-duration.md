@@ -1,0 +1,47 @@
+# `parseISODuration`
+
+Parses an ISO 8601 duration such as `P1Y2M3DT4H5M6.5S`.
+
+## Import
+
+```ts
+import { parseISODuration } from "@sgx4u/date-time";
+```
+
+## Signature
+
+```ts
+function parseISODuration(value: string): Duration | undefined;
+```
+
+## Parameters
+
+| Name    | Type     | Required | Default | Meaning             |
+| ------- | -------- | -------- | ------- | ------------------- |
+| `value` | `string` | yes      |         | The candidate text. |
+
+## Examples
+
+```ts
+parseISODuration("PT1H30M");
+// { hours: 1, minutes: 30 }
+
+parseISODuration("P1Y2M3DT4H5M6.5S");
+// { years: 1, months: 2, days: 3, hours: 4, minutes: 5, seconds: 6.5 }
+
+parseISODuration("-P1D");
+// { days: -1 }
+
+parseISODuration("P");
+// undefined
+```
+
+## Edge cases
+
+Text that does not match returns `undefined`. `P`, `PT`, `-P`, and `-PT` are empty and return `undefined`. A fraction is allowed only on the last component, so `P1.5YT1H` returns `undefined`. A leading `-` negates every field. A value that is not a string throws `TypeError`.
+
+## Related
+
+- [`formatISODuration`](../format-iso-duration/format-iso-duration.md) writes a duration as ISO 8601 text.
+- [`parseDurationText`](../parse-duration-text/parse-duration-text.md) reads English duration text.
+- [`addDuration`](../add-duration/add-duration.md) adds the parsed duration to a date.

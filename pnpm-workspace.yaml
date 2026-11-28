@@ -16,7 +16,7 @@ catalog:
     "@size-limit/preset-small-lib": ^14.3.0
     "@turbo/gen": ^2.11.13
     "@types/node": ^26.6.8
-    "@vitest/coverage-v8": 5.1.1
+    "@vitest/coverage-v8": ^5.1.1
     eslint: ^10.15.0
     eslint-config-prettier: ^10.1.8
     eslint-plugin-turbo: ^2.11.13
@@ -29,6 +29,7 @@ catalog:
     publint: ^0.3.25
     sherif: ^1.13.0
     size-limit: ^14.3.0
+    temporal-polyfill: ^1.0.8
     tsdown: ^0.23.7
     turbo: ^2.11.13
     typescript: ~6.0.3
