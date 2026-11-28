@@ -51,12 +51,26 @@ export function encodeBase64Bytes(bytes: Uint8Array, urlSafe: boolean): string {
  * @param urlSafe - When `true`, accept `-` and `_` instead of `+` and `/`.
  * @returns The bytes, or `undefined` when the text is not valid Base64.
  */
+/**
+ * Drops `=` characters from the end of `value`.
+ *
+ * @param value - Encoded text.
+ * @returns The text without trailing padding.
+ */
+function stripTrailingEquals(value: string): string {
+    let end = value.length;
+    while (end > 0 && value[end - 1] === "=") {
+        end -= 1;
+    }
+    return value.slice(0, end);
+}
+
 export function decodeBase64Bytes(
     value: string,
     urlSafe: boolean,
 ): Uint8Array | undefined {
     const alphabet = urlSafe ? urlAlphabet : standardAlphabet;
-    const cleaned = urlSafe ? value : value.replace(/=+$/u, "");
+    const cleaned = urlSafe ? value : stripTrailingEquals(value);
     if (!urlSafe && value.length % 4 === 1) {
         return undefined;
     }

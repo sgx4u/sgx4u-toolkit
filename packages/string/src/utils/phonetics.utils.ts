@@ -43,12 +43,31 @@ function soundexDigit(letter: string): string {
  * @param value - A word.
  * @returns The code, or `undefined` when there is no letter.
  */
+/**
+ * Collapses a run of the same letter to one letter.
+ *
+ * @param word - Uppercase letters.
+ * @returns The word without repeated letters.
+ */
+function collapseRepeatedLetters(word: string): string {
+    let collapsed = "";
+    let previous = "";
+    for (const character of word) {
+        if (character === previous) {
+            continue;
+        }
+        collapsed += character;
+        previous = character;
+    }
+    return collapsed;
+}
+
 export function metaphoneCode(value: string): string | undefined {
     let word = value.toUpperCase().replace(/[^A-Z]/gu, "");
     if (word.length === 0) {
         return undefined;
     }
-    word = word.replace(/(.)\1+/gu, "$1").replace(/CC/gu, "CC");
+    word = collapseRepeatedLetters(word);
     if (/^(KN|GN|PN|AE|WR)/u.test(word)) {
         word = word.slice(1);
     }

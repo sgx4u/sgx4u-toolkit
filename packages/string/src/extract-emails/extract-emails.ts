@@ -19,13 +19,52 @@ export function extractEmails(value: unknown): string[] | undefined {
         return undefined;
     }
     const results: string[] = [];
-    for (const match of value.matchAll(/[^\s@<>()]+@[^\s@<>()]+/gu)) {
-        const candidate = trimTrailingPunctuation(match[0] ?? "", isEmail);
-        if (candidate !== undefined) {
-            results.push(candidate);
+    let index = 0;
+    while (index < value.length) {
+        const atIndex = value.indexOf("@", index);
+        if (atIndex === -1) {
+            break;
         }
+        let start = atIndex;
+        while (start > 0 && isAddressCharacter(value[start - 1] ?? "")) {
+            start -= 1;
+        }
+        let end = atIndex + 1;
+        while (end < value.length && isAddressCharacter(value[end] ?? "")) {
+            end += 1;
+        }
+        if (start < atIndex && end > atIndex + 1) {
+            const candidate = trimTrailingPunctuation(
+                value.slice(start, end),
+                isEmail,
+            );
+            if (candidate !== undefined) {
+                results.push(candidate);
+            }
+        }
+        index = Math.max(end, atIndex + 1);
     }
     return results;
+}
+
+/**
+ * Whether `character` can sit in the practical address scan.
+ *
+ * Whitespace, `@`, and the wrapper characters end a candidate. The scan
+ * walks one character at a time so a long run cannot force backtracking.
+ *
+ * @param character - One code unit.
+ * @returns `true` when the character can belong to an address candidate.
+ */
+function isAddressCharacter(character: string): boolean {
+    return (
+        character !== "@" &&
+        character !== "<" &&
+        character !== ">" &&
+        character !== "(" &&
+        character !== ")" &&
+        !/\s/u.test(character)
+    );
 }
 
 /**
