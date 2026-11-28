@@ -1,0 +1,96 @@
+<a id="readme-top"></a>
+
+<div align="center">
+    <a href="https://github.com/sgx4u/sgx4u-toolkit">
+        <img src="https://github.com/sgx4u/sgx4u-toolkit/blob/develop/logo.svg?raw=true" width="75" alt="SGX4U" />
+    </a>
+
+<h1 align="center">🌟 @sgx4u/string 🌟</h1>
+
+<h3 align="center">Replace this sentence with what <code>@sgx4u/string</code> does before the first release.</h3>
+
+<p align="center">
+    <a href="../../.github/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/sgx4u/sgx4u-toolkit/ci.yml?branch=develop&style=for-the-badge&label=ci&labelColor=353535" alt="ci" /></a>
+    <a href="../../LICENSE"><img src="https://img.shields.io/github/license/sgx4u/sgx4u-toolkit?style=for-the-badge&labelColor=353535&color=4f46e5" alt="License: MIT" /></a>
+    <a href="./package.json"><img src="https://img.shields.io/badge/node-%3E%3D22.12-339933?style=for-the-badge&logo=nodedotjs&logoColor=white&labelColor=353535" alt="Node &gt;=22.12" /></a>
+    <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+</p>
+
+<p align="center">Part of <a href="../../README.md">@sgx4u/toolkit</a>.</p>
+</div>
+
+<br />
+
+<h2 id="about">💫 About</h2>
+
+`packageIdentifier` returns `@sgx4u/string`. Replace the stub, and the sentence in the header, before the first release.
+
+Each function lives in its own kebab-case folder: `<name>.ts`,
+`<name>.types.ts`, `<name>.test.ts`, and `<name>.md`. Shared code lives in
+`constants/*.constants.ts`, `data/*.data.ts`, and `utils/*.utils.ts`.
+`src/index.ts` re-exports the public functions and their public types. This
+package starts with those four files for `package-identifier`.
+
+Experimental (`0.x`). Breaking changes may land in minor versions until 1.0.0.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<br />
+
+<h2 id="installation">📥 Installation</h2>
+
+```sh
+pnpm add @sgx4u/string       # pnpm
+npm install @sgx4u/string    # npm
+yarn add @sgx4u/string       # yarn
+```
+
+Requires Node `>=22.12`. The package publishes ESM (`import`) and CommonJS (`require`).
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<br />
+
+<h2 id="usage">💡 Usage</h2>
+
+```ts
+import { packageIdentifier } from "@sgx4u/string";
+
+packageIdentifier(); // "@sgx4u/string"
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<br />
+
+<h2 id="functions">📘 Functions</h2>
+
+- [`packageIdentifier`](./src/package-identifier/package-identifier.md) returns `@sgx4u/string`. The stub exists so the new package typechecks, tests, and packs. Replace it before the first release.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<br />
+
+<h2 id="runtime-support">🌐 Runtime support</h2>
+
+Runtime: `universal`. Universal code uses web standards and runs in browsers, workers, and Node. Edge code may use web standards and the Workers `nodejs_compat` modules that have an implementation. Node code may use Node built-ins.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<br />
+
+<h2 id="contributing">🤝 Contributing</h2>
+
+Repository rules are in [CONTRIBUTING.md](../../CONTRIBUTING.md).
+
+Owner: `@sgx4u`
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<br />
+
+<h2 id="license">📄 License</h2>
+
+[MIT](../../LICENSE) © 2026 Subhajit Ghosh
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>

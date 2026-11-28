@@ -1,0 +1,104 @@
+{
+    "name": "@sgx4u/string",
+    "version": "0.0.0",
+    "description": "Grapheme-safe string helpers: case, width, validation, encoding, and formatting, with no runtime dependencies.",
+    "license": "MIT",
+    "author": "Subhajit Ghosh",
+    "type": "module",
+    "sideEffects": false,
+    "main": "./dist/index.cjs",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.cts",
+    "exports": {
+        ".": {
+            "@sgx4u/source": "./src/index.ts",
+            "import": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            },
+            "require": {
+                "types": "./dist/index.d.cts",
+                "default": "./dist/index.cjs"
+            }
+        },
+        "./transliterate": {
+            "@sgx4u/source": "./src/transliterate.ts",
+            "import": {
+                "types": "./dist/transliterate.d.ts",
+                "default": "./dist/transliterate.js"
+            },
+            "require": {
+                "types": "./dist/transliterate.d.cts",
+                "default": "./dist/transliterate.cjs"
+            }
+        },
+        "./html-entities": {
+            "@sgx4u/source": "./src/html-entities.ts",
+            "import": {
+                "types": "./dist/html-entities.d.ts",
+                "default": "./dist/html-entities.js"
+            },
+            "require": {
+                "types": "./dist/html-entities.d.cts",
+                "default": "./dist/html-entities.cjs"
+            }
+        },
+        "./validators/locale": {
+            "@sgx4u/source": "./src/validators/locale.ts",
+            "import": {
+                "types": "./dist/validators/locale.d.ts",
+                "default": "./dist/validators/locale.js"
+            },
+            "require": {
+                "types": "./dist/validators/locale.d.cts",
+                "default": "./dist/validators/locale.cjs"
+            }
+        },
+        "./package.json": "./package.json"
+    },
+    "files": [
+        "dist",
+        "src",
+        "!src/**/*.test.ts",
+        "!src/**/*.md",
+        "README.md"
+    ],
+    "scripts": {
+        "build": "tsdown",
+        "dev": "tsdown --watch",
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run --coverage",
+        "lint": "eslint . --max-warnings 0",
+        "size": "size-limit",
+        "check:package": "publint && attw --pack . --profile node16 && size-limit"
+    },
+    "devDependencies": {
+        "@arethetypeswrong/cli": "catalog:",
+        "@size-limit/preset-small-lib": "catalog:",
+        "@sgx4u/eslint-config": "workspace:*",
+        "@sgx4u/tsconfig": "workspace:*",
+        "@sgx4u/tsdown-config": "workspace:*",
+        "@sgx4u/vitest-config": "workspace:*",
+        "@vitest/coverage-v8": "catalog:",
+        "eslint": "catalog:",
+        "fast-check": "catalog:",
+        "publint": "catalog:",
+        "size-limit": "catalog:",
+        "tsdown": "catalog:",
+        "typescript": "catalog:",
+        "vitest": "catalog:"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sgx4u/sgx4u-toolkit.git",
+        "directory": "packages/string"
+    },
+    "homepage": "https://github.com/sgx4u/sgx4u-toolkit/tree/develop/packages/string",
+    "bugs": "https://github.com/sgx4u/sgx4u-toolkit/issues",
+    "engines": {
+        "node": ">=22.12"
+    }
+}
