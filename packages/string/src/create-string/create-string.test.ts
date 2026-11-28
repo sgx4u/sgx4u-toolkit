@@ -57,6 +57,34 @@ describe("createString", () => {
         });
     });
 
+    it("does not leak slug or title options into other functions", () => {
+        const strings = createString({
+            titleCaseStyle: "apa",
+            slugifySeparator: "_",
+            templatePattern: "double-curly",
+            unit: "codeUnit",
+        });
+        expect(
+            strings.formatList({
+                values: ["Ada", "Grace"],
+                locale: "en",
+            }),
+        ).toBe("Ada and Grace");
+        expect(
+            strings.truncate({ value: "hello_world", maximumLength: 8 }),
+        ).toBe("hello_w…");
+        expect(
+            strings.interpolate({
+                template: "Hello {{name}}",
+                values: { name: "Ada" },
+            }),
+        ).toBe("Hello Ada");
+        expect(strings.pad({ value: "😀", maximumLength: 3 })).toBe("😀 ");
+        expect(strings.lastIndexOfMatch({ value: "😀😀", search: "😀" })).toBe(
+            2,
+        );
+    });
+
     it("keeps two instances independent", () => {
         const turkish = createString({ locale: "tr-TR" });
         const english = createString({ locale: "en" });
