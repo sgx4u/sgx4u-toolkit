@@ -100,5 +100,27 @@
     "bugs": "https://github.com/sgx4u/sgx4u-toolkit/issues",
     "engines": {
         "node": ">=22.12"
-    }
+    },
+    "size-limit": [
+        {
+            "name": "Root entry",
+            "path": "dist/index.js",
+            "limit": "28 kB"
+        },
+        {
+            "name": "transliterate",
+            "path": "dist/transliterate.js",
+            "limit": "20 kB"
+        },
+        {
+            "name": "html entities",
+            "path": "dist/html-entities.js",
+            "limit": "12 kB"
+        },
+        {
+            "name": "locale validators",
+            "path": "dist/validators/locale.js",
+            "limit": "8 kB"
+        }
+    ]
 }
