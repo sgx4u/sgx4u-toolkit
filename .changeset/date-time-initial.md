@@ -9,3 +9,5 @@ Added: `createDateTime` binds a time zone, locale, week start, holiday list, and
 Added: `addDuration` and every other function that needs several values takes one flat object. A function that needs one value takes that value directly. Invalid dates and unparseable text return `undefined`. `isValidDate` and the other `is*` functions return `false` for invalid input.
 
 Added: `indiaHolidays`, `unitedStatesHolidays`, and `unitedKingdomHolidays` return `{ date, name }` entries for one year. Business-day functions use a `holidays` list in that shape.
+
+Fixed: `getNextRecurrenceOccurrence` returns the next occurrence without building every later candidate through the following 20 years.

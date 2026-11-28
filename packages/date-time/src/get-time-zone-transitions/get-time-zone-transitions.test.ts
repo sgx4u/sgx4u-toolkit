@@ -94,18 +94,12 @@ describe("getTimeZoneTransitions", () => {
     it("includes a span of exactly 50 years", () => {
         const start = new Date("2000-01-01T00:00:00.000Z");
         const end = new Date(start.getTime() + 50 * 365.25 * 86_400_000);
-        expect(() =>
-            getTimeZoneTransitions({
-                interval: { start, end },
-                timeZone: "UTC",
-            }),
-        ).not.toThrow();
-        expect(
-            getTimeZoneTransitions({
-                interval: { start, end },
-                timeZone: "UTC",
-            }),
-        ).toEqual([]);
+        // `+00:00` skips Intl. A 50-year UTC scan exceeds 5s in parallel CI.
+        const transitions = getTimeZoneTransitions({
+            interval: { start, end },
+            timeZone: "+00:00",
+        });
+        expect(transitions).toEqual([]);
     });
 
     it("finds both 2024 New York offset changes", () => {
