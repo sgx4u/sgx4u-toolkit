@@ -1,7 +1,7 @@
 {
     "name": "@sgx4u/date-time",
     "version": "0.0.0",
-    "description": "Reports whether a Date, a millisecond timestamp, or a date string is a real date.",
+    "description": "Dates, durations, intervals, business time, holidays, time zones, recurrence, cron, and English date phrases.",
     "license": "MIT",
     "author": "Subhajit Ghosh",
     "type": "module",
@@ -21,6 +21,83 @@
                 "default": "./dist/index.cjs"
             }
         },
+        "./recurrence": {
+            "@sgx4u/source": "./src/recurrence.ts",
+            "import": {
+                "types": "./dist/recurrence.d.ts",
+                "default": "./dist/recurrence.js"
+            },
+            "require": {
+                "types": "./dist/recurrence.d.cts",
+                "default": "./dist/recurrence.cjs"
+            }
+        },
+        "./cron": {
+            "@sgx4u/source": "./src/cron.ts",
+            "import": {
+                "types": "./dist/cron.d.ts",
+                "default": "./dist/cron.js"
+            },
+            "require": {
+                "types": "./dist/cron.d.cts",
+                "default": "./dist/cron.cjs"
+            }
+        },
+        "./natural-language": {
+            "@sgx4u/source": "./src/natural-language.ts",
+            "import": {
+                "types": "./dist/natural-language.d.ts",
+                "default": "./dist/natural-language.js"
+            },
+            "require": {
+                "types": "./dist/natural-language.d.cts",
+                "default": "./dist/natural-language.cjs"
+            }
+        },
+        "./astronomy": {
+            "@sgx4u/source": "./src/astronomy.ts",
+            "import": {
+                "types": "./dist/astronomy.d.ts",
+                "default": "./dist/astronomy.js"
+            },
+            "require": {
+                "types": "./dist/astronomy.d.cts",
+                "default": "./dist/astronomy.cjs"
+            }
+        },
+        "./holidays/india": {
+            "@sgx4u/source": "./src/holidays/india.ts",
+            "import": {
+                "types": "./dist/holidays/india.d.ts",
+                "default": "./dist/holidays/india.js"
+            },
+            "require": {
+                "types": "./dist/holidays/india.d.cts",
+                "default": "./dist/holidays/india.cjs"
+            }
+        },
+        "./holidays/united-states": {
+            "@sgx4u/source": "./src/holidays/united-states.ts",
+            "import": {
+                "types": "./dist/holidays/united-states.d.ts",
+                "default": "./dist/holidays/united-states.js"
+            },
+            "require": {
+                "types": "./dist/holidays/united-states.d.cts",
+                "default": "./dist/holidays/united-states.cjs"
+            }
+        },
+        "./holidays/united-kingdom": {
+            "@sgx4u/source": "./src/holidays/united-kingdom.ts",
+            "import": {
+                "types": "./dist/holidays/united-kingdom.d.ts",
+                "default": "./dist/holidays/united-kingdom.js"
+            },
+            "require": {
+                "types": "./dist/holidays/united-kingdom.d.cts",
+                "default": "./dist/holidays/united-kingdom.cjs"
+            }
+        },
         "./package.json": "./package.json"
     },
     "files": [
@@ -28,15 +105,18 @@
         "src",
         "!src/**/*.test.ts",
         "!src/**/*.md",
-        "README.md"
+        "README.md",
+        "FUNCTIONS.md"
     ],
     "scripts": {
         "build": "tsdown",
         "dev": "tsdown --watch",
         "typecheck": "tsc --noEmit",
-        "test": "vitest run",
+        "test": "vitest run --coverage",
         "lint": "eslint . --max-warnings 0",
-        "check:package": "publint && attw --pack ."
+        "check:package": "publint && attw --pack . --profile node16 && size-limit",
+        "size": "size-limit",
+        "test:zones": "node scripts/test-time-zones.mjs"
     },
     "devDependencies": {
         "@arethetypeswrong/cli": "catalog:",
@@ -44,8 +124,13 @@
         "@sgx4u/tsconfig": "workspace:*",
         "@sgx4u/tsdown-config": "workspace:*",
         "@sgx4u/vitest-config": "workspace:*",
+        "@size-limit/preset-small-lib": "catalog:",
+        "@vitest/coverage-v8": "catalog:",
         "eslint": "catalog:",
+        "fast-check": "catalog:",
         "publint": "catalog:",
+        "size-limit": "catalog:",
+        "temporal-polyfill": "catalog:",
         "tsdown": "catalog:",
         "typescript": "catalog:",
         "vitest": "catalog:"

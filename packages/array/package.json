@@ -1,0 +1,159 @@
+{
+    "name": "@sgx4u/array",
+    "version": "0.0.0",
+    "description": "Immutable array helpers for guards, grouping, sets, sorting, diff, and async iteration.",
+    "license": "MIT",
+    "author": "Subhajit Ghosh",
+    "type": "module",
+    "sideEffects": false,
+    "main": "./dist/index.cjs",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.cts",
+    "exports": {
+        ".": {
+            "@sgx4u/source": "./src/index.ts",
+            "import": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            },
+            "require": {
+                "types": "./dist/index.d.cts",
+                "default": "./dist/index.cjs"
+            }
+        },
+        "./async": {
+            "@sgx4u/source": "./src/async.ts",
+            "import": {
+                "types": "./dist/async.d.ts",
+                "default": "./dist/async.js"
+            },
+            "require": {
+                "types": "./dist/async.d.cts",
+                "default": "./dist/async.cjs"
+            }
+        },
+        "./combinatorics": {
+            "@sgx4u/source": "./src/combinatorics.ts",
+            "import": {
+                "types": "./dist/combinatorics.d.ts",
+                "default": "./dist/combinatorics.js"
+            },
+            "require": {
+                "types": "./dist/combinatorics.d.cts",
+                "default": "./dist/combinatorics.cjs"
+            }
+        },
+        "./package.json": "./package.json"
+    },
+    "files": [
+        "dist",
+        "src",
+        "!src/**/*.test.ts",
+        "!src/**/*.md",
+        "README.md",
+        "FUNCTIONS.md"
+    ],
+    "scripts": {
+        "build": "tsdown",
+        "dev": "tsdown --watch",
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run --coverage",
+        "lint": "eslint . --max-warnings 0",
+        "size": "size-limit",
+        "check:package": "publint && attw --pack . --profile node16 && size-limit"
+    },
+    "devDependencies": {
+        "@arethetypeswrong/cli": "catalog:",
+        "@sgx4u/eslint-config": "workspace:*",
+        "@sgx4u/tsconfig": "workspace:*",
+        "@sgx4u/tsdown-config": "workspace:*",
+        "@sgx4u/vitest-config": "workspace:*",
+        "@size-limit/preset-small-lib": "catalog:",
+        "@vitest/coverage-v8": "catalog:",
+        "eslint": "catalog:",
+        "fast-check": "catalog:",
+        "publint": "catalog:",
+        "size-limit": "catalog:",
+        "tsdown": "catalog:",
+        "typescript": "catalog:",
+        "vitest": "catalog:"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sgx4u/sgx4u-toolkit.git",
+        "directory": "packages/array"
+    },
+    "homepage": "https://github.com/sgx4u/sgx4u-toolkit/tree/develop/packages/array",
+    "bugs": "https://github.com/sgx4u/sgx4u-toolkit/issues",
+    "engines": {
+        "node": ">=22.12"
+    },
+    "size-limit": [
+        {
+            "name": "chunk",
+            "path": "dist/index.js",
+            "import": "{ chunk }",
+            "limit": "1 kB"
+        },
+        {
+            "name": "getUniqueItems",
+            "path": "dist/index.js",
+            "import": "{ getUniqueItems }",
+            "limit": "1 kB"
+        },
+        {
+            "name": "partition",
+            "path": "dist/index.js",
+            "import": "{ partition }",
+            "limit": "1 kB"
+        },
+        {
+            "name": "sortBy",
+            "path": "dist/index.js",
+            "import": "{ sortBy }",
+            "limit": "2 kB"
+        },
+        {
+            "name": "diffArraySequence",
+            "path": "dist/index.js",
+            "import": "{ diffArraySequence }",
+            "limit": "2 kB"
+        },
+        {
+            "name": "getLongestCommonSubsequence",
+            "path": "dist/index.js",
+            "import": "{ getLongestCommonSubsequence }",
+            "limit": "2 kB"
+        },
+        {
+            "name": "binItems",
+            "path": "dist/index.js",
+            "import": "{ binItems }",
+            "limit": "1.5 kB"
+        },
+        {
+            "name": "root",
+            "path": "dist/index.js",
+            "limit": "22 kB"
+        },
+        {
+            "name": "createArray",
+            "path": "dist/index.js",
+            "import": "{ createArray }",
+            "limit": "22 kB"
+        },
+        {
+            "name": "async",
+            "path": "dist/async.js",
+            "limit": "4 kB"
+        },
+        {
+            "name": "combinatorics",
+            "path": "dist/combinatorics.js",
+            "limit": "2 kB"
+        }
+    ]
+}

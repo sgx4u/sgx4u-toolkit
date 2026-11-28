@@ -1,0 +1,165 @@
+{
+    "name": "@sgx4u/object",
+    "version": "0.0.0",
+    "description": "Immutable object utilities for paths, merge, clone, equality, and safe JSON.",
+    "license": "MIT",
+    "author": "Subhajit Ghosh",
+    "type": "module",
+    "sideEffects": false,
+    "main": "./dist/index.cjs",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.cts",
+    "exports": {
+        ".": {
+            "@sgx4u/source": "./src/index.ts",
+            "import": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            },
+            "require": {
+                "types": "./dist/index.d.cts",
+                "default": "./dist/index.cjs"
+            }
+        },
+        "./json-patch": {
+            "@sgx4u/source": "./src/json-patch.ts",
+            "import": {
+                "types": "./dist/json-patch.d.ts",
+                "default": "./dist/json-patch.js"
+            },
+            "require": {
+                "types": "./dist/json-patch.d.cts",
+                "default": "./dist/json-patch.cjs"
+            }
+        },
+        "./hash": {
+            "@sgx4u/source": "./src/hash.ts",
+            "import": {
+                "types": "./dist/hash.d.ts",
+                "default": "./dist/hash.js"
+            },
+            "require": {
+                "types": "./dist/hash.d.cts",
+                "default": "./dist/hash.cjs"
+            }
+        },
+        "./package.json": "./package.json"
+    },
+    "files": [
+        "dist",
+        "src",
+        "!src/**/*.test.ts",
+        "!src/**/*.md",
+        "README.md",
+        "FUNCTIONS.md"
+    ],
+    "scripts": {
+        "build": "tsdown",
+        "dev": "tsdown --watch",
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run --coverage",
+        "lint": "eslint . --max-warnings 0",
+        "check:package": "publint && attw --pack . --profile node16 && size-limit",
+        "size": "size-limit"
+    },
+    "devDependencies": {
+        "@arethetypeswrong/cli": "catalog:",
+        "@sgx4u/eslint-config": "workspace:*",
+        "@sgx4u/tsconfig": "workspace:*",
+        "@sgx4u/tsdown-config": "workspace:*",
+        "@sgx4u/vitest-config": "workspace:*",
+        "@size-limit/preset-small-lib": "catalog:",
+        "@vitest/coverage-v8": "catalog:",
+        "eslint": "catalog:",
+        "fast-check": "catalog:",
+        "publint": "catalog:",
+        "size-limit": "catalog:",
+        "tsdown": "catalog:",
+        "typescript": "catalog:",
+        "vitest": "catalog:"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sgx4u/sgx4u-toolkit.git",
+        "directory": "packages/object"
+    },
+    "homepage": "https://github.com/sgx4u/sgx4u-toolkit/tree/develop/packages/object",
+    "bugs": "https://github.com/sgx4u/sgx4u-toolkit/issues",
+    "engines": {
+        "node": ">=22.12"
+    },
+    "size-limit": [
+        {
+            "name": "isPlainObject",
+            "path": "dist/index.js",
+            "import": "{ isPlainObject }",
+            "limit": "1 kB"
+        },
+        {
+            "name": "pick",
+            "path": "dist/index.js",
+            "import": "{ pick }",
+            "limit": "1 kB"
+        },
+        {
+            "name": "getPath",
+            "path": "dist/index.js",
+            "import": "{ getPath }",
+            "limit": "1.3 kB"
+        },
+        {
+            "name": "cloneDeep",
+            "path": "dist/index.js",
+            "import": "{ cloneDeep }",
+            "limit": "2 kB"
+        },
+        {
+            "name": "mergeDeep",
+            "path": "dist/index.js",
+            "import": "{ mergeDeep }",
+            "limit": "2.2 kB"
+        },
+        {
+            "name": "isEqual",
+            "path": "dist/index.js",
+            "import": "{ isEqual }",
+            "limit": "2 kB"
+        },
+        {
+            "name": "flattenObject",
+            "path": "dist/index.js",
+            "import": "{ flattenObject }",
+            "limit": "2 kB"
+        },
+        {
+            "name": "convertKeys",
+            "path": "dist/index.js",
+            "import": "{ convertKeys }",
+            "limit": "2.3 kB"
+        },
+        {
+            "name": "root entry",
+            "path": "dist/index.js",
+            "limit": "22 kB"
+        },
+        {
+            "name": "createObject",
+            "path": "dist/index.js",
+            "import": "{ createObject }",
+            "limit": "23 kB"
+        },
+        {
+            "name": "json-patch",
+            "path": "dist/json-patch.js",
+            "limit": "4 kB"
+        },
+        {
+            "name": "hash",
+            "path": "dist/hash.js",
+            "limit": "3 kB"
+        }
+    ]
+}
